@@ -1,0 +1,8 @@
+.DS_Store
+.classpath
+.project
+.pydevproject
+.settings/
+dependency-reduced-pom.xml
+target/
+temp/
