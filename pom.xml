@@ -27,6 +27,11 @@
 			<artifactId>jython-standalone</artifactId>
 			<version>2.7-b1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.kohsuke</groupId>
+			<artifactId>github-api</artifactId>
+			<version>1.49</version>
+		</dependency>
 	</dependencies>
 
 	<build>
