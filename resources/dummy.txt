@@ -6,3 +6,7 @@ Henry
 Name: Tudor
 Job: King
 Wife Count: 8
+
+Nammu:
+Pantheon: Sumerian
+Portfolio: Water
