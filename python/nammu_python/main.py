@@ -3,24 +3,29 @@ Created on 25 Mar 2014
 
 @author: jamespjh
 '''
-
-from javax.swing import *
+from javax.swing import JFrame, JTabbedPane, JPanel, BoxLayout, JEditorPane, BorderFactory, JLabel, JTextField, JScrollPane
 from javax.swing.event import DocumentListener
 from java.awt import BorderLayout, GridLayout, Color, Dimension
 from javax.swing.border import BevelBorder
 from java.lang import Short
-
-
 from org.kohsuke.github import GitHub
+from nammu import Nammu
+from pyoracc.atf.atffile import AtfFile
+from pyoracc.test.fixtures import belsunu
+import codecs
 
-gh=GitHub.connect()
-me=gh.getMyself()
-this_repo=gh.getRepository("jamespjh/nammu")
+testATF = AtfFile(codecs.open("/Users/raquelalegre/workspace/ORACC/nammu/python/pyoracc/test/fixtures/tiny_corpus/belsunu.atf",
+                       encoding='utf-8').read())
+
+Nammu()
+
+gh = GitHub.connect()
+me = gh.getMyself()
+this_repo = gh.getRepository("UCL-RITS/nammu")
 
 frame = JFrame('ORACC Editor Prototype 0.0.1, (Codename Nammu)',
             defaultCloseOperation = JFrame.EXIT_ON_CLOSE,
-            size = (1000, 1000)
-            
+            size = (1000, 1000)   
         )
 tabber=JTabbedPane()
 
@@ -81,6 +86,8 @@ scroller = JScrollPane(editor,
 tabber.addTab("Text View", None, scroller)
 tabber.addTab("Model View", None, object_view)
 frame.add(tabber)
+
+
 
 def main():
     frame.visible = True
