@@ -23,6 +23,6 @@ public class App {
 	        systemState.path.append(new PyString("target/classes/Lib"));
 	        
 	        systemState.__setattr__("_jy_interpreter", Py.java2py(interpreter));
-	        interpreter.exec("try:\n import nammu_python.main\n nammu_python.main.main()\nexcept SystemExit: pass");
+	        interpreter.exec("try:\n import nammu.main\n nammu.main.main()\nexcept SystemExit: pass");
 	    }
 }
