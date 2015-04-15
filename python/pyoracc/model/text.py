@@ -1,15 +1,15 @@
-#from mako.template import Template
+from mako.template import Template
 from oraccobject import OraccObject
 
 
 class Text(object):
-#    template = Template(
-#"""&${code} = ${description}
-##project: ${project}
-##atf: lang ${language}
-#% for child in children:
-#${child.serialize()}
-#% endfor""")
+    template = Template(
+"""&${code} = ${description}
+#project: ${project}
+#atf: lang ${language}
+% for child in children:
+${child.serialize()}
+% endfor""")
     
     def __init__(self):
         self.children = []
@@ -21,11 +21,11 @@ class Text(object):
         self.project = None
         self.language = None
 
-#    def __str__(self):
-#        return Text.template.render_unicode(**vars(self))
+    def __str__(self):
+        return Text.template.render_unicode(**vars(self))
     
-#    def serialize(self):
-#        return Text.template.render_unicode(**vars(self))
+    def serialize(self):
+        return Text.template.render_unicode(**vars(self))
 
     def objects(self):
         return [x for x in self.children if isinstance(x, OraccObject)]
