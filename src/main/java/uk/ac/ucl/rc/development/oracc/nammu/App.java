@@ -1,3 +1,13 @@
+/**
+ * This is the entry point for Nammu.
+ * 
+ * It sets up the Jython interpreter and ensures that it can find any requisite 
+ * external libraries.
+ * 
+ * @author raquel-ucl
+ * 
+ */
+
 package uk.ac.ucl.rc.development.oracc.nammu;
 
 import java.util.Properties;
@@ -19,7 +29,8 @@ public class App {
 	        
 	        PySystemState systemState = Py.getSystemState();
 
-	        //Link some external python libraries installed via maven plugin 
+	        //Link some external python libraries installed with a 
+	        // non-configurable maven plugin during mvn install/package
 	        systemState.path.append(new PyString("target/classes/Lib"));
 	        
 	        systemState.__setattr__("_jy_interpreter", Py.java2py(interpreter));
