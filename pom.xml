@@ -76,7 +76,7 @@
 					<libraries>
 						<param>nose</param>
 						<param>ply</param>
-						<param>jinja</param>
+						<param>https://pypi.python.org/packages/source/M/Mako/Mako-0.9.1.tar.gz</param>
 					</libraries>
 				</configuration>
 			</plugin>
