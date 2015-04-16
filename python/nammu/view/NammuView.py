@@ -30,10 +30,8 @@ class NammuView(JFrame):
         
         #All window components apart from the menu will go in the JFrame's 
         #content pane 
-        #self.getContentPane().setLayout(BorderLayout)
-      
-
-        
+        self.setLayout(BorderLayout())
+    
         #Assign view controller
         #self.controller = controller
         
@@ -43,7 +41,18 @@ class NammuView(JFrame):
         #toolbar = ToolbarView(ToolbarController)
         #console = ConsoleView(ConsoleController)
         
-        
+        #Create splitPane with two empty panels for the ATF edition/console area
+#         splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT);
+#         
+#         atfAreaPanel = JPanel()
+#         consolePanel = JPanel()
+#        
+#         splitPane.setTopComponent(atfAreaPanel)
+#         splitPane.setBottomComponent(consolePanel)
+#         splitPane.setDividerLocation(500);
+#  
+#         self.add(splitPane)
+#         
     #def bind(self):
     #    self.setContentPane(content)
         
@@ -69,102 +78,4 @@ class NammuView(JFrame):
         #Display Nammu window
         self.visible = 1
         
-    
-    #... Components
-    #editArea = None
-    #fileChooser = JFileChooser()
-
-    #============================================================== constructor
-#     def __init__(self):
-#         
-#         #... Create actions for menu items, buttons, ...
-#         self.openAction = OpenAction(self)
-#         self.saveAction = SaveAction(self)
-#         self.exitAction = ExitAction(self)
-# 
-#         #... Create scrollable text area.
-#         self.editArea = JTextArea(15, 80)
-#         self.editArea.border=BorderFactory.createEmptyBorder(2,2,2,2)
-#         self.editArea.font=Font("monospaced", Font.PLAIN, 14)
-#         scrollingText = JScrollPane(self.editArea)
-# 
-#         #-- Create a content pane, set layout, add component.
-#         content = JPanel()
-#         content.setLayout(BorderLayout())
-#         content.add(scrollingText, BorderLayout.CENTER);
-# 
-#         #... Create menubar
-#         menuBar = JMenuBar()
-#         fileMenu = menuBar.add(JMenu("File"))
-#         fileMenu.setMnemonic('F')
-#         fileMenu.add(self.openAction)       # Note use of actions, not text.
-#         fileMenu.add(self.saveAction)
-#         fileMenu.addSeparator()
-#         fileMenu.add(self.exitAction)
-#     
-#         #... Set window content and menu.
-#         self.setContentPane(content)
-#         self.setJMenuBar(menuBar)
-#     
-#         #... Set other window characteristics.
-#         self.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-#         self.setTitle("~ Nammu ~")
-#         self.pack()
-#         self.setLocationRelativeTo(None)
-#         self.visible=1
-#         
-#     def run(self):
-#         print "Controller can run but it can't hide!"
-# 
-# #//////////////////////////////////////////////// inner class OpenAction
-# class OpenAction(AbstractAction):
-#    #============================================= constructor
-#    def __init__(self,outer):  # outer instance.
-#      AbstractAction.__init__(self,"Open...")
-#      self.outer=outer
-#      self.putValue(AbstractAction.MNEMONIC_KEY, Integer(ord('O')))
-# 
-#    #========================================= actionPerformed
-#    def actionPerformed(self, e):
-#      retval = self.outer.fileChooser.showOpenDialog(self.outer)
-#      if retval==JFileChooser.APPROVE_OPTION:
-#        f = self.outer.fileChooser.getSelectedFile()
-#        try:
-#          reader = FileReader(f)
-#          self.outer.editArea.read(reader, "")  # Use TextComponent read
-#        except IOException,ioex:
-#          System.out.println(e);
-#          System.exit(1);
-# 
-# #////////////////////////////////////////////////// inner class SaveAction
-# class SaveAction(AbstractAction):
-#    #============================================= constructor
-#    def __init__(self,outer):
-#      AbstractAction.__init__(self,"Save...")
-#      self.outer=outer
-#      self.putValue(AbstractAction.MNEMONIC_KEY, Integer(ord('S')))
-# 
-#    #========================================= actionPerformed
-#    def actionPerformed(self, e):
-#      retval = self.outer.fileChooser.showSaveDialog(self.outer)
-#      if retval == JFileChooser.APPROVE_OPTION:
-#        f = self.outer.fileChooser.getSelectedFile()
-#        try:
-#          writer = FileWriter(f)
-#          self.outer.editArea.write(writer)  # TextComponent write
-#        except IOException,ioex:
-#          JOptionPane.showMessageDialog(self.outer, ioex)
-#          System.exit(1)
-# 
-# #/////////////////////////////////////////////////// inner class ExitAction
-# class ExitAction(AbstractAction):
-# 
-#    #============================================= constructor
-#    def __init__(self,outer):
-#      AbstractAction.__init__(self,"Exit")
-#      self.outer=outer
-#      self.putValue(AbstractAction.MNEMONIC_KEY, Integer(ord('X')))
-# 
-#    #========================================= actionPerformed
-#    def actionPerformed(self, e):
-#      System.exit(0);
+ 
