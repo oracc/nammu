@@ -10,7 +10,7 @@ Initializes the view components and sets components layout.
 from java.awt import BorderLayout, Font
 #from java.awt.event import  *   
 from javax.swing import JFileChooser, JTextArea, JScrollPane, JPanel, JMenuBar, \
-    JMenu, JFrame, JOptionPane, AbstractAction, BorderFactory, BoxLayout
+    JMenu, JFrame, JOptionPane, AbstractAction, BorderFactory, BoxLayout, Box
 from java.io import FileWriter, IOException
 from java.lang import System,Integer
 from ..view.MenuView import MenuView
@@ -30,9 +30,9 @@ class NammuView(JFrame):
         
         #All window components apart from the menu will go in the JFrame's 
         #content pane 
-        #panel = JPanel()
-        #panel.setLayout(BoxLayout(panel, BoxLayout.PAGE_AXIS))
-        #self.contentPane = panel
+        #self.getContentPane().setLayout(BorderLayout)
+      
+
         
         #Assign view controller
         #self.controller = controller
@@ -51,7 +51,13 @@ class NammuView(JFrame):
         self.setJMenuBar(menuView)
         
     def addToolBar(self, toolbarView):
-        self.add(toolbarView)
+        self.getContentPane().add(toolbarView, BorderLayout.NORTH)
+        
+    def addAtfArea(self, atfAreaView):
+        self.getContentPane().add(atfAreaView, BorderLayout.CENTER)
+        
+    def addConsole(self, consoleView):
+        self.getContentPane().add(consoleView, BorderLayout.SOUTH)   
         
     def display(self):
         

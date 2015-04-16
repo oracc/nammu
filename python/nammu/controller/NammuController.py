@@ -50,8 +50,8 @@ class NammuController():
         self.view = NammuView()
         self.view.addMenuBar(menuView)
         self.view.addToolBar(toolbarView)
-#         self.view.add(atfAreaView)
-#         self.view.add(consoleView)
+        self.view.addAtfArea(atfAreaView)
+        self.view.addConsole(consoleView)
    
         #Display view
         self.view.display()
