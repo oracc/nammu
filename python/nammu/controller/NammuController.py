@@ -56,9 +56,7 @@ class NammuController():
         #Display view
         self.view.display()
         
-        #Create actions - not sure I need any at these stage - maybe check ATF 
-        #saved before closing? 
-        #self.exitAction(self)
+        #Handle actions - eventBus?
         
         
         
