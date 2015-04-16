@@ -6,7 +6,8 @@ Initializes the menu view and sets its layout.
 @author: raquel-ucl
 '''
 
-from javax.swing import JMenuBar, JMenu, JMenuItem, ImageIcon
+from javax.swing import JMenuBar, JMenu, JMenuItem, ImageIcon, JFileChooser
+from javax.swing.filechooser import FileNameExtensionFilter
 from java.awt.event import KeyEvent
 
 class MenuView(JMenuBar):
@@ -184,9 +185,49 @@ class MenuView(JMenuBar):
         
     def onOpenFileSelect(self, event):
         print "Browse for new file to open and load it in text area."
+        
+#         chooseFile = JFileChooser()
+#         filter = FileNameExtensionFilter("ATF files", ["atf"])
+#         chooseFile.addChoosableFileFilter(filter)
+# 
+#         returnedValue = chooseFile.showDialog(self.panel, "Choose file")
+# 
+#         if returnedValue == JFileChooser.APPROVE_OPTION:
+#             atfFile = chooseFile.getSelectedFile()
+#             atfText = self.readFile(atfFile)
+#             return text()
+# 
+# 
+#     def readFile(self, file):
+#         filename = file.getCanonicalPath()
+#         f = open(filename, "r")
+#         text = f.read()
+#         return text
+#         
+#            def actionPerformed(self, e):
+#      retval = self.outer._fileChooser.showOpenDialog(self.outer)
+#      if retval==JFileChooser.APPROVE_OPTION:
+#        f = self.outer._fileChooser.getSelectedFile()
+#        try:
+#          reader = FileReader(f)
+#          self.outer._editArea.read(reader, "")  # Use TextComponent read
+#        except IOException,ioex:
+#          System.out.println(e);
+#          System.exit(1);
             
     def onSaveFileSelect(self, event):
         print "Browse for place to save current file."
+        
+#             retval = self.outer._fileChooser.showSaveDialog(self.outer)
+#     if retval == JFileChooser.APPROVE_OPTION:
+#       f = self.outer._fileChooser.getSelectedFile()
+#       try:
+#         writer = FileWriter(f)
+#         self.outer._editArea.write(writer)  # TextComponent write
+#       except IOException,ioex:
+#         JOptionPane.showMessageDialog(self.outer, ioex)
+#         System.exit(1)
+
             
     def onCloseFileSelect(self, event):
         print "Prompt save current, close it and clean text area."
