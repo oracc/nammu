@@ -6,3 +6,5 @@
 dependency-reduced-pom.xml
 target/
 temp/
+/parser.out
+*.py
