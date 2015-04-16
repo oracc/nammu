@@ -5,15 +5,16 @@ Initializes the toolbar view and sets its layout.
 
 @author: raquel-ucl
 '''
-from javax.swing import JToolBar, ImageIcon, JButton
 
-from ..controller.ToolbarController import ToolbarController
+from javax.swing import JToolBar, ImageIcon, JButton
 
 class ToolbarView(JToolBar):
     
-    def __init__(self):
+    def __init__(self, controller):
         print "I'm the toolbar view"
-        #self.controller = ToolbarController
+        
+        #Give reference to controller to delegate action response
+        self.controller = controller
         
         newIcon = ImageIcon("../../../resources/images/new.png")
         newFileButton = JButton("New", newIcon, 
@@ -95,39 +96,54 @@ class ToolbarView(JToolBar):
         
     def onNewFileClick(self, event):
         print "Prompt save current, clear text area"
+        self.controller.newFile()
         
     def onOpenFileClick(self, event):
         print "Browse for new file to open and load it in text area."
+        self.controller.openFile()
         
     def onSaveFileClick(self, event):
         print "Browse for place to save current file."
+        self.controller.saveFile()
         
     def onCloseFileClick(self, event):
         print "Prompt save current, clear text area."
+        self.controller.closeFile()
         
     def onUndoClick(self, event):
         print "Undo last action."
+        self.controller.undo()
         
     def onRedoClick(self, event):
         print "Redo last undone action."
+        self.controller.redo()
         
     def onValidateClick(self, event):
         print "Validate current ATF, display errors in console panel."
+        self.controller.validate("text area content or path to file?")
         
     def onLemmatiseClick(self, event):
         print "Lemmatise current ATF, display errors in console panel."    
+        self.controller.lemmatise("text area content or path to file?")
         
     def onUnicodeClick(self, event):
         print "Change to Unicode keyboard."   
+        #TODO
+        #self.controller.unicode(true)
+        #self.controller.unicode(false)
         
     def onConsoleClick(self, event):
         print "Toggle console panel."  
+        #TODO
+        #self.controller.hideConsole()
+        #self.controller.displayConsole()
         
     def onModelClick(self, event):
         print "Change atfAreaView to model mode." 
-    
+        self.controller.displayModelView()
+        
     def onQuitClick(self, event):
         print "Prompt save current, exit Nammu."
-        
+        self.controller.quit()
         
         

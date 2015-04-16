@@ -11,7 +11,7 @@ from javax.swing import JTextArea, JScrollPane, JPanel, BorderFactory
 
 class AtfAreaView(JPanel):
     
-    def __init__(self):
+    def __init__(self, controller):
         '''
         Creates default empty text area in a panel.
         It will contain the ATF file content, and allow text edition.
@@ -21,7 +21,7 @@ class AtfAreaView(JPanel):
         or contexts, depending on user choice: text view or model view.
         '''
         #Give reference to controller to delegate action response
-        #self.controller = AtfAreaController
+        self.controller = controller
         
         #Make text area occupy all available space and resize with parent window
         self.setLayout(BorderLayout())

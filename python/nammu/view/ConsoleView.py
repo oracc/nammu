@@ -9,11 +9,9 @@ Initializes the console view and sets its layout.
 from java.awt import Font, BorderLayout, Color, Dimension
 from javax.swing import JTextArea, JScrollPane, JPanel, BorderFactory
 
-from ..controller.ConsoleController import ConsoleController
-
 class ConsoleView(JPanel):
     
-    def __init__(self):
+    def __init__(self, controller):
         '''
         Creates default empty console-looking panel.
         It should be separated from the rest of the GUI so that users can choose
@@ -24,7 +22,7 @@ class ConsoleView(JPanel):
         '''
         
         #Give reference to controller to delegate action response
-        #self.controller = ConsoleController
+        self.controller = controller
         
         #Make text area occupy all available space and resize with parent window
         self.setLayout(BorderLayout())

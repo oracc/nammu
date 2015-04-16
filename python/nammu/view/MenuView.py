@@ -12,9 +12,11 @@ from java.awt.event import KeyEvent
 
 class MenuView(JMenuBar):
     
-    def __init__(self):
+    def __init__(self, controller):
         print "I'm the menu view"
-        #self.controller = MenuController
+        
+        #Save reference to controller to handle events
+        self.controller = controller
         
         fileMenu = JMenu("File")
         fileMenu.setMnemonic(KeyEvent.VK_F)
@@ -182,9 +184,11 @@ class MenuView(JMenuBar):
         
     def onNewFileSelect(self, event):
         print "Prompt save current, close it and clean text area."
+        self.controller.newFile()
         
     def onOpenFileSelect(self, event):
         print "Browse for new file to open and load it in text area."
+        self.controller.openFile()
         
 #         chooseFile = JFileChooser()
 #         filter = FileNameExtensionFilter("ATF files", ["atf"])
@@ -217,6 +221,7 @@ class MenuView(JMenuBar):
             
     def onSaveFileSelect(self, event):
         print "Browse for place to save current file."
+        self.controller.saveFile()
         
 #             retval = self.outer._fileChooser.showSaveDialog(self.outer)
 #     if retval == JFileChooser.APPROVE_OPTION:
@@ -229,49 +234,71 @@ class MenuView(JMenuBar):
 #         System.exit(1)
 
             
+    #Delegate all events to view controller
     def onCloseFileSelect(self, event):
         print "Prompt save current, close it and clean text area."
+        self.controller.closeFile()
             
     def onQuitFileSelect(self, event):
         print "Prompt save current, exit Nammu."
+        self.controller.quit()
             
     def onUndoSelect(self, event):
         print "Undo last change." 
+        self.controller.undo()
         
     def onRedoSelect(self, event):
         print "Redo last undone action."
+        self.controller.redo()
         
     def onCopySelect(self, event):
         print "Copy selected text."
+        self.controller.copy()
        
     def onCutSelect(self, event):
         print "Cut selected text."
+        self.controller.cut()
     
     def onPasteSelect(self, event):
         print "Paste clipboard text."
+        self.controller.paste()
         
     def onValidateSelect(self, event):
         print "Validate ATF."
+        self.controller.validate("text area content or path to file?")
     
     def onLemmatiseSelect(self, event):
         print "Lemmatise ATF."
+        self.controller.lemmatise("text area content or path to file?")
         
     def onHelpSelect(self, event):
         print "Display ATF help."
+        self.controller.showHelp()
         
     def onAboutSelect(self, event):
-        print "Display Nammu information."  
+        print "Display Nammu information." 
+        self.controller.showAbout() 
        
     def onModelSelect(self, event):
         print "Change to model view."
+        self.controller.displayModelView()
         
     def onConsoleSelect(self, event):
         print "Toggle/Display console panel."
+        #TODO
+        #self.controller.hideConsole()
+        #self.controller.displayConsole()
         
     def onToolbarSelect(self, event):
         print "Display/Hide toolbar."
+        #TODO
+        #self.controller.hideToolbar()
+        #self.controller.displayToolbar()
         
     def onUnicodeSelect(self, event):
         print "Use Unicode keyboard."
+        #TODO
+        #self.controller.unicode(true)
+        #self.controller.unicode(false)
         
                

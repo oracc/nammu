@@ -25,22 +25,17 @@ from __builtin__ import None
 
 class NammuView(JFrame):
 
-    def __init__(self):
+    def __init__(self, controller):
         print "I'm the main window!"
+        
+        #Give reference to controller to delegate action response
+        self.controller = controller
         
         #All window components apart from the menu will go in the JFrame's 
         #content pane 
         self.setLayout(BorderLayout())
-    
-        #Assign view controller
-        #self.controller = controller
         
-        #Initialise Nammu components
-        #menu = MenuView(MenuController)
-        #atfArea = AtfAreaView(AtfAreaController)
-        #toolbar = ToolbarView(ToolbarController)
-        #console = ConsoleView(ConsoleController)
-        
+        #TODO
         #Create splitPane with two empty panels for the ATF edition/console area
 #         splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT);
 #         

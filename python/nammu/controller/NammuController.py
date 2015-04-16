@@ -30,28 +30,22 @@ class NammuController():
         '''
         Initialise main controller of the application:
         1. For each component (menu, toolbar, ATF area, console)
-            1.1. Create its view
-            1.2. Create its controller referencing the corresponding view
+            1.1 Create its controller, which will
+                Create its own view referencing the corresponding controller
         2. Create main view that'll bind all the components
-        3. Create event/action handlers
+        3. Create event/action handlers - EventBus?
         '''
-        menuView = MenuView()
-        menuController = MenuController(menuView)
         
-        toolbarView = ToolbarView()
-        toolbarController = ToolbarController(toolbarView)
-        
-        atfAreaView = AtfAreaView()
-        atfAreaController = AtfAreaController(atfAreaView)
-        
-        consoleView = ConsoleView()
-        consoleController = ConsoleController(consoleView)
+        menuController = MenuController(self)
+        toolbarController = ToolbarController(self)
+        atfAreaController = AtfAreaController(self)
+        consoleController = ConsoleController(self)
     
-        self.view = NammuView()
-        self.view.addMenuBar(menuView)
-        self.view.addToolBar(toolbarView)
-        self.view.addAtfArea(atfAreaView)
-        self.view.addConsole(consoleView)
+        self.view = NammuView(self)
+        self.view.addMenuBar(menuController.view)
+        self.view.addToolBar(toolbarController.view)
+        self.view.addAtfArea(atfAreaController.view)
+        self.view.addConsole(consoleController.view)
    
         #Display view
         self.view.display()
