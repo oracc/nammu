@@ -7,21 +7,21 @@ from java.lang import System,Integer
 
 class Nammu(JFrame):
     #... Components
-   _editArea=None
-   _fileChooser = JFileChooser()
+   editArea=None
+   fileChooser = JFileChooser()
 
    #============================================================== constructor
    def __init__(self):
 
      #... Create actions for menu items, buttons, ...
-     self._openAction = OpenAction(self)
-     self._saveAction = SaveAction(self)
-     self._exitAction = ExitAction(self)
+     self.openAction = OpenAction(self)
+     self.saveAction = SaveAction(self)
+     self.exitAction = ExitAction(self)
 
      #... Create scrollable text area.
-     self._editArea = JTextArea(15, 80)
-     self._editArea.border=BorderFactory.createEmptyBorder(2,2,2,2)
-     self._editArea.font=Font("monospaced", Font.PLAIN, 14)
+     self.editArea = JTextArea(15, 80)
+     self.editArea.border=BorderFactory.createEmptyBorder(2,2,2,2)
+     self.editArea.font=Font("monospaced", Font.PLAIN, 14)
      scrollingText = JScrollPane(self._editArea)
 
      #-- Create a content pane, set layout, add component.
@@ -59,12 +59,12 @@ class OpenAction(AbstractAction):
 
    #========================================= actionPerformed
    def actionPerformed(self, e):
-     retval = self.outer._fileChooser.showOpenDialog(self.outer)
+     retval = self.outer.fileChooser.showOpenDialog(self.outer)
      if retval==JFileChooser.APPROVE_OPTION:
-       f = self.outer._fileChooser.getSelectedFile()
+       f = self.outer.fileChooser.getSelectedFile()
        try:
          reader = FileReader(f)
-         self.outer._editArea.read(reader, "")  # Use TextComponent read
+         self.outer.editArea.read(reader, "")  # Use TextComponent read
        except IOException,ioex:
          System.out.println(e);
          System.exit(1);
@@ -79,12 +79,12 @@ class SaveAction(AbstractAction):
 
    #========================================= actionPerformed
    def actionPerformed(self, e):
-     retval = self.outer._fileChooser.showSaveDialog(self.outer)
+     retval = self.outer.fileChooser.showSaveDialog(self.outer)
      if retval == JFileChooser.APPROVE_OPTION:
-       f = self.outer._fileChooser.getSelectedFile()
+       f = self.outer.fileChooser.getSelectedFile()
        try:
          writer = FileWriter(f)
-         self.outer._editArea.write(writer)  # TextComponent write
+         self.outer.editArea.write(writer)  # TextComponent write
        except IOException,ioex:
          JOptionPane.showMessageDialog(self.outer, ioex)
          System.exit(1)
