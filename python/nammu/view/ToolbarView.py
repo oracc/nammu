@@ -57,7 +57,7 @@ class ToolbarView(JToolBar):
         self.add(validateButton)
         
         lemmatiseIcon = ImageIcon("../../../resources/images/lemmatise.png")
-        lemmatiseButton = JButton("Validate", lemmatiseIcon, 
+        lemmatiseButton = JButton("Lemmatise", lemmatiseIcon, 
                              actionPerformed=self.onLemmatiseClick)
         self.add(lemmatiseButton)
         
