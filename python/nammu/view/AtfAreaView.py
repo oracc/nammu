@@ -6,19 +6,37 @@ Initializes the ATF (edit/model) view and sets its layout.
 @author: raquel-ucl
 '''
 
-from java.awt import Font, BorderLayout 
+from java.awt import Font, BorderLayout, Dimension
 from javax.swing import JTextArea, JScrollPane, JPanel, BorderFactory
 
 class AtfAreaView(JPanel):
     
     def __init__(self):
-        print "I'm the ATF area view"
+        '''
+        Creates default empty text area in a panel.
+        It will contain the ATF file content, and allow text edition.
+        It should highlight reserved words and suggest autocompletion or 
+        possible typos, a la IDEs like Eclipse.
+        It might need refactoring so that there is a parent panel with two modes
+        or contexts, depending on user choice: text view or model view.
+        '''
+        #Give reference to controller to delegate action response
         #self.controller = AtfAreaController
+        
+        #Make text area occupy all available space and resize with parent window
         self.setLayout(BorderLayout())
+        
+        #Create text edition area
         self.editArea = JTextArea()
         self.editArea.border = BorderFactory.createEmptyBorder(2,2,2,2)
         self.editArea.font=Font("monospaced", Font.PLAIN, 14)
+        self.size
+        
+        #Will need scrolling controls
         scrollingText = JScrollPane(self.editArea)
+        scrollingText.setPreferredSize(Dimension(1,400))
+        
+        #Add to parent panel
         self.add(scrollingText, BorderLayout.CENTER)
     
         
