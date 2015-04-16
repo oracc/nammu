@@ -15,7 +15,7 @@ class ConsoleView(JPanel):
     def __init__(self):
         print "I'm the console view"
         #self.controller = ConsoleController
-        
+        self.setLayout(BorderLayout())
         self.editArea = JTextArea()
         self.editArea.border = BorderFactory.createEmptyBorder(2,2,2,2)
         self.editArea.font=Font("monospaced", Font.PLAIN, 14)
