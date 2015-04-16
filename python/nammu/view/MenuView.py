@@ -190,49 +190,10 @@ class MenuView(JMenuBar):
         print "Browse for new file to open and load it in text area."
         self.controller.openFile()
         
-#         chooseFile = JFileChooser()
-#         filter = FileNameExtensionFilter("ATF files", ["atf"])
-#         chooseFile.addChoosableFileFilter(filter)
-# 
-#         returnedValue = chooseFile.showDialog(self.panel, "Choose file")
-# 
-#         if returnedValue == JFileChooser.APPROVE_OPTION:
-#             atfFile = chooseFile.getSelectedFile()
-#             atfText = self.readFile(atfFile)
-#             return text()
-# 
-# 
-#     def readFile(self, file):
-#         filename = file.getCanonicalPath()
-#         f = open(filename, "r")
-#         text = f.read()
-#         return text
-#         
-#            def actionPerformed(self, e):
-#      retval = self.outer._fileChooser.showOpenDialog(self.outer)
-#      if retval==JFileChooser.APPROVE_OPTION:
-#        f = self.outer._fileChooser.getSelectedFile()
-#        try:
-#          reader = FileReader(f)
-#          self.outer._editArea.read(reader, "")  # Use TextComponent read
-#        except IOException,ioex:
-#          System.out.println(e);
-#          System.exit(1);
-            
+#        
     def onSaveFileSelect(self, event):
         print "Browse for place to save current file."
         self.controller.saveFile()
-        
-#             retval = self.outer._fileChooser.showSaveDialog(self.outer)
-#     if retval == JFileChooser.APPROVE_OPTION:
-#       f = self.outer._fileChooser.getSelectedFile()
-#       try:
-#         writer = FileWriter(f)
-#         self.outer._editArea.write(writer)  # TextComponent write
-#       except IOException,ioex:
-#         JOptionPane.showMessageDialog(self.outer, ioex)
-#         System.exit(1)
-
             
     #Delegate all events to view controller
     def onCloseFileSelect(self, event):

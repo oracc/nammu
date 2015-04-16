@@ -12,62 +12,75 @@ from ..view.ToolbarView import ToolbarView
 
 class ToolbarController():
     
-    def __init__(self, mainPresenter):
+    def __init__(self, mainController):
         print "I'm the toolbar controller"
         
         #Create view with a reference to its controller to handle events
         self.view = ToolbarView(self)
         
         #Will also need delegating to parent presenter
-        self.presenter = mainPresenter
+        self.controller = mainController
         
     #Actions delegated from view. Some of them will need delegation to app
     #controller (eg. action in menu will need modification of text area 
     #controlled elsewhere and not accessible from this controller; eg. quit 
     #Nammu or show help pop up can be dealt with from here)
 
+ 
     def newFile(self):
-        print "Creating new file from controller"
+        self.controller.newFile()
         
     def openFile(self):
-        print "Opening file from controller"
-       
+        self.controller.openFile()
+        
+        
     def saveFile(self):
-        print "Saving file from controller"
+        self.controller.saveFile()
+
          
     def closeFile(self):
-        print "Closing file from controller"
+        self.controller.closeFile()
     
     def quit(self):
-        print "Exiting from controller"
-        System.exit(0)
+        self.controller.quit()
         
     def undo(self):
-        print "Undoing from controller"
+        self.controller.undo()
         
     def redo(self):
-        print "Redoing from controller"
+        self.controller.redo()
         
     def copy(self):
-        print "Copying from controller"
+        self.controller.copy()
         
     def cut(self):
-        print "Cutting from controller"
+        self.controller.cut()
         
     def paste(self):
-        print "Pasting from controller"
+        self.controller.paste()
         
     def validate(self, atfFile):
-        print "Validating from controller"
+        self.controller.validate(atfFile)
         
     def lemmatise(self, atfFile):
-        print "Lemmatising from controller"
+        self.controller.lemmatise(atfFile)
         
     def showHelp(self):
-        print "Showing help popup from controller"
+        """ 
+        1. Show popup window with help (or just open firefox with ORACC info?)
+        """
         
     def showAbout(self):
-        print "Showing Nammu's info from controller"
+        """ 
+        1. Show popup window with help (or just open firefox with ORACC info?)
+        """
+        
         
     def displayModelView(self):
-        print "Displaying model view from controller"
+        """
+        1. Parse text area content
+        2. Change atfArea mode to model view
+        3. Process parsed data and serialize in separate JPanel
+        4. Think about whether the other user options should remain visible or
+        should this just be shown in a separate window?
+        """
