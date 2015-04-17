@@ -18,3 +18,6 @@ class ConsoleController():
         
         #Will also need delegating to parent presenter
         self.controller = mainControler
+        
+    def addText(self, text):
+        self.view.editArea.append(text)
