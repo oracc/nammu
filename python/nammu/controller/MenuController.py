@@ -6,8 +6,6 @@ Creates the menu view and handles menu actions.
 @author: raquel-ucl
 '''
 
-from java.lang import System
-
 from ..view.MenuView import MenuView
 
 class MenuController():

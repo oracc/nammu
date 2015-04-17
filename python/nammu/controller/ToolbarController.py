@@ -6,8 +6,6 @@ Creates the toolbar view and handles toolbar actions.
 @author: raquel-ucl
 '''
 
-from java.lang import System
-
 from ..view.ToolbarView import ToolbarView
 
 class ToolbarController():

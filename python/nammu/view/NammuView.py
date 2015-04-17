@@ -7,20 +7,8 @@ Initializes the view components and sets components layout.
 @author: raquel-ucl
 '''
 
-from java.awt import BorderLayout, Font
-#from java.awt.event import  *   
-from javax.swing import JFileChooser, JTextArea, JScrollPane, JPanel, JMenuBar, \
-    JMenu, JFrame, JOptionPane, AbstractAction, BorderFactory, BoxLayout, Box
-from java.io import FileWriter, IOException
-from java.lang import System,Integer
-from ..view.MenuView import MenuView
-from ..view.AtfAreaView import AtfAreaView
-from ..view.ToolbarView import ToolbarView
-from ..view.ConsoleView import ConsoleView
-from ..controller.MenuController import MenuController
-from ..controller.ConsoleController import ConsoleController
-from ..controller.AtfAreaController import AtfAreaController
-from ..controller.ToolbarController import ToolbarController
+from java.awt import BorderLayout
+from javax.swing import JFrame
 from __builtin__ import None
 
 class NammuView(JFrame):

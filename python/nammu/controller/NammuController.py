@@ -7,23 +7,17 @@ Handles controller events.
 
 @author: raquel-ucl
 '''
-from java.awt import BorderLayout, Font
-#from java.awt.event import  *   
-from javax.swing import JFileChooser, JTextArea, JScrollPane, JPanel, JMenuBar, \
-    JMenu, JFrame, JOptionPane, AbstractAction, BorderFactory
+
+from javax.swing import JFileChooser
+from javax.swing.filechooser import FileNameExtensionFilter
 from java.io import FileWriter, IOException
 from java.lang import System, Integer
+
 from ..view.NammuView import NammuView
-from ..view.AtfAreaView import AtfAreaView
-from ..view.ToolbarView import ToolbarView
-from ..view.ConsoleView import ConsoleView
-from ..view.MenuView import MenuView
 from MenuController import MenuController
 from ConsoleController import ConsoleController
 from AtfAreaController import AtfAreaController
 from ToolbarController import ToolbarController
-from __builtin__ import None
-from javax.swing.filechooser import FileNameExtensionFilter
 
 class NammuController():
     
@@ -88,13 +82,12 @@ class NammuController():
         fileChooser.setFileFilter(filter)
         status = fileChooser.showDialog(self.view, "Choose file")
         
-        #TODO: Check if selected file is ATF or at least text file!
+
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
             atfText = self.readTextFile(atfFile)
             self.atfAreaController.setAtfAreaText(atfText)
             print atfText
-            #TODO: Display text in AtfTextArea
         
         #TODO: Else, prompt user to choose again before closing
 
@@ -104,12 +97,8 @@ class NammuController():
         f = open(filename, "r")
         text = f.read()
         return text
-        #TODO return error if file is not text?
-#         
-#            def actionPerformed(self, e):
-#      retval = self.outer._fileChooser.showOpenDialog(self.outer)
-#      if retval==JFileChooser.APPROVE_OPTION:
-#        f = self.outer._fileChooser.getSelectedFile()
+        #TODO: Check if selected file is ATF or at least text file!
+
 #        try:
 #          reader = FileReader(f)
 #          self.outer._editArea.read(reader, "")  # Use TextComponent read
@@ -125,7 +114,7 @@ class NammuController():
         """
        
         
-        #             retval = self.outer._fileChooser.showSaveDialog(self.outer)
+#     retval = self.outer._fileChooser.showSaveDialog(self.outer)
 #     if retval == JFileChooser.APPROVE_OPTION:
 #       f = self.outer._fileChooser.getSelectedFile()
 #       try:

@@ -6,8 +6,7 @@ Initializes the menu view and sets its layout.
 @author: raquel-ucl
 '''
 
-from javax.swing import JMenuBar, JMenu, JMenuItem, ImageIcon, JFileChooser
-from javax.swing.filechooser import FileNameExtensionFilter
+from javax.swing import JMenuBar, JMenu, JMenuItem, ImageIcon
 from java.awt.event import KeyEvent
 
 class MenuView(JMenuBar):
