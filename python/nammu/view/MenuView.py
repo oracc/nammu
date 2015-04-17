@@ -182,53 +182,41 @@ class MenuView(JMenuBar):
         #Suboptions: Help | About
         
     def onNewFileSelect(self, event):
-        print "Prompt save current, close it and clean text area."
         self.controller.newFile()
         
     def onOpenFileSelect(self, event):
-        print "Browse for new file to open and load it in text area."
         self.controller.openFile()
         
 #        
     def onSaveFileSelect(self, event):
-        print "Browse for place to save current file."
         self.controller.saveFile()
             
     #Delegate all events to view controller
     def onCloseFileSelect(self, event):
-        print "Prompt save current, close it and clean text area."
         self.controller.closeFile()
             
     def onQuitFileSelect(self, event):
-        print "Prompt save current, exit Nammu."
         self.controller.quit()
             
     def onUndoSelect(self, event):
-        print "Undo last change." 
         self.controller.undo()
         
     def onRedoSelect(self, event):
-        print "Redo last undone action."
         self.controller.redo()
         
     def onCopySelect(self, event):
-        print "Copy selected text."
         self.controller.copy()
        
     def onCutSelect(self, event):
-        print "Cut selected text."
         self.controller.cut()
     
     def onPasteSelect(self, event):
-        print "Paste clipboard text."
         self.controller.paste()
         
     def onValidateSelect(self, event):
-        print "Validate ATF."
         self.controller.validate("text area content or path to file?")
     
     def onLemmatiseSelect(self, event):
-        print "Lemmatise ATF."
         self.controller.lemmatise("text area content or path to file?")
         
     def onHelpSelect(self, event):
@@ -240,7 +228,6 @@ class MenuView(JMenuBar):
         self.controller.showAbout() 
        
     def onModelSelect(self, event):
-        print "Change to model view."
         self.controller.displayModelView()
         
     def onConsoleSelect(self, event):
