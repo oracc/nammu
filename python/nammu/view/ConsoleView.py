@@ -30,10 +30,10 @@ class ConsoleView(JPanel):
         #Create console-looking area
         self.editArea = JTextArea()
         self.editArea.border = BorderFactory.createEmptyBorder(4,4,4,4)
-        self.editArea.font=Font("Courier New", Font.BOLD, 14)
+        self.editArea.font = Font("Courier New", Font.BOLD, 14)
         self.editArea.background = Color.BLACK
         self.editArea.foreground = Color.WHITE
-        self.editArea.text = "Console started. Log will appear here."
+        self.editArea.text = "Console started. Nammu's log will appear here.\n\n"
         
         #Will need scrolling controls
         scrollingText = JScrollPane(self.editArea)
