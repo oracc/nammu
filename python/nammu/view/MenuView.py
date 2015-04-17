@@ -17,33 +17,30 @@ class MenuView(JMenuBar):
         #Save reference to controller to handle events
         self.controller = controller
         
+        #Build Menu as per issue#18 
+        #See https://github.com/UCL-RITS/nammu/issues/18
+        
+        #TODO Refactor to avoid duplication - See issue#16 
+        #https://github.com/UCL-RITS/nammu/issues/16
+        
         fileMenu = JMenu("File")
         fileMenu.setMnemonic(KeyEvent.VK_F)
         
-        icon = ImageIcon("../../../resources/images/new.png")
-        newFileMenuItem = JMenuItem("New", icon, actionPerformed=self.onNewFileSelect)
+        newFileMenuItem = JMenuItem("New", actionPerformed=self.onNewFileSelect)
         newFileMenuItem.setMnemonic(KeyEvent.VK_N)
-        newFileMenuItem.setToolTipText("Creates empty ATF file for edition")
         
-        icon = ImageIcon("../../../resources/images/open.png")
-        openFileMenuItem = JMenuItem("Open", icon, actionPerformed=self.onOpenFileSelect)
+        openFileMenuItem = JMenuItem("Open", actionPerformed=self.onOpenFileSelect)
         openFileMenuItem.setMnemonic(KeyEvent.VK_O)
-        openFileMenuItem.setToolTipText("Opens ATF file for edition")
-        
-        icon = ImageIcon("../../../resources/images/save.png")
-        saveFileMenuItem = JMenuItem("Save", icon, actionPerformed=self.onSaveFileSelect)
+    
+        saveFileMenuItem = JMenuItem("Save", actionPerformed=self.onSaveFileSelect)
         saveFileMenuItem.setMnemonic(KeyEvent.VK_S)
-        saveFileMenuItem.setToolTipText("Saves current file")
          
-        icon = ImageIcon("../../../resources/images/close.png")
-        closeFileMenuItem = JMenuItem("Close", icon, actionPerformed=self.onCloseFileSelect)
+        closeFileMenuItem = JMenuItem("Close", actionPerformed=self.onCloseFileSelect)
         closeFileMenuItem.setMnemonic(KeyEvent.VK_C)
-        closeFileMenuItem.setToolTipText("Close current file")
         
-        icon = ImageIcon("../../../resources/images/quit.png")
-        quitFileMenuItem = JMenuItem("Quit", icon, actionPerformed=self.onQuitFileSelect)
+        quitFileMenuItem = JMenuItem("Quit", actionPerformed=self.onQuitFileSelect)
         quitFileMenuItem.setMnemonic(KeyEvent.VK_Q)
-        quitFileMenuItem.setToolTipText("Exit application")
+
         
         fileMenu.add(newFileMenuItem)
         fileMenu.add(openFileMenuItem)
@@ -54,33 +51,22 @@ class MenuView(JMenuBar):
                 
         self.add(fileMenu)
         
-        
-        
         editMenu = JMenu("Edit")
         editMenu.setMnemonic(KeyEvent.VK_E)
         
-        icon = ImageIcon("../../../resources/images/undo.png")
-        undoMenuItem = JMenuItem("Undo", icon, actionPerformed=self.onUndoSelect)
+        undoMenuItem = JMenuItem("Undo", actionPerformed=self.onUndoSelect)
         undoMenuItem.setMnemonic(KeyEvent.VK_U)
-        undoMenuItem.setToolTipText("Undo last action")
         
-        icon = ImageIcon("../../../resources/images/redo.png")
-        redoMenuItem = JMenuItem("Redo", icon, actionPerformed=self.onRedoSelect)
+        redoMenuItem = JMenuItem("Redo", actionPerformed=self.onRedoSelect)
         redoMenuItem.setMnemonic(KeyEvent.VK_R)
-        redoMenuItem.setToolTipText("Redo last undone action")
         
-        icon = ImageIcon("../../../resources/images/copy.png")
-        copyMenuItem = JMenuItem("Copy", icon, actionPerformed=self.onCopySelect)
+        copyMenuItem = JMenuItem("Copy", actionPerformed=self.onCopySelect)
         copyMenuItem.setMnemonic(KeyEvent.VK_Y)
-        copyMenuItem.setToolTipText("Copy text selection")
         
-        icon = ImageIcon("../../../resources/images/cut.png")
-        cutMenuItem = JMenuItem("Cut", icon, actionPerformed=self.onCutSelect)
+        cutMenuItem = JMenuItem("Cut", actionPerformed=self.onCutSelect)
         cutMenuItem.setMnemonic(KeyEvent.VK_X)
-        cutMenuItem.setToolTipText("Cut text selection")
          
-        icon = ImageIcon("../../../resources/images/paste.png")
-        pasteMenuItem = JMenuItem("Paste", icon, actionPerformed=self.onPasteSelect)
+        pasteMenuItem = JMenuItem("Paste", actionPerformed=self.onPasteSelect)
         pasteMenuItem.setMnemonic(KeyEvent.VK_P)
         pasteMenuItem.setToolTipText("Paste clipboard content")
                 
@@ -93,53 +79,36 @@ class MenuView(JMenuBar):
                 
         self.add(editMenu)
         
-        
-                
-        
-        
         atfMenu = JMenu("ATF")
         atfMenu.setMnemonic(KeyEvent.VK_A)
         
-        icon = ImageIcon("../../../resources/images/validate.png")
-        validateMenuItem = JMenuItem("Validate ATF", icon, actionPerformed=self.onValidateSelect)
+        validateMenuItem = JMenuItem("Validate ATF", actionPerformed=self.onValidateSelect)
         validateMenuItem.setMnemonic(KeyEvent.VK_V)
         validateMenuItem.setToolTipText("Check current ATF correctness")
         
-        icon = ImageIcon("../../../resources/images/lematise.png")
-        lemmatiseMenuItem = JMenuItem("Lemmatise ATF", icon, actionPerformed=self.onLemmatiseSelect)
+        lemmatiseMenuItem = JMenuItem("Lemmatise ATF", actionPerformed=self.onLemmatiseSelect)
         lemmatiseMenuItem.setMnemonic(KeyEvent.VK_L)
-        lemmatiseMenuItem.setToolTipText("Obtain lemmas for current ATF text")
                 
         atfMenu.add(validateMenuItem)
         atfMenu.add(lemmatiseMenuItem)
         
         self.add(atfMenu)
         
-        
-                
-        
         windowMenu = JMenu("Window")
         windowMenu.setMnemonic(KeyEvent.VK_A)
         
-        icon = ImageIcon("../../../resources/images/model.png")
-        modelMenuItem = JMenuItem("Model View", icon, actionPerformed=self.onModelSelect)
+        modelMenuItem = JMenuItem("Model View", actionPerformed=self.onModelSelect)
         modelMenuItem.setMnemonic(KeyEvent.VK_M)
-        modelMenuItem.setToolTipText("Change to ATF data model view")
         
-        icon = ImageIcon("../../../resources/images/console.png")
-        consoleMenuItem = JMenuItem("View/Hide Console", icon, actionPerformed=self.onConsoleSelect)
+        consoleMenuItem = JMenuItem("View/Hide Console", actionPerformed=self.onConsoleSelect)
         consoleMenuItem.setMnemonic(KeyEvent.VK_N)
-        consoleMenuItem.setToolTipText("View/Hide Console")
         
-        icon = ImageIcon("../../../resources/images/toolbar.png")
-        toolbarMenuItem = JMenuItem("View/Hide Toolbar", icon, actionPerformed=self.onToolbarSelect)
+        toolbarMenuItem = JMenuItem("View/Hide Toolbar", actionPerformed=self.onToolbarSelect)
         toolbarMenuItem.setMnemonic(KeyEvent.VK_T)
         toolbarMenuItem.setToolTipText("View/Hide Toolbar")
         
-        icon = ImageIcon("../../../resources/images/unicode.png")
-        unicodeMenuItem = JMenuItem("Unicode Keyboard", icon, actionPerformed=self.onUnicodeSelect)
+        unicodeMenuItem = JMenuItem("Unicode Keyboard", actionPerformed=self.onUnicodeSelect)
         unicodeMenuItem.setMnemonic(KeyEvent.VK_Z)
-        unicodeMenuItem.setToolTipText("Use Unicode characters")
                 
         windowMenu.add(modelMenuItem)
         windowMenu.add(consoleMenuItem)
@@ -148,19 +117,14 @@ class MenuView(JMenuBar):
         
         self.add(windowMenu)
         
-        
         helpMenu = JMenu("Help")
         helpMenu.setMnemonic(KeyEvent.VK_A)
         
-        icon = ImageIcon("../../../resources/images/help.png")
-        helpMenuItem = JMenuItem("Help", icon, actionPerformed=self.onHelpSelect)
+        helpMenuItem = JMenuItem("Help", actionPerformed=self.onHelpSelect)
         helpMenuItem.setMnemonic(KeyEvent.VK_H)
-        helpMenuItem.setToolTipText("Displays ATF documentation")
         
-        icon = ImageIcon("../../../resources/images/about.png")
-        aboutMenuItem = JMenuItem("About", icon, actionPerformed=self.onAboutSelect)
+        aboutMenuItem = JMenuItem("About", actionPerformed=self.onAboutSelect)
         aboutMenuItem.setMnemonic(KeyEvent.VK_B)
-        aboutMenuItem.setToolTipText("Displays information about Nammu")
                 
         helpMenu.add(helpMenuItem)
         helpMenu.addSeparator()
@@ -168,30 +132,17 @@ class MenuView(JMenuBar):
         
         self.add(helpMenu)
         
-        
-        #self.add(JMenu("Edit"))
-        #Suboptions: Undo, Redo | Copy, Cut, Paste
-        
-        #self.add(JMenu("ATF"))
-        #Suboptions: Validate, Lemmatize 
-        
-        #self.add(JMenu("Window"))
-        #Suboptions: View/Hide Console |  Model View / Text View | Toggle Unicode Keyboard
-        
-        #self.add(JMenu("Help"))
-        #Suboptions: Help | About
+    #Delegate all events to view controller
         
     def onNewFileSelect(self, event):
         self.controller.newFile()
         
     def onOpenFileSelect(self, event):
         self.controller.openFile()
-        
-#        
+    
     def onSaveFileSelect(self, event):
         self.controller.saveFile()
-            
-    #Delegate all events to view controller
+        
     def onCloseFileSelect(self, event):
         self.controller.closeFile()
             
