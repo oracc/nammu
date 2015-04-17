@@ -32,11 +32,9 @@ class MenuController():
     def openFile(self):
         self.controller.openFile()
         
-        
     def saveFile(self):
         self.controller.saveFile()
 
-         
     def closeFile(self):
         self.controller.closeFile()
     
@@ -73,7 +71,6 @@ class MenuController():
         """ 
         1. Show popup window with help (or just open firefox with ORACC info?)
         """
-        
         
     def displayModelView(self):
         """
