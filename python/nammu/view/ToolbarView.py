@@ -95,35 +95,27 @@ class ToolbarView(JToolBar):
         self.add(quitButton)
         
     def onNewFileClick(self, event):
-        print "Prompt save current, clear text area"
         self.controller.newFile()
         
     def onOpenFileClick(self, event):
-        print "Browse for new file to open and load it in text area."
         self.controller.openFile()
         
     def onSaveFileClick(self, event):
-        print "Browse for place to save current file."
         self.controller.saveFile()
         
     def onCloseFileClick(self, event):
-        print "Prompt save current, clear text area."
         self.controller.closeFile()
         
     def onUndoClick(self, event):
-        print "Undo last action."
         self.controller.undo()
         
     def onRedoClick(self, event):
-        print "Redo last undone action."
         self.controller.redo()
         
     def onValidateClick(self, event):
-        print "Validate current ATF, display errors in console panel."
         self.controller.validate("text area content or path to file?")
         
-    def onLemmatiseClick(self, event):
-        print "Lemmatise current ATF, display errors in console panel."    
+    def onLemmatiseClick(self, event):    
         self.controller.lemmatise("text area content or path to file?")
         
     def onUnicodeClick(self, event):
@@ -139,11 +131,9 @@ class ToolbarView(JToolBar):
         #self.controller.displayConsole()
         
     def onModelClick(self, event):
-        print "Change atfAreaView to model mode." 
         self.controller.displayModelView()
         
     def onQuitClick(self, event):
-        print "Prompt save current, exit Nammu."
         self.controller.quit()
         
         
