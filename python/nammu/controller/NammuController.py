@@ -87,7 +87,6 @@ class NammuController():
         
         if self.unsavedChanges():
             option = self.promptOptionPane("There are unsaved changes. Save now?")
-            print option
             if option == 0:
                 self.saveFile()
             
@@ -110,7 +109,6 @@ class NammuController():
         
         if self.unsavedChanges():
             option = self.promptOptionPane("There are unsaved changes. Save now?")
-            print option
             if option == 0:
                 self.saveFile()
             
@@ -191,7 +189,6 @@ class NammuController():
         
         if self.unsavedChanges():
             option = self.promptOptionPane("There are unsaved changes. Save now?")
-            print option
             if option == 0:
                 self.saveFile()
             
@@ -233,6 +230,12 @@ class NammuController():
         1. Check if file has unsaved changes
         2. Exit
         """
+        
+        if self.unsavedChanges():
+            option = self.promptOptionPane("There are unsaved changes. Save now?")
+            if option == 0:
+                self.saveFile()
+                
         self.consoleController.addText("NammuController: Exiting...")
         
         self.consoleController.addText(" OK\n")
