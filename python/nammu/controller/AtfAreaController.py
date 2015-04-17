@@ -24,5 +24,8 @@ class AtfAreaController():
         
     def getAtfAreaText(self):
         return self.view.editArea.getText()
+    
+    def clearAtfArea(self):
+        return self.view.editArea.setText("")
         
         
