@@ -29,7 +29,7 @@ class AtfAreaView(JPanel):
         #Create text edition area
         self.editArea = JTextArea()
         self.editArea.border = BorderFactory.createEmptyBorder(4,4,4,4)
-        self.editArea.font=Font("Monaco", Font.PLAIN, 14)
+        self.editArea.font = Font("Monaco", Font.PLAIN, 14)
         
         #Will need scrolling controls
         scrollingText = JScrollPane(self.editArea)
