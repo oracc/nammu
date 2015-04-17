@@ -88,8 +88,7 @@ class NammuController():
             atfFile = fileChooser.getSelectedFile()
             atfText = self.readTextFile(atfFile)
             self.atfAreaController.setAtfAreaText(atfText)
-            print atfText
-        
+
         #TODO: Else, prompt user to choose again before closing
 
     
@@ -110,12 +109,27 @@ class NammuController():
     def saveFile(self):
         print "Saving file from controller"
         """
-        1. Save current file
+        1. Check if current file has a filename
+        2. Save current file in destination given by user
         """
-       
+        fileChooser = JFileChooser()
+        status = fileChooser.showSaveDialog(self.view)
         
-#     retval = self.outer._fileChooser.showSaveDialog(self.outer)
-#     if retval == JFileChooser.APPROVE_OPTION:
+        if status == JFileChooser.APPROVE_OPTION:
+            atfFile = fileChooser.getSelectedFile()
+            atfText = self.atfAreaController.getAtfAreaText()
+            self.writeTextFile(atfFile, atfText)
+            #TODO check returned status?
+            
+            
+    def writeTextFile(self, file, text):
+        filename = file.getCanonicalPath()
+        f = codecs.open(filename, "w", "utf-8")
+        f.write(text)
+        f.close()
+        
+        #TODO return status?
+        
 #       f = self.outer._fileChooser.getSelectedFile()
 #       try:
 #         writer = FileWriter(f)

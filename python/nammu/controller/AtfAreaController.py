@@ -22,4 +22,7 @@ class AtfAreaController():
     def setAtfAreaText(self, text):
         self.view.editArea.setText(text)
         
+    def getAtfAreaText(self):
+        return self.view.editArea.getText()
+        
         
