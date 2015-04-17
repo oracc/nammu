@@ -23,6 +23,7 @@ from ConsoleController import ConsoleController
 from AtfAreaController import AtfAreaController
 from ToolbarController import ToolbarController
 from __builtin__ import None
+from javax.swing.filechooser import FileNameExtensionFilter
 
 class NammuController():
     
@@ -36,37 +37,39 @@ class NammuController():
         3. Create event/action handlers - EventBus?
         '''
         
-        menuController = MenuController(self)
-        toolbarController = ToolbarController(self)
-        atfAreaController = AtfAreaController(self)
-        consoleController = ConsoleController(self)
+        self.menuController = MenuController(self)
+        self.toolbarController = ToolbarController(self)
+        self.atfAreaController = AtfAreaController(self)
+        self.consoleController = ConsoleController(self)
     
         self.view = NammuView(self)
-        self.view.addMenuBar(menuController.view)
-        self.view.addToolBar(toolbarController.view)
-        self.view.addAtfArea(atfAreaController.view)
-        self.view.addConsole(consoleController.view)
+        self.view.addMenuBar(self.menuController.view)
+        self.view.addToolBar(self.toolbarController.view)
+        self.view.addAtfArea(self.atfAreaController.view)
+        self.view.addConsole(self.consoleController.view)
    
         #Display view
         self.view.display()
         
         #Handle actions - eventBus?
         
-        
-        
-    
-    
-    #Actions delegated from subcontrollers. They  can't handle them because they 
-    #require interaction of several subcontrollers and they have no visibility.
+     
+    #Actions delegated from subcontrollers follow. 
+    #Subcontrollers can't handle these actions because they 
+    #require interaction of several subcontrollers who have no visibility.
     #Eg. action in menu will need modification of text area controlled elsewhere 
-    #and not accessible from that controller; eg. show help pop up can be dealt 
-    #with from subcontroller)
+    #and not accessible from the menu controller that receives the action in the
+    #first instance; or eg. show help pop up can be dealt with from 
+    #subcontroller)
 
     def newFile(self):
         print "Creating new file from controller"
         """
         1. Check if current file in text area has unsaved changes
+            1.1 Prompt user for file saving
+                1.1.1 Save file
         2. Clear text area
+        3. See GitHub issue: https://github.com/UCL-RITS/nammu/issues/6
         """
         
         
@@ -74,28 +77,34 @@ class NammuController():
         print "Opening file from controller"
         """
         1. Check if current file in text area has unsaved changes
+            1.1 Prompt user for file saving
+                1.1.1 Save file
         2. Display browser for user to choose file
         3. Load file in text area
         """
-      
         
-        #chooseFile = JFileChooser()
-#         filter = FileNameExtensionFilter("ATF files", ["atf"])
-#         chooseFile.addChoosableFileFilter(filter)
-# 
-#         returnedValue = chooseFile.showDialog(self.panel, "Choose file")
-# 
-#         if returnedValue == JFileChooser.APPROVE_OPTION:
-#             atfFile = chooseFile.getSelectedFile()
-#             atfText = self.readFile(atfFile)
-#             return text()
-# 
-# 
-#     def readFile(self, file):
-#         filename = file.getCanonicalPath()
-#         f = open(filename, "r")
-#         text = f.read()
-#         return text
+        fileChooser = JFileChooser()
+        filter = FileNameExtensionFilter("ATF files", ["atf"])
+        fileChooser.setFileFilter(filter)
+        status = fileChooser.showDialog(self.view, "Choose file")
+        
+        #TODO: Check if selected file is ATF or at least text file!
+        if status == JFileChooser.APPROVE_OPTION:
+            atfFile = fileChooser.getSelectedFile()
+            atfText = self.readTextFile(atfFile)
+            self.atfAreaController.setAtfAreaText(atfText)
+            print atfText
+            #TODO: Display text in AtfTextArea
+        
+        #TODO: Else, prompt user to choose again before closing
+
+    
+    def readTextFile(self, file):
+        filename = file.getCanonicalPath()
+        f = open(filename, "r")
+        text = f.read()
+        return text
+        #TODO return error if file is not text?
 #         
 #            def actionPerformed(self, e):
 #      retval = self.outer._fileChooser.showOpenDialog(self.outer)

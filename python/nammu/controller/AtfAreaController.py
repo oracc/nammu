@@ -18,3 +18,8 @@ class AtfAreaController():
         
         #Will also need delegating to parent presenter
         self.controller = mainControler
+        
+    def setAtfAreaText(self, text):
+        self.view.editArea.setText(text)
+        
+        
