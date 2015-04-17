@@ -12,6 +12,7 @@ from javax.swing import JFileChooser
 from javax.swing.filechooser import FileNameExtensionFilter
 from java.io import FileWriter, IOException
 from java.lang import System, Integer
+import codecs
 
 from ..view.NammuView import NammuView
 from MenuController import MenuController
@@ -94,8 +95,7 @@ class NammuController():
     
     def readTextFile(self, file):
         filename = file.getCanonicalPath()
-        f = open(filename, "r")
-        text = f.read()
+        text = codecs.open(filename, encoding='utf-8').read()
         return text
         #TODO: Check if selected file is ATF or at least text file!
 
