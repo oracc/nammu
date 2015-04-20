@@ -14,6 +14,7 @@ from java.io import FileWriter, IOException
 from java.lang import System, Integer
 import codecs, time
 
+from pyoracc.atf.atffile import AtfFile
 from ..view.NammuView import NammuView
 from MenuController import MenuController
 from ConsoleController import ConsoleController
@@ -224,7 +225,14 @@ class NammuController():
                 self.view.getContentPane(), question, "Question", \
                 JOptionPane.YES_NO_CANCEL_OPTION)
         return result;
-        
+    
+    def promptInfoPane(self, text):
+        '''
+        1. Show popup with given information text
+        '''
+        JOptionPane.showMessageDialog( \
+                self.view.getContentPane(), text, "Information", \
+                JOptionPane.INFORMATION_MESSAGE)
          
     def quit(self):
         """
@@ -332,13 +340,27 @@ class NammuController():
         
     def displayModelView(self):
         """
-        1. Parse text area content
-        2. Change atfArea mode to model view
-        3. Process parsed data and serialize in separate JPanel
-        4. Think about whether the other user options should remain visible or
-        should this just be shown in a separate window?
+        1. Check if a file is opened or not
+        2. Check if file is valid before trying to display model view
+        3. Send text to model view controller and delegate 
         """
-        self.modelController = ModelController(self)
+        atfText = self.atfAreaController.getAtfAreaText()
+        #if self.currentFilename != None and atfText != None :
+        if self.currentFilename != None:
+            #TODO Check if ATF is valid 
+            #This may imply parsing the text, so perhaps the model controller 
+            #can just receive the parsed object instead of the text
+            self.modelController = ModelController(self, self.parse(atfText))
+        else:
+            self.promptInfoPane("Open ATF file before trying to display model view.")
+            
+    def parse(self, text):
+        """
+        Parse input string, could be just a line or a whole file content.
+        """
+        parsed = AtfFile(text)
+        return parsed
+        
         
         
         
