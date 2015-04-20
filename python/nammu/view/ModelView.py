@@ -8,8 +8,9 @@ Might be merged with AtfAreaView in the future.
 '''
 
 from java.util import Vector
-from java.awt import Font, BorderLayout, Dimension
-from javax.swing import JTextArea, JScrollPane, JPanel, BorderFactory, JFrame, JComboBox, JTabbedPane
+from java.awt import Font, BorderLayout, GridLayout, FlowLayout, Dimension
+from javax.swing import JTextArea, JScrollPane, JPanel, BorderFactory, JFrame, \
+JComboBox, JTabbedPane, JLabel, BoxLayout, JButton
 from __builtin__ import None
 
 class ModelView(JFrame):
@@ -26,72 +27,123 @@ class ModelView(JFrame):
         #Make text area occupy all available space and resize with parent window
         self.setLayout(BorderLayout())
         
-        self.tabbedPanel = JTabbedPane()
-        self.tabbedPanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        self.add(self.tabbedPanel, BorderLayout.CENTER)
-
+        self.mainPanel = JTabbedPane()
+        self.mainPanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        self.add(self.mainPanel, BorderLayout.CENTER)
         
+        #Set empty dictionary of tab panels
+        self.objectTabs = {}
+
         #Will need scrolling controls
-        scrollingArea = JScrollPane(self.tabbedPanel)
-        scrollingArea.setPreferredSize(Dimension(600,400))
+        #scrollingArea = JScrollPane(self.tabbedPanel)
+        #scrollingArea.setPreferredSize(Dimension(600,400))
         
         #Add to parent panel
-        self.add(scrollingArea, BorderLayout.CENTER)
+        #self.add(scrollingArea, BorderLayout.CENTER)
         
-        #Temp test
-        metadataPanel = JPanel()
-        metadataPanel.setLayout(BorderLayout())
-        metadataField = JTextArea()
-        metadataField.setText("#project: cams/gkab\n#atf: lang akk-x-stdbab\n#atf: use unicode\n#atf: use math")
-        metadataPanel.add(metadataField, BorderLayout.NORTH)
-        
-        line1Content = Vector()
-        line1Content.add(u"1.    [MU] 1.03-KAM {iti}AB GE\u2086 U\u2084 2-KAM")
-        line1Content.add(u"#lem: \u0161atti[year]N; n; \u0162ebetu[1]MN; m\u016B\u0161a[at night]AV; \u016Bm[day]N; n")
-        line1Content.add(u"1.    Year 63, \u0161ebetu (Month X), night of day 2:^1^")
-        line1Content.add(u"^1^ A note to the translation.")
-        
-        line1Panel = JPanel()
-        line1ComboBox = JComboBox(line1Content)
-        line1Panel.add(line1ComboBox)
-        
-        panel1 = JPanel()
-        panel1.setLayout(BorderLayout())
-        panel1.add(metadataPanel, BorderLayout.NORTH)
-        panel1.add(line1Panel, BorderLayout.CENTER)
-        
-        self.tabbedPanel.add("&X001001 = JCS 48, 089", panel1)
+        #TODO: Where to get/store this information?
+        self.languages = { "akk-x-stdbab": "Akkadian Standard Babylonian", \
+                          "akk": "Akkadian", "sux": "", "a":"", \
+                          "akk-x-oldbab":"Akkadian Old Babylonian", "qpc": "", \
+                          "na": "", "nb": "", "x/n": "", \
+                          "akk-x-neoass": "Akkadian Neo Assyrian"}
         
         
+    def addObject(self, objectID):
+        """
+        Creates new empty JPanel that'll contain the model for one object in 
+        the ATF file.
+        """
+        objectPanel = JPanel()
+        objectPanel.setLayout(BoxLayout(objectPanel, BoxLayout.PAGE_AXIS))
         
-        
-        
-  
+        self.objectTabs[objectID] = objectPanel
   
         
-    def display(self):
+    def display(self): 
+        """
+        Put together all elements in main panel and display.
+        """
+        #Add all object tabs to window
+        for objectID, tabPanel in self.objectTabs.iteritems():
+            self.mainPanel.add(objectID, tabPanel)
         
-        self.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+        #Set up main model window
+        self.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
         self.setTitle("ATF Model View")
         self.pack()
         self.setLocationRelativeTo(None)
 
-        #Display Model window
+        #Display model window
         self.visible = 1
+        
+    def addLine(self, objectID, category, text):
+        """
+        Add a new panel containing the text corresponding to one line in the 
+        ATF file. 
+        This panel will show the line type (ruling, comment, text, 
+        translation...), followed by the line content and a group of icons to 
+        add, edit or remove the line.
+        """
+        linePanel = JPanel()
+        linePanel.setLayout(BorderLayout())
+        
+        label = JLabel(category)
+        
+        combo = JComboBox(text)
+        
+        buttonsPanel = JPanel()
+        addButton = JButton("Add")
+        editButton = JButton("Edit")
+        deleteButton = JButton("Delete")
+        buttonsPanel.add(addButton)
+        buttonsPanel.add(editButton)
+        buttonsPanel.add(deleteButton)
+        
+        linePanel.add(label, BorderLayout.WEST)
+        linePanel.add(combo, BorderLayout.CENTER)
+        linePanel.add(buttonsPanel, BorderLayout.EAST)
+        
+        #Add metadataPanel to object tab in main panel
+        self.objectTabs[objectID].add(linePanel)
     
-#     def addTab(self, title, panel):
-#         tabbedPane.addTab( title, panel);
-#         
-#     def setProject(self):
-#         
-#     def setMetadata(self):
-#         
-#     def setObjectType(self, type):
-#             
-#     
-#     def addReverse(self):
-#         
-#         
-#     def addObverse(self):
+    #Protocols not yet in model parsed object
+    #def addMetadata(self, project, language, protocols):
+    def addMetadata(self, objectID, project, language):
+        """
+        Add a JTable at the top of the object tab containing the metadata of
+        the object presented in that tab.
+        """
+        metadataPanel = JPanel()
+        #TODO: Need to count protocols to set up Grid dimension
+        metadataPanel.setLayout(GridLayout(3,2))
+        
+        projectLabel = JLabel("Project: ")
+        projectValue = JLabel(project)
+        
+        #TODO Check language not found
+        languageLabel = JLabel("Language: ")
+        languageValue = JLabel(self.languages[language])
+        
+        #TODO Protocols not yet in parsed object
+        protocolsLabel = JLabel("ATF Protocols: ")
+        protocolsBox = JComboBox()
+        #for protocol in protocols:
+        #    protocolBox.add(protocol)
+        
+        metadataPanel.add(projectLabel)
+        metadataPanel.add(projectValue)
+        metadataPanel.add(languageLabel)
+        metadataPanel.add(languageValue)
+        metadataPanel.add(protocolsLabel)
+        metadataPanel.add(protocolsBox)
+        
+        #Add metadataPanel to object tab in main panel
+        self.objectTabs[objectID].add(metadataPanel)
+        
+        
+
+    
+    #def addSide(self, sideType, content):
         
         
