@@ -11,7 +11,6 @@ from ..view.ConsoleView import ConsoleView
 class ConsoleController():
     
     def __init__(self, mainControler):
-        print "I'm the console controller"
         
         #Create view with a reference to its controller to handle events
         self.view = ConsoleView(self)

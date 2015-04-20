@@ -11,7 +11,6 @@ from javax.swing import JToolBar, ImageIcon, JButton
 class ToolbarView(JToolBar):
     
     def __init__(self, controller):
-        print "I'm the toolbar view"
         
         #Give reference to controller to delegate action response
         self.controller = controller

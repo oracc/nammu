@@ -11,7 +11,6 @@ from ..view.AtfAreaView import AtfAreaView
 class AtfAreaController():
     
     def __init__(self, mainControler):
-        print "I'm the ATF area controller"
         
         #Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)

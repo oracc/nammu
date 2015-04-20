@@ -11,7 +11,6 @@ from ..view.MenuView import MenuView
 class MenuController():
     
     def __init__(self, mainController):
-        print "I'm the menu controller"
         
         #Create view with a reference to its controller to handle events
         self.view = MenuView(self)

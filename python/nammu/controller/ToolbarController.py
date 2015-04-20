@@ -11,7 +11,6 @@ from ..view.ToolbarView import ToolbarView
 class ToolbarController():
     
     def __init__(self, mainController):
-        print "I'm the toolbar controller"
         
         #Create view with a reference to its controller to handle events
         self.view = ToolbarView(self)

@@ -12,7 +12,6 @@ from java.awt.event import KeyEvent
 class MenuView(JMenuBar):
     
     def __init__(self, controller):
-        print "I'm the menu view"
         
         #Save reference to controller to handle events
         self.controller = controller
