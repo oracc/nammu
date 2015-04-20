@@ -38,6 +38,9 @@ class MenuView(JMenuBar):
         closeFileMenuItem = JMenuItem("Close", actionPerformed=self.onCloseFileSelect)
         closeFileMenuItem.setMnemonic(KeyEvent.VK_C)
         
+        printFileMenuItem = JMenuItem("Print", actionPerformed=self.onPrintFileSelect)
+        printFileMenuItem.setMnemonic(KeyEvent.VK_P)
+        
         quitFileMenuItem = JMenuItem("Quit", actionPerformed=self.onQuitFileSelect)
         quitFileMenuItem.setMnemonic(KeyEvent.VK_Q)
 
@@ -46,6 +49,8 @@ class MenuView(JMenuBar):
         fileMenu.add(openFileMenuItem)
         fileMenu.add(saveFileMenuItem)
         fileMenu.add(closeFileMenuItem)
+        fileMenu.addSeparator()
+        fileMenu.add(printFileMenuItem)
         fileMenu.addSeparator()
         fileMenu.add(quitFileMenuItem)
                 
@@ -120,12 +125,17 @@ class MenuView(JMenuBar):
         helpMenu = JMenu("Help")
         helpMenu.setMnemonic(KeyEvent.VK_A)
         
+        settingsMenuItem = JMenuItem("Settings...", actionPerformed=self.onSettingsSelect)
+        settingsMenuItem.setMnemonic(KeyEvent.VK_H)
+        
         helpMenuItem = JMenuItem("Help", actionPerformed=self.onHelpSelect)
         helpMenuItem.setMnemonic(KeyEvent.VK_H)
         
         aboutMenuItem = JMenuItem("About", actionPerformed=self.onAboutSelect)
         aboutMenuItem.setMnemonic(KeyEvent.VK_B)
-                
+             
+        helpMenu.add(settingsMenuItem)
+        helpMenu.addSeparator()   
         helpMenu.add(helpMenuItem)
         helpMenu.addSeparator()
         helpMenu.add(aboutMenuItem)
@@ -146,6 +156,9 @@ class MenuView(JMenuBar):
     def onCloseFileSelect(self, event):
         self.controller.closeFile()
             
+    def onPrintFileSelect(self, event):
+        self.controller.printFile()
+        
     def onQuitFileSelect(self, event):
         self.controller.quit()
             
@@ -169,6 +182,10 @@ class MenuView(JMenuBar):
     
     def onLemmatiseSelect(self, event):
         self.controller.lemmatise("text area content or path to file?")
+        
+    def onSettingsSelect(self, event):
+        print "Edit Nammu settings."
+        self.controller.editSettings()
         
     def onHelpSelect(self, event):
         print "Display ATF help."

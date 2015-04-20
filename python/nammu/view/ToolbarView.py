@@ -47,6 +47,12 @@ class ToolbarView(JToolBar):
                                   actionPerformed=self.onCloseFileClick)
         closeFileButton.setToolTipText("Close current file")
         self.add(closeFileButton)
+        
+        printIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/print.png")
+        printFileButton = JButton(printIcon, 
+                                  actionPerformed=self.onPrintFileClick)
+        printFileButton.setToolTipText("Close current file")
+        self.add(printFileButton)
 
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
@@ -130,6 +136,12 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
 
+        settingsIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/settings.png")
+        settingsButton = JButton(settingsIcon, 
+                             actionPerformed=self.onSettingsClick)
+        settingsButton.setToolTipText("Change Nammu settings")
+        self.add(settingsButton)
+        
         helpIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/help.png")
         helpButton = JButton(helpIcon, 
                              actionPerformed=self.onHelpClick)
@@ -162,6 +174,9 @@ class ToolbarView(JToolBar):
         
     def onCloseFileClick(self, event):
         self.controller.closeFile()
+        
+    def onPrintFileClick(self, event):
+        self.controller.printFile()
         
     def onUndoClick(self, event):
         self.controller.undo()
@@ -198,6 +213,10 @@ class ToolbarView(JToolBar):
         
     def onModelClick(self, event):
         self.controller.displayModelView()
+        
+    def onSettingsClick(self, event):
+        print "Edit Nammu settings."
+        self.controller.editSettings()
         
     def onHelpClick(self, event):
         print "Display ATF help."

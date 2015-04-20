@@ -36,6 +36,9 @@ class MenuController():
     def closeFile(self):
         self.controller.closeFile()
     
+    def printFile(self):
+        self.controller.printFile()
+        
     def quit(self):
         self.controller.quit()
         
@@ -60,6 +63,12 @@ class MenuController():
     def lemmatise(self, atfFile):
         self.controller.lemmatise(atfFile)
         
+    def editSettings(self):
+        """
+        Show settings window for edition.
+        """
+        self.controller.editSettings()
+        
     def showHelp(self):
         """ 
         1. Show popup window with help (or just open firefox with ORACC info?)
@@ -78,4 +87,4 @@ class MenuController():
         4. Think about whether the other user options should remain visible or
         should this just be shown in a separate window?
         """
-        
+        self.controller.displayModelView()
