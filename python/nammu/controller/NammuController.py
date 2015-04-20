@@ -19,6 +19,7 @@ from MenuController import MenuController
 from ConsoleController import ConsoleController
 from AtfAreaController import AtfAreaController
 from ToolbarController import ToolbarController
+from ModelController import ModelController
 
 class NammuController():
     
@@ -311,5 +312,33 @@ class NammuController():
         self.consoleController.addText("NammuController: Lemmatising ATF file...")
             
         self.consoleController.addText(" OK\n") 
+        
+    def printFile(self):
+        """
+        Print file.
+        """
+        self.consoleController.addText("NammuController: Printing file...")
+        
+        self.consoleController.addText("OK\n")
+        
+    def editSettings(self):
+        """
+        Show settings window for edition.
+        """
+        self.consoleController.addText("NammuController: Changing settings...")
+        
+        self.consoleController.addText("OK\n")
+        
+        
+    def displayModelView(self):
+        """
+        1. Parse text area content
+        2. Change atfArea mode to model view
+        3. Process parsed data and serialize in separate JPanel
+        4. Think about whether the other user options should remain visible or
+        should this just be shown in a separate window?
+        """
+        self.modelController = ModelController(self)
+        
         
         
