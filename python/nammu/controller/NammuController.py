@@ -196,6 +196,8 @@ class NammuController():
             
         self.currentFilename = None
         
+        self.atfAreaController.clearAtfArea()
+        
         self.consoleController.addText(" OK\n")
        
     
