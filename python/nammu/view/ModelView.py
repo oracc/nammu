@@ -35,11 +35,10 @@ class ModelView(JFrame):
         self.objectTabs = {}
 
         #Will need scrolling controls
-        #scrollingArea = JScrollPane(self.tabbedPanel)
-        #scrollingArea.setPreferredSize(Dimension(600,400))
+        scrollingArea = JScrollPane(self.mainPanel)
         
         #Add to parent panel
-        #self.add(scrollingArea, BorderLayout.CENTER)
+        self.add(scrollingArea, BorderLayout.CENTER)
         
         #TODO: Where to get/store this information?
         self.languages = { "akk-x-stdbab": "Akkadian Standard Babylonian", \
