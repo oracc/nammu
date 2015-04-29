@@ -7,6 +7,7 @@ Initializes the toolbar view and sets its layout.
 '''
 
 from javax.swing import JToolBar, ImageIcon, JButton
+from java.lang import ClassLoader
 
 class ToolbarView(JToolBar):
     
@@ -22,32 +23,35 @@ class ToolbarView(JToolBar):
         #TODO Refactor to avoid duplication - See issue#16 
         #https://github.com/UCL-RITS/nammu/issues/16
         
-        newIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/new.png")
+        #Create helper object to load icon images in jar
+        loader = ClassLoader.getSystemClassLoader()
+        
+        newIcon = ImageIcon(loader.getResource("resources/images/new.png"))
         newFileButton = JButton(newIcon, 
                                 actionPerformed=self.onNewFileClick)
         newFileButton.setToolTipText("Creates empty ATF file for edition")
         self.add(newFileButton)
         
-        openIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/open.png")
+        openIcon = ImageIcon(loader.getResource("resources/images/open.png"))
         openFileButton = JButton(openIcon, 
                                  actionPerformed=self.onOpenFileClick)
         openFileButton.setToolTipText("Opens ATF file for edition")
         self.add(openFileButton)
         
-        saveIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/save.png")
+        saveIcon = ImageIcon(loader.getResource("resources/images/save.png"))
         saveFileButton = JButton(saveIcon, 
                                  actionPerformed=self.onSaveFileClick)
         
         saveFileButton.setToolTipText("Saves current file")
         self.add(saveFileButton)
         
-        closeIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/close.png")
+        closeIcon = ImageIcon(loader.getResource("resources/images/close.png"))
         closeFileButton = JButton(closeIcon, 
                                   actionPerformed=self.onCloseFileClick)
         closeFileButton.setToolTipText("Close current file")
         self.add(closeFileButton)
         
-        printIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/print.png")
+        printIcon = ImageIcon(loader.getResource("resources/images/print.png"))
         printFileButton = JButton(printIcon, 
                                   actionPerformed=self.onPrintFileClick)
         printFileButton.setToolTipText("Close current file")
@@ -56,14 +60,14 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
 
-        undoIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/undo.png")
+        undoIcon = ImageIcon(loader.getResource("resources/images/undo.png"))
         undoButton = JButton(undoIcon, 
                              actionPerformed=self.onUndoClick)
         
         undoButton.setToolTipText("Undo last action")
         self.add(undoButton)
         
-        redoIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/redo.png")
+        redoIcon = ImageIcon(loader.getResource("resources/images/redo.png"))
         redoButton = JButton(redoIcon, 
                              actionPerformed=self.onRedoClick)
         redoButton.setToolTipText("Redo last undone action")
@@ -72,19 +76,19 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
         
-        copyIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/copy.png")
+        copyIcon = ImageIcon(loader.getResource("resources/images/copy.png"))
         copyButton = JButton(copyIcon, 
                              actionPerformed=self.onCopyClick)
         copyButton.setToolTipText("Copy text selection")
         self.add(copyButton)
         
-        cutIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/cut.png")
+        cutIcon = ImageIcon(loader.getResource("resources/images/cut.png"))
         cutButton = JButton(cutIcon, 
                              actionPerformed=self.onCutClick)
         cutButton.setToolTipText("Cut text selection")
         self.add(cutButton)
         
-        pasteIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/paste.png")
+        pasteIcon = ImageIcon(loader.getResource("resources/images/paste.png"))
         pasteButton = JButton(pasteIcon, 
                              actionPerformed=self.onPasteClick)
         pasteButton.setToolTipText("Paste clipboard content")
@@ -93,13 +97,13 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
 
-        validateIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/validate.png")
+        validateIcon = ImageIcon(loader.getResource("resources/images/validate.png"))
         validateButton = JButton(validateIcon, 
                              actionPerformed=self.onValidateClick)
         validateButton.setToolTipText("Check current ATF correctness")
         self.add(validateButton)
         
-        lemmatiseIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/lemmatise.png")
+        lemmatiseIcon = ImageIcon(loader.getResource("resources/images/lemmatise.png"))
         lemmatiseButton = JButton(lemmatiseIcon, 
                              actionPerformed=self.onLemmatiseClick)
         lemmatiseButton.setToolTipText("Obtain lemmas for current ATF text")
@@ -108,7 +112,7 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
         
-        unicodeIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/unicode.png")
+        unicodeIcon = ImageIcon(loader.getResource("resources/images/unicode.png"))
         unicodeButton = JButton(unicodeIcon, 
                              actionPerformed=self.onUnicodeClick)
         unicodeButton.setToolTipText("Use Unicode characters")
@@ -117,7 +121,7 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
         
-        consoleIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/console.png")
+        consoleIcon = ImageIcon(loader.getResource("resources/images/console.png"))
         consoleButton = JButton(consoleIcon, 
                              actionPerformed=self.onConsoleClick)
         consoleButton.setToolTipText("View/Hide Console")
@@ -126,7 +130,7 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
         
-        modelIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/model.png")
+        modelIcon = ImageIcon(loader.getResource("resources/images/model.png"))
         modelButton = JButton(modelIcon, 
                              actionPerformed=self.onModelClick)
         modelButton.setToolTipText("Change to ATF data model view")
@@ -135,19 +139,19 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
 
-        settingsIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/settings.png")
+        settingsIcon = ImageIcon(loader.getResource("resources/images/settings.png"))
         settingsButton = JButton(settingsIcon, 
                              actionPerformed=self.onSettingsClick)
         settingsButton.setToolTipText("Change Nammu settings")
         self.add(settingsButton)
         
-        helpIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/help.png")
+        helpIcon = ImageIcon(loader.getResource("resources/images/help.png"))
         helpButton = JButton(helpIcon, 
                              actionPerformed=self.onHelpClick)
         helpButton.setToolTipText("Displays ATF documentation")
         self.add(helpButton)
         
-        aboutIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/about.png")
+        aboutIcon = ImageIcon(loader.getResource("resources/images/about.png"))
         aboutButton = JButton(aboutIcon, 
                              actionPerformed=self.onAboutClick)
         aboutButton.setToolTipText("Displays information about Nammu")
@@ -156,7 +160,7 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
         
-        quitIcon = ImageIcon("/Users/raquelalegre/workspace/ORACC/nammu/resources/images/quit.png")
+        quitIcon = ImageIcon(loader.getResource("resources/images/quit.png"))
         quitButton = JButton(quitIcon, 
                              actionPerformed=self.onQuitClick)
         quitButton.setToolTipText("Exit Nammu")
@@ -227,8 +231,6 @@ class ToolbarView(JToolBar):
     
     def onQuitClick(self, event):
         self.controller.quit()
-        
-        
 
         
         
