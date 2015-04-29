@@ -39,6 +39,31 @@
 		
 		<plugins>
 		
+			<!-- Make sure resources like toolbar icons are copied to final 
+			jar -->
+	        <plugin>
+		        <artifactId>maven-resources-plugin</artifactId>
+		        <version>2.7</version>
+		        <executions>
+		          <execution>
+		            <id>copy-resources</id>
+		            <phase>validate</phase>
+		            <goals>
+		              <goal>copy-resources</goal>
+		            </goals>
+		            <configuration>
+		              <outputDirectory>${basedir}/target/classes/resources</outputDirectory>
+		              <resources>          
+		                <resource>
+		                  <directory>${basedir}/resources</directory>
+            			  <filtering>false</filtering>
+		                </resource>
+		              </resources>              
+		            </configuration>            
+		          </execution>
+		        </executions>
+	        </plugin>		
+		
  			<!-- A little outdated plugin needed to import all the python 
 			modules needed by pyoracc. It works using easy_install + <param>.  
 			It is old (2011) and the latest version of Mako and Ply won't work,
