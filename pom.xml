@@ -27,39 +27,24 @@
 			<artifactId>jython-standalone</artifactId>
 			<version>2.7-rc1</version>
 		</dependency>
-		<dependency>
-			<groupId>org.kohsuke</groupId>
-			<artifactId>github-api</artifactId>
-			<version>1.49</version>
-		</dependency>
 	</dependencies>
 
 	<build>
+	
 		<resources>
 			<resource>
 				<directory>python</directory>
 			</resource>
 		</resources>
+		
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.5.1</version>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>
-								${project.build.directory}/dependency-jars/
-							</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+		
+ 			<!-- A little outdated plugin needed to import all the python 
+			modules needed by pyoracc. It works using easy_install + <param>.  
+			It is old (2011) and the latest version of Mako and Ply won't work,
+			thus I needed to force older versions. 
+			TODO: Update this plugin in my own mvn repo and use latest versions
+			of all <param>s. -->
 			<plugin>
 				<groupId>net.sf.mavenjython</groupId>
 				<artifactId>jython-compile-maven-plugin</artifactId>
@@ -80,45 +65,39 @@
 					</libraries>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>uk.ac.ucl.rc.development.oracc.nammu.App</mainClass>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>dependency-jars/</classpathPrefix>
-						</manifest>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>default-jar</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.2</version>
+			
+			<!-- Aggregate the project output along with its dependencies, and 
+			other files into a single distributable archive. Note if this plugin 
+			is not used, jython.jar which is essential won't be attached and 
+			Nammu won't work. -->
+		    <plugin>
+		      <artifactId>maven-assembly-plugin</artifactId>
+		      <configuration>
+		  		<archive>
+		          <manifest>
+		            <mainClass>uk.ac.ucl.rc.development.oracc.nammu.App</mainClass>
+		          </manifest>
+		        </archive>
+		        <descriptorRefs>
+		          <descriptorRef>jar-with-dependencies</descriptorRef>
+		        </descriptorRefs>
+		        <!-- The jar-with-dependencies is our main distributable jar, so
+		        give it a sensible name and remove the default suffix 
+		        reated by this plugin -->
+		        <appendAssemblyId>false</appendAssemblyId>
+		      </configuration>
 				<executions>
 					<execution>
 						<phase>package</phase>
 						<goals>
-							<goal>shade</goal>
+							<goal>assembly</goal>
 						</goals>
-						<configuration>
-							<minimizeJar>true</minimizeJar>
-						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+		    </plugin>		
+		    	
 		</plugins>
+		
 	</build>
 
 </project>
