@@ -32,26 +32,26 @@ class ToolbarView(JToolBar):
         newFileButton.setToolTipText("Creates empty ATF file for edition")
         self.add(newFileButton)
         
-        openIcon = ImageIcon(loader.getResource("resources/images/open.png"))
+        openIcon = ImageIcon(findImageResource('open'))  
         openFileButton = JButton(openIcon, 
                                  actionPerformed=self.onOpenFileClick)
         openFileButton.setToolTipText("Opens ATF file for edition")
         self.add(openFileButton)
         
-        saveIcon = ImageIcon(loader.getResource("resources/images/save.png"))
+        saveIcon = ImageIcon(findImageResource('save'))  
         saveFileButton = JButton(saveIcon, 
                                  actionPerformed=self.onSaveFileClick)
         
         saveFileButton.setToolTipText("Saves current file")
         self.add(saveFileButton)
         
-        closeIcon = ImageIcon(loader.getResource("resources/images/close.png"))
+        closeIcon = ImageIcon(findImageResource('close'))  
         closeFileButton = JButton(closeIcon, 
                                   actionPerformed=self.onCloseFileClick)
         closeFileButton.setToolTipText("Close current file")
         self.add(closeFileButton)
         
-        printIcon = ImageIcon(loader.getResource("resources/images/print.png"))
+        printIcon = ImageIcon(findImageResource('print'))  
         printFileButton = JButton(printIcon, 
                                   actionPerformed=self.onPrintFileClick)
         printFileButton.setToolTipText("Close current file")
@@ -60,14 +60,14 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
 
-        undoIcon = ImageIcon(loader.getResource("resources/images/undo.png"))
+        undoIcon = ImageIcon(findImageResource('undo'))  
         undoButton = JButton(undoIcon, 
                              actionPerformed=self.onUndoClick)
         
         undoButton.setToolTipText("Undo last action")
         self.add(undoButton)
         
-        redoIcon = ImageIcon(loader.getResource("resources/images/redo.png"))
+        redoIcon = ImageIcon(findImageResource('redo'))  
         redoButton = JButton(redoIcon, 
                              actionPerformed=self.onRedoClick)
         redoButton.setToolTipText("Redo last undone action")
@@ -76,19 +76,19 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
         
-        copyIcon = ImageIcon(loader.getResource("resources/images/copy.png"))
+        copyIcon = ImageIcon(findImageResource('copy'))  
         copyButton = JButton(copyIcon, 
                              actionPerformed=self.onCopyClick)
         copyButton.setToolTipText("Copy text selection")
         self.add(copyButton)
         
-        cutIcon = ImageIcon(loader.getResource("resources/images/cut.png"))
+        cutIcon = ImageIcon(findImageResource('cut'))  
         cutButton = JButton(cutIcon, 
                              actionPerformed=self.onCutClick)
         cutButton.setToolTipText("Cut text selection")
         self.add(cutButton)
         
-        pasteIcon = ImageIcon(loader.getResource("resources/images/paste.png"))
+        pasteIcon = ImageIcon(findImageResource('paste'))  
         pasteButton = JButton(pasteIcon, 
                              actionPerformed=self.onPasteClick)
         pasteButton.setToolTipText("Paste clipboard content")
@@ -97,13 +97,13 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
 
-        validateIcon = ImageIcon(loader.getResource("resources/images/validate.png"))
+        validateIcon = ImageIcon(findImageResource('validate'))  
         validateButton = JButton(validateIcon, 
                              actionPerformed=self.onValidateClick)
         validateButton.setToolTipText("Check current ATF correctness")
         self.add(validateButton)
         
-        lemmatiseIcon = ImageIcon(loader.getResource("resources/images/lemmatise.png"))
+        lemmatiseIcon = ImageIcon(findImageResource('lemmatise'))  
         lemmatiseButton = JButton(lemmatiseIcon, 
                              actionPerformed=self.onLemmatiseClick)
         lemmatiseButton.setToolTipText("Obtain lemmas for current ATF text")
@@ -112,7 +112,7 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
         
-        unicodeIcon = ImageIcon(loader.getResource("resources/images/unicode.png"))
+        unicodeIcon = ImageIcon(findImageResource('unicode'))  
         unicodeButton = JButton(unicodeIcon, 
                              actionPerformed=self.onUnicodeClick)
         unicodeButton.setToolTipText("Use Unicode characters")
@@ -121,7 +121,7 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
         
-        consoleIcon = ImageIcon(loader.getResource("resources/images/console.png"))
+        consoleIcon = ImageIcon(findImageResource('console'))  
         consoleButton = JButton(consoleIcon, 
                              actionPerformed=self.onConsoleClick)
         consoleButton.setToolTipText("View/Hide Console")
@@ -130,7 +130,7 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
         
-        modelIcon = ImageIcon(loader.getResource("resources/images/model.png"))
+        modelIcon = ImageIcon(findImageResource('model'))  
         modelButton = JButton(modelIcon, 
                              actionPerformed=self.onModelClick)
         modelButton.setToolTipText("Change to ATF data model view")
@@ -139,19 +139,19 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
 
-        settingsIcon = ImageIcon(loader.getResource("resources/images/settings.png"))
+        settingsIcon = ImageIcon(findImageResource('settings'))  
         settingsButton = JButton(settingsIcon, 
                              actionPerformed=self.onSettingsClick)
         settingsButton.setToolTipText("Change Nammu settings")
         self.add(settingsButton)
         
-        helpIcon = ImageIcon(loader.getResource("resources/images/help.png"))
+        helpIcon = ImageIcon(findImageResource('help'))  
         helpButton = JButton(helpIcon, 
                              actionPerformed=self.onHelpClick)
         helpButton.setToolTipText("Displays ATF documentation")
         self.add(helpButton)
         
-        aboutIcon = ImageIcon(loader.getResource("resources/images/about.png"))
+        aboutIcon = ImageIcon(findImageResource('about'))  
         aboutButton = JButton(aboutIcon, 
                              actionPerformed=self.onAboutClick)
         aboutButton.setToolTipText("Displays information about Nammu")
@@ -160,7 +160,7 @@ class ToolbarView(JToolBar):
         #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
         self.addSeparator()
         
-        quitIcon = ImageIcon(loader.getResource("resources/images/quit.png"))
+        quitIcon = ImageIcon(findImageResource('quit'))  
         quitButton = JButton(quitIcon, 
                              actionPerformed=self.onQuitClick)
         quitButton.setToolTipText("Exit Nammu")
@@ -232,5 +232,9 @@ class ToolbarView(JToolBar):
     def onQuitClick(self, event):
         self.controller.quit()
 
+    def findImageResource(name):
+        loader.getResource("resources/images"+name+".png")
+
+  
         
         
