@@ -6,8 +6,10 @@ Initializes the toolbar view and sets its layout.
 @author: raquel-ucl
 '''
 
+import collections
 from javax.swing import JToolBar, ImageIcon, JButton
 from java.lang import ClassLoader
+
 
 class ToolbarView(JToolBar):
     
@@ -23,54 +25,43 @@ class ToolbarView(JToolBar):
         #TODO Refactor to avoid duplication - See issue#16 
         #https://github.com/UCL-RITS/nammu/issues/16
         
-        methods = {'new': 'onNewFileClick', 
-                 'open': 'onOpenFileClick',
-                 'save': 'onSaveFileClick', 
-                 'close': 'onCloseFileClick', 
-                 'print': 'onPrintFileClick', 
-                 'undo': 'onUndoClick', 
-                 'redo': 'onRedoClick', 
-                 'copy': 'onCopyClick', 
-                 'cut': 'onCutClick', 
-                 'paste': 'onPasteClick', 
-                 'validate': 'onValidateClick', 
-                 'lemmatise': 'onLemmatiseClick', 
-                 'unicode': 'onUnicodeClick',
-                 'console': 'onConsoleClick', 
-                 'model': 'onModelClick', 
-                 'settings': 'onSettingsClick', 
-                 'help': 'onHelpClick', 
-                 'about': 'onAboutClick', 
-                 'quit': 'onQuitClick'}
+        options= ['NewFile', 'OpenFile', 'SaveFile', 'CloseFile', 'PrintFile', 'Undo', 'Redo', 
+                  'Copy', 'Cut', 'Paste', 'Validate', 'Lemmatise', 'Unicode',
+                  'Console', 'Model', 'Settings', 'Help', 'About', 'Quit']    
+        methods = {}
+        methods = collections.OrderedDict()
+        for option in options:
+            methods[option] = "on" + option + "Click"
+            print methods[option]
         
-        tooltips = {'new': 'Creates empty ATF file for edition', 
-                 'open': 'Opens ATF file for edition',
-                 'save': 'Saves current file', 
-                 'close': 'Closes current file', 
-                 'print': 'Prints current file', 
-                 'undo': 'Undo last action', 
-                 'redo': 'Redo last undone action', 
-                 'copy': 'Copy text selection', 
-                 'cut': 'Cut text selection', 
-                 'paste': 'Paste clipboard content', 
-                 'validate': 'Check current ATF correctness', 
-                 'lemmatise': 'Obtain lemmas for current ATF text', 
-                 'unicode': 'Use Unicode characters',
-                 'console': 'View/Hide Console', 
-                 'model': 'Change to ATF data model view', 
-                 'settings': 'Change Nammu settings', 
-                 'help': 'Displays ATF documentation', 
-                 'about': 'Displays information about Nammu and ORACC', 
-                 'quit': 'Exits Nammu'}
+        tooltips = {'NewFile': 'Creates empty ATF file for edition', 
+                 'OpenFile': 'Opens ATF file for edition',
+                 'SaveFile': 'Saves current file', 
+                 'CloseFile': 'Closes current file', 
+                 'PrintFile': 'Prints current file', 
+                 'Undo': 'Undo last action', 
+                 'Redo': 'Redo last undone action', 
+                 'Copy': 'Copy text selection', 
+                 'Cut': 'Cut text selection', 
+                 'Paste': 'Paste clipboard content', 
+                 'Validate': 'Check current ATF correctness', 
+                 'Lemmatise': 'Obtain lemmas for current ATF text', 
+                 'Unicode': 'Use Unicode characters',
+                 'Console': 'View/Hide Console', 
+                 'Model': 'Change to ATF data model view', 
+                 'Settings': 'Change Nammu settings', 
+                 'Help': 'Displays ATF documentation', 
+                 'About': 'Displays information about Nammu and ORACC', 
+                 'Quit': 'Exits Nammu'}
         
-        for name, method in methods.iteritems():
+        for name, method in methods.items():
             icon = ImageIcon(self.findImageResource(name))
             button = JButton(icon, actionPerformed=getattr(self, method))
             button.setToolTipText(tooltips[name])
             self.add(button)
             #Work out is separator is needed
-            if name in ['print', 'redo', 'paste', 'lemmatise', 'unicode', 
-                        'console', 'model', 'about']:
+            if name in ['PrintFile', 'Redo', 'Paste', 'Lemmatise', 'Unicode', 
+                        'Console', 'Model', 'About']:
                 self.addSeparator()
         
         
@@ -144,7 +135,7 @@ class ToolbarView(JToolBar):
         #Create helper object to load icon images in jar
         loader = ClassLoader.getSystemClassLoader()
         #Load image
-        return loader.getResource("resources/images/"+name+".png")
+        return loader.getResource("resources/images/" + name.lower() + ".png")
 
   
         
