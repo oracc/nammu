@@ -64,7 +64,7 @@ class ToolbarView(JToolBar):
                  'quit': 'Exits Nammu'}
         
         for name, method in methods.iteritems():
-            icon = ImageIcon(findImageResource(name))
+            icon = ImageIcon(self.findImageResource(name))
             button = JButton(icon, actionPerformed=getattr(self, method))
             button.setToolTipText(tooltips[name])
             self.add(button)
@@ -140,11 +140,11 @@ class ToolbarView(JToolBar):
     def onQuitClick(self, event):
         self.controller.quit()
 
-    def findImageResource(name):
+    def findImageResource(self, name):
         #Create helper object to load icon images in jar
         loader = ClassLoader.getSystemClassLoader()
         #Load image
-        loader.getResource("resources/images"+name+".png")
+        return loader.getResource("resources/images/"+name+".png")
 
   
         
