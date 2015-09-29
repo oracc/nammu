@@ -87,10 +87,7 @@ class NammuController():
         """
         self.consoleController.addText("NammuController: Creating new file...")
         
-        if self.unsavedChanges():
-            option = self.promptOptionPane("There are unsaved changes. Save now?")
-            if option == 0:
-                self.saveFile()
+        self.handleUnsaved()
             
         self.atfAreaController.clearAtfArea()
             
@@ -109,10 +106,7 @@ class NammuController():
         """
         self.consoleController.addText("NammuController: Opening file...")
         
-        if self.unsavedChanges():
-            option = self.promptOptionPane("There are unsaved changes. Save now?")
-            if option == 0:
-                self.saveFile()
+        self.handleUnsaved()
             
         fileChooser = JFileChooser()
         filter = FileNameExtensionFilter("ATF files", ["atf"])
@@ -189,10 +183,7 @@ class NammuController():
         """
         self.consoleController.addText("NammuController: Closing file...")
         
-        if self.unsavedChanges():
-            option = self.promptOptionPane("There are unsaved changes. Save now?")
-            if option == 0:
-                self.saveFile()
+        self.handleUnsaved()
             
         self.currentFilename = None
         
@@ -216,6 +207,12 @@ class NammuController():
                 return True
             else:
                 return False
+            
+    def handleUnsaved(self):
+        if self.unsavedChanges():
+            option = self.promptOptionPane("There are unsaved changes. Save now?")
+            if option == 0:
+                self.saveFile()
             
     def promptOptionPane(self, question):
         '''
@@ -242,10 +239,7 @@ class NammuController():
         2. Exit
         """
         
-        if self.unsavedChanges():
-            option = self.promptOptionPane("There are unsaved changes. Save now?")
-            if option == 0:
-                self.saveFile()
+        self.handleUnsaved()
                 
         self.consoleController.addText("NammuController: Exiting...")
         
