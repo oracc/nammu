@@ -23,148 +23,56 @@ class ToolbarView(JToolBar):
         #TODO Refactor to avoid duplication - See issue#16 
         #https://github.com/UCL-RITS/nammu/issues/16
         
-        #Create helper object to load icon images in jar
-        loader = ClassLoader.getSystemClassLoader()
+        methods = {'new': 'onNewFileClick', 
+                 'open': 'onOpenFileClick',
+                 'save': 'onSaveFileClick', 
+                 'close': 'onCloseFileClick', 
+                 'print': 'onPrintFileClick', 
+                 'undo': 'onUndoClick', 
+                 'redo': 'onRedoClick', 
+                 'copy': 'onCopyClick', 
+                 'cut': 'onCutClick', 
+                 'paste': 'onPasteClick', 
+                 'validate': 'onValidateClick', 
+                 'lemmatise': 'onLemmatiseClick', 
+                 'unicode': 'onUnicodeClick',
+                 'console': 'onConsoleClick', 
+                 'model': 'onModelClick', 
+                 'settings': 'onSettingsClick', 
+                 'help': 'onHelpClick', 
+                 'about': 'onAboutClick', 
+                 'quit': 'onQuitClick'}
         
-        newIcon = ImageIcon(loader.getResource("resources/images/new.png"))
-        newFileButton = JButton(newIcon, 
-                                actionPerformed=self.onNewFileClick)
-        newFileButton.setToolTipText("Creates empty ATF file for edition")
-        self.add(newFileButton)
+        tooltips = {'new': 'Creates empty ATF file for edition', 
+                 'open': 'Opens ATF file for edition',
+                 'save': 'Saves current file', 
+                 'close': 'Closes current file', 
+                 'print': 'Prints current file', 
+                 'undo': 'Undo last action', 
+                 'redo': 'Redo last undone action', 
+                 'copy': 'Copy text selection', 
+                 'cut': 'Cut text selection', 
+                 'paste': 'Paste clipboard content', 
+                 'validate': 'Check current ATF correctness', 
+                 'lemmatise': 'Obtain lemmas for current ATF text', 
+                 'unicode': 'Use Unicode characters',
+                 'console': 'View/Hide Console', 
+                 'model': 'Change to ATF data model view', 
+                 'settings': 'Change Nammu settings', 
+                 'help': 'Displays ATF documentation', 
+                 'about': 'Displays information about Nammu and ORACC', 
+                 'quit': 'Exits Nammu'}
         
-        openIcon = ImageIcon(findImageResource('open'))  
-        openFileButton = JButton(openIcon, 
-                                 actionPerformed=self.onOpenFileClick)
-        openFileButton.setToolTipText("Opens ATF file for edition")
-        self.add(openFileButton)
+        for name, method in methods.iteritems():
+            icon = ImageIcon(findImageResource(name))
+            button = JButton(icon, actionPerformed=getattr(self, method))
+            button.setToolTipText(tooltips[name])
+            self.add(button)
+            #Work out is separator is needed
+            if name in ['print', 'redo', 'paste', 'lemmatise', 'unicode', 
+                        'console', 'model', 'about']:
+                self.addSeparator()
         
-        saveIcon = ImageIcon(findImageResource('save'))  
-        saveFileButton = JButton(saveIcon, 
-                                 actionPerformed=self.onSaveFileClick)
-        
-        saveFileButton.setToolTipText("Saves current file")
-        self.add(saveFileButton)
-        
-        closeIcon = ImageIcon(findImageResource('close'))  
-        closeFileButton = JButton(closeIcon, 
-                                  actionPerformed=self.onCloseFileClick)
-        closeFileButton.setToolTipText("Close current file")
-        self.add(closeFileButton)
-        
-        printIcon = ImageIcon(findImageResource('print'))  
-        printFileButton = JButton(printIcon, 
-                                  actionPerformed=self.onPrintFileClick)
-        printFileButton.setToolTipText("Close current file")
-        self.add(printFileButton)
-
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-
-        undoIcon = ImageIcon(findImageResource('undo'))  
-        undoButton = JButton(undoIcon, 
-                             actionPerformed=self.onUndoClick)
-        
-        undoButton.setToolTipText("Undo last action")
-        self.add(undoButton)
-        
-        redoIcon = ImageIcon(findImageResource('redo'))  
-        redoButton = JButton(redoIcon, 
-                             actionPerformed=self.onRedoClick)
-        redoButton.setToolTipText("Redo last undone action")
-        self.add(redoButton)
-        
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-        
-        copyIcon = ImageIcon(findImageResource('copy'))  
-        copyButton = JButton(copyIcon, 
-                             actionPerformed=self.onCopyClick)
-        copyButton.setToolTipText("Copy text selection")
-        self.add(copyButton)
-        
-        cutIcon = ImageIcon(findImageResource('cut'))  
-        cutButton = JButton(cutIcon, 
-                             actionPerformed=self.onCutClick)
-        cutButton.setToolTipText("Cut text selection")
-        self.add(cutButton)
-        
-        pasteIcon = ImageIcon(findImageResource('paste'))  
-        pasteButton = JButton(pasteIcon, 
-                             actionPerformed=self.onPasteClick)
-        pasteButton.setToolTipText("Paste clipboard content")
-        self.add(pasteButton)
-    
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-
-        validateIcon = ImageIcon(findImageResource('validate'))  
-        validateButton = JButton(validateIcon, 
-                             actionPerformed=self.onValidateClick)
-        validateButton.setToolTipText("Check current ATF correctness")
-        self.add(validateButton)
-        
-        lemmatiseIcon = ImageIcon(findImageResource('lemmatise'))  
-        lemmatiseButton = JButton(lemmatiseIcon, 
-                             actionPerformed=self.onLemmatiseClick)
-        lemmatiseButton.setToolTipText("Obtain lemmas for current ATF text")
-        self.add(lemmatiseButton)
-        
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-        
-        unicodeIcon = ImageIcon(findImageResource('unicode'))  
-        unicodeButton = JButton(unicodeIcon, 
-                             actionPerformed=self.onUnicodeClick)
-        unicodeButton.setToolTipText("Use Unicode characters")
-        self.add(unicodeButton)
-        
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-        
-        consoleIcon = ImageIcon(findImageResource('console'))  
-        consoleButton = JButton(consoleIcon, 
-                             actionPerformed=self.onConsoleClick)
-        consoleButton.setToolTipText("View/Hide Console")
-        self.add(consoleButton)
-        
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-        
-        modelIcon = ImageIcon(findImageResource('model'))  
-        modelButton = JButton(modelIcon, 
-                             actionPerformed=self.onModelClick)
-        modelButton.setToolTipText("Change to ATF data model view")
-        self.add(modelButton)
-        
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-
-        settingsIcon = ImageIcon(findImageResource('settings'))  
-        settingsButton = JButton(settingsIcon, 
-                             actionPerformed=self.onSettingsClick)
-        settingsButton.setToolTipText("Change Nammu settings")
-        self.add(settingsButton)
-        
-        helpIcon = ImageIcon(findImageResource('help'))  
-        helpButton = JButton(helpIcon, 
-                             actionPerformed=self.onHelpClick)
-        helpButton.setToolTipText("Displays ATF documentation")
-        self.add(helpButton)
-        
-        aboutIcon = ImageIcon(findImageResource('about'))  
-        aboutButton = JButton(aboutIcon, 
-                             actionPerformed=self.onAboutClick)
-        aboutButton.setToolTipText("Displays information about Nammu")
-        self.add(aboutButton)
-
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-        
-        quitIcon = ImageIcon(findImageResource('quit'))  
-        quitButton = JButton(quitIcon, 
-                             actionPerformed=self.onQuitClick)
-        quitButton.setToolTipText("Exit Nammu")
-        self.add(quitButton)
         
     def onNewFileClick(self, event):
         self.controller.newFile()
@@ -233,6 +141,9 @@ class ToolbarView(JToolBar):
         self.controller.quit()
 
     def findImageResource(name):
+        #Create helper object to load icon images in jar
+        loader = ClassLoader.getSystemClassLoader()
+        #Load image
         loader.getResource("resources/images"+name+".png")
 
   
