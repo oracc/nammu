@@ -35,12 +35,6 @@ class ToolbarController():
     def lemmatise(self, atfFile):
         self.controller.lemmatise(atfFile)
         
-    def editSettings(self):
-        """
-        Show settings window for edition.
-        """
-        self.controller.editSettings()
-        
     def showHelp(self):
         """ 
         1. Show popup window with help (or just open firefox with ORACC info?)
@@ -50,4 +44,7 @@ class ToolbarController():
         """ 
         1. Show popup window with help (or just open firefox with ORACC info?)
         """
+        
+        
+         
     

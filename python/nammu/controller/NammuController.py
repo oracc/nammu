@@ -191,7 +191,6 @@ class NammuController():
         
         self.consoleController.addText(" OK\n")
        
-    
     def unsavedChanges(self):
         '''
         1. Check of any file is opened
@@ -286,7 +285,6 @@ class NammuController():
         
         self.consoleController.addText(" OK\n") 
        
-        
     def paste(self):
         """
         Note: check if JTextArea already has this functionality
@@ -316,7 +314,7 @@ class NammuController():
         self.consoleController.addText("NammuController: Lemmatising ATF file...")
             
         self.consoleController.addText(" OK\n") 
-        
+                
     def printFile(self):
         """
         Print file.
@@ -356,7 +354,16 @@ class NammuController():
         """
         parsed = AtfFile(text)
         return parsed
+    
+    def unicode(self):
+        """
+        Create bool for unicode, change value when clicked.
+        """
         
-        
-        
+    def console(self):
+        """
+        Create bool for console, change value when clicked.
+        Hide if being shown, show if hidden.
+        """
+
         
