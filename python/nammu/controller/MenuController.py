@@ -18,55 +18,22 @@ class MenuController():
         #Will also need delegating to parent presenter
         self.controller = mainController
         
-    #Actions delegated from view. Some of them will need delegation to app
-    #controller (eg. action in menu will need modification of text area 
-    #controlled elsewhere and not accessible from this controller; eg. quit 
-    #Nammu or show help pop up can be dealt with from here)
+    #Some actions need to be delegated to NammuController.
+    #E.g. actions in menu that'll need modification of text area controlled 
+    #elsewhere and not accessible from this controller; as opposed to e.g. 
+    #showHelp that can be dealt with from MenuController.
 
-    def newFile(self):
-        self.controller.newFile()
-        
-    def openFile(self):
-        self.controller.openFile()
-        
-    def saveFile(self):
-        self.controller.saveFile()
-
-    def closeFile(self):
-        self.controller.closeFile()
-    
-    def printFile(self):
-        self.controller.printFile()
-        
-    def quit(self):
-        self.controller.quit()
-        
-    def undo(self):
-        self.controller.undo()
-        
-    def redo(self):
-        self.controller.redo()
-        
-    def copy(self):
-        self.controller.copy()
-        
-    def cut(self):
-        self.controller.cut()
-        
-    def paste(self):
-        self.controller.paste()
-        
+    #Whenever a MenuController's method is invoked, __getattr__ will search for 
+    #that given method name in this class. If it's not found, it'll delegate the
+    #action with same name to NammuController
+    def __getattr__(self, name):
+        return getattr(self.controller, name)
+       
     def validate(self, atfFile):
         self.controller.validate(atfFile)
         
     def lemmatise(self, atfFile):
         self.controller.lemmatise(atfFile)
-        
-    def editSettings(self):
-        """
-        Show settings window for edition.
-        """
-        self.controller.editSettings()
         
     def showHelp(self):
         """ 
@@ -78,12 +45,3 @@ class MenuController():
         1. Show popup window with help (or just open firefox with ORACC info?)
         """
         
-    def displayModelView(self):
-        """
-        1. Parse text area content
-        2. Change atfArea mode to model view
-        3. Process parsed data and serialize in separate JPanel
-        4. Think about whether the other user options should remain visible or
-        should this just be shown in a separate window?
-        """
-        self.controller.displayModelView()
