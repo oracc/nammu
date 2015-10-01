@@ -18,51 +18,46 @@ class ToolbarView(JToolBar):
         #Give reference to controller to delegate action response
         self.controller = controller
 
-        #Build Toolbar following schema in issue#18 and mockups in
-        #https://github.com/UCL-RITS/nammu/tree/master/doc/mockups
-        #https://github.com/UCL-RITS/nammu/issues/18
-
         #TODO Refactor to avoid duplication - See issue#16
         #https://github.com/UCL-RITS/nammu/issues/16
 
-        options = ['NewFile', 'OpenFile', 'SaveFile', 'CloseFile', 'PrintFile', 'Undo', 'Redo',
-                  'Copy', 'Cut', 'Paste', 'Validate', 'Lemmatise', 'Unicode',
-                  'Console', 'DisplayModelView', 'EditSettings', 'ShowHelp', 'ShowAbout', 'Quit']
-        methods = {}
-        methods = collections.OrderedDict()
-        for option in options:
-            methods[option] = "on" + option + "Click"
-            print methods[option]
+        #Content needs to be displayed in an orderly fashion so that buttons are
+        #placed where we expect them to be, not in the ramdon order dicts have.
+        #We also can't create the tooltips dict e.g.:
+        #tooltips = { 'a' : 'A', 'b' : 'B', 'c' : 'C' } 
+        #because it will still be randomly ordered. Elements need to be added to 
+        #the dict in the order we want them to be placed in the toolbar for 
+        #OrderedDict to work
+        tooltips = {}
+        tooltips = collections.OrderedDict()
+        tooltips['newFile'] = 'Creates empty ATF file for edition'
+        tooltips['openFile'] = 'Opens ATF file for edition'
+        tooltips['saveFile'] = 'Saves current file'
+        tooltips['closeFile'] = 'Closes current file'
+        tooltips['printFile'] = 'Prints current file'
+        tooltips['undo'] = 'Undo last action'
+        tooltips['redo'] = 'Redo last undone action'
+        tooltips['copy'] = 'Copy text selection'
+        tooltips['cut'] = 'Cut text selection'
+        tooltips['validate'] = 'Check current ATF correctness'
+        tooltips['paste'] = 'Paste clipboard content'
+        tooltips['lemmatise'] = 'Obtain lemmas for current ATF text'
+        tooltips['unicode'] = 'Use Unicode characters'
+        tooltips['console'] = 'View/Hide Console'
+        tooltips['displayModelView'] = 'Change to ATF data model view'
+        tooltips['editSettings'] = 'Change Nammu settings'
+        tooltips['showHelp'] = 'Displays ATF documentation'
+        tooltips['showAbout'] = 'Displays information about Nammu and ORACC'
+        tooltips['quit'] = 'Exits Nammu'
 
-        tooltips = {'NewFile': 'Creates empty ATF file for edition',
-                 'OpenFile': 'Opens ATF file for edition',
-                 'SaveFile': 'Saves current file',
-                 'CloseFile': 'Closes current file',
-                 'PrintFile': 'Prints current file',
-                 'Undo': 'Undo last action',
-                 'Redo': 'Redo last undone action',
-                 'Copy': 'Copy text selection',
-                 'Cut': 'Cut text selection',
-                 'Paste': 'Paste clipboard content',
-                 'Validate': 'Check current ATF correctness',
-                 'Lemmatise': 'Obtain lemmas for current ATF text',
-                 'Unicode': 'Use Unicode characters',
-                 'Console': 'View/Hide Console',
-                 'DisplayModelView': 'Change to ATF data model view',
-                 'EditSettings': 'Change Nammu settings',
-                 'ShowHelp': 'Displays ATF documentation',
-                 'ShowAbout': 'Displays information about Nammu and ORACC',
-                 'Quit': 'Exits Nammu'}
-
-        for name, method in methods.items():
+        for name, tooltip in tooltips.items():
             icon = ImageIcon(self.findImageResource(name))
-#            button = JButton(icon, actionperformed = getattr(self, options[0].lower() + options[1:]))
-            button = JButton(icon, actionPerformed = getattr(self, "newFile"))
+            button = JButton(icon, actionPerformed = getattr(self, name))
             button.setToolTipText(tooltips[name])
             self.add(button)
             #Work out is separator is needed
-            if name in ['PrintFile', 'Redo', 'Paste', 'Lemmatise', 'Unicode',
-                        'Console', 'DisplayModelView', 'ShowAbout']:
+            if name in ['printFile', 'redo', 'paste', 'lemmatise', 'unicode',
+                        'console', 'displayModelView', 'showAbout']:
                 self.addSeparator()
 
     def __getattr__(self, name):

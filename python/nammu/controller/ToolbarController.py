@@ -31,9 +31,6 @@ class ToolbarController(object):
     def __getattr__(self, name):
         return getattr(self.mainController, name)
 
-    #def onNewFileClick(self, event):
-    #    self.mainController.newFile()
-
     def validate(self, atfFile):
         self.mainController.validate(atfFile)
 

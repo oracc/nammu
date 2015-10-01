@@ -96,7 +96,7 @@ class NammuController():
         self.consoleController.addText(" OK\n")
 
 
-    def openFile(self):
+    def openFile(self, event):
         """
         1. Check if current file in text area has unsaved changes
             1.1 Prompt user for file saving
@@ -140,7 +140,7 @@ class NammuController():
 #          System.exit(1);
 
 
-    def saveFile(self):
+    def saveFile(self, event):
         """
         1. Check if current file has a filename
         2. Save current file in destination given by user
@@ -176,7 +176,7 @@ class NammuController():
 #         System.exit(1)
 
 
-    def closeFile(self):
+    def closeFile(self, event):
         """
         1. Check if file has unsaved changes
         2. Clear text area
@@ -232,7 +232,7 @@ class NammuController():
                 self.view.getContentPane(), text, "Information", \
                 JOptionPane.INFORMATION_MESSAGE)
 
-    def quit(self):
+    def quit(self, event):
         """
         1. Check if file has unsaved changes
         2. Exit
@@ -248,7 +248,7 @@ class NammuController():
 
         System.exit(0)
 
-    def undo(self):
+    def undo(self, event):
         """
         1. Check if any action happened since application was launched
         2. Come back to previous state (handle stack or rever last action)
@@ -260,7 +260,7 @@ class NammuController():
         self.consoleController.addText(" OK\n")
 
 
-    def redo(self):
+    def redo(self, event):
         """
         1. Check if any action has been undone
         2. Handle actions stack and update it
@@ -269,7 +269,7 @@ class NammuController():
 
         self.consoleController.addText(" OK\n")
 
-    def copy(self):
+    def copy(self, event):
         """
         Note: check if JTextArea already has this functionality
         """
@@ -277,7 +277,7 @@ class NammuController():
 
         self.consoleController.addText(" OK\n")
 
-    def cut(self):
+    def cut(self, event):
         """
         Note: check if JTextArea already has this functionality
         """
@@ -285,7 +285,7 @@ class NammuController():
 
         self.consoleController.addText(" OK\n")
 
-    def paste(self):
+    def paste(self, event):
         """
         Note: check if JTextArea already has this functionality
         """
@@ -315,7 +315,7 @@ class NammuController():
 
         self.consoleController.addText(" OK\n")
 
-    def printFile(self):
+    def printFile(self, event):
         """
         Print file.
         """
@@ -323,7 +323,7 @@ class NammuController():
 
         self.consoleController.addText("OK\n")
 
-    def editSettings(self):
+    def editSettings(self, event):
         """
         Show settings window for edition.
         """
@@ -332,7 +332,7 @@ class NammuController():
         self.consoleController.addText("OK\n")
 
 
-    def displayModelView(self):
+    def displayModelView(self, event):
         """
         1. Check if a file is opened or not
         2. Check if file is valid before trying to display model view
@@ -355,15 +355,17 @@ class NammuController():
         parsed = AtfFile(text)
         return parsed
 
-    def unicode(self):
+    def unicode(self, event):
         """
         Create bool for unicode, change value when clicked.
         """
-
-    def console(self):
+        self.consoleController.addText("NammuController: Unicode...")
+        
+    def console(self, event):
         """
         Create bool for console, change value when clicked.
         Hide if being shown, show if hidden.
         """
-
+        self.consoleController.addText("NammuController: Console...")
+        
 
