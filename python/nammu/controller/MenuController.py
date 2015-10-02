@@ -6,7 +6,7 @@ Creates the menu view and handles menu actions.
 @author: raquel-ucl
 '''
 
-from .MenuView import MenuView
+from ..view.MenuView import MenuView
 
 class MenuController():
 
@@ -30,12 +30,6 @@ class MenuController():
     #action with same name to NammuController
     def __getattr__(self, name):
         return getattr(self.mainController, name)
-    
-    def newFile(self, event):
-        self.mainController.newFile(event)
-
-    def newFile(self):
-        self.mainController.newFile(event)
         
     def validate(self, atfFile):
         self.mainController.validate(atfFile)
