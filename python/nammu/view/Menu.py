@@ -10,7 +10,7 @@ class Menu(JMenu):
         self.items = self.createItems(menuItems)
         for item in self.items:
             self.add(item)
-            if item.name in separators:
+            if item.getText() in separators:
                 self.addSeparator()
 
 
