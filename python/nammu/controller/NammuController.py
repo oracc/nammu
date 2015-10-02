@@ -367,18 +367,9 @@ class NammuController():
         Hide if being shown, show if hidden.
         """
         self.consoleController.addText("NammuController: Console...")
-        
-    def toolbar(self, event):
-        """
-        Hide/Show toolbar
-        """
-        self.consoleController.addText("NammuController: Toolbar...")
-        
-    def __getattr__(self, name):
-        """
-        Display text instead of breaking when an unknown methods is not 
-        properly delegated/propagated.
-        """
-        self.consoleController.addText("NammuController: Don't know any methods \
-        called " + name)
 
+    def toolbar(self, event):
+        print("NammuController: Toolbar new functions ")
+
+    def __getattr__(self, name):
+        print "Undefined: "  + name

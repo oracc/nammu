@@ -30,7 +30,13 @@ class MenuController():
     #action with same name to NammuController
     def __getattr__(self, name):
         return getattr(self.mainController, name)
+    
+    def newFile(self, event):
+        self.mainController.newFile(event)
 
+    def newFile(self):
+        self.mainController.newFile(event)
+        
     def validate(self, atfFile):
         self.mainController.validate(atfFile)
 
@@ -45,4 +51,6 @@ class MenuController():
     def showAbout(self):
         """
         1. Show popup window with help (or just open firefox with ORACC info?)
-        """        
+        """
+
+        
