@@ -39,14 +39,18 @@ class NammuController():
         #TODO replace with proper Logging functionality
         self.consoleController.addText("NammuController: Creating subcontrollers...")
 
+        #Create all the controllers
         self.menuController = MenuController(self)
         self.toolbarController = ToolbarController(self)
         self.atfAreaController = AtfAreaController(self)
 
+        #TODO: Only if everything went fine
         self.consoleController.addText(" OK\n")
 
+        #Log next action
         self.consoleController.addText("NammuController: Creating views...")
 
+        #Create all the views and assigned them to appropriate controller
         self.view = NammuView(self)
         self.view.addMenuBar(self.menuController.view)
         self.view.addToolBar(self.toolbarController.view)
@@ -55,9 +59,10 @@ class NammuController():
 
         self.consoleController.addText(" OK\n")
 
+        #Log next action
         self.consoleController.addText("NammuController: Display main view...")
 
-        #Display view
+        #Display Nammu's view
         self.view.display()
 
         self.consoleController.addText(" OK\n")
@@ -66,25 +71,22 @@ class NammuController():
         #TODO: save array with all opened ATFs
         self.currentFilename = None
 
-        #Handle actions - eventBus?
-
-
     #Actions delegated from subcontrollers follow.
     #Subcontrollers can't handle these actions because they
     #require interaction of several subcontrollers who have no visibility.
     #Eg. action in menu will need modification of text area controlled elsewhere
     #and not accessible from the menu controller that receives the action in the
     #first instance; or eg. show help pop up can be dealt with from
-    #subcontroller)
+    #subcontroller
 
     def newFile(self, event):
-        """
+        '''
         1. Check if current file in text area has unsaved changes
             1.1 Prompt user for file saving
                 1.1.1 Save file
         2. Clear text area
         3. See GitHub issue: https://github.com/UCL-RITS/nammu/issues/6
-        """
+        '''
         self.consoleController.addText("NammuController: Creating new file...")
 
         self.handleUnsaved()
@@ -97,13 +99,13 @@ class NammuController():
 
 
     def openFile(self, event):
-        """
+        '''
         1. Check if current file in text area has unsaved changes
             1.1 Prompt user for file saving
                 1.1.1 Save file
         2. Display browser for user to choose file
         3. Load file in text area
-        """
+        '''
         self.consoleController.addText("NammuController: Opening file...")
 
         self.handleUnsaved()
@@ -112,7 +114,6 @@ class NammuController():
         filter = FileNameExtensionFilter("ATF files", ["atf"])
         fileChooser.setFileFilter(filter)
         status = fileChooser.showDialog(self.view, "Choose file")
-
 
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
@@ -123,11 +124,13 @@ class NammuController():
 
         #TODO: Else, prompt user to choose again before closing
 
-
         self.consoleController.addText(" OK\n")
 
 
     def readTextFile(self, filename):
+        '''
+        Helper function to open file for reading.
+        '''
         text = codecs.open(filename, encoding='utf-8').read()
         return text
         #TODO: Check if selected file is ATF or at least text file!
@@ -141,10 +144,10 @@ class NammuController():
 
 
     def saveFile(self, event):
-        """
+        '''
         1. Check if current file has a filename
         2. Save current file in destination given by user
-        """
+        '''
 
         self.consoleController.addText("NammuController: Saving file...")
 
@@ -162,6 +165,9 @@ class NammuController():
 
 
     def writeTextFile(self, filename, text):
+        '''
+        Action to execute when saving an ATF.
+        '''
         f = codecs.open(filename, "w", "utf-8")
         f.write(text)
         f.close()
@@ -177,10 +183,10 @@ class NammuController():
 
 
     def closeFile(self, event):
-        """
+        '''
         1. Check if file has unsaved changes
         2. Clear text area
-        """
+        '''
         self.consoleController.addText("NammuController: Closing file...")
 
         self.handleUnsaved()
@@ -190,6 +196,7 @@ class NammuController():
         self.atfAreaController.clearAtfArea()
 
         self.consoleController.addText(" OK\n")
+
 
     def unsavedChanges(self):
         '''
@@ -207,11 +214,16 @@ class NammuController():
             else:
                 return False
 
+
     def handleUnsaved(self):
+        '''
+        Helper function to decide what to do with open ATF file.
+        '''
         if self.unsavedChanges():
             option = self.promptOptionPane("There are unsaved changes. Save now?")
             if option == 0:
                 self.saveFile()
+
 
     def promptOptionPane(self, question):
         '''
@@ -224,6 +236,7 @@ class NammuController():
                 JOptionPane.YES_NO_CANCEL_OPTION)
         return result;
 
+
     def promptInfoPane(self, text):
         '''
         1. Show popup with given information text
@@ -232,11 +245,12 @@ class NammuController():
                 self.view.getContentPane(), text, "Information", \
                 JOptionPane.INFORMATION_MESSAGE)
 
+
     def quit(self, event):
-        """
+        '''
         1. Check if file has unsaved changes
         2. Exit
-        """
+        '''
 
         self.handleUnsaved()
 
@@ -248,96 +262,101 @@ class NammuController():
 
         System.exit(0)
 
+
     def undo(self, event):
-        """
+        '''
         1. Check if any action happened since application was launched
         2. Come back to previous state (handle stack or rever last action)
         3. Update state stack
         Note: Check java's Undoable
-        """
+        '''
         self.consoleController.addText("NammuController: Undoing last action...")
 
         self.consoleController.addText(" OK\n")
 
 
     def redo(self, event):
-        """
+        '''
         1. Check if any action has been undone
         2. Handle actions stack and update it
-        """
+        '''
         self.consoleController.addText("NammuController: Redoing last undone action...")
 
         self.consoleController.addText(" OK\n")
 
+
     def copy(self, event):
-        """
+        '''
         Note: check if JTextArea already has this functionality
-        """
+        '''
         self.consoleController.addText("NammuController: Copying selected text...")
 
         self.consoleController.addText(" OK\n")
 
+
     def cut(self, event):
-        """
+        '''
         Note: check if JTextArea already has this functionality
-        """
+        '''
         self.consoleController.addText("NammuController: Cutting selected text...")
 
         self.consoleController.addText(" OK\n")
 
+
     def paste(self, event):
-        """
+        '''
         Note: check if JTextArea already has this functionality
-        """
+        '''
         self.consoleController.addText("NammuController: Pasting clipboard text...")
 
         self.consoleController.addText(" OK\n")
 
     def validate(self, atfFile):
-        """
+        '''
         1. Parse content of text area
         2. Any errors parsing?
         3. Display OK/NOK message in Console
-        """
+        '''
         self.consoleController.addText("NammuController: Validating ATF file...")
 
         self.consoleController.addText(" OK\n")
 
+
     def lemmatise(self, atfFile):
-        """
+        '''
         1. Connect with UPenn DB
         2. Send text area content
         3. Receive response file
         4. Display response in text area
         5. Display OK/NOK message in Console
-        """
+        '''
         self.consoleController.addText("NammuController: Lemmatising ATF file...")
 
         self.consoleController.addText(" OK\n")
 
+
     def printFile(self, event):
-        """
+        '''
         Print file.
-        """
+        '''
         self.consoleController.addText("NammuController: Printing file...")
 
         self.consoleController.addText("OK\n")
 
     def editSettings(self, event):
-        """
+        '''
         Show settings window for edition.
-        """
+        '''
         self.consoleController.addText("NammuController: Changing settings...")
-
         self.consoleController.addText("OK\n")
 
 
     def displayModelView(self, event):
-        """
+        '''
         1. Check if a file is opened or not
         2. Check if file is valid before trying to display model view
         3. Send text to model view controller and delegate
-        """
+        '''
         atfText = self.atfAreaController.getAtfAreaText()
         #if self.currentFilename != None and atfText != None :
         if self.currentFilename != None:
@@ -348,28 +367,41 @@ class NammuController():
         else:
             self.promptInfoPane("Open ATF file before trying to display model view.")
 
+
     def parse(self, text):
-        """
+        '''
         Parse input string, could be just a line or a whole file content.
-        """
+        '''
         parsed = AtfFile(text)
         return parsed
 
+
     def unicode(self, event):
-        """
+        '''
         Create bool for unicode, change value when clicked.
-        """
+        '''
         self.consoleController.addText("NammuController: Unicode...")
+        self.consoleController.addText("OK\n")
+        
         
     def console(self, event):
-        """
+        '''
         Create bool for console, change value when clicked.
         Hide if being shown, show if hidden.
-        """
+        '''
         self.consoleController.addText("NammuController: Console...")
 
+
     def toolbar(self, event):
-        print("NammuController: Toolbar new functions ")
+        '''
+        Show/Hide Toolbar.
+        '''
+        self.consoleController.addText("NammuController: Toolbar... ")
+        self.consoleController.addText("OK\n")
+
 
     def __getattr__(self, name):
-        print "Undefined: "  + name
+        '''
+        Handle calls to undefined methods.
+        '''
+        self.consoleController.addText("!!!Undefined method " + name)
