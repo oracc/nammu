@@ -8,7 +8,7 @@ Creates the menu view and handles menu actions.
 
 from ..view.MenuView import MenuView
 
-class MenuController():
+class MenuController(object):
 
     def __init__(self, mainController):
 

@@ -8,7 +8,7 @@ Creates the ATF area (edit/object) view and handles its actions.
 
 from ..view.AtfAreaView import AtfAreaView
 
-class AtfAreaController():
+class AtfAreaController(object):
     
     def __init__(self, mainControler):
         

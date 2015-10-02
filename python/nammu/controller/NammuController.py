@@ -22,7 +22,7 @@ from AtfAreaController import AtfAreaController
 from ToolbarController import ToolbarController
 from ModelController import ModelController
 
-class NammuController():
+class NammuController(object):
 
     def __init__(self):
         '''

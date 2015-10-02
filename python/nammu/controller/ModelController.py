@@ -16,7 +16,7 @@ from pyoracc.model.ruling import Ruling
 from pyoracc.model.comment import Comment
 from pyoracc.model.line import Line
 
-class ModelController():
+class ModelController(object):
     
     def __init__(self, mainControler, parsedAtf):
         """
