@@ -8,3 +8,5 @@ target/
 temp/
 /parser.out
 *.py
+python/nammu/controller/NammuController$py.class
+python/nammu/controller/__init__$py.class
