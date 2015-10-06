@@ -209,7 +209,7 @@ class NammuController(object):
             savedText = self.readTextFile(self.currentFilename)
             nammuText = self.atfAreaController.getAtfAreaText()
 
-            if (savedText != nammuText):
+            if savedText != nammuText:
                 return True
             else:
                 return False
@@ -234,7 +234,7 @@ class NammuController(object):
         result = JOptionPane.showConfirmDialog( \
                 self.view.getContentPane(), question, "Question", \
                 JOptionPane.YES_NO_CANCEL_OPTION)
-        return result;
+        return result
 
 
     def promptInfoPane(self, text):
@@ -382,8 +382,8 @@ class NammuController(object):
         '''
         self.consoleController.addText("NammuController: Unicode...")
         self.consoleController.addText("OK\n")
-        
-        
+
+
     def console(self, event):
         '''
         Create bool for console, change value when clicked.
