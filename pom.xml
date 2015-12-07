@@ -89,9 +89,9 @@
 				</executions>
 				<configuration>
 					<libraries>
-						<param>nose</param>
-						<param>ply==3.4</param>
-						<param>https://pypi.python.org/packages/source/M/Mako/Mako-0.9.1.tar.gz</param>
+                        <param>nose</param>
+                        <param>ply==3.4</param>
+                        <param>mako</param>
 					</libraries>
 				</configuration>
 			</plugin>
