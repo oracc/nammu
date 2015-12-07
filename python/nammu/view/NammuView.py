@@ -14,7 +14,6 @@ from __builtin__ import None
 class NammuView(JFrame):
 
     def __init__(self, controller):
-        print "I'm the main window!"
         
         #Give reference to controller to delegate action response
         self.controller = controller

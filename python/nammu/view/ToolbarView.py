@@ -6,134 +6,69 @@ Initializes the toolbar view and sets its layout.
 @author: raquel-ucl
 '''
 
+import collections
 from javax.swing import JToolBar, ImageIcon, JButton
+from java.lang import ClassLoader
+
 
 class ToolbarView(JToolBar):
-    
+
     def __init__(self, controller):
-        print "I'm the toolbar view"
-        
+
         #Give reference to controller to delegate action response
         self.controller = controller
-        
-        newIcon = ImageIcon("../../../resources/images/new.png")
-        newFileButton = JButton("New", newIcon, 
-                                actionPerformed=self.onNewFileClick)
-        self.add(newFileButton)
-        
-        openIcon = ImageIcon("../../../resources/images/open.png")
-        openFileButton = JButton("Open", openIcon, 
-                                 actionPerformed=self.onOpenFileClick)
-        self.add(openFileButton)
-        
-        saveIcon = ImageIcon("../../../resources/images/save.png")
-        saveFileButton = JButton("Save", saveIcon, 
-                                 actionPerformed=self.onSaveFileClick)
-        self.add(saveFileButton)
-        
-        closeIcon = ImageIcon("../../../resources/images/close.png")
-        closeFileButton = JButton("Close", closeIcon, 
-                                  actionPerformed=self.onCloseFileClick)
-        self.add(closeFileButton)
 
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
+        #TODO Refactor to avoid duplication - See issue#16
+        #https://github.com/UCL-RITS/nammu/issues/16
 
-        undoIcon = ImageIcon("../../../resources/images/undo.png")
-        undoButton = JButton("Undo", undoIcon, 
-                             actionPerformed=self.onUndoClick)
-        self.add(undoButton)
-        
-        redoIcon = ImageIcon("../../../resources/images/redo.png")
-        redoButton = JButton("Redo", redoIcon, 
-                             actionPerformed=self.onRedoClick)
-        self.add(redoButton)
-        
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
+        #Content needs to be displayed in an orderly fashion so that buttons are
+        #placed where we expect them to be, not in the ramdon order dicts have.
+        #We also can't create the tooltips dict e.g.:
+        #tooltips = { 'a' : 'A', 'b' : 'B', 'c' : 'C' } 
+        #because it will still be randomly ordered. Elements need to be added to 
+        #the dict in the order we want them to be placed in the toolbar for 
+        #OrderedDict to work
+        tooltips = {}
+        tooltips = collections.OrderedDict()
+        tooltips['newFile'] = 'Creates empty ATF file for edition'
+        tooltips['openFile'] = 'Opens ATF file for edition'
+        tooltips['saveFile'] = 'Saves current file'
+        tooltips['closeFile'] = 'Closes current file'
+        tooltips['printFile'] = 'Prints current file'
+        tooltips['undo'] = 'Undo last action'
+        tooltips['redo'] = 'Redo last undone action'
+        tooltips['copy'] = 'Copy text selection'
+        tooltips['cut'] = 'Cut text selection'
+        tooltips['validate'] = 'Check current ATF correctness'
+        tooltips['paste'] = 'Paste clipboard content'
+        tooltips['lemmatise'] = 'Obtain lemmas for current ATF text'
+        tooltips['unicode'] = 'Use Unicode characters'
+        tooltips['console'] = 'View/Hide Console'
+        tooltips['displayModelView'] = 'Change to ATF data model view'
+        tooltips['editSettings'] = 'Change Nammu settings'
+        tooltips['showHelp'] = 'Displays ATF documentation'
+        tooltips['showAbout'] = 'Displays information about Nammu and ORACC'
+        tooltips['quit'] = 'Exits Nammu'
 
-        validateIcon = ImageIcon("../../../resources/images/validate.png")
-        validateButton = JButton("Validate", validateIcon, 
-                             actionPerformed=self.onValidateClick)
-        self.add(validateButton)
-        
-        lemmatiseIcon = ImageIcon("../../../resources/images/lemmatise.png")
-        lemmatiseButton = JButton("Lemmatise", lemmatiseIcon, 
-                             actionPerformed=self.onLemmatiseClick)
-        self.add(lemmatiseButton)
-        
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-        
-        unicodeIcon = ImageIcon("../../../resources/images/unicode.png")
-        unicodeButton = JButton("Unicode", unicodeIcon, 
-                             actionPerformed=self.onUnicodeClick)
-        self.add(unicodeButton)
-        
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-        
-        consoleIcon = ImageIcon("../../../resources/images/console.png")
-        consoleButton = JButton("Console", consoleIcon, 
-                             actionPerformed=self.onConsoleClick)
-        self.add(consoleButton)
-        
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
-        
-        modelIcon = ImageIcon("../../../resources/images/model.png")
-        modelButton = JButton("Model", modelIcon, 
-                             actionPerformed=self.onModelClick)
-        self.add(modelButton)
-        
-        #AddSeparator might need addSeparator(Dimension(20,20)) to be visible
-        self.addSeparator()
+        for name, tooltip in tooltips.items():
+            icon = ImageIcon(self.findImageResource(name))
+            button = JButton(icon, actionPerformed = getattr(self, name))
+            button.setToolTipText(tooltips[name])
+            self.add(button)
+            #Work out is separator is needed
+            if name in ['printFile', 'redo', 'paste', 'lemmatise', 'unicode',
+                        'console', 'displayModelView', 'showAbout']:
+                self.addSeparator()
 
-        quitIcon = ImageIcon("../../../resources/images/quit.png")
-        quitButton = JButton("Quit", quitIcon, 
-                             actionPerformed=self.onQuitClick)
-        self.add(quitButton)
-        
-    def onNewFileClick(self, event):
-        self.controller.newFile()
-        
-    def onOpenFileClick(self, event):
-        self.controller.openFile()
-        
-    def onSaveFileClick(self, event):
-        self.controller.saveFile()
-        
-    def onCloseFileClick(self, event):
-        self.controller.closeFile()
-        
-    def onUndoClick(self, event):
-        self.controller.undo()
-        
-    def onRedoClick(self, event):
-        self.controller.redo()
-        
-    def onValidateClick(self, event):
-        self.controller.validate("text area content or path to file?")
-        
-    def onLemmatiseClick(self, event):    
-        self.controller.lemmatise("text area content or path to file?")
-        
-    def onUnicodeClick(self, event):
-        print "Change to Unicode keyboard."   
-        #TODO
-        #self.controller.unicode(true)
-        #self.controller.unicode(false)
-        
-    def onConsoleClick(self, event):
-        print "Toggle console panel."  
-        #TODO
-        #self.controller.hideConsole()
-        #self.controller.displayConsole()
-        
-    def onModelClick(self, event):
-        self.controller.displayModelView()
-        
-    def onQuitClick(self, event):
-        self.controller.quit()
-        
-        
+    def __getattr__(self, name):
+        return getattr(self.controller, name)
+
+    def findImageResource(self, name):
+        #Create helper object to load icon images in jar
+        loader = ClassLoader.getSystemClassLoader()
+        #Load image
+        return loader.getResource("resources/images/" + name.lower() + ".png")
+
+
+
+

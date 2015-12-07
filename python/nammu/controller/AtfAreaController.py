@@ -8,10 +8,9 @@ Creates the ATF area (edit/object) view and handles its actions.
 
 from ..view.AtfAreaView import AtfAreaView
 
-class AtfAreaController():
+class AtfAreaController(object):
     
     def __init__(self, mainControler):
-        print "I'm the ATF area controller"
         
         #Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)

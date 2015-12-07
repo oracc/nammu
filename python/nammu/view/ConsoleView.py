@@ -8,6 +8,7 @@ Initializes the console view and sets its layout.
 
 from java.awt import Font, BorderLayout, Color, Dimension
 from javax.swing import JTextArea, JScrollPane, JPanel, BorderFactory
+from javax.swing.text import DefaultCaret
 
 class ConsoleView(JPanel):
     
@@ -38,6 +39,10 @@ class ConsoleView(JPanel):
         #Will need scrolling controls
         scrollingText = JScrollPane(self.editArea)
         scrollingText.setPreferredSize(Dimension(1,150))
+        
+        #Make text area auto scroll down to last printed line
+        caret = self.editArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         
         #Add to parent panel
         self.add(scrollingText, BorderLayout.CENTER)

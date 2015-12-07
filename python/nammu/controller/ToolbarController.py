@@ -8,74 +8,45 @@ Creates the toolbar view and handles toolbar actions.
 
 from ..view.ToolbarView import ToolbarView
 
-class ToolbarController():
-    
+class ToolbarController(object):
+
     def __init__(self, mainController):
-        print "I'm the toolbar controller"
-        
+
+        #Needs delegating to parent presenter
+        #Note: self.controller needs to be defined before creating the
+        #ToolbarView, since the ToolbaView will delegate some actions to it.
+        self.mainController = mainController
+
         #Create view with a reference to its controller to handle events
         self.view = ToolbarView(self)
-        
-        #Will also need delegating to parent presenter
-        self.controller = mainController
-        
-    #Actions delegated from view. Some of them will need delegation to app
-    #controller (eg. action in menu will need modification of text area 
-    #controlled elsewhere and not accessible from this controller; eg. quit 
-    #Nammu or show help pop up can be dealt with from here)
 
- 
-    def newFile(self):
-        self.controller.newFile()
-        
-    def openFile(self):
-        self.controller.openFile()
-                
-    def saveFile(self):
-        self.controller.saveFile()
+    #Some actions need to be delegated to NammuController.
+    #E.g. actions in menu that'll need modification of text area controlled
+    #elsewhere and not accessible from this controller; as opposed to e.g.
+    #showHelp that can be dealt with from MenuController.
 
-    def closeFile(self):
-        self.controller.closeFile()
-    
-    def quit(self):
-        self.controller.quit()
-        
-    def undo(self):
-        self.controller.undo()
-        
-    def redo(self):
-        self.controller.redo()
-        
-    def copy(self):
-        self.controller.copy()
-        
-    def cut(self):
-        self.controller.cut()
-        
-    def paste(self):
-        self.controller.paste()
-        
+    #Whenever a MenuController's method is invoked, __getattr__ will search for
+    #that given method name in this class. If it's not found, it'll delegate the
+    #action with same name to NammuController
+    def __getattr__(self, name):
+        return getattr(self.mainController, name)
+
     def validate(self, atfFile):
-        self.controller.validate(atfFile)
-        
+        self.mainController.validate(atfFile)
+
     def lemmatise(self, atfFile):
-        self.controller.lemmatise(atfFile)
-        
+        self.mainController.lemmatise(atfFile)
+
     def showHelp(self):
-        """ 
+        """
         1. Show popup window with help (or just open firefox with ORACC info?)
         """
-        
+
     def showAbout(self):
-        """ 
+        """
         1. Show popup window with help (or just open firefox with ORACC info?)
         """
-        
-    def displayModelView(self):
-        """
-        1. Parse text area content
-        2. Change atfArea mode to model view
-        3. Process parsed data and serialize in separate JPanel
-        4. Think about whether the other user options should remain visible or
-        should this just be shown in a separate window?
-        """
+
+
+
+
