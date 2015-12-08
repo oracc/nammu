@@ -101,13 +101,14 @@
 			is not used, jython.jar which is essential won't be attached and 
 			Nammu won't work. -->
 		    <plugin>
-		      <artifactId>maven-assembly-plugin</artifactId>
-		      <configuration>
-		  		<archive>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+		        <configuration>
+		  		 <archive>
 		          <manifest>
 		            <mainClass>uk.ac.ucl.rc.development.oracc.nammu.App</mainClass>
 		          </manifest>
-		        </archive>
+		         </archive>
 		        <descriptorRefs>
 		          <descriptorRef>jar-with-dependencies</descriptorRef>
 		        </descriptorRefs>
