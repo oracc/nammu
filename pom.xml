@@ -90,8 +90,13 @@
 				<configuration>
 					<libraries>
                         <param>nose</param>
-                        <param>ply==3.4</param>
                         <param>mako</param>
+                        <!-- Ply latest version is 3.8. It was not installable 
+                             when using jython-compile-maven-plugin, but it is
+                             after latest changes. The problem now is the code
+                             in PyORACC is not compliant with Ply 3.8. 
+                             See #43. -->
+                        <param>ply==3.4</param>
 					</libraries>
 				</configuration>
 			</plugin>
