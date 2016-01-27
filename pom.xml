@@ -93,6 +93,7 @@
 						in PyORACC is not compliant with Ply 3.8.
 						See #43. -->
 						<param>ply</param>
+						<param>https://github.com/ucl/pyoracc/archive/master.tar.gz</param>
 					</libraries>
 				</configuration>
 			</plugin>
