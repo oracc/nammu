@@ -1,0 +1,3 @@
+[submodule "python/pyoracc"]
+	path = python/pyoracc
+	url = git@github.com:UCL/pyoracc.git
