@@ -22,60 +22,56 @@
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.python</groupId>
-            <artifactId>jython-standalone</artifactId>
-            <version>2.7.0</version>
+		<dependency>
+			<groupId>org.python</groupId>
+			<artifactId>jython-standalone</artifactId>
+			<version>2.7.0</version>
 		</dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-jython</artifactId>
-            <version>1.2.4</version>
-        </dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-jython</artifactId>
+			<version>1.2.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>
-	
+
 		<resources>
 			<resource>
 				<directory>python</directory>
 			</resource>
 		</resources>
-		
+
 		<plugins>
-		
-			<!-- Make sure resources like toolbar icons are copied to final 
+
+			<!-- Make sure resources like toolbar icons are copied to final
 			jar -->
-	        <plugin>
-		        <artifactId>maven-resources-plugin</artifactId>
-		        <version>2.7</version>
-		        <executions>
-		          <execution>
-		            <id>copy-resources</id>
-		            <phase>validate</phase>
-		            <goals>
-		              <goal>copy-resources</goal>
-		            </goals>
-		            <configuration>
-		              <outputDirectory>${basedir}/target/classes/resources</outputDirectory>
-		              <resources>          
-		                <resource>
-		                  <directory>${basedir}/resources</directory>
-            			  <filtering>false</filtering>
-		                </resource>
-		              </resources>              
-		            </configuration>            
-		          </execution>
-		        </executions>
-	        </plugin>		
-		
- 			<!-- A little outdated plugin needed to import all the python 
-			modules needed by pyoracc. It works using easy_install + <param>.  
-			It is old (2011) and the latest version of Mako and Ply won't work,
-			thus I needed to force older versions. 
-			TODO: Update this plugin in my own mvn repo and use latest versions
-			of all <param>s. -->
 			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes/resources</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/resources</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- A little outdated plugin needed to import all the python
+			modules needed by pyoracc. It works using easy_install + <param>.	-->
+			<plugin>   
 				<groupId>net.sf.mavenjython</groupId>
 				<artifactId>jython-compile-maven-plugin</artifactId>
 				<version>1.3</version>
@@ -89,39 +85,39 @@
 				</executions>
 				<configuration>
 					<libraries>
-                        <param>nose</param>
-                        <param>mako</param>
-                        <!-- Ply latest version is 3.8. It was not installable 
-                             when using jython-compile-maven-plugin, but it is
-                             after latest changes. The problem now is the code
-                             in PyORACC is not compliant with Ply 3.8. 
-                             See #43. -->
-                        <param>ply==3.4</param>
+						<param>nose</param>
+						<param>mako</param>
+						<!-- Ply latest version is 3.8. It was not installable
+						when using jython-compile-maven-plugin, but it is
+						after latest changes. The problem now is the code
+						in PyORACC is not compliant with Ply 3.8.
+						See #43. -->
+						<param>ply</param>
 					</libraries>
 				</configuration>
 			</plugin>
-			
-			<!-- Aggregate the project output along with its dependencies, and 
-			other files into a single distributable archive. Note if this plugin 
-			is not used, jython.jar which is essential won't be attached and 
+
+			<!-- Aggregate the project output along with its dependencies, and
+			other files into a single distributable archive. Note if this plugin
+			is not used, jython.jar which is essential won't be attached and
 			Nammu won't work. -->
-		    <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
-		        <configuration>
-		  		 <archive>
-		          <manifest>
-		            <mainClass>uk.ac.ucl.rc.development.oracc.nammu.App</mainClass>
-		          </manifest>
-		         </archive>
-		        <descriptorRefs>
-		          <descriptorRef>jar-with-dependencies</descriptorRef>
-		        </descriptorRefs>
-		        <!-- The jar-with-dependencies is our main distributable jar, so
-		        give it a sensible name and remove the default suffix 
-		        reated by this plugin -->
-		        <appendAssemblyId>false</appendAssemblyId>
-		      </configuration>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>uk.ac.ucl.rc.development.oracc.nammu.App</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<!-- The jar-with-dependencies is our main distributable jar, so
+					give it a sensible name and remove the default suffix
+					reated by this plugin -->
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -130,45 +126,45 @@
 						</goals>
 					</execution>
 				</executions>
-		    </plugin>		
-		    	
+			</plugin>
+
 		</plugins>
-		
+
 	</build>
-	
+
 	<reporting>
 		<plugins>
-	
+
 			<plugin>
-          		<groupId>org.apache.maven.plugins</groupId>
-          		<artifactId>maven-checkstyle-plugin</artifactId>
-          		<version>2.15</version>
-          		<reportSets>
-            		<reportSet>
-              			<reports>
-                			<report>checkstyle</report>
-              			</reports>
-            		</reportSet>
-          		</reportSets>
-        	</plugin>	
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.15</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>checkstyle</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.7</version>
-            </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.7</version>
+			</plugin>
 
-            <plugin>
-     	        <groupId>org.codehaus.mojo</groupId>
-    		    <artifactId>findbugs-maven-plugin</artifactId>
-    		    <version>3.0.3</version>
-            </plugin>
-	
-      		<plugin>
-        		<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-pmd-plugin</artifactId>
-        		<version>3.5</version>
-      		</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.3</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.5</version>
+			</plugin>
 
 		</plugins>
 	</reporting>
