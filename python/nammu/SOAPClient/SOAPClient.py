@@ -1,7 +1,7 @@
 import requests
 import logging
 import httplib as http_client
-import HTTPRequestBuilder
+from HTTPRequest import HTTPRequest
 
 # Dunno if this is the right place to set up logging
 logging.basicConfig()
@@ -10,11 +10,12 @@ class SOAPClient:
     """
     Sends and retrieves information to and from the ORACC SOAP server.
     """
-    def __init__(self, url):
+    def __init__(self, url, method):
         self.url = url
-        self.logger, self.request_log = self.set_logger()
+        self.method = method
+        self.logger, self.request_log = self.setup_logger()
 
-    def create_logger(self):
+    def setup_logger(self):
         """
         Creates logger to debug HTTP messages sent and responses received.
         Output should be sent to Nammu's console.
@@ -26,7 +27,11 @@ class SOAPClient:
         request_log.propagate = True
         return logger, request_log
 
-    def send_message(self):
+    def create_request(self, **kwargs):
+        request = HTTPRequest(self.url, self.method, **kwargs)
+        self.request = request
+
+    def send(self):
         """
         Elaborate HTTP POST request and send it to ORACC's server.
         """
@@ -38,8 +43,20 @@ class SOAPClient:
         """
         pass
 
+    def parse_response(self):
+        """
+        Extract information sent in server response.
+        """
+        pass
+
     def _check_response_ready(self, id):
         """
         Send a HTTP GET request to ORACC's server and retrieve status.
+        """
+        pass
+
+    def create_request_zip(self):
+        """
+        Pack attachment in a zip file.
         """
         pass
