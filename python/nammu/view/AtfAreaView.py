@@ -7,9 +7,11 @@ Initializes the ATF (edit/model) view and sets its layout.
 '''
 
 from java.awt import Font, BorderLayout, Dimension, Color
-from javax.swing import JEditorPane, JScrollPane, JPanel, BorderFactory
-from javax.swing.text import DefaultHighlighter, StyleContext
+from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
+from javax.swing.text import DefaultHighlighter, StyleContext, StyleConstants
+from javax.swing.text import SimpleAttributeSet
 from pyoracc.atf.atflex import AtfLexer
+
 
 class AtfAreaView(JPanel):
 
@@ -30,7 +32,7 @@ class AtfAreaView(JPanel):
         self.setLayout(BorderLayout())
 
         # Create text edition area
-        self.editArea = JEditorPane()
+        self.editArea = JTextPane()
         self.editArea.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.editArea.font = Font("Monaco", Font.PLAIN, 14)
 
@@ -41,6 +43,28 @@ class AtfAreaView(JPanel):
         # Add to parent panel
         self.add(scrollingText, BorderLayout.CENTER)
         self.painter = DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW)
+        sc = StyleContext.getDefaultStyleContext()
+        self.colors = {}
+        self.colors['red2'] = sc.addAttribute(
+                                       SimpleAttributeSet.EMPTY,
+                                       StyleConstants.Foreground,
+                                       Color(238, 0, 0))
+        self.colors['green4'] = sc.addAttribute(
+                                       SimpleAttributeSet.EMPTY,
+                                       StyleConstants.Foreground,
+                                       Color(0, 139, 0))
+        self.colors['darkorchid'] = sc.addAttribute(
+                                       SimpleAttributeSet.EMPTY,
+                                       StyleConstants.Foreground,
+                                       Color(153, 50, 204))
+        self.colors['darkslateblue'] = sc.addAttribute(
+                                       SimpleAttributeSet.EMPTY,
+                                       StyleConstants.Foreground,
+                                       Color(72, 61, 139))
+        self.colors['royalblue'] = sc.addAttribute(
+                                       SimpleAttributeSet.EMPTY,
+                                       StyleConstants.Foreground,
+                                       Color(65, 105, 225))
 
     def paint_word(self, word):
         doc = self.editArea.getDocument()
@@ -79,3 +103,23 @@ class AtfAreaView(JPanel):
                 linelenght = len(splittext[tok.lineno])
                 hiliter.addHighlight(tok.lexpos, tok.lexpos + linelenght,
                                      self.painter)
+
+    def syntax_highlight2(self):
+        lexer = AtfLexer().lexer
+        text = self.editArea.text
+        styledoc = self.editArea.getStyledDocument()
+        splittext = text.split('\n')
+        lexer.input(text)
+        for tok in lexer:
+            if tok.type == 'AMPERSAND':
+                linelenght = len(splittext[tok.lineno-1])
+                styledoc.setCharacterAttributes(tok.lexpos,
+                                                linelenght,
+                                                self.colors['green4'],
+                                                True)
+            if tok.type == 'LEM':
+                linelenght = len(splittext[tok.lineno-1])
+                styledoc.setCharacterAttributes(tok.lexpos,
+                                                linelenght,
+                                                self.colors['darkslateblue'],
+                                                True)
