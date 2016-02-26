@@ -87,7 +87,7 @@ class HTTPRequest:
             message_type = 'Response'
 
         for key in kwargs['keys']:
-            osc_data_keys += '\n                            <osc-data:key>{}</osc-data:key>'.format(key)
+            osc_data_keys += '<osc-data:key>{}</osc-data:key>'.format(key)
 
         envelope = """<?xml version="1.0" encoding="UTF-8"?>
             <SOAP-ENV:Envelope
