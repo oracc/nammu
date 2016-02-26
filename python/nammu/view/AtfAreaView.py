@@ -66,45 +66,7 @@ class AtfAreaView(JPanel):
                                        StyleConstants.Foreground,
                                        Color(65, 105, 225))
 
-    def paint_word(self, word):
-        doc = self.editArea.getDocument()
-        text = doc.getText(0, doc.getLength())
-        start = 0
-        here = text.find(word, start)
-        hiliter = self.editArea.getHighlighter()
-        while here > -1:
-            hiliter.addHighlight(here, here + len(word), self.painter)
-            start = here + len(word)
-            here = text.find(word, start)
-
-    def reset_paint(self):
-        hiliter = self.editArea.getHighlighter()
-        hiliter.removeAllHighlights()
-
-    def paint_index(self, word):
-        doc = self.editArea.getDocument()
-        text = doc.getText(0, doc.getLength())
-        start = 0
-        here = text.find(word, start)
-        hiliter = self.editArea.getHighlighter()
-        while here > -1:
-            hiliter.addHighlight(here, here + len(word), self.painter)
-            start = here + len(word)
-            here = text.find(word, start)
-
     def syntax_highlight(self):
-        lexer = AtfLexer().lexer
-        text = self.editArea.text
-        hiliter = self.editArea.getHighlighter()
-        splittext = text.split('\n')
-        lexer.input(text)
-        for tok in lexer:
-            if tok.type == 'LEM':
-                linelenght = len(splittext[tok.lineno])
-                hiliter.addHighlight(tok.lexpos, tok.lexpos + linelenght,
-                                     self.painter)
-
-    def syntax_highlight2(self):
         lexer = AtfLexer().lexer
         text = self.editArea.text
         styledoc = self.editArea.getStyledDocument()
