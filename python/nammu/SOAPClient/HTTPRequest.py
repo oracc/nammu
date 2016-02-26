@@ -17,51 +17,36 @@ class HTTPRequest:
                                             kwargs['attachment'])
             else:
                 self.create_response_message(kwargs['keys'])
-        else:
-            pass
 
     def create_request_message(self, command, keys, attachment):
-        self.create_soap_envelope(command=command, keys=keys, attachment=attachment)
-        # mtompkg = self.create_mtom_package(type='multipart', host=self.url, envelope=self.envelope, attachment=attachment)
-        #
-        # mtompkg = MIMEMultipart('related',boundary='============boundary============', charset='utf-8', type='application/xop+xml', start='<SOAP-ENV:Envelope>')
-        # #Doesn't like the hyphen in start-info when passing as MIMEMultipart param
-        # mtompkg.set_param('start-info', 'application/soap+xml')
-        # mtompkg['Host'] = "http://oracc.museum.upenn.edu:8085"
-        # mtompkg['Connection'] = "close"
-        # del(mtompkg['mime-version'])
-        #
-        # rootpkg = MIMEApplication(envelope, 'xop+xml', encode_7or8bit)
-        # rootpkg.set_param('charset', 'utf-8')
-        # rootpkg.set_param('type', 'application/soap+xml')
-        # rootpkg.add_header('Content-ID', '<SOAP-ENV:Envelope>')
-        # del(rootpkg['Content-Transfer-Encoding'])
-        # rootpkg.add_header('Content-Transfer-Encoding', 'binary')
-        # del(rootpkg['mime-version'])
-        #
-        # mtompkg.attach(rootpkg)
-        #
-        # document = MIMEBase('*','*')
-        # document['Content-Transfer-Encoding'] = "binary"
-        # document['Content-ID'] = "<id6>"
-        # filename = "./osc-debug-2/request.zip"
-        # document.set_payload(open(filename,'rb').read())
-        # del(document['mime-version'])
-        #
-        # mtompkg.attach(document)
-        #
-        #
-        # # extract body string from MIMEMultipart message
-        # bound = '--%s' % (mtompkg.get_boundary(), )
-        # marray = mtompkg.as_string().split(bound)
-        # mtombody = bound
-        # mtombody += bound.join(marray[1:])
-        #
-        # # set Content-Length
-        # mtompkg.add_header("Content-Length", str(len(mtombody)))
+        """
+        Send attachment to server containing ATF file and necessary data to
+        run given command (validate, lemmatise, etc).
+        """
+        self.
+
+        self.create_soap_envelope(command=command,
+                                  keys=keys,
+                                  attachment=attachment)
 
     def create_response_message(self, keys):
+        """
+        Asks the server for the response request.zip attachment containing
+        validated/lemmantised/etc ATF file.
+        """
         self.create_soap_envelope(keys=keys)
+
+    def create_request_body(self):
+        pass
+
+    def create_request_headers(self):
+        request_headers = ['Host', 'Content-Length', 'Connection']
+        body_headers = ['Content-ID', 'Content-Transfer-Encoding']
+        request_header_values = [self.url, len(str(mtombody)), 'close']
+        envelope_header_values = ['<SOAP-ENV:Envelope>', 'binary']
+        attachment_header_values = ['request_zip', 'binary']
+
+        pass
 
     def create_soap_envelope(self, **kwargs):
         """
@@ -114,30 +99,6 @@ class HTTPRequest:
 
     def get_soap_envelope(self):
         return self.envelope
-
-    def create_request_soap_envelope(self, command, atf_file, zip_file):
-        """
-        Customizes SOAP envelope with request user options.
-        """
-        pass
-
-    def create_response_soap_envelope(self, id):
-        """
-        Customizes SOAP envelope with ATF file's ID.
-        """
-        pass
-
-    def generate_boundary(self):
-        """
-        Generate random boundary to separate HTTP POST request's areas.
-        """
-        pass
-
-    def generate_cid(self):
-        """
-        Generate random reference to attachment.
-        """
-        pass
 
     def get_headers(self):
         """
