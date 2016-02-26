@@ -3,7 +3,7 @@ import xml.dom.minidom
 from ..SOAPClient.SOAPClient import SOAPClient
 from ..SOAPClient.HTTPRequest import HTTPRequest
 
-class TestSOAP:
+class TestSOAP(object):
 
     @pytest.mark.xfail
     def test_http_post_headers(self):
