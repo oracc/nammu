@@ -4,36 +4,18 @@ from ..SOAPClient.SOAPClient import SOAPClient
 from ..SOAPClient.HTTPRequest import HTTPRequest
 
 class TestSOAP:
-    def setup(self):
-        pass
 
-    def teardown(self):
-        pass
-
-    def test_send_request(self):
-        pass
-
-    # def test_http_post_headers(self):
-    #     goal_headers = {
-    #         'Connection': 'close',
-    #         'Content-Type': 'multipart/related; start="<SOAP-ENV:Envelope>"; charset="utf-8"; type="application/xop+xml"; boundary="============boundary============"; start-info="application/soap+xml"',
-    #         'Host': 'http://oracc.museum.upenn.edu:8085'
-    #     }
-    #     client = SOAPClient('http://oracc.museum.upenn.edu:8085', method='POST')
-    #     request = client.create_request()
-    #     test_headers = requests.get_headers()
-    #     assert test_headers == goal_headers
-    #
-    # def test_http_get_headers(self):
-    #     goal_headers = {
-    #         'Connection': 'close',
-    #         'Content-Type': 'multipart/related; start="<SOAP-ENV:Envelope>"; charset="utf-8"; type="application/xop+xml"; boundary="============boundary============"; start-info="application/soap+xml"',
-    #         'Host': 'http://oracc.museum.upenn.edu:8085'
-    #     }
-    #     client = SOAPClient('http://oracc.museum.upenn.edu:8085', method='POST')
-    #     request = client.create_request()
-    #     test_headers = requests.get_headers()
-    #     assert test_headers == goal_headers
+    @pytest.mark.xfail
+    def test_http_post_headers(self):
+        goal_headers = {
+            'Connection': 'close',
+            'Content-Type': 'multipart/related; start="<SOAP-ENV:Envelope>"; charset="utf-8"; type="application/xop+xml"; boundary="============boundary============"; start-info="application/soap+xml"',
+            'Host': 'http://oracc.museum.upenn.edu:8085'
+        }
+        client = SOAPClient('http://oracc.museum.upenn.edu:8085', method='POST')
+        request = client.create_request()
+        test_headers = requests.get_headers()
+        assert test_headers == goal_headers
 
     def test_soap_request_envelope(self):
         goal_envelope = """<?xml version="1.0" encoding="UTF-8"?>
@@ -103,15 +85,3 @@ class TestSOAP:
             if not line.strip() == '':
                 pretty_str += line
         return pretty_str
-
-    def test_http_payload(self):
-        pass
-
-    def test_get_response_ok(self):
-        pass
-
-    def test_http_body(self):
-        pass
-
-    def test_response_ready(self):
-        pass
