@@ -66,10 +66,7 @@ class TestSOAP:
                               keys=['tests/mini', '00atf/hyphens.atf'],
                               attachment='resources/test/request.zip')
         test_envelope = client.request.get_soap_envelope()
-        test_xml = xml.dom.minidom.parseString(test_envelope)
-        goal_xml = xml.dom.minidom.parseString(goal_envelope)
-        assert self.pretty_print(test_xml) == self.pretty_print(goal_xml)
-
+        assert self.compare_soap_envelopes(test_envelope, goal_envelope)
 
     def test_soap_response_envelope(self):
         goal_envelope = """<?xml version="1.0" encoding="UTF-8"?>
@@ -93,9 +90,12 @@ class TestSOAP:
         client = SOAPClient('http://oracc.museum.upenn.edu:8085', method='POST')
         client.create_request(keys=['ZO3vNg'])
         test_envelope = client.request.get_soap_envelope()
-        test_xml = xml.dom.minidom.parseString(test_envelope)
-        goal_xml = xml.dom.minidom.parseString(goal_envelope)
-        assert self.pretty_print(test_xml) == self.pretty_print(goal_xml)
+        assert self.compare_soap_envelopes(test_envelope, goal_envelope)
+
+    def compare_soap_envelopes(self, test, goal):
+        test_xml = xml.dom.minidom.parseString(test)
+        goal_xml = xml.dom.minidom.parseString(goal)
+        return self.pretty_print(test_xml) == self.pretty_print(goal_xml)
 
     def pretty_print(self, str):
         pretty_str = ''
