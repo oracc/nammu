@@ -3,7 +3,7 @@ import logging
 import httplib as http_client
 from HTTPRequest import HTTPRequest
 
-class SOAPClient:
+class SOAPClient(object):
     """
     Sends and retrieves information to and from the ORACC SOAP server.
     """

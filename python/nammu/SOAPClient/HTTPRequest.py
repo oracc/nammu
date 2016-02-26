@@ -3,7 +3,7 @@ from email.encoders import encode_7or8bit
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 
-class HTTPRequest:
+class HTTPRequest(object):
     """
     Builds an HTTP GET or POST request that ORACC's server understands to send
     and retrieve ATF data.
