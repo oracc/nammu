@@ -3,9 +3,6 @@ import logging
 import httplib as http_client
 from HTTPRequest import HTTPRequest
 
-# Dunno if this is the right place to set up logging
-logging.basicConfig()
-
 class SOAPClient:
     """
     Sends and retrieves information to and from the ORACC SOAP server.
@@ -13,6 +10,7 @@ class SOAPClient:
     def __init__(self, url, method):
         self.url = url
         self.method = method
+        logging.basicConfig()
         self.logger, self.request_log = self.setup_logger()
 
     def setup_logger(self):

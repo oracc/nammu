@@ -23,8 +23,6 @@ class HTTPRequest:
         Send attachment to server containing ATF file and necessary data to
         run given command (validate, lemmatise, etc).
         """
-        self.
-
         self.create_soap_envelope(command=command,
                                   keys=keys,
                                   attachment=attachment)
