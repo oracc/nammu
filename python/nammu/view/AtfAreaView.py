@@ -7,6 +7,7 @@ Initializes the ATF (edit/model) view and sets its layout.
 '''
 
 from java.awt import Font, BorderLayout, Dimension, Color
+from java.awt.event import KeyListener
 from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultHighlighter, StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
@@ -35,14 +36,14 @@ class AtfAreaView(JPanel):
         self.editArea = JTextPane()
         self.editArea.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.editArea.font = Font("Monaco", Font.PLAIN, 14)
-
+        self.styledoc = self.editArea.getStyledDocument()
         # Will need scrolling controls
         scrollingText = JScrollPane(self.editArea)
         scrollingText.setPreferredSize(Dimension(1, 500))
 
         # Add to parent panel
         self.add(scrollingText, BorderLayout.CENTER)
-        self.painter = DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW)
+
         sc = StyleContext.getDefaultStyleContext()
         self.colors = {}
         self.colors['red2'] = sc.addAttribute(
@@ -65,23 +66,46 @@ class AtfAreaView(JPanel):
                                        SimpleAttributeSet.EMPTY,
                                        StyleConstants.Foreground,
                                        Color(65, 105, 225))
+        self.colors['black'] = sc.addAttribute(
+                                       SimpleAttributeSet.EMPTY,
+                                       StyleConstants.Foreground,
+                                       Color(0, 0, 0))
+        self.editArea.addKeyListener(AtfAreaKeyListener(self))
 
     def syntax_highlight(self):
-        lexer = AtfLexer().lexer
+        lexer = AtfLexer(skipinvalid=True).lexer
         text = self.editArea.text
-        styledoc = self.editArea.getStyledDocument()
         splittext = text.split('\n')
         lexer.input(text)
+        self.styledoc.setCharacterAttributes(0, len(text),
+                                             self.colors['black'],
+                                             True)
         for tok in lexer:
             if tok.type == 'AMPERSAND':
                 linelenght = len(splittext[tok.lineno-1])
-                styledoc.setCharacterAttributes(tok.lexpos,
-                                                linelenght,
-                                                self.colors['green4'],
-                                                True)
+                self.styledoc.setCharacterAttributes(tok.lexpos, linelenght,
+                                                     self.colors['green4'],
+                                                     True)
             if tok.type == 'LEM':
                 linelenght = len(splittext[tok.lineno-1])
-                styledoc.setCharacterAttributes(tok.lexpos,
-                                                linelenght,
-                                                self.colors['darkslateblue'],
-                                                True)
+                self.styledoc.setCharacterAttributes(tok.lexpos, linelenght,
+                                                     self.colors['darkslateblue'],
+                                                     True)
+
+
+class AtfAreaKeyListener(KeyListener):
+    def __init__(self, atfareaview):
+        self.atfareaview = atfareaview
+
+    def keyReleased(self, ke):
+        self.atfareaview.syntax_highlight()
+
+    # We have to implement these since the baseclass versions
+    # raise non implemented errors when called by the event.
+    def keyPressed(self, ke):
+        pass
+
+    def keyTyped(self, ke):
+        # It would be more natural to use this event. However
+        # this gives the string before typing
+        pass
