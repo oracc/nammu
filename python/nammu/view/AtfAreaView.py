@@ -79,11 +79,11 @@ class AtfAreaView(JPanel):
 
         self.tokencolorlu = {}
         self.tokencolorlu['AMPERSAND'] = ('green', True)
-        for i in set(AtfLexer.protocols)-set(['NOTE']):
+        for i in AtfLexer.protocols:
             self.tokencolorlu[i] = ('magenta', False)
         for i in AtfLexer.protocol_keywords:
             self.tokencolorlu[i] = ('magenta', False)
-        for i in set(AtfLexer.structures)-set(['NOTE']):
+        for i in AtfLexer.structures:
             self.tokencolorlu[i] = ('violet', False)
         for i in AtfLexer.long_argument_structures:
             self.tokencolorlu[i] = ('violet', False)
@@ -99,41 +99,44 @@ class AtfAreaView(JPanel):
         self.tokencolorlu['SEMICOLON'] = ('red', False)
         self.tokencolorlu['HAT'] = ('cyan', False)
 
+        self.tokencolorlu['NOTE'] = {}
+        self.tokencolorlu['NOTE']['flagged'] = ('violet', False)
+        self.tokencolorlu['NOTE']['para'] = ('magenta', False)
+
+        self.tokencolorlu['PROJECT'] = {}
+        self.tokencolorlu['PROJECT']['flagged'] = ('magenta', False)
+        self.tokencolorlu['PROJECT']['transctrl'] = ('green', False)
+        self.tokencolorlu['default'] = ('black', False)
 
     def syntax_highlight(self):
         lexer = AtfLexer(skipinvalid=True).lexer
         text = self.editArea.text
         splittext = text.split('\n')
         lexer.input(text)
+        # Reset all styling
+        defaultcolor = self.tokencolorlu['default'][0]
         self.styledoc.setCharacterAttributes(0, len(text),
-                                             self.colors['black'],
+                                             self.colors[defaultcolor],
                                              True)
         for tok in lexer:
             if tok.type in self.tokencolorlu:
-                color = self.tokencolorlu[tok.type][0]
-                styleline = self.tokencolorlu[tok.type][1]
+                if type(self.tokencolorlu[tok.type]) is dict:
+                    # the token should be styled differently depending
+                    # on state
+                    try:
+                        state = lexer.current_state()
+                        color = self.tokencolorlu[tok.type][state][0]
+                        styleline = self.tokencolorlu[tok.type][state][1]
+                    except KeyError:
+                        color = self.tokencolorlu['default'][0]
+                        styleline = self.tokencolorlu['default'][1]
+                else:
+                    color = self.tokencolorlu[tok.type][0]
+                    styleline = self.tokencolorlu[tok.type][1]
                 if styleline:
                     mylength = len(splittext[tok.lineno-1])
                 else:
                     mylength = len(tok.value)
-                self.styledoc.setCharacterAttributes(tok.lexpos, mylength,
-                                                     self.colors[color],
-                                                     True)
-            if tok.type == 'NOTE':
-                if lexer.current_state() == 'flagged':
-                    color = self.tokencolorlu['TABLET'][0]
-                elif lexer.current_state() == 'para':
-                    color = self.tokencolorlu['ATF'][0]
-                mylength = len(tok.value)
-                self.styledoc.setCharacterAttributes(tok.lexpos, mylength,
-                                                     self.colors[color],
-                                                     True)
-            if tok.type == 'PROJECT':
-                if lexer.current_state() == 'flagged':
-                    color = self.tokencolorlu['ATF'][0]
-                elif lexer.current_state() == 'transctrl':
-                    color = self.tokencolorlu['PARALLEL'][0]
-                mylength = len(tok.value)
                 self.styledoc.setCharacterAttributes(tok.lexpos, mylength,
                                                      self.colors[color],
                                                      True)
