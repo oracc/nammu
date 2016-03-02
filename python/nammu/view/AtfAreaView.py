@@ -45,32 +45,59 @@ class AtfAreaView(JPanel):
         self.add(scrollingText, BorderLayout.CENTER)
 
         sc = StyleContext.getDefaultStyleContext()
+        # Syntax highlighting colors based on SOLARIZED
+        self.colorlut = {}
+        # Black backgroud tones
+        self.colorlut['base03'] = (0, 43, 54)
+        self.colorlut['base02'] = (7, 54, 66)
+        # Content tones
+        self.colorlut['base01'] = (88, 110, 117)
+        self.colorlut['base00'] = (101, 123, 131)
+        self.colorlut['base0'] = (131, 148, 150)
+        self.colorlut['base1'] = (147, 161, 161)
+        # White background tones
+        self.colorlut['base2'] = (238, 232, 213)
+        self.colorlut['base3'] = (253, 246, 227)
+        # Accent Colors
+        self.colorlut['yellow'] = (181, 137, 0)
+        self.colorlut['orange'] = (203, 75, 22)
+        self.colorlut['red'] = (220,  50, 47)
+        self.colorlut['magenta'] = (211,  54, 130)
+        self.colorlut['violet'] = (108, 113, 196)
+        self.colorlut['blue'] = (38, 139, 210)
+        self.colorlut['cyan'] = (42, 161, 152)
+        self.colorlut['green'] = (133, 153, 0)
+        self.colorlut['black'] = (0, 0, 0)
+
         self.colors = {}
-        self.colors['red2'] = sc.addAttribute(
-                                       SimpleAttributeSet.EMPTY,
-                                       StyleConstants.Foreground,
-                                       Color(238, 0, 0))
-        self.colors['green4'] = sc.addAttribute(
-                                       SimpleAttributeSet.EMPTY,
-                                       StyleConstants.Foreground,
-                                       Color(0, 139, 0))
-        self.colors['darkorchid'] = sc.addAttribute(
-                                       SimpleAttributeSet.EMPTY,
-                                       StyleConstants.Foreground,
-                                       Color(153, 50, 204))
-        self.colors['darkslateblue'] = sc.addAttribute(
-                                       SimpleAttributeSet.EMPTY,
-                                       StyleConstants.Foreground,
-                                       Color(72, 61, 139))
-        self.colors['royalblue'] = sc.addAttribute(
-                                       SimpleAttributeSet.EMPTY,
-                                       StyleConstants.Foreground,
-                                       Color(65, 105, 225))
-        self.colors['black'] = sc.addAttribute(
-                                       SimpleAttributeSet.EMPTY,
-                                       StyleConstants.Foreground,
-                                       Color(0, 0, 0))
+        for color in self.colorlut:
+            self.colors[color] = sc.addAttribute(
+                                           SimpleAttributeSet.EMPTY,
+                                           StyleConstants.Foreground,
+                                           Color(*self.colorlut[color]))
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
+
+        self.tokencolorlu = {}
+        self.tokencolorlu['AMPERSAND'] = ('green', True, 0)
+        for i in AtfLexer.protocols:
+            self.tokencolorlu[i] = ('magenta', False, 1)
+        for i in AtfLexer.protocol_keywords:
+            self.tokencolorlu[i] = ('magenta', False, 0)
+        for i in set(AtfLexer.structures)-set(['NOTE']):
+            self.tokencolorlu[i] = ('violet', False, 1)
+        for i in AtfLexer.long_argument_structures:
+            self.tokencolorlu[i] = ('violet', False, 1)
+        self.tokencolorlu['DOLLAR'] = ('orange', False, 0)
+        for i in AtfLexer.dollar_keywords:
+            self.tokencolorlu[i] = ('orange', False, 0)
+        self.tokencolorlu['REFERENCE'] = ('base01', False, 0)
+        self.tokencolorlu['COMMENT'] = ('base1', True, 0)
+        for i in AtfLexer.translation_keywords:
+            self.tokencolorlu[i] = ('green', False, 0)
+        self.tokencolorlu['LINELABEL'] = ('yellow', False, 0)
+        self.tokencolorlu['LEM'] = ('red', False, 1)
+        self.tokencolorlu['SEMICOLON'] = ('red', False, 0)
+        self.tokencolorlu['HAT'] = ('cyan', False, 0)
 
     def syntax_highlight(self):
         lexer = AtfLexer(skipinvalid=True).lexer
@@ -81,15 +108,16 @@ class AtfAreaView(JPanel):
                                              self.colors['black'],
                                              True)
         for tok in lexer:
-            if tok.type == 'AMPERSAND':
-                linelenght = len(splittext[tok.lineno-1])
-                self.styledoc.setCharacterAttributes(tok.lexpos, linelenght,
-                                                     self.colors['green4'],
-                                                     True)
-            if tok.type == 'LEM':
-                linelenght = len(splittext[tok.lineno-1])
-                self.styledoc.setCharacterAttributes(tok.lexpos, linelenght,
-                                                     self.colors['darkslateblue'],
+            if tok.type in self.tokencolorlu:
+                color = self.tokencolorlu[tok.type][0]
+                styleline = self.tokencolorlu[tok.type][1]
+                offset = self.tokencolorlu[tok.type][2]
+                if styleline:
+                    mylength = len(splittext[tok.lineno-1])
+                else:
+                    mylength = len(tok.value) + offset
+                self.styledoc.setCharacterAttributes(tok.lexpos, mylength,
+                                                     self.colors[color],
                                                      True)
 
 
