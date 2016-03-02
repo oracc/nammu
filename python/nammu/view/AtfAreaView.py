@@ -78,26 +78,27 @@ class AtfAreaView(JPanel):
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
 
         self.tokencolorlu = {}
-        self.tokencolorlu['AMPERSAND'] = ('green', True, 0)
-        for i in AtfLexer.protocols:
-            self.tokencolorlu[i] = ('magenta', False, 1)
+        self.tokencolorlu['AMPERSAND'] = ('green', True)
+        for i in set(AtfLexer.protocols)-set(['NOTE']):
+            self.tokencolorlu[i] = ('magenta', False)
         for i in AtfLexer.protocol_keywords:
-            self.tokencolorlu[i] = ('magenta', False, 0)
+            self.tokencolorlu[i] = ('magenta', False)
         for i in set(AtfLexer.structures)-set(['NOTE']):
-            self.tokencolorlu[i] = ('violet', False, 1)
+            self.tokencolorlu[i] = ('violet', False)
         for i in AtfLexer.long_argument_structures:
-            self.tokencolorlu[i] = ('violet', False, 1)
-        self.tokencolorlu['DOLLAR'] = ('orange', False, 0)
+            self.tokencolorlu[i] = ('violet', False)
+        self.tokencolorlu['DOLLAR'] = ('orange', False)
         for i in AtfLexer.dollar_keywords:
-            self.tokencolorlu[i] = ('orange', False, 0)
-        self.tokencolorlu['REFERENCE'] = ('base01', False, 0)
-        self.tokencolorlu['COMMENT'] = ('base1', True, 0)
+            self.tokencolorlu[i] = ('orange', False)
+        self.tokencolorlu['REFERENCE'] = ('base01', False)
+        self.tokencolorlu['COMMENT'] = ('base1', True)
         for i in AtfLexer.translation_keywords:
-            self.tokencolorlu[i] = ('green', False, 0)
-        self.tokencolorlu['LINELABEL'] = ('yellow', False, 0)
-        self.tokencolorlu['LEM'] = ('red', False, 1)
-        self.tokencolorlu['SEMICOLON'] = ('red', False, 0)
-        self.tokencolorlu['HAT'] = ('cyan', False, 0)
+            self.tokencolorlu[i] = ('green', False)
+        self.tokencolorlu['LINELABEL'] = ('yellow', False)
+        self.tokencolorlu['LEM'] = ('red', False)
+        self.tokencolorlu['SEMICOLON'] = ('red', False)
+        self.tokencolorlu['HAT'] = ('cyan', False)
+
 
     def syntax_highlight(self):
         lexer = AtfLexer(skipinvalid=True).lexer
@@ -111,15 +112,31 @@ class AtfAreaView(JPanel):
             if tok.type in self.tokencolorlu:
                 color = self.tokencolorlu[tok.type][0]
                 styleline = self.tokencolorlu[tok.type][1]
-                offset = self.tokencolorlu[tok.type][2]
                 if styleline:
                     mylength = len(splittext[tok.lineno-1])
                 else:
-                    mylength = len(tok.value) + offset
+                    mylength = len(tok.value)
                 self.styledoc.setCharacterAttributes(tok.lexpos, mylength,
                                                      self.colors[color],
                                                      True)
-
+            if tok.type == 'NOTE':
+                if lexer.current_state() == 'flagged':
+                    color = self.tokencolorlu['TABLET'][0]
+                elif lexer.current_state() == 'para':
+                    color = self.tokencolorlu['ATF'][0]
+                mylength = len(tok.value)
+                self.styledoc.setCharacterAttributes(tok.lexpos, mylength,
+                                                     self.colors[color],
+                                                     True)
+            if tok.type == 'PROJECT':
+                if lexer.current_state() == 'flagged':
+                    color = self.tokencolorlu['ATF'][0]
+                elif lexer.current_state() == 'transctrl':
+                    color = self.tokencolorlu['PARALLEL'][0]
+                mylength = len(tok.value)
+                self.styledoc.setCharacterAttributes(tok.lexpos, mylength,
+                                                     self.colors[color],
+                                                     True)
 
 class AtfAreaKeyListener(KeyListener):
     def __init__(self, atfareaview):
