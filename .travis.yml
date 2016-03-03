@@ -4,4 +4,4 @@ language: java
 
 script:
 
-  - mvn clean test
+  - mvn clean test -DskipTests=false
