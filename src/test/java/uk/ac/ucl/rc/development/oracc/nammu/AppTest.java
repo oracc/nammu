@@ -19,11 +19,12 @@ public class AppTest {
       PySystemState systemState = Py.getSystemState();
       systemState.path.append(new PyString("target/jython-plugins-tmp/build/pytest"));
       systemState.path.append(new PyString("target/jython-plugins-tmp/build/py"));
+      systemState.path.append(new PyString("target/jython-plugins-tmp/build/requests"));
       PythonInterpreter interpreter = new PythonInterpreter();
       systemState.__setattr__("_jy_interpreter", Py.java2py(interpreter));
       String command = "try:\n "
                      + "  import pytest\n "
-                     + "  pytest.main()\n"
+                     + "  pytest.main(\" python/nammu/test/\")\n"
                      + "except "
                      + "  SystemExit: pass";
       interpreter.exec(command);
