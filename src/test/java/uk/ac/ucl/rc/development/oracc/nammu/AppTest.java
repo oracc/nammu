@@ -1,5 +1,6 @@
 package uk.ac.ucl.rc.development.oracc.nammu;
 
+import org.junit.Test;
 import org.python.core.Py;
 import org.python.core.PyString;
 import org.python.core.PyException;
@@ -15,6 +16,7 @@ import org.python.util.PythonInterpreter;
  */
 public class AppTest {
 
+    @Test
     public void testApp() throws PyException {
       PySystemState systemState = Py.getSystemState();
       systemState.path.append(new PyString("target/jython-plugins-tmp/build/pytest"));
