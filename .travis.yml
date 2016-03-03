@@ -4,6 +4,8 @@ dist: trusty
 
 language: java
 
-script:
+jdk:
+  - oraclejdk8
 
-  - mvn clean test -DskipTests=false
+script:
+  - mvn clean test 
