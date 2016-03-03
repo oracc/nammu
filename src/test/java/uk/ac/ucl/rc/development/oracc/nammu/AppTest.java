@@ -1,12 +1,13 @@
 package uk.ac.ucl.rc.development.oracc.nammu;
 
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 import org.python.core.Py;
+import org.python.core.PyInteger;
 import org.python.core.PyString;
 import org.python.core.PyException;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
-
 /**
  * This is the entry point for Nammu's tests.
  *
@@ -26,9 +27,11 @@ public class AppTest {
       systemState.__setattr__("_jy_interpreter", Py.java2py(interpreter));
       String command = "try:\n "
                      + "  import pytest\n "
-                     + "  pytest.main(\" python/nammu/test/\")\n"
+                     + "  testresult = pytest.main(\" python/nammu/test/\")\n"
                      + "except "
                      + "  SystemExit: pass";
       interpreter.exec(command);
+      PyInteger testresult = (PyInteger)interpreter.get("testresult");
+      assertEquals(testresult.asInt(), 0);
     }
 }
