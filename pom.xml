@@ -93,6 +93,7 @@
 				</executions>
 				<configuration>
 					<libraries>
+						<param>requests</param>
 						<param>pytest</param>
 						<param>mako</param>
 						<param>ply</param>
