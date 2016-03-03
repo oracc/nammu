@@ -1,0 +1,7 @@
+sudo: false
+
+language: java
+
+script:
+
+  - mvn clean test
