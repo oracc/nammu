@@ -1,5 +1,7 @@
 sudo: false
 
+os: osx
+
 language: java
 
 script:
