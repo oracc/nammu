@@ -12,8 +12,8 @@ from javax.swing import JMenuBar, JMenu, JMenuItem
 from java.awt.event import KeyEvent
 
 class MenuView(JMenuBar):
-    
-    def __init__(self, controller):      
+
+    def __init__(self, controller):
         #Save reference to controller to handle events
         self.controller = controller
 
@@ -44,7 +44,7 @@ class MenuView(JMenuBar):
         menuItems["File"]["Save"] = [KeyEvent.VK_S, "saveFile"]
         menuItems["File"]["Close"] = [KeyEvent.VK_W, "closeFile"]
         menuItems["File"]["Print"] = [KeyEvent.VK_P, "printFile"]
-        menuItems["File"]["Quit"] = [KeyEvent.VK_Q, "quit"] 
+        menuItems["File"]["Quit"] = [KeyEvent.VK_Q, "quit"]
 
         menuItems["Edit"] = {}
         menuItems["Edit"] = collections.OrderedDict()
@@ -52,25 +52,25 @@ class MenuView(JMenuBar):
         menuItems["Edit"]["Redo"] = [KeyEvent.VK_R, "redo"]
         menuItems["Edit"]["Copy"] = [KeyEvent.VK_C, "copy"]
         menuItems["Edit"]["Cut"] = [KeyEvent.VK_X, "cut"]
-        menuItems["Edit"]["Paste"] = [KeyEvent.VK_V, "paste"] 
+        menuItems["Edit"]["Paste"] = [KeyEvent.VK_V, "paste"]
 
         menuItems["ATF"] = {}
         menuItems["ATF"] = collections.OrderedDict()
         menuItems["ATF"]["Validate"] = [KeyEvent.VK_D, "validate"]
-        menuItems["ATF"]["Lemmatise"] = [KeyEvent.VK_L, "lemmatise"] 
+        menuItems["ATF"]["Lemmatise"] = [KeyEvent.VK_L, "lemmatise"]
 
         menuItems["Window"] = {}
         menuItems["Window"] = collections.OrderedDict()
         menuItems["Window"]["Display Model View"] = [KeyEvent.VK_M, "displayModelView"]
         menuItems["Window"]["View/Hide Console"] = [KeyEvent.VK_B, "console"]
         menuItems["Window"]["View/Hide Toolbar"] = [KeyEvent.VK_T, "toolbar"]
-        menuItems["Window"]["Unicode Keyboard"] = [KeyEvent.VK_K, "unicode"] 
+        menuItems["Window"]["Unicode Keyboard"] = [KeyEvent.VK_K, "unicode"]
 
         menuItems["Help"] = {}
         menuItems["Help"] = collections.OrderedDict()
-        menuItems["Help"]["Settings"] = [KeyEvent.VK_E, "settings"]
+        menuItems["Help"]["Settings"] = [KeyEvent.VK_E, "editSettings"]
         menuItems["Help"]["Help"] = [KeyEvent.VK_H, "showHelp"]
-        menuItems["Help"]["About"] = [KeyEvent.VK_A, "showAbout"] 
+        menuItems["Help"]["About"] = [KeyEvent.VK_A, "showAbout"]
 
         #Menu Items after which there is a menu separator
         separators = { "File": ["Close", "Print"],
@@ -88,5 +88,3 @@ class MenuView(JMenuBar):
     #Delegate methods not found here to view controller
     def __getattr__(self, name):
         return getattr(self.controller, name)
-
-

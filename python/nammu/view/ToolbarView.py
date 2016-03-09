@@ -24,9 +24,9 @@ class ToolbarView(JToolBar):
         #Content needs to be displayed in an orderly fashion so that buttons are
         #placed where we expect them to be, not in the ramdon order dicts have.
         #We also can't create the tooltips dict e.g.:
-        #tooltips = { 'a' : 'A', 'b' : 'B', 'c' : 'C' } 
-        #because it will still be randomly ordered. Elements need to be added to 
-        #the dict in the order we want them to be placed in the toolbar for 
+        #tooltips = { 'a' : 'A', 'b' : 'B', 'c' : 'C' }
+        #because it will still be randomly ordered. Elements need to be added to
+        #the dict in the order we want them to be placed in the toolbar for
         #OrderedDict to work
         tooltips = {}
         tooltips = collections.OrderedDict()
@@ -39,8 +39,8 @@ class ToolbarView(JToolBar):
         tooltips['redo'] = 'Redo last undone action'
         tooltips['copy'] = 'Copy text selection'
         tooltips['cut'] = 'Cut text selection'
-        tooltips['validate'] = 'Check current ATF correctness'
         tooltips['paste'] = 'Paste clipboard content'
+        tooltips['validate'] = 'Check current ATF correctness'
         tooltips['lemmatise'] = 'Obtain lemmas for current ATF text'
         tooltips['unicode'] = 'Use Unicode characters'
         tooltips['console'] = 'View/Hide Console'
@@ -68,7 +68,3 @@ class ToolbarView(JToolBar):
         loader = ClassLoader.getSystemClassLoader()
         #Load image
         return loader.getResource("resources/images/" + name.lower() + ".png")
-
-
-
-
