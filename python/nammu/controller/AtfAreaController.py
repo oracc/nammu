@@ -8,23 +8,23 @@ Creates the ATF area (edit/object) view and handles its actions.
 
 from ..view.AtfAreaView import AtfAreaView
 
+
 class AtfAreaController(object):
-    
+
     def __init__(self, mainControler):
-        
-        #Create view with a reference to its controller to handle events
+
+        # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
-        
-        #Will also need delegating to parent presenter
+
+        # Will also need delegating to parent presenter
         self.controller = mainControler
-        
+
     def setAtfAreaText(self, text):
         self.view.editArea.setText(text)
-        
+        self.view.syntax_highlight()
+
     def getAtfAreaText(self):
         return self.view.editArea.getText()
-    
+
     def clearAtfArea(self):
         return self.view.editArea.setText("")
-        
-        
