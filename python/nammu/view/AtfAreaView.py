@@ -121,8 +121,8 @@ class AtfAreaView(JPanel):
         for tok in lexer:
             if tok.type in self.tokencolorlu:
                 if type(self.tokencolorlu[tok.type]) is dict:
-                    # the token should be styled differently depending
-                    # on state
+                    # the token should be styled differently depending
+                    # on state
                     try:
                         state = lexer.current_state()
                         color = self.tokencolorlu[tok.type][state][0]
