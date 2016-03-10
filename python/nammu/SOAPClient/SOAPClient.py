@@ -34,13 +34,9 @@ class SOAPClient(object):
         """
         Elaborate HTTP POST request and send it to ORACC's server.
         """
-        self.request
-
         url = "http://oracc.museum.upenn.edu:8085"
-        headers = dict(self.request.mtompkg.items())
-        body = self.request.mtompkg.as_string().split('\r\n', 1)[0]
-        body = body.replace('\r\n', '\n')
-        body = body.replace('\n', '\r\n')
+        headers = dict(self.request.get_headers())
+        body = self.request.get_body()
         self.response = requests.post(url, data=body, headers=headers)
         # try:
         #    response = requests.post(url, data=body, headers=headers, timeout=10)
@@ -61,10 +57,12 @@ class SOAPClient(object):
         Check for a response to the request and obtain response zip file.
         """
         while True:
-            print "Hey"
             ready_response = requests.get('http://oracc.museum.upenn.edu/p/' + id)
             if ready_response.text == "done\n":
                 return
+
+    def get_response(self):
+        return self.response
 
     def parse_response(self):
         """

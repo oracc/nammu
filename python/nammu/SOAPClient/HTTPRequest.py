@@ -36,8 +36,6 @@ class HTTPRequest(object):
         #The headers can't be created until the body is finished since they need
         #it to populate the Content-Length header
         self.set_multipart_headers()
-        print self.mtompkg
-
 
     def create_response_message(self, keys):
         """
@@ -46,9 +44,7 @@ class HTTPRequest(object):
         """
         self.set_soap_envelope(keys=keys)
         self.mtompkg = MIMEApplication(self.envelope, 'soap+xml', encode_7or8bit)
-        self.set_response_params()
-        self.set_response_headers()
-        print self.mtompkg
+        self.mtompkg.add_header("Host", self.url)
 
     def set_response_headers(self):
         del(self.mtompkg['Content-Transfer-Encoding'])
@@ -185,7 +181,12 @@ class HTTPRequest(object):
         """
         Return dict with message body/payload - ready to use by requests module.
         """
-        pass
+        headers = dict(self.mtompkg.items())
+        body = self.mtompkg.as_string().split('\n\n', 1)[1]
+        body = body.replace('\r\n', '\r')
+        body = body.replace('\n', '\r\n')
+        return body
+
 
     def handle_server_error(self):
         """

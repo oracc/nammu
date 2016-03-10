@@ -341,7 +341,7 @@ class NammuController(object):
         client.create_request(keys=[server_id])
         client.send()
 
-        response = client.get_response_text()
+        response = client.get_response()
         print response
 
         self.consoleController.addText(" OK\n")
