@@ -28,13 +28,16 @@ class HTTPRequest(object):
         self.set_soap_envelope(command=command,
                                keys=keys,
                                attachment=attachment)
-
         self.rootpkg = MIMEApplication(self.envelope, 'xop+xml', encode_7or8bit)
         self.set_multipart_payload()
+        self.document = MIMEBase('*','*')
+        self.set_document_payload(attachment)
 
         #The headers can't be created until the body is finished since they need
         #it to populate the Content-Length header
         self.set_multipart_headers()
+        print self.mtompkg
+
 
     def create_response_message(self, keys):
         """
@@ -46,47 +49,53 @@ class HTTPRequest(object):
     def create_request_body(self):
         pass
 
-    def create_request_headers(self):
-        envelope_headers = ['Content-ID', 'Content-Transfer-Encoding']
-        envelope_header_values = ['<SOAP-ENV:Envelope>', 'binary']
-        attachment_header_values = ['request_zip', 'binary']
-        self.request_headers = \
-            dict(zip(request_headers, request_header_values))
-        self.envelope_headers = \
-            dict(zip(envelope_headers, envelope_header_values))
-        self.attachment_headers = \
-            dict(zip(envelope_headers, attachment_header_values))
-
     def set_multipart_payload(self):
-        self.set_multipart_params()
-        self.set_multipart_headers()
+        self.set_payload_headers()
+        self.set_payload_params()
         self.mtompkg.attach(self.rootpkg)
 
+    def set_document_payload(self, attachment):
+        self.set_document_headers()
 
-    def set_multipart_params(self):
+        #TODO: replace with contents of text area
+        attachment = "/tmp/nammu/release/nammu/resources/files/request.zip"
+        self.document.set_payload(open(attachment,'rb').read())
+
+        self.mtompkg.attach(self.document)
+
+
+    def set_document_headers(self):
+        headers = ['Content-ID', 'Content-Transfer-Encoding']
+        values = ['<request_zip>', 'binary']
+        for header, value in zip(headers, values):
+            self.document.add_header(header, value)
+
+    def set_payload_params(self):
         params = ['charset', 'type']
         values = ['utf-8', 'application/soap+xml']
-        for param, value in dict(zip(params, values)).iteritems():
+        for param, value in zip(params, values):
             self.rootpkg.set_param(param, value)
 
-    def set_multipart_headers(self):
+    def set_payload_headers(self):
+        #Content-Transfer-Encoding is set to 7bit by default
+        del(self.rootpkg['Content-Transfer-Encoding'])
         headers = ['Content-ID', 'Content-Transfer-Encoding']
         values = ['<SOAP-ENV:Envelope>', 'binary']
-        for header, value in dict(zip(header, value)):
+        for header, value in zip(headers, values):
             self.rootpkg.add_header(header, value)
 
     def set_multipart_headers(self):
         headers = ['Host', 'Content-Length', 'Connection']
         # values = [self.url, len(str(self.mtombody)), 'close']
         values = [self.url, '1500', 'close']
-        for header, value in dict(zip(headers, values)).iteritems():
+        for header, value in zip(headers, values):
             self.mtompkg.add_header(header, value)
 
     def set_multipart_params(self):
-        params = ['boundary', 'charset', 'type', 'start', 'start-info']
-        values = ['============boundary============', 'utf-8',
-            'application/xop+xml', '<SOAP-ENV:Envelope>', 'application/soap+xml']
-        for param, value in dict(zip(params, values)).iteritems():
+        params = ['charset', 'type', 'start', 'start-info']
+        values = ['utf-8', 'application/xop+xml', '<SOAP-ENV:Envelope>',
+                  'application/soap+xml']
+        for param, value in zip(params, values):
             self.mtompkg.set_param(param, value)
     #
     # def set_element_params(self, params, values, element):
