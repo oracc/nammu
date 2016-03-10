@@ -23,30 +23,85 @@ class HTTPRequest(object):
         Send attachment to server containing ATF file and necessary data to
         run given command (validate, lemmatise, etc).
         """
-        self.create_soap_envelope(command=command,
-                                  keys=keys,
-                                  attachment=attachment)
+        self.mtompkg = MIMEMultipart('related')
+        self.set_multipart_params()
+        self.set_soap_envelope(command=command,
+                               keys=keys,
+                               attachment=attachment)
+
+        self.rootpkg = MIMEApplication(self.envelope, 'xop+xml', encode_7or8bit)
+        self.set_multipart_payload()
+
+        #The headers can't be created until the body is finished since they need
+        #it to populate the Content-Length header
+        self.set_multipart_headers()
 
     def create_response_message(self, keys):
         """
         Asks the server for the response request.zip attachment containing
         validated/lemmantised/etc ATF file.
         """
-        self.create_soap_envelope(keys=keys)
+        self.set_soap_envelope(keys=keys)
 
     def create_request_body(self):
         pass
 
     def create_request_headers(self):
-        request_headers = ['Host', 'Content-Length', 'Connection']
-        body_headers = ['Content-ID', 'Content-Transfer-Encoding']
-        request_header_values = [self.url, len(str(mtombody)), 'close']
+        envelope_headers = ['Content-ID', 'Content-Transfer-Encoding']
         envelope_header_values = ['<SOAP-ENV:Envelope>', 'binary']
         attachment_header_values = ['request_zip', 'binary']
+        self.request_headers = \
+            dict(zip(request_headers, request_header_values))
+        self.envelope_headers = \
+            dict(zip(envelope_headers, envelope_header_values))
+        self.attachment_headers = \
+            dict(zip(envelope_headers, attachment_header_values))
 
-        pass
+    def set_multipart_payload(self):
+        self.set_multipart_params()
+        self.set_multipart_headers()
+        self.mtompkg.attach(self.rootpkg)
 
-    def create_soap_envelope(self, **kwargs):
+
+    def set_multipart_params(self):
+        params = ['charset', 'type']
+        values = ['utf-8', 'application/soap+xml']
+        for param, value in dict(zip(params, values)).iteritems():
+            self.rootpkg.set_param(param, value)
+
+    def set_multipart_headers(self):
+        headers = ['Content-ID', 'Content-Transfer-Encoding']
+        values = ['<SOAP-ENV:Envelope>', 'binary']
+        for header, value in dict(zip(header, value)):
+            self.rootpkg.add_header(header, value)
+
+    def set_multipart_headers(self):
+        headers = ['Host', 'Content-Length', 'Connection']
+        # values = [self.url, len(str(self.mtombody)), 'close']
+        values = [self.url, '1500', 'close']
+        for header, value in dict(zip(headers, values)).iteritems():
+            self.mtompkg.add_header(header, value)
+
+    def set_multipart_params(self):
+        params = ['boundary', 'charset', 'type', 'start', 'start-info']
+        values = ['============boundary============', 'utf-8',
+            'application/xop+xml', '<SOAP-ENV:Envelope>', 'application/soap+xml']
+        for param, value in dict(zip(params, values)).iteritems():
+            self.mtompkg.set_param(param, value)
+    #
+    # def set_element_params(self, params, values, element):
+    #     d = dict(zip(params, values))
+    #     for param, value in d.iteritems():
+    #         element.set_param(param, value)
+    #     return element
+    #
+    # def set_element_headers(self, headers, values, element):
+    #     d = dict(zip(headers, values))
+    #     for header, value in d.iteritems():
+    #         element.add_header(header, value)
+    #     return element
+
+    def set_soap_envelope(self, **kwargs):
         """
         Format SOAP envelope to be attached in HTTP POST request.
         """
@@ -102,7 +157,7 @@ class HTTPRequest(object):
         """
         Return dict with message headers - ready to use by requests module.
         """
-        pass
+        return dict(self.mtompkg.items())
 
     def get_body(self):
         """

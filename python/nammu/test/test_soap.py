@@ -5,16 +5,33 @@ from ..SOAPClient.HTTPRequest import HTTPRequest
 
 class TestSOAP(object):
 
-    @pytest.mark.xfail
-    def test_http_post_headers(self):
+    def test_http_request_headers(self):
         goal_headers = {
             'Connection': 'close',
-            'Content-Type': 'multipart/related; start="<SOAP-ENV:Envelope>"; charset="utf-8"; type="application/xop+xml"; boundary="============boundary============"; start-info="application/soap+xml"',
-            'Host': 'http://oracc.museum.upenn.edu:8085'
+            'Content-Type': 'multipart/related; boundary="============boundary============"; charset="utf-8"; start="<SOAP-ENV:Envelope>"; type="application/xop+xml"; start-info="application/soap+xml"',
+            'Host': 'http://oracc.museum.upenn.edu:8085',
+            'Content-Length': '1500',
+            'MIME-Version': '1.0'
         }
         client = SOAPClient('http://oracc.museum.upenn.edu:8085', method='POST')
-        request = client.create_request()
-        test_headers = requests.get_headers()
+        client.create_request(command='atf',
+                              keys=['tests/mini', '00atf/hyphens.atf'],
+                              attachment='resources/test/request.zip')
+        test_headers = client.request.get_headers()
+        assert test_headers == goal_headers
+
+    @pytest.mark.xfail
+    def test_http_response_headers(self):
+        goal_headers = {
+            'Connection': 'close',
+            'Content-Type': 'multipart/related; start="<SOAP-ENV:Envelope>"; boundary="============boundary============"; charset="utf-8"; type="application/xop+xml"; start-info="application/soap+xml"',
+            'Host': 'http://oracc.museum.upenn.edu:8085',
+            'Content-Length': '1500',
+            'MIME-Version': '1.0'
+        }
+        client = SOAPClient('http://oracc.museum.upenn.edu:8085', method='POST')
+        client.create_request(keys=['ZO3vNg'])
+        test_headers = client.request.get_headers()
         assert test_headers == goal_headers
 
     def test_soap_request_envelope(self):
