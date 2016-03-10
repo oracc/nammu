@@ -329,13 +329,20 @@ class NammuController(object):
         client.create_request(command='atf',
                               keys=['tests/mini', '00atf/hyphens.atf'],
                               attachment='resources/test/request.zip')
-
         client.send()
         server_id = client.get_response_id()
         self.consoleController.addText("        Request sent OK with ID " + server_id + "\n")
         self.consoleController.addText("        Waiting for server to prepare response... ")
 
-        response = client.get_response(server_id)
+        client.wait_for_response(server_id)
+
+        # This shouldn't need a new client, but a new request inside the same client
+        client = SOAPClient(url, method='POST')
+        client.create_request(keys=[server_id])
+        client.send()
+
+        response = client.get_response_text()
+        print response
 
         self.consoleController.addText(" OK\n")
 

@@ -47,13 +47,16 @@ class SOAPClient(object):
         # except ReadTimeout:
         #          print "Timed out!"
 
+    def get_response_text(self):
+        return self.response.text
+
     def get_response_id(self):
         xml_root = ET.fromstring(self.response.text)
         # This should be done with xpath. See XPath and namespaces sections
         # here: https://docs.python.org/2/library/xml.etree.elementtree.html
         return xml_root[0][0][0][0].text
 
-    def get_response(self, id):
+    def wait_for_response(self, id):
         """
         Check for a response to the request and obtain response zip file.
         """
@@ -61,13 +64,7 @@ class SOAPClient(object):
             print "Hey"
             ready_response = requests.get('http://oracc.museum.upenn.edu/p/' + id)
             if ready_response.text == "done\n":
-                break
-        
-
-        return response
-
-
-
+                return
 
     def parse_response(self):
         """

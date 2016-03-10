@@ -45,6 +45,20 @@ class HTTPRequest(object):
         validated/lemmantised/etc ATF file.
         """
         self.set_soap_envelope(keys=keys)
+        self.mtompkg = MIMEApplication(self.envelope, 'soap+xml', encode_7or8bit)
+        self.set_response_params()
+        self.set_response_headers()
+        print self.mtompkg
+
+    def set_response_headers(self):
+        del(self.mtompkg['Content-Transfer-Encoding'])
+        headers = ['Host', 'Content-Length', 'Connection']
+        values = [self.url, '623', 'close']
+        for header, value in zip(headers, values):
+            self.mtompkg.add_header(header, value)
+
+    def set_response_params(self):
+        self.mtompkg.set_param('charset', 'utf-8')
 
     def create_request_body(self):
         pass
@@ -62,7 +76,6 @@ class HTTPRequest(object):
         self.document.set_payload(open(attachment,'rb').read())
 
         self.mtompkg.attach(self.document)
-
 
     def set_document_headers(self):
         headers = ['Content-ID', 'Content-Transfer-Encoding']
