@@ -1,5 +1,6 @@
 import requests
 import logging
+import xml.etree.ElementTree as ET
 import httplib as http_client
 from HTTPRequest import HTTPRequest
 
@@ -33,13 +34,40 @@ class SOAPClient(object):
         """
         Elaborate HTTP POST request and send it to ORACC's server.
         """
-        pass
+        self.request
 
-    def get_response(self):
+        url = "http://oracc.museum.upenn.edu:8085"
+        headers = dict(self.request.mtompkg.items())
+        body = self.request.mtompkg.as_string().split('\r\n', 1)[0]
+        body = body.replace('\r\n', '\n')
+        body = body.replace('\n', '\r\n')
+        self.response = requests.post(url, data=body, headers=headers)
+        # try:
+        #    response = requests.post(url, data=body, headers=headers, timeout=10)
+        # except ReadTimeout:
+        #          print "Timed out!"
+
+    def get_response_id(self):
+        xml_root = ET.fromstring(self.response.text)
+        # This should be done with xpath. See XPath and namespaces sections
+        # here: https://docs.python.org/2/library/xml.etree.elementtree.html
+        return xml_root[0][0][0][0].text
+
+    def get_response(self, id):
         """
         Check for a response to the request and obtain response zip file.
         """
-        pass
+        while True:
+            print "Hey"
+            ready_response = requests.get('http://oracc.museum.upenn.edu/p/' + id)
+            if ready_response.text == "done\n":
+                break
+        
+
+        return response
+
+
+
 
     def parse_response(self):
         """

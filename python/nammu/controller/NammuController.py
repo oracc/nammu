@@ -21,6 +21,7 @@ from ConsoleController import ConsoleController
 from AtfAreaController import AtfAreaController
 from ToolbarController import ToolbarController
 from ModelController import ModelController
+from ..SOAPClient.SOAPClient import SOAPClient
 
 class NammuController(object):
 
@@ -311,18 +312,35 @@ class NammuController(object):
 
         self.consoleController.addText(" OK\n")
 
-    def validate(self, atfFile):
+    def validate(self, event):
         '''
         1. Parse content of text area
         2. Any errors parsing?
         3. Display OK/NOK message in Console
         '''
-        self.consoleController.addText("NammuController: Validating ATF file...")
+        self.consoleController.addText("NammuController: Validating ATF file... \n")
+
+        nammuText = self.atfAreaController.getAtfAreaText()
+
+        # Build request.zip on the fly, pack all needed in it and send to server.
+        url = 'http://oracc.museum.upenn.edu:8085'
+        self.consoleController.addText("        Sending request to server at ..." + url + "\n")
+        client = SOAPClient(url, method='POST')
+        client.create_request(command='atf',
+                              keys=['tests/mini', '00atf/hyphens.atf'],
+                              attachment='resources/test/request.zip')
+
+        client.send()
+        server_id = client.get_response_id()
+        self.consoleController.addText("        Request sent OK with ID " + server_id + "\n")
+        self.consoleController.addText("        Waiting for server to prepare response... ")
+
+        response = client.get_response(server_id)
 
         self.consoleController.addText(" OK\n")
 
 
-    def lemmatise(self, atfFile):
+    def lemmatise(self, event):
         '''
         1. Connect with UPenn DB
         2. Send text area content
@@ -330,6 +348,9 @@ class NammuController(object):
         4. Display response in text area
         5. Display OK/NOK message in Console
         '''
+
+        nammuText = self.atfAreaController.getAtfAreaText()
+
         self.consoleController.addText("NammuController: Lemmatising ATF file...")
 
         self.consoleController.addText(" OK\n")
