@@ -318,13 +318,16 @@ class NammuController(object):
         2. Any errors parsing?
         3. Display OK/NOK message in Console
         '''
+        # TODO Check first there is a file to be validated.
+        # Also maybe ask to save before validate?
+
         self.consoleController.addText("NammuController: Validating ATF file... \n")
 
         nammuText = self.atfAreaController.getAtfAreaText()
 
         # Build request.zip on the fly, pack all needed in it and send to server.
         url = 'http://oracc.museum.upenn.edu:8085'
-        self.consoleController.addText("        Sending request to server at ..." + url + "\n")
+        self.consoleController.addText("        Sending request to server at " + url + "\n")
         client = SOAPClient(url, method='POST')
         client.create_request(command='atf',
                               keys=['tests/mini', '00atf/hyphens.atf'],
@@ -336,16 +339,33 @@ class NammuController(object):
 
         client.wait_for_response(server_id)
 
+        self.consoleController.addText("OK\n")
+
+        self.consoleController.addText("        Response is ready on server. \n")
+        self.consoleController.addText("        Fetching response... ")
+
         # This shouldn't need a new client, but a new request inside the same client
         client = SOAPClient(url, method='POST')
         client.create_request(keys=[server_id])
         client.send()
 
         response = client.get_response()
-        print response
 
         self.consoleController.addText(" OK\n")
 
+
+        self.consoleController.addText("        Reading response... ")
+        oracc_log = client.get_oracc_log()
+        self.consoleController.addText(" OK\n")
+
+        self.consoleController.addText(oracc_log)
+
+        self.consoleController.addText("        Validating ATF done. \n\n")
+
+
+
+
+        # TODO Print contents of oracc.log inside zip file. Or show in new window?
 
     def lemmatise(self, event):
         '''

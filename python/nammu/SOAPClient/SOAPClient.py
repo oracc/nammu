@@ -1,5 +1,8 @@
 import requests
 import logging
+import re
+import StringIO
+from zipfile import ZipFile
 import xml.etree.ElementTree as ET
 import httplib as http_client
 from HTTPRequest import HTTPRequest
@@ -62,7 +65,7 @@ class SOAPClient(object):
                 return
 
     def get_response(self):
-        return self.response
+        return self.response.content
 
     def parse_response(self):
         """
@@ -81,3 +84,21 @@ class SOAPClient(object):
         Pack attachment in a zip file.
         """
         pass
+
+    def get_oracc_log(self):
+        """
+        Manipulate response to substract the content of oracc.log that is in the
+        returned binary-coded zip file.
+        """
+        self.response.content
+        binary_body = re.split('--==.*==', self.response.content)[2].split('\r\n')[5]
+
+        f = StringIO.StringIO()
+        f.write(bytearray(binary_body))
+
+        # if zipfile.is_zipfile(f):
+        memory_zip = ZipFile(f)
+        zip_content = {name: memory_zip.read(name) for name in memory_zip.namelist()}
+        oracc_log = zip_content['oracc.log']
+
+        return oracc_log
