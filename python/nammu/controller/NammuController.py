@@ -320,7 +320,7 @@ class NammuController(object):
         '''
         # TODO Check first there is a file to be validated.
         # Also maybe ask to save before validate?
-        self.handleUnsaved()
+        # self.handleUnsaved()
 
         self.consoleController.addText("NammuController: Validating ATF file... \n")
 
