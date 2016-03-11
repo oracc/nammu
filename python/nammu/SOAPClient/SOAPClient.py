@@ -100,5 +100,12 @@ class SOAPClient(object):
         memory_zip = ZipFile(f)
         zip_content = {name: memory_zip.read(name) for name in memory_zip.namelist()}
         oracc_log = zip_content['oracc.log']
+        request_log = zip_content['request.log']
+
+        print "@*30"
+        print oracc_log
+        print "@*30"
+        print request_log
+        print "@*30"
 
         return oracc_log

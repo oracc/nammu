@@ -2,6 +2,8 @@ from email.mime.application import MIMEApplication
 from email.encoders import encode_7or8bit
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
+import zipfile
+from cStringIO import StringIO
 
 class HTTPRequest(object):
     """
@@ -14,11 +16,12 @@ class HTTPRequest(object):
         if method == 'POST':
             if 'command' in kwargs.keys():
                 self.create_request_message(kwargs['command'], kwargs['keys'],
-                                            kwargs['attachment'])
+                                            kwargs['atf_basename'],
+                                            kwargs['atf_text'])
             else:
                 self.create_response_message(kwargs['keys'])
 
-    def create_request_message(self, command, keys, attachment):
+    def create_request_message(self, command, keys, atf_basename, atf_text):
         """
         Send attachment to server containing ATF file and necessary data to
         run given command (validate, lemmatise, etc).
@@ -27,11 +30,12 @@ class HTTPRequest(object):
         self.set_multipart_params()
         self.set_soap_envelope(command=command,
                                keys=keys,
-                               attachment=attachment)
+                               atf_basename=atf_basename,
+                               atf_text=atf_text)
         self.rootpkg = MIMEApplication(self.envelope, 'xop+xml', encode_7or8bit)
         self.set_multipart_payload()
         self.document = MIMEBase('*','*')
-        self.set_document_payload(attachment)
+        self.set_document_payload(atf_basename, atf_text)
 
         #The headers can't be created until the body is finished since they need
         #it to populate the Content-Length header
@@ -64,13 +68,17 @@ class HTTPRequest(object):
         self.set_payload_params()
         self.mtompkg.attach(self.rootpkg)
 
-    def set_document_payload(self, attachment):
+    def set_document_payload(self, atf_basename, atf_text):
         self.set_document_headers()
 
-        #TODO: replace with contents of text area
-        attachment = "/tmp/nammu/release/nammu/resources/files/request.zip"
-        self.document.set_payload(open(attachment,'rb').read())
+        mem_data = StringIO()
+        mem_zip = zipfile.ZipFile(mem_data, "w", zipfile.ZIP_DEFLATED, False)
+        mem_zip.writestr("00atf/"+atf_basename, atf_text)
+        mem_zip.close()
+        mem_data.seek(0)
 
+        #TODO: replace with contents of text area
+        self.document.set_payload(mem_data.getvalue())
         self.mtompkg.attach(self.document)
 
     def set_document_headers(self):

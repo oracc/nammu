@@ -12,7 +12,7 @@ from javax.swing import JFileChooser, JOptionPane
 from javax.swing.filechooser import FileNameExtensionFilter
 from java.io import FileWriter, IOException
 from java.lang import System, Integer
-import codecs, time
+import codecs, time, os
 
 from pyoracc.atf.atffile import AtfFile
 from ..view.NammuView import NammuView
@@ -320,6 +320,7 @@ class NammuController(object):
         '''
         # TODO Check first there is a file to be validated.
         # Also maybe ask to save before validate?
+        self.handleUnsaved()
 
         self.consoleController.addText("NammuController: Validating ATF file... \n")
 
@@ -331,7 +332,8 @@ class NammuController(object):
         client = SOAPClient(url, method='POST')
         client.create_request(command='atf',
                               keys=['tests/mini', '00atf/hyphens.atf'],
-                              attachment='resources/test/request.zip')
+                              atf_basename=os.path.basename(self.currentFilename),
+                              atf_text=nammuText)
         client.send()
         server_id = client.get_response_id()
         self.consoleController.addText("        Request sent OK with ID " + server_id + "\n")
@@ -358,10 +360,11 @@ class NammuController(object):
         oracc_log = client.get_oracc_log()
         self.consoleController.addText(" OK\n")
 
-        self.consoleController.addText(oracc_log)
 
-        self.consoleController.addText("        Validating ATF done. \n\n")
 
+        self.consoleController.addText("        Validating ATF done. This is the log from the server:\n\n")
+
+        self.consoleController.addText(oracc_log + "\n\n")
 
 
 
