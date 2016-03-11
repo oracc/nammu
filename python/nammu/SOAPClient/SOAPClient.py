@@ -102,10 +102,10 @@ class SOAPClient(object):
         oracc_log = zip_content['oracc.log']
         request_log = zip_content['request.log']
 
-        print "@*30"
+        print "@"*30
         print oracc_log
-        print "@*30"
+        print "@"*30
         print request_log
-        print "@*30"
+        print "@"*30
 
         return oracc_log
