@@ -326,13 +326,19 @@ class NammuController(object):
 
         nammuText = self.atfAreaController.getAtfAreaText()
 
+        print "#"*30
+        print nammuText
+        print "#"*30
+
         # Build request.zip on the fly, pack all needed in it and send to server.
         url = 'http://oracc.museum.upenn.edu:8085'
         self.consoleController.addText("        Sending request to server at " + url + "\n")
         client = SOAPClient(url, method='POST')
+        atf_basename = os.path.basename(self.currentFilename)
+        project = "cams/gkab"
         client.create_request(command='atf',
-                              keys=['tests/mini', '00atf/hyphens.atf'],
-                              atf_basename=os.path.basename(self.currentFilename),
+                              keys=[project, '00atf/'+atf_basename],
+                              atf_basename=atf_basename,
                               atf_text=nammuText)
         client.send()
         server_id = client.get_response_id()
