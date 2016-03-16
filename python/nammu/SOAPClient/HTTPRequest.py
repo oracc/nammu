@@ -41,6 +41,10 @@ class HTTPRequest(object):
         #it to populate the Content-Length header
         self.set_multipart_headers()
 
+        print "*"*30
+        print self.mtompkg
+        print "*"*30
+
     def create_response_message(self, keys):
         """
         Asks the server for the response request.zip attachment containing
@@ -72,13 +76,17 @@ class HTTPRequest(object):
         self.set_document_headers()
 
         mem_data = StringIO()
-        mem_zip = zipfile.ZipFile(mem_data, "w", zipfile.ZIP_DEFLATED, False)
+        mem_zip = zipfile.ZipFile("/Users/raquelalegre/workspace/ORACC/nammu/data/request_from_mem.zip", "w", zipfile.ZIP_DEFLATED, False)
         mem_zip.writestr("00atf/"+atf_basename, atf_text)
         mem_zip.close()
         mem_data.seek(0)
 
-        #TODO: replace with contents of text area
-        self.document.set_payload(mem_data.getvalue())
+        print "*"*30
+        print mem_data.getvalue()
+        print "*"*30
+
+        self.document.set_payload(open("/Users/raquelalegre/workspace/ORACC/nammu/data/request_from_mem.zip",'rb').read())
+        # self.document.set_payload(mem_data.getvalue())
         self.mtompkg.attach(self.document)
 
     def set_document_headers(self):
@@ -109,9 +117,9 @@ class HTTPRequest(object):
             self.mtompkg.add_header(header, value)
 
     def set_multipart_params(self):
-        params = ['charset', 'type', 'start', 'start-info']
+        params = ['charset', 'type', 'start', 'start-info', 'boundary']
         values = ['utf-8', 'application/xop+xml', '<SOAP-ENV:Envelope>',
-                  'application/soap+xml']
+                  'application/soap+xml', '==========boundary========']
         for param, value in zip(params, values):
             self.mtompkg.set_param(param, value)
     #
