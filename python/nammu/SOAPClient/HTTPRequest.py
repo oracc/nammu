@@ -194,8 +194,15 @@ class HTTPRequest(object):
         """
         headers = dict(self.mtompkg.items())
         body = self.mtompkg.as_string().split('\n\n', 1)[1]
-        body = body.replace('\r\n', '\r')
-        body = body.replace('\n', '\r\n')
+        boundary = self.mtompkg.get_boundary()
+        if boundary != None:
+            attachment = body.split("\n\nPK")[1].split("\n--" + str(boundary))[0]
+            print attachment
+            body = body.replace(attachment, '<attachment>')
+            body = body.replace('\r\n', '\r').replace('\n', '\r\n')
+            body = body.replace("<attachment>", attachment)
+        else:
+            body = body.replace('\r\n', '\r').replace('\n', '\r\n')
         return body
 
 
