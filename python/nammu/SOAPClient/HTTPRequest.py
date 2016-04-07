@@ -76,17 +76,12 @@ class HTTPRequest(object):
         self.set_document_headers()
 
         mem_data = StringIO()
-        mem_zip = zipfile.ZipFile("/Users/raquelalegre/workspace/ORACC/nammu/data/request_from_mem.zip", "w", zipfile.ZIP_DEFLATED, False)
+        mem_zip = zipfile.ZipFile(mem_data, "w", zipfile.ZIP_DEFLATED, False)
         mem_zip.writestr("00atf/"+atf_basename, atf_text)
         mem_zip.close()
         mem_data.seek(0)
 
-        print "*"*30
-        print mem_data.getvalue()
-        print "*"*30
-
-        self.document.set_payload(open("/Users/raquelalegre/workspace/ORACC/nammu/data/request_from_mem.zip",'rb').read())
-        # self.document.set_payload(mem_data.getvalue())
+        self.document.set_payload(mem_data.getvalue())
         self.mtompkg.attach(self.document)
 
     def set_document_headers(self):
