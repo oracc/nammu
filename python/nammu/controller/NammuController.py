@@ -330,6 +330,23 @@ class NammuController(object):
         self.log("        Validating ATF done.\n")
 
 
+    def lemmatise(self, event):
+        '''
+        Connect to ORACC server and retrieved lemmatised version of ATF file.
+        '''
+        self.log("NammuController: Lemmatising ATF file... \n")
+
+        # Search for project name in file. If not found, don't validate
+        project = self.get_project()
+
+        if project:
+            self.send_command("lem", project)
+        else:
+            self.log("        No project found in file. Add project and retry.\n")
+
+        self.log("        Lemmatising ATF done.\n")
+
+
     def send_command(self, command, project):
         '''
         Both validation and atf validation work similarly, same for other
@@ -378,22 +395,6 @@ class NammuController(object):
             self.log("        This is the log from the server:\n\n")
             self.log(oracc_log + "\n\n")
 
-
-    def lemmatise(self, event):
-        '''
-        Connect to ORACC server and retrieved lemmatised version of ATF file.
-        '''
-        self.log("NammuController: Lemmatising ATF file... \n")
-
-        # Search for project name in file. If not found, don't validate
-        project = self.get_project()
-
-        if project:
-            self.send_command("lem", project)
-        else:
-            self.log("        No project found in file. Add project and retry.\n")
-
-        self.log("        Lemmatising ATF done.\n")
 
     def printFile(self, event):
         '''
