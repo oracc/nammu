@@ -38,7 +38,7 @@ class NammuController(object):
         self.consoleController = ConsoleController(self)
 
         #TODO replace with proper Logging functionality
-        self.consoleController.addText("NammuController: Creating subcontrollers...")
+        self.log("NammuController: Creating subcontrollers...")
 
         #Create all the controllers
         self.menuController = MenuController(self)
@@ -46,10 +46,10 @@ class NammuController(object):
         self.atfAreaController = AtfAreaController(self)
 
         #TODO: Only if everything went fine
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
         #Log next action
-        self.consoleController.addText("NammuController: Creating views...")
+        self.log("NammuController: Creating views...")
 
         #Create all the views and assigned them to appropriate controller
         self.view = NammuView(self)
@@ -58,15 +58,15 @@ class NammuController(object):
         self.view.addAtfArea(self.atfAreaController.view)
         self.view.addConsole(self.consoleController.view)
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
         #Log next action
-        self.consoleController.addText("NammuController: Display main view...")
+        self.log("NammuController: Display main view...")
 
         #Display Nammu's view
         self.view.display()
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
         #Save current ATF filename
         #TODO: save array with all opened ATFs
@@ -88,7 +88,7 @@ class NammuController(object):
         2. Clear text area
         3. See GitHub issue: https://github.com/UCL-RITS/nammu/issues/6
         '''
-        self.consoleController.addText("NammuController: Creating new file...")
+        self.log("NammuController: Creating new file...")
 
         self.handleUnsaved()
 
@@ -96,7 +96,7 @@ class NammuController(object):
 
         self.currentFilename = None
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def openFile(self, event):
@@ -107,7 +107,7 @@ class NammuController(object):
         2. Display browser for user to choose file
         3. Load file in text area
         '''
-        self.consoleController.addText("NammuController: Opening file...")
+        self.log("NammuController: Opening file...")
 
         self.handleUnsaved()
 
@@ -125,7 +125,7 @@ class NammuController(object):
 
         #TODO: Else, prompt user to choose again before closing
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def readTextFile(self, filename):
@@ -150,7 +150,7 @@ class NammuController(object):
         2. Save current file in destination given by user
         '''
 
-        self.consoleController.addText("NammuController: Saving file...")
+        self.log("NammuController: Saving file...")
 
         fileChooser = JFileChooser()
         status = fileChooser.showSaveDialog(self.view)
@@ -162,7 +162,7 @@ class NammuController(object):
             self.writeTextFile(filename, atfText)
             #TODO check returned status?
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def writeTextFile(self, filename, text):
@@ -188,7 +188,7 @@ class NammuController(object):
         1. Check if file has unsaved changes
         2. Clear text area
         '''
-        self.consoleController.addText("NammuController: Closing file...")
+        self.log("NammuController: Closing file...")
 
         self.handleUnsaved()
 
@@ -196,7 +196,7 @@ class NammuController(object):
 
         self.atfAreaController.clearAtfArea()
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def unsavedChanges(self):
@@ -255,11 +255,11 @@ class NammuController(object):
 
         self.handleUnsaved()
 
-        self.consoleController.addText("NammuController: Exiting...")
+        self.log("NammuController: Exiting...")
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
-        self.consoleController.addText("Bye! :)")
+        self.log("Bye! :)")
 
         System.exit(0)
 
@@ -271,9 +271,9 @@ class NammuController(object):
         3. Update state stack
         Note: Check java's Undoable
         '''
-        self.consoleController.addText("NammuController: Undoing last action...")
+        self.log("NammuController: Undoing last action...")
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def redo(self, event):
@@ -440,8 +440,8 @@ class NammuController(object):
         '''
         Create bool for unicode, change value when clicked.
         '''
-        self.consoleController.addText("NammuController: Unicode...")
-        self.consoleController.addText("OK\n")
+        self.log("NammuController: Unicode...")
+        self.log("OK\n")
 
 
     def console(self, event):
@@ -449,22 +449,22 @@ class NammuController(object):
         Create bool for console, change value when clicked.
         Hide if being shown, show if hidden.
         '''
-        self.consoleController.addText("NammuController: Console...")
+        self.log("NammuController: Console...")
 
 
     def toolbar(self, event):
         '''
         Show/Hide Toolbar.
         '''
-        self.consoleController.addText("NammuController: Toolbar... ")
-        self.consoleController.addText("OK\n")
+        self.log("NammuController: Toolbar... ")
+        self.log("OK\n")
 
 
     def __getattr__(self, name):
         '''
         Handle calls to undefined methods.
         '''
-        self.consoleController.addText("!!!Undefined method " + name)
+        self.log("!!!Undefined method " + name)
 
     def get_project(self):
         '''
@@ -487,3 +487,7 @@ class NammuController(object):
                 project = nammu_text.split(project_str)[1].split()[0]
 
         return project
+
+
+    def log(self, string):
+        self.consoleController.addText(string)
