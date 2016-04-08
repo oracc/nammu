@@ -281,133 +281,134 @@ class NammuController(object):
         1. Check if any action has been undone
         2. Handle actions stack and update it
         '''
-        self.consoleController.addText("NammuController: Redoing last undone action...")
+        self.log("NammuController: Redoing last undone action...")
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def copy(self, event):
         '''
         Note: check if JTextArea already has this functionality
         '''
-        self.consoleController.addText("NammuController: Copying selected text...")
+        self.log("NammuController: Copying selected text...")
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def cut(self, event):
         '''
         Note: check if JTextArea already has this functionality
         '''
-        self.consoleController.addText("NammuController: Cutting selected text...")
+        self.log("NammuController: Cutting selected text...")
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def paste(self, event):
         '''
         Note: check if JTextArea already has this functionality
         '''
-        self.consoleController.addText("NammuController: Pasting clipboard text...")
+        self.log("NammuController: Pasting clipboard text...")
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
     def validate(self, event):
         '''
-        1. Parse content of text area
-        2. Any errors parsing?
-        3. Display OK/NOK message in Console
+        For now, we are validating using the SOAP webservices from ORACC server.
+        However, the intention is to replace this with validation by pyoracc.
         '''
-        # TODO Check first there is a file to be validated.
-        # Also maybe ask to save before validate?
-        # self.handleUnsaved()
+        self.log("NammuController: Validating ATF file... \n")
 
-        self.consoleController.addText("NammuController: Validating ATF file... \n")
-
-        # Search for project name in file
-        # If not found, don't validate
-        # Could first try to parse, if that fails, then get it with RE by now
+        # Search for project name in file. If not found, don't validate
         project = self.get_project()
+
         if project:
-            nammuText = self.atfAreaController.getAtfAreaText()
-
-            # Build request.zip on the fly, pack all needed in it and send to server.
-            url = 'http://oracc.museum.upenn.edu:8085'
-            self.consoleController.addText("        Sending request to server at " + url + "\n")
-            client = SOAPClient(url, method='POST')
-            atf_basename = os.path.basename(self.currentFilename)
-
-            client.create_request(command='atf',
-                                  keys=[project, '00atf/'+atf_basename],
-                                  atf_basename=atf_basename,
-                                  atf_text=nammuText.encode('utf-8'))
-            client.send()
-            server_id = client.get_response_id()
-            self.consoleController.addText("        Request sent OK with ID " + server_id + "\n")
-            self.consoleController.addText("        Waiting for server to prepare response... ")
-
-            client.wait_for_response(server_id)
-
-            self.consoleController.addText("OK\n")
-
-            self.consoleController.addText("        Response is ready on server. \n")
-            self.consoleController.addText("        Fetching response... ")
-
-            # This shouldn't need a new client, but a new request inside the same client
-            client = SOAPClient(url, method='POST')
-            client.create_request(keys=[server_id])
-            client.send()
-
-            response = client.get_response()
-
-            self.consoleController.addText(" OK\n")
-
-
-            self.consoleController.addText("        Reading response... ")
-            oracc_log = client.get_oracc_log()
-            self.consoleController.addText(" OK\n")
-
-            self.consoleController.addText("        Validating ATF done. This is the log from the server:\n\n")
-
-            self.consoleController.addText(oracc_log + "\n\n")
-
+            self.send_command("atf", project)
         else:
-            self.consoleController.addText("        No project found in file. Add project and retry.\n")
+            self.log("        No project found in file. Add project and retry.\n")
+
+        self.log("        Validating ATF done.\n")
 
 
+    def send_command(self, command, project):
+        '''
+        Both validation and atf validation work similarly, same for other
+        services.
+        This method sends a command to the ORACC server along with all the
+        necessary arguments to build the HTTP request.
+        '''
 
+        # Build request.zip on the fly, pack all needed in it and send to server.
+        url = 'http://oracc.museum.upenn.edu:8085'
 
-        # TODO Print contents of oracc.log inside zip file. Or show in new window?
+        self.log("        Sending request to server at " + url + "\n")
+
+        # Create HTTP client and prepare all input arguments for request
+        client = SOAPClient(url, method='POST')
+        atf_basename = os.path.basename(self.currentFilename)
+        nammuText = self.atfAreaController.getAtfAreaText()
+
+        # Send request and check for returned process ID
+        client.create_request(command=command,
+                              keys=[project, '00atf/'+atf_basename],
+                              atf_basename=atf_basename,
+                              atf_text=nammuText.encode('utf-8'))
+        client.send()
+        server_id = client.get_response_id()
+
+        # Wait for server to prepare response
+        self.log("        Request sent OK with ID " + server_id + "\n")
+        self.log("        Waiting for server to prepare response... ")
+        client.wait_for_response(server_id)
+        self.log("OK\n")
+        self.log("        Fetching response... ")
+
+        # Send new request to fetch results and server logs
+        # This shouldn't need a new client, but a new request inside the same client
+        client = SOAPClient(url, method='POST')
+        client.create_request(keys=[server_id])
+        client.send()
+        response = client.get_response()
+        self.log(" OK\n")
+        self.log("        Reading response... ")
+        oracc_log = client.get_oracc_log()
+        self.log(" OK\n")
+
+        if oracc_log:
+            self.log("        This is the log from the server:\n\n")
+            self.log(oracc_log + "\n\n")
+
 
     def lemmatise(self, event):
         '''
-        1. Connect with UPenn DB
-        2. Send text area content
-        3. Receive response file
-        4. Display response in text area
-        5. Display OK/NOK message in Console
+        Connect to ORACC server and retrieved lemmatised version of ATF file.
         '''
+        self.log("NammuController: Lemmatising ATF file... \n")
 
-        nammuText = self.atfAreaController.getAtfAreaText()
+        # Search for project name in file. If not found, don't validate
+        project = self.get_project()
 
-        self.consoleController.addText("NammuController: Lemmatising ATF file...")
+        if project:
+            self.send_command("lem", project)
+        else:
+            self.log("        No project found in file. Add project and retry.\n")
 
-        self.consoleController.addText(" OK\n")
+        self.log("        Lemmatising ATF done.\n")
 
     def printFile(self, event):
         '''
         Print file.
         '''
-        self.consoleController.addText("NammuController: Printing file...")
+        self.log("NammuController: Printing file...")
 
-        self.consoleController.addText("OK\n")
+        self.log("OK\n")
 
     def editSettings(self, event):
         '''
         Show settings window for edition.
         '''
-        self.consoleController.addText("NammuController: Changing settings...")
-        self.consoleController.addText("OK\n")
+        self.log("NammuController: Changing settings...")
+        self.log("OK\n")
 
 
     def displayModelView(self, event):
