@@ -324,53 +324,56 @@ class NammuController(object):
 
         self.consoleController.addText("NammuController: Validating ATF file... \n")
 
-        nammuText = self.atfAreaController.getAtfAreaText()
+        # Search for project name in file
+        # If not found, don't validate
+        # Could first try to parse, if that fails, then get it with RE by now
+        project = self.get_project()
+        if project:
+            nammuText = self.atfAreaController.getAtfAreaText()
 
-        print "#"*30
-        print nammuText
-        print "#"*30
+            # Build request.zip on the fly, pack all needed in it and send to server.
+            url = 'http://oracc.museum.upenn.edu:8085'
+            self.consoleController.addText("        Sending request to server at " + url + "\n")
+            client = SOAPClient(url, method='POST')
+            atf_basename = os.path.basename(self.currentFilename)
 
-        # Build request.zip on the fly, pack all needed in it and send to server.
-        url = 'http://oracc.museum.upenn.edu:8085'
-        self.consoleController.addText("        Sending request to server at " + url + "\n")
-        client = SOAPClient(url, method='POST')
-        atf_basename = os.path.basename(self.currentFilename)
-        project = "test/mini"
-        client.create_request(command='atf',
-                              keys=[project, '00atf/'+atf_basename],
-                              atf_basename=atf_basename,
-                              atf_text=nammuText.encode('utf-8'))
-        client.send()
-        server_id = client.get_response_id()
-        self.consoleController.addText("        Request sent OK with ID " + server_id + "\n")
-        self.consoleController.addText("        Waiting for server to prepare response... ")
+            client.create_request(command='atf',
+                                  keys=[project, '00atf/'+atf_basename],
+                                  atf_basename=atf_basename,
+                                  atf_text=nammuText.encode('utf-8'))
+            client.send()
+            server_id = client.get_response_id()
+            self.consoleController.addText("        Request sent OK with ID " + server_id + "\n")
+            self.consoleController.addText("        Waiting for server to prepare response... ")
 
-        client.wait_for_response(server_id)
+            client.wait_for_response(server_id)
 
-        self.consoleController.addText("OK\n")
+            self.consoleController.addText("OK\n")
 
-        self.consoleController.addText("        Response is ready on server. \n")
-        self.consoleController.addText("        Fetching response... ")
+            self.consoleController.addText("        Response is ready on server. \n")
+            self.consoleController.addText("        Fetching response... ")
 
-        # This shouldn't need a new client, but a new request inside the same client
-        client = SOAPClient(url, method='POST')
-        client.create_request(keys=[server_id])
-        client.send()
+            # This shouldn't need a new client, but a new request inside the same client
+            client = SOAPClient(url, method='POST')
+            client.create_request(keys=[server_id])
+            client.send()
 
-        response = client.get_response()
+            response = client.get_response()
 
-        self.consoleController.addText(" OK\n")
-
-
-        self.consoleController.addText("        Reading response... ")
-        oracc_log = client.get_oracc_log()
-        self.consoleController.addText(" OK\n")
+            self.consoleController.addText(" OK\n")
 
 
+            self.consoleController.addText("        Reading response... ")
+            oracc_log = client.get_oracc_log()
+            self.consoleController.addText(" OK\n")
 
-        self.consoleController.addText("        Validating ATF done. This is the log from the server:\n\n")
+            self.consoleController.addText("        Validating ATF done. This is the log from the server:\n\n")
 
-        self.consoleController.addText(oracc_log + "\n\n")
+            self.consoleController.addText(oracc_log + "\n\n")
+
+        else:
+            self.consoleController.addText("        No project found in file. Add project and retry.\n")
+
 
 
 
@@ -390,7 +393,6 @@ class NammuController(object):
         self.consoleController.addText("NammuController: Lemmatising ATF file...")
 
         self.consoleController.addText(" OK\n")
-
 
     def printFile(self, event):
         '''
@@ -423,6 +425,7 @@ class NammuController(object):
             self.modelController = ModelController(self, self.parse(atfText))
         else:
             self.promptInfoPane("Open ATF file before trying to display model view.")
+
 
 
     def parse(self, text):
@@ -462,3 +465,25 @@ class NammuController(object):
         Handle calls to undefined methods.
         '''
         self.consoleController.addText("!!!Undefined method " + name)
+
+    def get_project(self):
+        '''
+        Search for project in text content.
+        First try to parse it and get it from the parser.
+        If that fails, try to find it with re ("#project: xxxx").
+        If that fails as well, display error message and ask for project.
+        '''
+        project = None
+        project_str = "#project:"
+
+        nammu_text = self.atfAreaController.getAtfAreaText()
+
+        if project_str in nammu_text:
+            try:
+                parsed_atf = self.parse(nammu_text)
+                project = parsed_atf.text.project
+            except SyntaxError:
+                # File can't be parsed but might still contain a project code
+                project = nammu_text.split(project_str)[1].split()[0]
+
+        return project
