@@ -31,12 +31,6 @@ class ToolbarController(object):
     def __getattr__(self, name):
         return getattr(self.mainController, name)
 
-    def validate(self, atfFile):
-        self.mainController.validate(atfFile)
-
-    def lemmatise(self, atfFile):
-        self.mainController.lemmatise(atfFile)
-
     def showHelp(self):
         """
         1. Show popup window with help (or just open firefox with ORACC info?)
@@ -46,7 +40,3 @@ class ToolbarController(object):
         """
         1. Show popup window with help (or just open firefox with ORACC info?)
         """
-
-
-
-
