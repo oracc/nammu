@@ -34,51 +34,50 @@ class NammuController(object):
         2. Create main view that'll bind all the components
         3. Create event/action handlers - EventBus?
         '''
-        #Create this controller first since it's where the log will be displayed
+        # Create this controller first since it's where the log will be displayed
         self.consoleController = ConsoleController(self)
 
-        #TODO replace with proper Logging functionality
+        # TODO replace with proper Logging functionality
         self.log("NammuController: Creating subcontrollers...")
 
-        #Create all the controllers
+        # Create all the controllers
         self.menuController = MenuController(self)
         self.toolbarController = ToolbarController(self)
         self.atfAreaController = AtfAreaController(self)
 
-        #TODO: Only if everything went fine
+        # TODO: Only if everything went fine
         self.log(" OK\n")
 
-        #Log next action
+        # Log next action
         self.log("NammuController: Creating views...")
 
-        #Create all the views and assigned them to appropriate controller
+        # Create all the views and assigned them to appropriate controller
         self.view = NammuView(self)
         self.view.addMenuBar(self.menuController.view)
         self.view.addToolBar(self.toolbarController.view)
         self.view.addAtfArea(self.atfAreaController.view)
         self.view.addConsole(self.consoleController.view)
-
         self.log(" OK\n")
 
-        #Log next action
+        # Log next action
         self.log("NammuController: Display main view...")
 
-        #Display Nammu's view
+        # Display Nammu's view
         self.view.display()
 
         self.log(" OK\n")
 
-        #Save current ATF filename
-        #TODO: save array with all opened ATFs
+        # Save current ATF filename
+        # TODO: save array with all opened ATFs
         self.currentFilename = None
 
-    #Actions delegated from subcontrollers follow.
-    #Subcontrollers can't handle these actions because they
-    #require interaction of several subcontrollers who have no visibility.
-    #Eg. action in menu will need modification of text area controlled elsewhere
-    #and not accessible from the menu controller that receives the action in the
-    #first instance; or eg. show help pop up can be dealt with from
-    #subcontroller
+    # Actions delegated from subcontrollers follow.
+    # Subcontrollers can't handle these actions because they
+    # require interaction of several subcontrollers who have no visibility.
+    # Eg. action in menu will need modification of text area controlled elsewhere
+    # and not accessible from the menu controller that receives the action in the
+    # first instance; or eg. show help pop up can be dealt with from
+    # subcontroller
 
     def newFile(self, event):
         '''
@@ -123,7 +122,7 @@ class NammuController(object):
             self.currentFilename = atfFile.getCanonicalPath()
             self.atfAreaController.setAtfAreaText(atfText)
 
-        #TODO: Else, prompt user to choose again before closing
+        # TODO: Else, prompt user to choose again before closing
 
         self.log(" OK\n")
 
@@ -134,7 +133,7 @@ class NammuController(object):
         '''
         text = codecs.open(filename, encoding='utf-8').read()
         return text
-        #TODO: Check if selected file is ATF or at least text file!
+        # TODO: Check if selected file is ATF or at least text file!
 
 #        try:
 #          reader = FileReader(f)
@@ -173,7 +172,7 @@ class NammuController(object):
         f.write(text)
         f.close()
 
-        #TODO return status?
+        # TODO return status?
 
 #       try:
 #         writer = FileWriter(f)
@@ -312,6 +311,7 @@ class NammuController(object):
 
         self.log(" OK\n")
 
+
     def validate(self, event):
         '''
         For now, we are validating using the SOAP webservices from ORACC server.
@@ -404,6 +404,7 @@ class NammuController(object):
 
         self.log("OK\n")
 
+
     def editSettings(self, event):
         '''
         Show settings window for edition.
@@ -419,7 +420,7 @@ class NammuController(object):
         3. Send text to model view controller and delegate
         '''
         atfText = self.atfAreaController.getAtfAreaText()
-        #if self.currentFilename != None and atfText != None :
+        # if self.currentFilename != None and atfText != None :
         if self.currentFilename != None:
             #TODO Check if ATF is valid
             #This may imply parsing the text, so perhaps the model controller
@@ -427,7 +428,6 @@ class NammuController(object):
             self.modelController = ModelController(self, self.parse(atfText))
         else:
             self.promptInfoPane("Open ATF file before trying to display model view.")
-
 
 
     def parse(self, text):
@@ -468,6 +468,7 @@ class NammuController(object):
         '''
         self.log("!!!Undefined method " + name)
 
+
     def get_project(self):
         '''
         Search for project in text content.
@@ -492,4 +493,8 @@ class NammuController(object):
 
 
     def log(self, string):
+        '''
+        By now we are outputting in the console directly. A better logging
+        method would be nice though.
+        '''
         self.consoleController.addText(string)
