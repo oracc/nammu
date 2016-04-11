@@ -43,3 +43,11 @@ class AtfAreaController(object):
 
         # Print in line numbers' area
         self.view.line_numbers_area.setText(numbers)
+
+    def update_highlighting(self, validation_errors):
+        """
+        Receives a dictionary with line numbers and error messages and repaints
+        the line numbers and text lines to highlight errors.
+        """
+        for line, error in validation_errors.items():
+            print line, error

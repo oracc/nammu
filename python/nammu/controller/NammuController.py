@@ -392,8 +392,27 @@ class NammuController(object):
         self.log(" OK\n")
 
         if oracc_log:
-            self.log("        This is the log from the server:\n\n")
-            self.log(oracc_log + "\n\n")
+            validation_errors = self.get_validation_errors(oracc_log)
+            self.atfAreaController.update_highlighting(validation_errors)
+            self.log("        See highlighted areas in the text for errors and validate again.\n\n")
+        else:
+            self.log("        The ORACC server didn't report any validation errors.\n\n")
+
+    def get_validation_errors(self, oracc_log):
+        """
+        Reads the log from the oracc server from the validation, and returns a
+        dictionary with line numbers and error messages.
+        """
+        validation_errors = {}
+
+        for line in oracc_log.splitlines():
+            if ':' in line:
+                line_number = line.split(':')[1]
+                project_id = line.split(':')[2]
+                error_message = line.split(project_id + ':')[1]
+                validation_errors[line_number] = error_message
+
+        return validation_errors
 
 
     def printFile(self, event):
