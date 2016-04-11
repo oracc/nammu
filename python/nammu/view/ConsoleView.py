@@ -22,10 +22,10 @@ class ConsoleView(JPanel):
         It will also accept commands in later stages of development, if need be.
         '''
 
-        #Give reference to controller to delegate action response
+        # Give reference to controller to delegate action response
         self.controller = controller
 
-        #Make text area occupy all available space and resize with parent window
+        # Make text area occupy all available space and resize with parent window
         self.setLayout(BorderLayout())
 
         #Create console-looking area
@@ -36,13 +36,22 @@ class ConsoleView(JPanel):
         self.editArea.foreground = Color.WHITE
         self.editArea.text = "Console started. Nammu's log will appear here.\n\n"
 
-        #Will need scrolling controls
+        # Disable writting in the console
+        self.editArea.setEditable(False)
+
+        # Will need scrolling controls
         scrollingText = JScrollPane(self.editArea)
         scrollingText.setPreferredSize(Dimension(1,150))
 
-        #Make text area auto scroll down to last printed line
+        # Make text area auto scroll down to last printed line
         caret = self.editArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-        #Add to parent panel
+        # Add to parent panel
         self.add(scrollingText, BorderLayout.CENTER)
+
+    def scroll(self):
+        '''
+        Scroll down to bottom.
+        '''
+        self.editArea.setCaretPosition(self.editArea.getDocument().getLength())
