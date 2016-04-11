@@ -22,18 +22,20 @@ class AtfAreaController(object):
     def setAtfAreaText(self, text):
         self.view.editArea.setText(text)
         self.view.syntax_highlight()
-        self.update_line_numbers(text)
+        self.update_line_numbers()
 
     def getAtfAreaText(self):
-        self.view.editArea.getText()
+        return self.view.editArea.getText()
 
     def clearAtfArea(self):
         self.view.editArea.setText("")
 
-    def update_line_numbers(self, text):
+    def update_line_numbers(self):
         # Get how many lines are in the file
-        n_lines = text.count('\n')
+        n_lines = self.getAtfAreaText().count('\n')
+        self.repaint_line_numbers(n_lines)
 
+    def repaint_line_numbers(self, n_lines):
         # Create line numbers
         numbers = ""
         for line in range(n_lines + 1):

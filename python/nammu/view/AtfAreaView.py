@@ -18,12 +18,10 @@ class AtfAreaView(JPanel):
 
     def __init__(self, controller):
         '''
-        Creates default empty text area in a panel.
-        It will contain the ATF file content, and allow text edition.
-        It should highlight reserved words and suggest autocompletion or
-        possible typos, a la IDEs like Eclipse.
-        It might need refactoring so that there is a parent panel with two
-        modes or contexts, depending on user choice: text view or model view.
+        Creates default empty text area in a panel for ATF edition.
+        It has syntax highlighting based on the ATF parser (pyoracc).
+        It also highlights line numbers where there are validations errors
+        returned by the ORACC server.
         '''
         # Give reference to controller to delegate action response
         self.controller = controller
@@ -68,6 +66,9 @@ class AtfAreaView(JPanel):
 
 
     def syntax_highlight(self):
+        """
+        Implements syntax highlighting based on pyoracc.
+        """
         lexer = AtfLexer(skipinvalid=True).lexer
         text = self.editArea.text
         splittext = text.split('\n')
@@ -102,17 +103,26 @@ class AtfAreaView(JPanel):
 
 
     def setup_edit_area(self):
+        """
+        Creates a JTextPane where the ATF text will be displayed, allowing text
+        edition.
+        """
         edit_area = JTextPane()
         edit_area.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         edit_area.font = Font("Monaco", Font.PLAIN, 14)
+
         return edit_area
 
 
     def setup_line_numbers_area(self):
+        """
+        Line numbers need to be displayed in a separate panel with different
+        styling.
+        """
         line_numbers_area = JTextPane()
         border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         line_numbers_area.border = border
-        line_numbers_area.setText("1\n")
+        line_numbers_area.setText("1: \n")
         line_numbers_area.setEditable(False)
 
         # Align right
@@ -190,11 +200,21 @@ class AtfAreaView(JPanel):
 
 
 class AtfAreaKeyListener(KeyListener):
+    """
+    Listens for user releasing keys to reload the syntax highlighting and the
+    line numbers (they'll need to be redrawn when a new line or block is added
+    or removed).
+    """
     def __init__(self, atfareaview):
         self.atfareaview = atfareaview
 
     def keyReleased(self, ke):
         self.atfareaview.syntax_highlight()
+        # Check length hasn't changed, otherwise repaint line numbers
+        number_lines = self.atfareaview.line_numbers_area.text.count('\n')
+        text_lines = self.atfareaview.editArea.text.count('\n')
+        if number_lines - 1 != text_lines:
+            self.atfareaview.controller.repaint_line_numbers(text_lines)
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.
@@ -205,3 +225,4 @@ class AtfAreaKeyListener(KeyListener):
         # It would be more natural to use this event. However
         # this gives the string before typing
         pass
+#
