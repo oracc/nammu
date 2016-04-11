@@ -37,17 +37,17 @@ class AtfAreaView(JPanel):
         self.editArea.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.editArea.font = Font("Monaco", Font.PLAIN, 14)
         self.styledoc = self.editArea.getStyledDocument()
-        # Will need scrolling controls
-        scrollingText = JScrollPane(self.editArea)
-        scrollingText.setPreferredSize(Dimension(1, 500))
 
         # Create panel that'll contain the ScrollPane and the line numbers
         container = JPanel(BorderLayout())
-        container.setPreferredSize(Dimension(1, 500))
-        container.add(scrollingText, BorderLayout.CENTER)
+        container.add(self.editArea, BorderLayout.CENTER)
+
+        # Will need scrolling controls
+        scrollingText = JScrollPane(container)
+        scrollingText.setPreferredSize(Dimension(1, 500))
 
         # Add to parent panel
-        self.add(container, BorderLayout.CENTER)
+        self.add(scrollingText, BorderLayout.CENTER)
 
         sc = StyleContext.getDefaultStyleContext()
         # Syntax highlighting colors based on SOLARIZED
