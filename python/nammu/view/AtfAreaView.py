@@ -6,7 +6,7 @@ Initializes the ATF (edit/model) view and sets its layout.
 @author: raquel-ucl
 '''
 
-from java.awt import Font, BorderLayout, Dimension, Color
+from java.awt import Font, BorderLayout, Dimension, Color, Insets
 from java.awt.event import KeyListener
 from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultHighlighter, StyleContext, StyleConstants
@@ -44,7 +44,7 @@ class AtfAreaView(JPanel):
 
         # Create text panel to add line numbers
         self.line_numbers_area = JTextPane()
-        border = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.black)
+        border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.line_numbers_area.border = border
         self.line_numbers_area.setText("1\n")
         self.line_numbers_area.setEditable(False)
