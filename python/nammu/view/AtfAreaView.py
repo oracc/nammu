@@ -42,6 +42,13 @@ class AtfAreaView(JPanel):
         container = JPanel(BorderLayout())
         container.add(self.editArea, BorderLayout.CENTER)
 
+        # Create text area to add line numbers
+        line_numbers_area = JTextPane()
+        line_numbers_area.setEditable(False)
+        line_numbers_area.border = BorderFactory.createLineBorder(Color.black)
+        line_numbers_area.font = Font("Monaco", Font.PLAIN, 14)
+        container.add(line_numbers_area, BorderLayout.WEST)
+
         # Will need scrolling controls
         scrollingText = JScrollPane(container)
         scrollingText.setPreferredSize(Dimension(1, 500))
