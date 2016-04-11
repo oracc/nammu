@@ -42,15 +42,19 @@ class AtfAreaView(JPanel):
         container = JPanel(BorderLayout())
         container.add(self.editArea, BorderLayout.CENTER)
 
-        # Create text area to add line numbers
+        # Create text panel to add line numbers
         self.line_numbers_area = JTextPane()
-        self.line_numbers_area.setEditable(False)
-        self.line_numbers_area.border = BorderFactory.createLineBorder(Color.black)
-        self.line_numbers_area.font = Font("Monaco", Font.PLAIN, 14)
+        border = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.black)
+        self.line_numbers_area.border = border
         self.line_numbers_area.setText("1\n")
+        self.line_numbers_area.setEditable(False)
+
         # Align right
         attribs = SimpleAttributeSet()
         StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT)
+        StyleConstants.setFontFamily(attribs, "Monaco")
+        StyleConstants.setFontSize(attribs, 14)
+        StyleConstants.setForeground(attribs, Color.gray)
         self.line_numbers_area.setParagraphAttributes(attribs, True)
         container.add(self.line_numbers_area, BorderLayout.WEST)
 
