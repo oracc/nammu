@@ -36,8 +36,8 @@ class AtfAreaController(object):
 
         # Create line numbers
         numbers = ""
-        for line in range(n_lines):
-            numbers += str(line) + "\n"
+        for line in range(n_lines + 1):
+            numbers += str(line + 1) + ": \n"
 
         # Print in line numbers' area
         self.view.line_numbers_area.setText(numbers)
