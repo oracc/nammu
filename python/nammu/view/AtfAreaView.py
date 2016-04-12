@@ -6,6 +6,7 @@ Initializes the ATF (edit/model) view and sets its layout.
 @author: raquel-ucl
 '''
 
+import re
 from java.awt import Font, BorderLayout, Dimension, Color
 from java.awt.event import KeyListener
 from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
@@ -37,7 +38,8 @@ class AtfAreaView(JPanel):
         self.line_numbers_area = self.setup_line_numbers_area()
 
         # Needed by syntax highlighter
-        self.styledoc = self.editArea.getStyledDocument()
+        self.edit_area_styledoc = self.editArea.getStyledDocument()
+        self.line_numbers_styledoc = self.line_numbers_area.getStyledDocument()
 
         # Create panel that'll contain the ScrollPane and the line numbers
         container = JPanel(BorderLayout())
@@ -64,6 +66,56 @@ class AtfAreaView(JPanel):
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
         self.setup_syntax_highlight_tokens()
 
+    def error_highlight(self, validation_errors):
+        """
+        Highlights line numbers and text lines that have errors.
+        Receives a dictionary with line numbers and error messages and repaints
+        the line numbers and text lines to highlight errors.
+        """
+
+        if validation_errors:
+            for line_num, error in validation_errors.items():
+                attribs = SimpleAttributeSet()
+                StyleConstants.setFontFamily(attribs, "Monaco")
+                StyleConstants.setFontSize(attribs, 14)
+                StyleConstants.setForeground(attribs, Color.red)
+                line_numbers_sd = self.line_numbers_area.getStyledDocument()
+                edit_area_sd = self.editArea.getStyledDocument()
+
+                text = self.line_numbers_area.text
+
+                # Search for start position and length of line number
+                if line_num in text:
+                    match = re.search(line_num, text)
+                    # This will return the position of the first substring
+                    # matching the line num, so we won't run into problems like
+                    # getting 122 when we are searching for 12 or 22.
+                    position = match.start()
+                    # Line numbers are as long as the number + 1 becase it is
+                    # followed by a colon
+                    length = len(line_num) + 1
+                    # Change style in line number panel
+                    line_numbers_sd.setCharacterAttributes(position,
+                                                           length,
+                                                           attribs,
+                                                           True)
+
+                    # Calculate postion of text line
+                    # text_lines = self.editArea.text.splitlines()
+                    # text_line = text_lines[int(line_num) - 1]
+                    # match = re.finditer('\n', self.editArea.text)[int(line_num) - 1]
+                    position = [m.start() for m in re.finditer(r"\n", self.editArea.text)][int(line_num) - 2:int(line_num)]
+                    length = position[1] - position[0]
+                    # Highlight text line
+                    attribs = SimpleAttributeSet()
+                    StyleConstants.setFontFamily(attribs, "Monaco")
+                    StyleConstants.setFontSize(attribs, 14)
+                    StyleConstants.setBackground(attribs, Color.yellow)
+                    edit_area_sd.setCharacterAttributes(position[0],
+                                                        length,
+                                                        attribs,
+                                                        True)
+
 
     def syntax_highlight(self):
         """
@@ -75,9 +127,9 @@ class AtfAreaView(JPanel):
         lexer.input(text)
         # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
-        self.styledoc.setCharacterAttributes(0, len(text),
-                                             self.colors[defaultcolor],
-                                             True)
+        self.edit_area_styledoc.setCharacterAttributes(0, len(text),
+                                                    self.colors[defaultcolor],
+                                                    True)
         for tok in lexer:
             if tok.type in self.tokencolorlu:
                 if type(self.tokencolorlu[tok.type]) is dict:
@@ -97,7 +149,7 @@ class AtfAreaView(JPanel):
                     mylength = len(splittext[tok.lineno-1])
                 else:
                     mylength = len(tok.value)
-                self.styledoc.setCharacterAttributes(tok.lexpos, mylength,
+                self.edit_area_styledoc.setCharacterAttributes(tok.lexpos, mylength,
                                                      self.colors[color],
                                                      True)
 
@@ -120,18 +172,24 @@ class AtfAreaView(JPanel):
         styling.
         """
         line_numbers_area = JTextPane()
+
+        # Align right
+        para_attribs = SimpleAttributeSet()
+        StyleConstants.setAlignment(para_attribs, StyleConstants.ALIGN_RIGHT)
+        line_numbers_area.setParagraphAttributes(para_attribs, True)
+
+        # Use default font style
+        default_attribs = SimpleAttributeSet()
+        StyleConstants.setFontFamily(default_attribs, "Monaco")
+        StyleConstants.setFontSize(default_attribs, 14)
+        StyleConstants.setForeground(default_attribs, Color.gray)
+        line_numbers_area.setCharacterAttributes(default_attribs, True)
+
+        # Initialize content
         border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         line_numbers_area.border = border
         line_numbers_area.setText("1: \n")
         line_numbers_area.setEditable(False)
-
-        # Align right
-        attribs = SimpleAttributeSet()
-        StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT)
-        StyleConstants.setFontFamily(attribs, "Monaco")
-        StyleConstants.setFontSize(attribs, 14)
-        StyleConstants.setForeground(attribs, Color.gray)
-        line_numbers_area.setParagraphAttributes(attribs, True)
 
         return line_numbers_area
 
@@ -198,6 +256,18 @@ class AtfAreaView(JPanel):
         self.tokencolorlu['PROJECT']['transctrl'] = ('green', False)
         self.tokencolorlu['default'] = ('black', False)
 
+    def repaint_line_numbers(self, n_lines):
+        """
+        Draws line numbers in corresponding panel.
+        """
+        # Create line numbers
+        numbers = ""
+        for line in range(n_lines + 1):
+            numbers += str(line + 1) + ": \n"
+
+        # Print in line numbers' area
+        self.line_numbers_area.setText(numbers)
+
 
 class AtfAreaKeyListener(KeyListener):
     """
@@ -214,7 +284,7 @@ class AtfAreaKeyListener(KeyListener):
         number_lines = self.atfareaview.line_numbers_area.text.count('\n')
         text_lines = self.atfareaview.editArea.text.count('\n')
         if number_lines - 1 != text_lines:
-            self.atfareaview.controller.repaint_line_numbers(text_lines)
+            self.atfareaview.repaint_line_numbers(text_lines)
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.
