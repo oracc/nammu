@@ -393,7 +393,7 @@ class NammuController(object):
 
         if oracc_log:
             validation_errors = self.get_validation_errors(oracc_log)
-            self.atfAreaController.update_highlighting(validation_errors)
+            self.atfAreaController.view.update_highlighting(validation_errors)
             self.log("        See highlighted areas in the text for errors and validate again.\n\n")
         else:
             self.log("        The ORACC server didn't report any validation errors.\n\n")

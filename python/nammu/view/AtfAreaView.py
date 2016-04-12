@@ -37,7 +37,8 @@ class AtfAreaView(JPanel):
         self.line_numbers_area = self.setup_line_numbers_area()
 
         # Needed by syntax highlighter
-        self.styledoc = self.editArea.getStyledDocument()
+        self.edit_area_styledoc = self.editArea.getStyledDocument()
+        self.line_numbers_styledoc = self.line_numbers_area.getStyledDocument()
 
         # Create panel that'll contain the ScrollPane and the line numbers
         container = JPanel(BorderLayout())
@@ -75,9 +76,9 @@ class AtfAreaView(JPanel):
         lexer.input(text)
         # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
-        self.styledoc.setCharacterAttributes(0, len(text),
-                                             self.colors[defaultcolor],
-                                             True)
+        self.edit_area_styledoc.setCharacterAttributes(0, len(text),
+                                                    self.colors[defaultcolor],
+                                                    True)
         for tok in lexer:
             if tok.type in self.tokencolorlu:
                 if type(self.tokencolorlu[tok.type]) is dict:
@@ -97,7 +98,7 @@ class AtfAreaView(JPanel):
                     mylength = len(splittext[tok.lineno-1])
                 else:
                     mylength = len(tok.value)
-                self.styledoc.setCharacterAttributes(tok.lexpos, mylength,
+                self.edit_area_styledoc.setCharacterAttributes(tok.lexpos, mylength,
                                                      self.colors[color],
                                                      True)
 
@@ -197,6 +198,18 @@ class AtfAreaView(JPanel):
         self.tokencolorlu['PROJECT']['flagged'] = ('magenta', False)
         self.tokencolorlu['PROJECT']['transctrl'] = ('green', False)
         self.tokencolorlu['default'] = ('black', False)
+
+    def repaint_line_numbers(self, n_lines):
+        """
+        Draws line numbers in corresponding panel.
+        """
+        # Create line numbers
+        numbers = ""
+        for line in range(n_lines + 1):
+            numbers += str(line + 1) + ": \n"
+
+        # Print in line numbers' area
+        self.line_numbers_area.setText(numbers)
 
 
 class AtfAreaKeyListener(KeyListener):
