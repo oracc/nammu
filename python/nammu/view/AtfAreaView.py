@@ -79,8 +79,8 @@ class AtfAreaView(JPanel):
                 StyleConstants.setFontFamily(attribs, "Monaco")
                 StyleConstants.setFontSize(attribs, 14)
                 StyleConstants.setForeground(attribs, Color.red)
-                StyleConstants.setBackground(attribs, Color.lightGray)
-                styled_document = self.line_numbers_area.getStyledDocument()
+                line_numbers_sd = self.line_numbers_area.getStyledDocument()
+                edit_area_sd = self.editArea.getStyledDocument()
 
                 text = self.line_numbers_area.text
 
@@ -95,14 +95,26 @@ class AtfAreaView(JPanel):
                     # followed by a colon
                     length = len(line_num) + 1
                     # Change style in line number panel
-                    styled_document.setCharacterAttributes(position,
+                    line_numbers_sd.setCharacterAttributes(position,
                                                            length,
                                                            attribs,
                                                            True)
-                # self.edit_area_styledoc.setCharacterAttributes(int(line),
-                #                                             len(line),
-                #                                             attribs,
-                #                                             False)
+
+                    # Calculate postion of text line
+                    # text_lines = self.editArea.text.splitlines()
+                    # text_line = text_lines[int(line_num) - 1]
+                    # match = re.finditer('\n', self.editArea.text)[int(line_num) - 1]
+                    position = [m.start() for m in re.finditer(r"\n", self.editArea.text)][int(line_num) - 2:int(line_num)]
+                    length = position[1] - position[0]
+                    # Highlight text line
+                    attribs = SimpleAttributeSet()
+                    StyleConstants.setFontFamily(attribs, "Monaco")
+                    StyleConstants.setFontSize(attribs, 14)
+                    StyleConstants.setBackground(attribs, Color.yellow)
+                    edit_area_sd.setCharacterAttributes(position[0],
+                                                        length,
+                                                        attribs,
+                                                        True)
 
 
     def syntax_highlight(self):
