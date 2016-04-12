@@ -127,12 +127,16 @@ class AtfAreaView(JPanel):
         line_numbers_area.setEditable(False)
 
         # Align right
-        attribs = SimpleAttributeSet()
-        StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT)
-        StyleConstants.setFontFamily(attribs, "Monaco")
-        StyleConstants.setFontSize(attribs, 14)
-        StyleConstants.setForeground(attribs, Color.gray)
-        line_numbers_area.setParagraphAttributes(attribs, True)
+        para_attribs = SimpleAttributeSet()
+        StyleConstants.setAlignment(para_attribs, StyleConstants.ALIGN_RIGHT)
+        line_numbers_area.setParagraphAttributes(para_attribs, True)
+
+        # Use default style
+        char_attribs = SimpleAttributeSet()
+        StyleConstants.setFontFamily(char_attribs, "Monaco")
+        StyleConstants.setFontSize(char_attribs, 14)
+        StyleConstants.setForeground(char_attribs, Color.gray)
+        line_numbers_area.setCharacterAttributes(char_attribs, True)
 
         return line_numbers_area
 
@@ -227,7 +231,7 @@ class AtfAreaKeyListener(KeyListener):
         number_lines = self.atfareaview.line_numbers_area.text.count('\n')
         text_lines = self.atfareaview.editArea.text.count('\n')
         if number_lines - 1 != text_lines:
-            self.atfareaview.controller.repaint_line_numbers(text_lines)
+            self.atfareaview.repaint_line_numbers(text_lines)
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.
