@@ -6,6 +6,7 @@ Initializes the ATF (edit/model) view and sets its layout.
 @author: raquel-ucl
 '''
 
+import re
 from java.awt import Font, BorderLayout, Dimension, Color
 from java.awt.event import KeyListener
 from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
@@ -65,6 +66,44 @@ class AtfAreaView(JPanel):
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
         self.setup_syntax_highlight_tokens()
 
+    def error_highlight(self, validation_errors):
+        """
+        Highlights line numbers and text lines that have errors.
+        Receives a dictionary with line numbers and error messages and repaints
+        the line numbers and text lines to highlight errors.
+        """
+
+        if validation_errors:
+            for line_num, error in validation_errors.items():
+                attribs = SimpleAttributeSet()
+                StyleConstants.setFontFamily(attribs, "Monaco")
+                StyleConstants.setFontSize(attribs, 14)
+                StyleConstants.setForeground(attribs, Color.red)
+                StyleConstants.setBackground(attribs, Color.lightGray)
+                styled_document = self.line_numbers_area.getStyledDocument()
+
+                text = self.line_numbers_area.text
+
+                # Search for start position and length of line number
+                if line_num in text:
+                    match = re.search(line_num, text)
+                    # This will return the position of the first substring
+                    # matching the line num, so we won't run into problems like
+                    # getting 122 when we are searching for 12 or 22.
+                    position = match.start()
+                    # Line numbers are as long as the number + 1 becase it is
+                    # followed by a colon
+                    length = len(line_num) + 1
+                    # Change style in line number panel
+                    styled_document.setCharacterAttributes(position,
+                                                           length,
+                                                           attribs,
+                                                           True)
+                # self.edit_area_styledoc.setCharacterAttributes(int(line),
+                #                                             len(line),
+                #                                             attribs,
+                #                                             False)
+
 
     def syntax_highlight(self):
         """
@@ -121,22 +160,24 @@ class AtfAreaView(JPanel):
         styling.
         """
         line_numbers_area = JTextPane()
-        border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        line_numbers_area.border = border
-        line_numbers_area.setText("1: \n")
-        line_numbers_area.setEditable(False)
 
         # Align right
         para_attribs = SimpleAttributeSet()
         StyleConstants.setAlignment(para_attribs, StyleConstants.ALIGN_RIGHT)
         line_numbers_area.setParagraphAttributes(para_attribs, True)
 
-        # Use default style
-        char_attribs = SimpleAttributeSet()
-        StyleConstants.setFontFamily(char_attribs, "Monaco")
-        StyleConstants.setFontSize(char_attribs, 14)
-        StyleConstants.setForeground(char_attribs, Color.gray)
-        line_numbers_area.setCharacterAttributes(char_attribs, True)
+        # Use default font style
+        default_attribs = SimpleAttributeSet()
+        StyleConstants.setFontFamily(default_attribs, "Monaco")
+        StyleConstants.setFontSize(default_attribs, 14)
+        StyleConstants.setForeground(default_attribs, Color.gray)
+        line_numbers_area.setCharacterAttributes(default_attribs, True)
+
+        # Initialize content
+        border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
+        line_numbers_area.border = border
+        line_numbers_area.setText("1: \n")
+        line_numbers_area.setEditable(False)
 
         return line_numbers_area
 
