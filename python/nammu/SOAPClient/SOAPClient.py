@@ -85,7 +85,7 @@ class SOAPClient(object):
         """
         pass
 
-    def get_oracc_log(self):
+    def get_server_logs(self):
         """
         Manipulate response to substract the content of oracc.log that is in the
         returned binary-coded zip file.
@@ -101,11 +101,24 @@ class SOAPClient(object):
         zip_content = {name: memory_zip.read(name) for name in memory_zip.namelist()}
         oracc_log = zip_content['oracc.log']
         request_log = zip_content['request.log']
+        # See if server returns a lemmatised file
+        autolem = None
+        for key, value in zip_content.iteritems():
+            if key.endswith("autolem.atf"):
+                autolem = zip_content[key]
 
         print "@"*30
         print oracc_log
         print "@"*30
         print request_log
         print "@"*30
+        if autolem:
+            print autolem
+            print "@"*30
 
-        return oracc_log
+        return oracc_log, request_log, autolem
+
+    def get_autolem(self):
+        """
+
+        """

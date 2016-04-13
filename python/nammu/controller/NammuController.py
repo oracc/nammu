@@ -344,8 +344,6 @@ class NammuController(object):
         else:
             self.log("        No project found in file. Add project and retry.\n")
 
-        self.log("        Lemmatising ATF done.\n")
-
 
     def send_command(self, command, project):
         '''
@@ -388,13 +386,17 @@ class NammuController(object):
         response = client.get_response()
         self.log(" OK\n")
         self.log("        Reading response... ")
-        oracc_log = client.get_oracc_log()
+        oracc_log, request_log, autolem = client.get_server_logs()
         self.log(" OK\n")
+
+        if autolem:
+            self.atfAreaController.setAtfAreaText(autolem)
+            self.log("        Lemmatised ATF received from server.\n")
 
         if oracc_log:
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
-            self.log("        See highlighted areas in the text for errors and validate again.\n\n")
+            self.log("        See highlighted areas in the text for errors and check again.\n\n")
         else:
             self.log("        The ORACC server didn't report any validation errors.\n\n")
 
