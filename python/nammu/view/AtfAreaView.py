@@ -13,6 +13,7 @@ from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultHighlighter, StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
 from pyoracc.atf.atflex import AtfLexer
+from .AtfEditArea import AtfEditArea
 
 
 class AtfAreaView(JPanel):
@@ -32,7 +33,7 @@ class AtfAreaView(JPanel):
         self.setLayout(BorderLayout())
 
         # Create text edition area
-        self.editArea = self.setup_edit_area()
+        self.editArea = AtfEditArea()
 
         # Create text panel to display the line numbers
         self.line_numbers_area = self.setup_line_numbers_area()
@@ -66,8 +67,6 @@ class AtfAreaView(JPanel):
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
         self.setup_syntax_highlight_tokens()
 
-        # Tooltip
-        self.editArea.setToolTipText("Hello");
 
     def error_highlight(self, validation_errors):
         """
@@ -155,18 +154,6 @@ class AtfAreaView(JPanel):
                 self.edit_area_styledoc.setCharacterAttributes(tok.lexpos, mylength,
                                                      self.colors[color],
                                                      True)
-
-
-    def setup_edit_area(self):
-        """
-        Creates a JTextPane where the ATF text will be displayed, allowing text
-        edition.
-        """
-        edit_area = JTextPane()
-        edit_area.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        edit_area.font = Font("Monaco", Font.PLAIN, 14)
-
-        return edit_area
 
 
     def setup_line_numbers_area(self):
