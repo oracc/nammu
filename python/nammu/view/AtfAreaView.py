@@ -66,6 +66,9 @@ class AtfAreaView(JPanel):
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
         self.setup_syntax_highlight_tokens()
 
+        # Tooltip
+        self.editArea.setToolTipText("Hello");
+
     def error_highlight(self, validation_errors):
         """
         Highlights line numbers and text lines that have errors.
