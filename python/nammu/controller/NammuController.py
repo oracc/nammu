@@ -410,7 +410,10 @@ class NammuController(object):
         for line in oracc_log.splitlines():
             if ':' in line:
                 line_number = line.split(':')[1]
-                project_id = line.split(':')[2]
+                try:
+                    project_id = line.split(':')[2]
+                except IndexError:
+                    continue
                 error_message = line.split(project_id + ':')[1]
                 validation_errors[line_number] = error_message
 
