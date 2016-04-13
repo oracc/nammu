@@ -18,4 +18,9 @@ class CustomMouseListener(MouseAdapter):
         self.panel = panel
     def mousePressed(self, event):
         offset = self.panel.viewToModel(event.getPoint())
-        print offset
+        # Check if tooltip should be displayed for this position
+        line_num = self.get_line_num(offset)
+        print offset, line_num
+    def get_line_num(self, offset):
+        text = self.panel.text[0:offset]
+        return text.count('\n') + 1
