@@ -30,12 +30,6 @@ class MenuController(object):
     #action with same name to NammuController
     def __getattr__(self, name):
         return getattr(self.mainController, name)
-        
-    def validate(self, atfFile):
-        self.mainController.validate(atfFile)
-
-    def lemmatise(self, atfFile):
-        self.mainController.lemmatise(atfFile)
 
     def showHelp(self):
         """
@@ -46,5 +40,3 @@ class MenuController(object):
         """
         1. Show popup window with help (or just open firefox with ORACC info?)
         """
-
-        

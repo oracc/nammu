@@ -63,6 +63,9 @@ class ToolbarView(JToolBar):
     def __getattr__(self, name):
         return getattr(self.controller, name)
 
+    def validate(self, event):
+        return self.controller.mainController.validate(event)
+
     def findImageResource(self, name):
         #Create helper object to load icon images in jar
         loader = ClassLoader.getSystemClassLoader()
