@@ -12,7 +12,6 @@ from ..view.AtfAreaView import AtfAreaView
 class AtfAreaController(object):
 
     def __init__(self, mainControler):
-
         # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
 
@@ -37,4 +36,6 @@ class AtfAreaController(object):
     def update_line_numbers(self):
         # Get how many lines are in the file
         n_lines = self.getAtfAreaText().count('\n')
+
+        # Reload line numbers text panel
         self.view.repaint_line_numbers(n_lines)

@@ -13,6 +13,8 @@ from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultHighlighter, StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
 from pyoracc.atf.atflex import AtfLexer
+from .AtfEditArea import AtfEditArea
+from .LineNumbersArea import LineNumbersArea
 
 
 class AtfAreaView(JPanel):
@@ -32,10 +34,10 @@ class AtfAreaView(JPanel):
         self.setLayout(BorderLayout())
 
         # Create text edition area
-        self.editArea = self.setup_edit_area()
+        self.editArea = AtfEditArea(self)
 
         # Create text panel to display the line numbers
-        self.line_numbers_area = self.setup_line_numbers_area()
+        self.line_numbers_area = LineNumbersArea()
 
         # Needed by syntax highlighter
         self.edit_area_styledoc = self.editArea.getStyledDocument()
@@ -66,13 +68,14 @@ class AtfAreaView(JPanel):
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
         self.setup_syntax_highlight_tokens()
 
+
     def error_highlight(self, validation_errors):
         """
         Highlights line numbers and text lines that have errors.
         Receives a dictionary with line numbers and error messages and repaints
         the line numbers and text lines to highlight errors.
         """
-
+        self.validation_errors = validation_errors
         if validation_errors:
             for line_num, error in validation_errors.items():
                 attribs = SimpleAttributeSet()
@@ -152,46 +155,6 @@ class AtfAreaView(JPanel):
                 self.edit_area_styledoc.setCharacterAttributes(tok.lexpos, mylength,
                                                      self.colors[color],
                                                      True)
-
-
-    def setup_edit_area(self):
-        """
-        Creates a JTextPane where the ATF text will be displayed, allowing text
-        edition.
-        """
-        edit_area = JTextPane()
-        edit_area.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        edit_area.font = Font("Monaco", Font.PLAIN, 14)
-
-        return edit_area
-
-
-    def setup_line_numbers_area(self):
-        """
-        Line numbers need to be displayed in a separate panel with different
-        styling.
-        """
-        line_numbers_area = JTextPane()
-
-        # Align right
-        para_attribs = SimpleAttributeSet()
-        StyleConstants.setAlignment(para_attribs, StyleConstants.ALIGN_RIGHT)
-        line_numbers_area.setParagraphAttributes(para_attribs, True)
-
-        # Use default font style
-        default_attribs = SimpleAttributeSet()
-        StyleConstants.setFontFamily(default_attribs, "Monaco")
-        StyleConstants.setFontSize(default_attribs, 14)
-        StyleConstants.setForeground(default_attribs, Color.gray)
-        line_numbers_area.setCharacterAttributes(default_attribs, True)
-
-        # Initialize content
-        border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        line_numbers_area.border = border
-        line_numbers_area.setText("1: \n")
-        line_numbers_area.setEditable(False)
-
-        return line_numbers_area
 
 
     def setup_syntax_highlight_colours(self):
