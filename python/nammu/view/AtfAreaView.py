@@ -34,7 +34,7 @@ class AtfAreaView(JPanel):
         self.setLayout(BorderLayout())
 
         # Create text edition area
-        self.editArea = AtfEditArea()
+        self.editArea = AtfEditArea(self)
 
         # Create text panel to display the line numbers
         self.line_numbers_area = LineNumbersArea()
@@ -75,7 +75,7 @@ class AtfAreaView(JPanel):
         Receives a dictionary with line numbers and error messages and repaints
         the line numbers and text lines to highlight errors.
         """
-
+        self.validation_errors = validation_errors
         if validation_errors:
             for line_num, error in validation_errors.items():
                 attribs = SimpleAttributeSet()
