@@ -43,7 +43,7 @@ class ToolbarView(JToolBar):
         tooltips['validate'] = 'Check current ATF correctness'
         tooltips['lemmatise'] = 'Obtain lemmas for current ATF text'
         tooltips['unicode'] = 'Use Unicode characters'
-        tooltips['console'] = 'View/Hide Console'
+        # tooltips['console'] = 'View/Hide Console'
         tooltips['displayModelView'] = 'Change to ATF data model view'
         tooltips['editSettings'] = 'Change Nammu settings'
         tooltips['showHelp'] = 'Displays ATF documentation'
