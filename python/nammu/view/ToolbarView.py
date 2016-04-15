@@ -42,7 +42,7 @@ class ToolbarView(JToolBar):
         tooltips['paste'] = 'Paste clipboard content'
         tooltips['validate'] = 'Check current ATF correctness'
         tooltips['lemmatise'] = 'Obtain lemmas for current ATF text'
-        tooltips['unicode'] = 'Use Unicode characters'
+        # tooltips['unicode'] = 'Use Unicode characters'
         # tooltips['console'] = 'View/Hide Console'
         tooltips['displayModelView'] = 'Change to ATF data model view'
         tooltips['editSettings'] = 'Change Nammu settings'
