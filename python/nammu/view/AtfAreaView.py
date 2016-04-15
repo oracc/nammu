@@ -12,6 +12,7 @@ from java.awt.event import KeyListener
 from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultHighlighter, StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
+from javax.swing.undo import UndoManager
 from pyoracc.atf.atflex import AtfLexer
 from .AtfEditArea import AtfEditArea
 from .LineNumbersArea import LineNumbersArea
@@ -42,6 +43,10 @@ class AtfAreaView(JPanel):
         # Needed by syntax highlighter
         self.edit_area_styledoc = self.editArea.getStyledDocument()
         self.line_numbers_styledoc = self.line_numbers_area.getStyledDocument()
+
+        # Set undo/redo manager to edit area
+        self.undo_manager = UndoManager()
+        self.editArea.getDocument().addUndoableEditListener(self.undo_manager)
 
         # Create panel that'll contain the ScrollPane and the line numbers
         container = JPanel(BorderLayout())

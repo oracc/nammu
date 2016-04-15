@@ -12,6 +12,7 @@ from javax.swing import JFileChooser, JOptionPane
 from javax.swing.filechooser import FileNameExtensionFilter
 from java.io import FileWriter, IOException
 from java.lang import System, Integer
+from javax.swing.undo import CannotUndoException, CannotRedoException
 import codecs, time, os
 
 from pyoracc.atf.atffile import AtfFile
@@ -264,25 +265,19 @@ class NammuController(object):
 
 
     def undo(self, event):
-        '''
-        1. Check if any action happened since application was launched
-        2. Come back to previous state (handle stack or rever last action)
-        3. Update state stack
-        Note: Check java's Undoable
-        '''
-        self.log("NammuController: Undoing last action...")
-
-        self.log(" OK\n")
+        undo_manager = self.atfAreaController.view.undo_manager
+        try:
+            undo_manager.undo()
+        except CannotUndoException:
+            pass
 
 
     def redo(self, event):
-        '''
-        1. Check if any action has been undone
-        2. Handle actions stack and update it
-        '''
-        self.log("NammuController: Redoing last undone action...")
-
-        self.log(" OK\n")
+        undo_manager = self.atfAreaController.view.undo_manager
+        try:
+            undo_manager.redo()
+        except CannotRedoException:
+            pass
 
 
     def copy(self, event):
