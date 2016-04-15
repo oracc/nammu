@@ -8,9 +8,7 @@ class AtfEditArea(JTextPane):
         self.parent_component = parent_component
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.font = Font("Monaco", Font.PLAIN, 14)
-        # Tooltip
-        self.setToolTipText("Hello")
-
+        # Consume mouse events when over this JTextPane
         listener = CustomMouseListener(self)
         self.addMouseListener(listener)
 
@@ -24,10 +22,9 @@ class AtfEditArea(JTextPane):
             position = self.viewToModel(event.getPoint())
             line_num = self.get_line_num(position)
             #Check if line_num has an error message assigned
-            validation_errors = self.parent_component.validation_errors
-            if validation_errors:
+            if self.parent_component.validation_errors:
                 try:
-                    return validation_errors[str(line_num)]
+                    return self.parent_component.validation_errors[str(line_num)]
                 except KeyError:
                     pass
 

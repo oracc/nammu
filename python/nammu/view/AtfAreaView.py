@@ -68,6 +68,9 @@ class AtfAreaView(JPanel):
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
         self.setup_syntax_highlight_tokens()
 
+        # Needs to be accessible from the AtfEditArea
+        self.validation_errors = None
+
 
     def error_highlight(self, validation_errors):
         """
@@ -75,8 +78,8 @@ class AtfAreaView(JPanel):
         Receives a dictionary with line numbers and error messages and repaints
         the line numbers and text lines to highlight errors.
         """
-        self.validation_errors = validation_errors
         if validation_errors:
+            self.validation_errors = validation_errors
             for line_num, error in validation_errors.items():
                 attribs = SimpleAttributeSet()
                 StyleConstants.setFontFamily(attribs, "Monaco")
