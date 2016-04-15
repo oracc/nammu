@@ -31,6 +31,7 @@ class AtfAreaController(object):
 
     def clearAtfArea(self):
         self.view.editArea.setText("")
+        self.view.undo_manager.discardAllEdits()
 
 
     def update_line_numbers(self):
