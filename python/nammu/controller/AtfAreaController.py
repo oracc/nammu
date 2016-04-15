@@ -6,6 +6,7 @@ Creates the ATF area (edit/object) view and handles its actions.
 @author: raquel-ucl
 '''
 
+from javax.swing.undo import CannotUndoException, CannotRedoException
 from ..view.AtfAreaView import AtfAreaView
 
 
@@ -18,6 +19,8 @@ class AtfAreaController(object):
         # Will also need delegating to parent presenter
         self.controller = mainControler
 
+        # Get a reference to the view's undo_manager
+        self.undo_manager = self.view.undo_manager
 
     def setAtfAreaText(self, text):
         self.view.editArea.setText(text)
@@ -40,3 +43,19 @@ class AtfAreaController(object):
 
         # Reload line numbers text panel
         self.view.repaint_line_numbers(n_lines)
+
+
+    def undo(self):
+        print self.undo_manager.toString()
+        try:
+            self.undo_manager.undo()
+        except CannotUndoException:
+            pass
+
+
+    def redo(self):
+        print self.undo_manager.toString()
+        try:
+            self.undo_manager.redo()
+        except CannotRedoException:
+            pass
