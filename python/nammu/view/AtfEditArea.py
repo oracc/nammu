@@ -8,6 +8,8 @@ class AtfEditArea(JTextPane):
         self.parent_component = parent_component
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.font = Font("Monaco", Font.PLAIN, 14)
+        # If this is not done, no tooltips appear
+        self.setToolTipText("")
         # Consume mouse events when over this JTextPane
         listener = CustomMouseListener(self)
         self.addMouseListener(listener)
