@@ -300,7 +300,7 @@ class NammuController(object):
         self.log(" OK\n")
 
 
-    def validate(self, event):
+    def validate(self, event=None):
         '''
         For now, we are validating using the SOAP webservices from ORACC server.
         However, the intention is to replace this with validation by pyoracc.
