@@ -46,16 +46,16 @@ class AtfAreaController(object):
 
 
     def undo(self):
-        print self.undo_manager.toString()
         try:
             self.undo_manager.undo()
+            self.update_line_numbers()
         except CannotUndoException:
             pass
 
 
     def redo(self):
-        print self.undo_manager.toString()
         try:
             self.undo_manager.redo()
+            self.update_line_numbers()
         except CannotRedoException:
             pass
