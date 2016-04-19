@@ -11,8 +11,9 @@ from java.awt import Font, BorderLayout, Dimension, Color
 from java.awt.event import KeyListener
 from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultHighlighter, StyleContext, StyleConstants
-from javax.swing.text import SimpleAttributeSet
+from javax.swing.text import SimpleAttributeSet, AbstractDocument
 from javax.swing.undo import UndoManager
+from javax.swing.event import UndoableEditListener
 from pyoracc.atf.atflex import AtfLexer
 from .AtfEditArea import AtfEditArea
 from .LineNumbersArea import LineNumbersArea
@@ -47,7 +48,8 @@ class AtfAreaView(JPanel):
         # Set undo/redo manager to edit area
         self.undo_manager = UndoManager()
         self.undo_manager.limit = 3000
-        self.editArea.getDocument().addUndoableEditListener(self.undo_manager)
+        self.edit_listener = AtfUndoableEditListener(self.undo_manager)
+        self.editArea.getDocument().addUndoableEditListener(self.edit_listener)
 
         # Create panel that'll contain the ScrollPane and the line numbers
         container = JPanel(BorderLayout())
@@ -267,4 +269,19 @@ class AtfAreaKeyListener(KeyListener):
         # It would be more natural to use this event. However
         # this gives the string before typing
         pass
-#
+
+
+class AtfUndoableEditListener(UndoableEditListener):
+    '''
+    Overrides the undoableEditHappened functionality to only count INSERT type
+    events instead of capturing other changes and events like highlighting, etc.
+    '''
+    def __init__(self, undo_manager):
+        self.undo_manager = undo_manager
+
+    def undoableEditHappened(self, event):
+        edit = event.getEdit()
+        edit_type = edit.getType()
+
+        if str(edit_type) == "INSERT" and edit.significant:
+            self.undo_manager.addEdit(edit)
