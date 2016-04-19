@@ -12,7 +12,6 @@ from javax.swing import JFileChooser, JOptionPane
 from javax.swing.filechooser import FileNameExtensionFilter
 from java.io import FileWriter, IOException
 from java.lang import System, Integer
-from javax.swing.undo import CannotUndoException, CannotRedoException
 import codecs, time, os
 
 from pyoracc.atf.atffile import AtfFile
@@ -267,19 +266,11 @@ class NammuController(object):
 
 
     def undo(self, event):
-        undo_manager = self.atfAreaController.view.undo_manager
-        try:
-            undo_manager.undo()
-        except CannotUndoException:
-            pass
+        self.atfAreaController.undo()
 
 
     def redo(self, event):
-        undo_manager = self.atfAreaController.view.undo_manager
-        try:
-            undo_manager.redo()
-        except CannotRedoException:
-            pass
+        self.atfAreaController.redo()
 
 
     def copy(self, event):

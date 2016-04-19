@@ -46,6 +46,7 @@ class AtfAreaView(JPanel):
 
         # Set undo/redo manager to edit area
         self.undo_manager = UndoManager()
+        self.undo_manager.limit = 3000
         self.editArea.getDocument().addUndoableEditListener(self.undo_manager)
 
         # Create panel that'll contain the ScrollPane and the line numbers
