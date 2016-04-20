@@ -283,5 +283,5 @@ class AtfUndoableEditListener(UndoableEditListener):
         edit = event.getEdit()
         edit_type = edit.getType()
 
-        if str(edit_type) == "INSERT" and edit.significant:
+        if (str(edit_type) == "INSERT" or str(edit_type) == "REMOVE") and edit.significant:
             self.undo_manager.addEdit(edit)
