@@ -72,9 +72,10 @@ class NammuController(object):
         self.currentFilename = None
 
 
-        # Configure the tooltip manager for tooltips to appear quicker
+        # Configure the tooltip manager for tooltips to appear quicker and not
+        # to vanish until mouse moves away
         ToolTipManager.sharedInstance().setInitialDelay(0)
-        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE)
 
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
