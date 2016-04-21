@@ -8,7 +8,7 @@ Handles controller events.
 @author: raquel-ucl
 '''
 
-from javax.swing import JFileChooser, JOptionPane
+from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
 from java.io import FileWriter, IOException
 from java.lang import System, Integer
@@ -70,6 +70,10 @@ class NammuController(object):
         # Save current ATF filename
         # TODO: save array with all opened ATFs
         self.currentFilename = None
+
+
+        # Configure the tooltip manager for tooltips to appear quicker
+        ToolTipManager.sharedInstance().setInitialDelay(0)
 
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
