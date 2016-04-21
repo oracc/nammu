@@ -89,7 +89,13 @@ class NammuController(object):
         '''
         self.log("NammuController: Creating new file...")
 
-        self.handleUnsaved()
+        if self.unsavedChanges():
+            # Option 0 is Yes, 1 is No, 2 is cancel.
+            option = self.promptOptionPane("There are unsaved changes. Save now?")
+            if option == 0:
+                self.saveFile()
+            elif option == 2:
+                return
 
         self.atfAreaController.clearAtfArea()
 
@@ -108,7 +114,13 @@ class NammuController(object):
         '''
         self.log("NammuController: Opening file...")
 
-        self.handleUnsaved()
+        if self.unsavedChanges():
+            # Option 0 is Yes, 1 is No, 2 is cancel.
+            option = self.promptOptionPane("There are unsaved changes. Save now?")
+            if option == 0:
+                self.saveFile()
+            elif option == 2:
+                return
 
         self.atfAreaController.clearAtfArea()
 
@@ -145,7 +157,7 @@ class NammuController(object):
 #          System.exit(1);
 
 
-    def saveFile(self, event):
+    def saveFile(self, event=None):
         '''
         1. Check if current file has a filename
         2. Save current file in destination given by user
@@ -191,7 +203,13 @@ class NammuController(object):
         '''
         self.log("NammuController: Closing file...")
 
-        self.handleUnsaved()
+        if self.unsavedChanges():
+            # Option 0 is Yes, 1 is No, 2 is cancel.
+            option = self.promptOptionPane("There are unsaved changes. Save now?")
+            if option == 0:
+                self.saveFile()
+            elif option == 2:
+                return
 
         self.currentFilename = None
 
@@ -215,16 +233,6 @@ class NammuController(object):
                 return True
             else:
                 return False
-
-
-    def handleUnsaved(self):
-        '''
-        Helper function to decide what to do with open ATF file.
-        '''
-        if self.unsavedChanges():
-            option = self.promptOptionPane("There are unsaved changes. Save now?")
-            if option == 0:
-                self.saveFile()
 
 
     def promptOptionPane(self, question):
@@ -254,7 +262,13 @@ class NammuController(object):
         2. Exit
         '''
 
-        self.handleUnsaved()
+        if self.unsavedChanges():
+            # Option 0 is Yes, 1 is No, 2 is cancel.
+            option = self.promptOptionPane("There are unsaved changes. Save now?")
+            if option == 0:
+                self.saveFile()
+            elif option == 2:
+                return
 
         self.log("NammuController: Exiting...")
 
