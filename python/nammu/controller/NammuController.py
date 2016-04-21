@@ -408,10 +408,10 @@ class NammuController(object):
 
         validation_error_str = {}
         for line_num, errors in validation_errors.iteritems():
-            error_message = "<html>"
+            error_message = "<html><font face=\"verdana\" size=\"3\">"
             for error in errors:
                 error_message += "&#149; " + error + "<br/>"
-            error_message += "</html>"
+            error_message += "</font></html>"
             validation_error_str[line_num] = error_message
 
         return validation_error_str
