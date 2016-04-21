@@ -8,7 +8,7 @@ Handles controller events.
 @author: raquel-ucl
 '''
 
-from javax.swing import JFileChooser, JOptionPane
+from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
 from java.io import FileWriter, IOException
 from java.lang import System, Integer
@@ -70,6 +70,12 @@ class NammuController(object):
         # Save current ATF filename
         # TODO: save array with all opened ATFs
         self.currentFilename = None
+
+
+        # Configure the tooltip manager for tooltips to appear quicker and not
+        # to vanish until mouse moves away
+        ToolTipManager.sharedInstance().setInitialDelay(0)
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE)
 
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
@@ -396,9 +402,19 @@ class NammuController(object):
                 except IndexError:
                     continue
                 error_message = line.split(project_id + ':')[1]
-                validation_errors[line_number] = error_message
+                if line_number not in validation_errors.keys():
+                    validation_errors[line_number] = []
+                validation_errors[line_number].append(error_message)
 
-        return validation_errors
+        validation_error_str = {}
+        for line_num, errors in validation_errors.iteritems():
+            error_message = "<html><font face=\"verdana\" size=\"3\">"
+            for error in errors:
+                error_message += "&#149; " + error + "<br/>"
+            error_message += "</font></html>"
+            validation_error_str[line_num] = error_message
+
+        return validation_error_str
 
 
     def printFile(self, event):
