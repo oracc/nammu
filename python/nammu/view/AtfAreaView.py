@@ -60,6 +60,7 @@ class AtfAreaView(JPanel):
         # simultaneously
         scrollingText = JScrollPane(container)
         scrollingText.setPreferredSize(Dimension(1, 500))
+        scrollingText.getVerticalScrollBar().setUnitIncrement(16)
 
         # Add to parent panel
         self.add(scrollingText, BorderLayout.CENTER)
