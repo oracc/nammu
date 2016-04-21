@@ -87,21 +87,12 @@ class NammuController(object):
         2. Clear text area
         3. See GitHub issue: https://github.com/UCL-RITS/nammu/issues/6
         '''
-        self.log("NammuController: Creating new file...")
 
-        if self.unsavedChanges():
-            # Option 0 is Yes, 1 is No, 2 is cancel.
-            option = self.promptOptionPane("There are unsaved changes. Save now?")
-            if option == 0:
-                self.saveFile()
-            elif option == 2:
-                return
-
-        self.atfAreaController.clearAtfArea()
-
-        self.currentFilename = None
-
-        self.log(" OK\n")
+        if self.handleUnsaved():
+            self.log("NammuController: Creating new file...")
+            self.atfAreaController.clearAtfArea()
+            self.currentFilename = None
+            self.log(" OK\n")
 
 
     def openFile(self, event):
@@ -112,33 +103,27 @@ class NammuController(object):
         2. Display browser for user to choose file
         3. Load file in text area
         '''
-        self.log("NammuController: Opening file...")
 
-        if self.unsavedChanges():
-            # Option 0 is Yes, 1 is No, 2 is cancel.
-            option = self.promptOptionPane("There are unsaved changes. Save now?")
-            if option == 0:
-                self.saveFile()
-            elif option == 2:
-                return
+        if self.handleUnsaved():
+            self.log("NammuController: Opening file...")
 
-        self.atfAreaController.clearAtfArea()
+            self.atfAreaController.clearAtfArea()
 
-        fileChooser = JFileChooser()
-        filter = FileNameExtensionFilter("ATF files", ["atf"])
-        fileChooser.setFileFilter(filter)
-        status = fileChooser.showDialog(self.view, "Choose file")
+            fileChooser = JFileChooser()
+            filter = FileNameExtensionFilter("ATF files", ["atf"])
+            fileChooser.setFileFilter(filter)
+            status = fileChooser.showDialog(self.view, "Choose file")
 
-        if status == JFileChooser.APPROVE_OPTION:
-            atfFile = fileChooser.getSelectedFile()
-            filename = atfFile.getCanonicalPath()
-            atfText = self.readTextFile(filename)
-            self.currentFilename = atfFile.getCanonicalPath()
-            self.atfAreaController.setAtfAreaText(atfText)
+            if status == JFileChooser.APPROVE_OPTION:
+                atfFile = fileChooser.getSelectedFile()
+                filename = atfFile.getCanonicalPath()
+                atfText = self.readTextFile(filename)
+                self.currentFilename = atfFile.getCanonicalPath()
+                self.atfAreaController.setAtfAreaText(atfText)
 
-        # TODO: Else, prompt user to choose again before closing
+            # TODO: Else, prompt user to choose again before closing
 
-        self.log(" OK\n")
+            self.log(" OK\n")
 
 
     def readTextFile(self, filename):
@@ -157,7 +142,7 @@ class NammuController(object):
 #          System.exit(1);
 
 
-    def saveFile(self, event=None):
+    def saveFile(self, event):
         '''
         1. Check if current file has a filename
         2. Save current file in destination given by user
@@ -201,21 +186,11 @@ class NammuController(object):
         1. Check if file has unsaved changes
         2. Clear text area
         '''
-        self.log("NammuController: Closing file...")
-
-        if self.unsavedChanges():
-            # Option 0 is Yes, 1 is No, 2 is cancel.
-            option = self.promptOptionPane("There are unsaved changes. Save now?")
-            if option == 0:
-                self.saveFile()
-            elif option == 2:
-                return
-
-        self.currentFilename = None
-
-        self.atfAreaController.clearAtfArea()
-
-        self.log(" OK\n")
+        if self.handleUnsaved():
+            self.log("NammuController: Closing file...")
+            self.currentFilename = None
+            self.atfAreaController.clearAtfArea()
+            self.log(" OK\n")
 
 
     def unsavedChanges(self):
@@ -233,6 +208,20 @@ class NammuController(object):
                 return True
             else:
                 return False
+
+
+    def handleUnsaved(self):
+        '''
+        Helper function to decide what to do with open ATF file before having to
+        clear up the text area.
+        '''
+        if self.unsavedChanges():
+            option = self.promptOptionPane("There are unsaved changes. Save now?")
+            if option == 0:
+                self.saveFile()
+            if option == 2:
+                return False
+        return True
 
 
     def promptOptionPane(self, question):
@@ -262,21 +251,11 @@ class NammuController(object):
         2. Exit
         '''
 
-        if self.unsavedChanges():
-            # Option 0 is Yes, 1 is No, 2 is cancel.
-            option = self.promptOptionPane("There are unsaved changes. Save now?")
-            if option == 0:
-                self.saveFile()
-            elif option == 2:
-                return
-
-        self.log("NammuController: Exiting...")
-
-        self.log(" OK\n")
-
-        self.log("Bye! :)")
-
-        System.exit(0)
+        if self.handleUnsaved():
+            self.log("NammuController: Exiting...")
+            self.log(" OK\n")
+            self.log("Bye! :)")
+            System.exit(0)
 
 
     def undo(self, event):
