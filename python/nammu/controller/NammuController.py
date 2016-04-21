@@ -74,6 +74,7 @@ class NammuController(object):
 
         # Configure the tooltip manager for tooltips to appear quicker
         ToolTipManager.sharedInstance().setInitialDelay(0)
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
