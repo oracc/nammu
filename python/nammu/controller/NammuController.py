@@ -409,7 +409,7 @@ class NammuController(object):
         for line_num, errors in validation_errors.iteritems():
             error_message = "<html>"
             for error in errors:
-                error_message += error + "<br/>"
+                error_message += "&#149; " + error + "<br/>"
             error_message += "</html>"
             validation_error_str[line_num] = error_message
 
