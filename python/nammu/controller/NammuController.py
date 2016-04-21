@@ -87,15 +87,12 @@ class NammuController(object):
         2. Clear text area
         3. See GitHub issue: https://github.com/UCL-RITS/nammu/issues/6
         '''
-        self.log("NammuController: Creating new file...")
 
-        self.handleUnsaved()
-
-        self.atfAreaController.clearAtfArea()
-
-        self.currentFilename = None
-
-        self.log(" OK\n")
+        if self.handleUnsaved():
+            self.log("NammuController: Creating new file...")
+            self.atfAreaController.clearAtfArea()
+            self.currentFilename = None
+            self.log(" OK\n")
 
 
     def openFile(self, event):
@@ -106,25 +103,27 @@ class NammuController(object):
         2. Display browser for user to choose file
         3. Load file in text area
         '''
-        self.log("NammuController: Opening file...")
 
-        self.handleUnsaved()
+        if self.handleUnsaved():
+            self.log("NammuController: Opening file...")
 
-        fileChooser = JFileChooser()
-        filter = FileNameExtensionFilter("ATF files", ["atf"])
-        fileChooser.setFileFilter(filter)
-        status = fileChooser.showDialog(self.view, "Choose file")
+            self.atfAreaController.clearAtfArea()
 
-        if status == JFileChooser.APPROVE_OPTION:
-            atfFile = fileChooser.getSelectedFile()
-            filename = atfFile.getCanonicalPath()
-            atfText = self.readTextFile(filename)
-            self.currentFilename = atfFile.getCanonicalPath()
-            self.atfAreaController.setAtfAreaText(atfText)
+            fileChooser = JFileChooser()
+            filter = FileNameExtensionFilter("ATF files", ["atf"])
+            fileChooser.setFileFilter(filter)
+            status = fileChooser.showDialog(self.view, "Choose file")
 
-        # TODO: Else, prompt user to choose again before closing
+            if status == JFileChooser.APPROVE_OPTION:
+                atfFile = fileChooser.getSelectedFile()
+                filename = atfFile.getCanonicalPath()
+                atfText = self.readTextFile(filename)
+                self.currentFilename = atfFile.getCanonicalPath()
+                self.atfAreaController.setAtfAreaText(atfText)
 
-        self.log(" OK\n")
+            # TODO: Else, prompt user to choose again before closing
+
+            self.log(" OK\n")
 
 
     def readTextFile(self, filename):
@@ -187,15 +186,11 @@ class NammuController(object):
         1. Check if file has unsaved changes
         2. Clear text area
         '''
-        self.log("NammuController: Closing file...")
-
-        self.handleUnsaved()
-
-        self.currentFilename = None
-
-        self.atfAreaController.clearAtfArea()
-
-        self.log(" OK\n")
+        if self.handleUnsaved():
+            self.log("NammuController: Closing file...")
+            self.currentFilename = None
+            self.atfAreaController.clearAtfArea()
+            self.log(" OK\n")
 
 
     def unsavedChanges(self):
@@ -217,12 +212,16 @@ class NammuController(object):
 
     def handleUnsaved(self):
         '''
-        Helper function to decide what to do with open ATF file.
+        Helper function to decide what to do with open ATF file before having to
+        clear up the text area.
         '''
         if self.unsavedChanges():
             option = self.promptOptionPane("There are unsaved changes. Save now?")
             if option == 0:
                 self.saveFile()
+            if option == 2:
+                return False
+        return True
 
 
     def promptOptionPane(self, question):
@@ -252,37 +251,19 @@ class NammuController(object):
         2. Exit
         '''
 
-        self.handleUnsaved()
-
-        self.log("NammuController: Exiting...")
-
-        self.log(" OK\n")
-
-        self.log("Bye! :)")
-
-        System.exit(0)
+        if self.handleUnsaved():
+            self.log("NammuController: Exiting...")
+            self.log(" OK\n")
+            self.log("Bye! :)")
+            System.exit(0)
 
 
     def undo(self, event):
-        '''
-        1. Check if any action happened since application was launched
-        2. Come back to previous state (handle stack or rever last action)
-        3. Update state stack
-        Note: Check java's Undoable
-        '''
-        self.log("NammuController: Undoing last action...")
-
-        self.log(" OK\n")
+        self.atfAreaController.undo()
 
 
     def redo(self, event):
-        '''
-        1. Check if any action has been undone
-        2. Handle actions stack and update it
-        '''
-        self.log("NammuController: Redoing last undone action...")
-
-        self.log(" OK\n")
+        self.atfAreaController.redo()
 
 
     def copy(self, event):
@@ -312,7 +293,7 @@ class NammuController(object):
         self.log(" OK\n")
 
 
-    def validate(self, event):
+    def validate(self, event=None):
         '''
         For now, we are validating using the SOAP webservices from ORACC server.
         However, the intention is to replace this with validation by pyoracc.
