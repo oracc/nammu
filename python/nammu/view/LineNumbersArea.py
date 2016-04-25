@@ -1,6 +1,6 @@
 from java.awt import Color
 from javax.swing import JTextPane, BorderFactory
-from javax.swing.text import SimpleAttributeSet, StyleConstants
+from javax.swing.text import SimpleAttributeSet, StyleConstants, DefaultCaret
 
 
 class LineNumbersArea(JTextPane):
@@ -26,3 +26,7 @@ class LineNumbersArea(JTextPane):
         self.border = border
         self.setText("1: \n")
         self.setEditable(False)
+
+        # Prevent auto scroll down when line numbers are repainted
+        caret = self.getCaret()
+        caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE)
