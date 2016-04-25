@@ -42,8 +42,8 @@ class ToolbarView(JToolBar):
         tooltips['paste'] = 'Paste clipboard content'
         tooltips['validate'] = 'Check current ATF correctness'
         tooltips['lemmatise'] = 'Obtain lemmas for current ATF text'
-        tooltips['unicode'] = 'Use Unicode characters'
-        tooltips['console'] = 'View/Hide Console'
+        # tooltips['unicode'] = 'Use Unicode characters'
+        # tooltips['console'] = 'View/Hide Console'
         tooltips['displayModelView'] = 'Change to ATF data model view'
         tooltips['editSettings'] = 'Change Nammu settings'
         tooltips['showHelp'] = 'Displays ATF documentation'
@@ -62,6 +62,10 @@ class ToolbarView(JToolBar):
 
     def __getattr__(self, name):
         return getattr(self.controller, name)
+
+    def validate(self, event=None):
+        if event:
+            return self.controller.mainController.validate(event)
 
     def findImageResource(self, name):
         #Create helper object to load icon images in jar

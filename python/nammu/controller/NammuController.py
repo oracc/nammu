@@ -8,11 +8,11 @@ Handles controller events.
 @author: raquel-ucl
 '''
 
-from javax.swing import JFileChooser, JOptionPane
+from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
 from java.io import FileWriter, IOException
 from java.lang import System, Integer
-import codecs, time
+import codecs, time, os
 
 from pyoracc.atf.atffile import AtfFile
 from ..view.NammuView import NammuView
@@ -21,6 +21,7 @@ from ConsoleController import ConsoleController
 from AtfAreaController import AtfAreaController
 from ToolbarController import ToolbarController
 from ModelController import ModelController
+from ..SOAPClient.SOAPClient import SOAPClient
 
 class NammuController(object):
 
@@ -33,51 +34,56 @@ class NammuController(object):
         2. Create main view that'll bind all the components
         3. Create event/action handlers - EventBus?
         '''
-        #Create this controller first since it's where the log will be displayed
+        # Create this controller first since it's where the log will be displayed
         self.consoleController = ConsoleController(self)
 
-        #TODO replace with proper Logging functionality
-        self.consoleController.addText("NammuController: Creating subcontrollers...")
+        # TODO replace with proper Logging functionality
+        self.log("NammuController: Creating subcontrollers...")
 
-        #Create all the controllers
+        # Create all the controllers
         self.menuController = MenuController(self)
         self.toolbarController = ToolbarController(self)
         self.atfAreaController = AtfAreaController(self)
 
-        #TODO: Only if everything went fine
-        self.consoleController.addText(" OK\n")
+        # TODO: Only if everything went fine
+        self.log(" OK\n")
 
-        #Log next action
-        self.consoleController.addText("NammuController: Creating views...")
+        # Log next action
+        self.log("NammuController: Creating views...")
 
-        #Create all the views and assigned them to appropriate controller
+        # Create all the views and assigned them to appropriate controller
         self.view = NammuView(self)
         self.view.addMenuBar(self.menuController.view)
         self.view.addToolBar(self.toolbarController.view)
         self.view.addAtfArea(self.atfAreaController.view)
         self.view.addConsole(self.consoleController.view)
+        self.log(" OK\n")
 
-        self.consoleController.addText(" OK\n")
+        # Log next action
+        self.log("NammuController: Display main view...")
 
-        #Log next action
-        self.consoleController.addText("NammuController: Display main view...")
-
-        #Display Nammu's view
+        # Display Nammu's view
         self.view.display()
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
-        #Save current ATF filename
-        #TODO: save array with all opened ATFs
+        # Save current ATF filename
+        # TODO: save array with all opened ATFs
         self.currentFilename = None
 
-    #Actions delegated from subcontrollers follow.
-    #Subcontrollers can't handle these actions because they
-    #require interaction of several subcontrollers who have no visibility.
-    #Eg. action in menu will need modification of text area controlled elsewhere
-    #and not accessible from the menu controller that receives the action in the
-    #first instance; or eg. show help pop up can be dealt with from
-    #subcontroller
+
+        # Configure the tooltip manager for tooltips to appear quicker and not
+        # to vanish until mouse moves away
+        ToolTipManager.sharedInstance().setInitialDelay(0)
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE)
+
+    # Actions delegated from subcontrollers follow.
+    # Subcontrollers can't handle these actions because they
+    # require interaction of several subcontrollers who have no visibility.
+    # Eg. action in menu will need modification of text area controlled elsewhere
+    # and not accessible from the menu controller that receives the action in the
+    # first instance; or eg. show help pop up can be dealt with from
+    # subcontroller
 
     def newFile(self, event):
         '''
@@ -87,15 +93,12 @@ class NammuController(object):
         2. Clear text area
         3. See GitHub issue: https://github.com/UCL-RITS/nammu/issues/6
         '''
-        self.consoleController.addText("NammuController: Creating new file...")
 
-        self.handleUnsaved()
-
-        self.atfAreaController.clearAtfArea()
-
-        self.currentFilename = None
-
-        self.consoleController.addText(" OK\n")
+        if self.handleUnsaved():
+            self.log("NammuController: Creating new file...")
+            self.atfAreaController.clearAtfArea()
+            self.currentFilename = None
+            self.log(" OK\n")
 
 
     def openFile(self, event):
@@ -106,25 +109,27 @@ class NammuController(object):
         2. Display browser for user to choose file
         3. Load file in text area
         '''
-        self.consoleController.addText("NammuController: Opening file...")
 
-        self.handleUnsaved()
+        if self.handleUnsaved():
+            self.log("NammuController: Opening file...")
 
-        fileChooser = JFileChooser()
-        filter = FileNameExtensionFilter("ATF files", ["atf"])
-        fileChooser.setFileFilter(filter)
-        status = fileChooser.showDialog(self.view, "Choose file")
+            self.atfAreaController.clearAtfArea()
 
-        if status == JFileChooser.APPROVE_OPTION:
-            atfFile = fileChooser.getSelectedFile()
-            filename = atfFile.getCanonicalPath()
-            atfText = self.readTextFile(filename)
-            self.currentFilename = atfFile.getCanonicalPath()
-            self.atfAreaController.setAtfAreaText(atfText)
+            fileChooser = JFileChooser()
+            filter = FileNameExtensionFilter("ATF files", ["atf"])
+            fileChooser.setFileFilter(filter)
+            status = fileChooser.showDialog(self.view, "Choose file")
 
-        #TODO: Else, prompt user to choose again before closing
+            if status == JFileChooser.APPROVE_OPTION:
+                atfFile = fileChooser.getSelectedFile()
+                filename = atfFile.getCanonicalPath()
+                atfText = self.readTextFile(filename)
+                self.currentFilename = atfFile.getCanonicalPath()
+                self.atfAreaController.setAtfAreaText(atfText)
 
-        self.consoleController.addText(" OK\n")
+            # TODO: Else, prompt user to choose again before closing
+
+            self.log(" OK\n")
 
 
     def readTextFile(self, filename):
@@ -133,7 +138,7 @@ class NammuController(object):
         '''
         text = codecs.open(filename, encoding='utf-8').read()
         return text
-        #TODO: Check if selected file is ATF or at least text file!
+        # TODO: Check if selected file is ATF or at least text file!
 
 #        try:
 #          reader = FileReader(f)
@@ -149,7 +154,7 @@ class NammuController(object):
         2. Save current file in destination given by user
         '''
 
-        self.consoleController.addText("NammuController: Saving file...")
+        self.log("NammuController: Saving file...")
 
         fileChooser = JFileChooser()
         status = fileChooser.showSaveDialog(self.view)
@@ -161,7 +166,7 @@ class NammuController(object):
             self.writeTextFile(filename, atfText)
             #TODO check returned status?
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def writeTextFile(self, filename, text):
@@ -172,7 +177,7 @@ class NammuController(object):
         f.write(text)
         f.close()
 
-        #TODO return status?
+        # TODO return status?
 
 #       try:
 #         writer = FileWriter(f)
@@ -187,15 +192,11 @@ class NammuController(object):
         1. Check if file has unsaved changes
         2. Clear text area
         '''
-        self.consoleController.addText("NammuController: Closing file...")
-
-        self.handleUnsaved()
-
-        self.currentFilename = None
-
-        self.atfAreaController.clearAtfArea()
-
-        self.consoleController.addText(" OK\n")
+        if self.handleUnsaved():
+            self.log("NammuController: Closing file...")
+            self.currentFilename = None
+            self.atfAreaController.clearAtfArea()
+            self.log(" OK\n")
 
 
     def unsavedChanges(self):
@@ -217,12 +218,16 @@ class NammuController(object):
 
     def handleUnsaved(self):
         '''
-        Helper function to decide what to do with open ATF file.
+        Helper function to decide what to do with open ATF file before having to
+        clear up the text area.
         '''
         if self.unsavedChanges():
             option = self.promptOptionPane("There are unsaved changes. Save now?")
             if option == 0:
                 self.saveFile()
+            if option == 2:
+                return False
+        return True
 
 
     def promptOptionPane(self, question):
@@ -252,103 +257,181 @@ class NammuController(object):
         2. Exit
         '''
 
-        self.handleUnsaved()
-
-        self.consoleController.addText("NammuController: Exiting...")
-
-        self.consoleController.addText(" OK\n")
-
-        self.consoleController.addText("Bye! :)")
-
-        System.exit(0)
+        if self.handleUnsaved():
+            self.log("NammuController: Exiting...")
+            self.log(" OK\n")
+            self.log("Bye! :)")
+            System.exit(0)
 
 
     def undo(self, event):
-        '''
-        1. Check if any action happened since application was launched
-        2. Come back to previous state (handle stack or rever last action)
-        3. Update state stack
-        Note: Check java's Undoable
-        '''
-        self.consoleController.addText("NammuController: Undoing last action...")
-
-        self.consoleController.addText(" OK\n")
+        self.atfAreaController.undo()
 
 
     def redo(self, event):
-        '''
-        1. Check if any action has been undone
-        2. Handle actions stack and update it
-        '''
-        self.consoleController.addText("NammuController: Redoing last undone action...")
-
-        self.consoleController.addText(" OK\n")
+        self.atfAreaController.redo()
 
 
     def copy(self, event):
         '''
         Note: check if JTextArea already has this functionality
         '''
-        self.consoleController.addText("NammuController: Copying selected text...")
+        self.log("NammuController: Copying selected text...")
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def cut(self, event):
         '''
         Note: check if JTextArea already has this functionality
         '''
-        self.consoleController.addText("NammuController: Cutting selected text...")
+        self.log("NammuController: Cutting selected text...")
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
 
     def paste(self, event):
         '''
         Note: check if JTextArea already has this functionality
         '''
-        self.consoleController.addText("NammuController: Pasting clipboard text...")
+        self.log("NammuController: Pasting clipboard text...")
 
-        self.consoleController.addText(" OK\n")
+        self.log(" OK\n")
 
-    def validate(self, atfFile):
+
+    def validate(self, event=None):
         '''
-        1. Parse content of text area
-        2. Any errors parsing?
-        3. Display OK/NOK message in Console
+        For now, we are validating using the SOAP webservices from ORACC server.
+        However, the intention is to replace this with validation by pyoracc.
         '''
-        self.consoleController.addText("NammuController: Validating ATF file...")
+        self.log("NammuController: Validating ATF file... \n")
 
-        self.consoleController.addText(" OK\n")
+        # Search for project name in file. If not found, don't validate
+        project = self.get_project()
+
+        if project:
+            self.send_command("atf", project)
+        else:
+            self.log("        No project found in file. Add project and retry.\n")
+
+        self.log("        Validating ATF done.\n")
 
 
-    def lemmatise(self, atfFile):
+    def lemmatise(self, event):
         '''
-        1. Connect with UPenn DB
-        2. Send text area content
-        3. Receive response file
-        4. Display response in text area
-        5. Display OK/NOK message in Console
+        Connect to ORACC server and retrieved lemmatised version of ATF file.
         '''
-        self.consoleController.addText("NammuController: Lemmatising ATF file...")
+        self.log("NammuController: Lemmatising ATF file... \n")
 
-        self.consoleController.addText(" OK\n")
+        # Search for project name in file. If not found, don't validate
+        project = self.get_project()
+
+        if project:
+            self.send_command("lem", project)
+        else:
+            self.log("        No project found in file. Add project and retry.\n")
+
+
+    def send_command(self, command, project):
+        '''
+        Both validation and atf validation work similarly, same for other
+        services.
+        This method sends a command to the ORACC server along with all the
+        necessary arguments to build the HTTP request.
+        '''
+
+        # Build request.zip on the fly, pack all needed in it and send to server.
+        url = 'http://oracc.museum.upenn.edu:8085'
+
+        self.log("        Sending request to server at " + url + "\n")
+
+        # Create HTTP client and prepare all input arguments for request
+        client = SOAPClient(url, method='POST')
+        atf_basename = os.path.basename(self.currentFilename)
+        nammuText = self.atfAreaController.getAtfAreaText()
+
+        # Send request and check for returned process ID
+        client.create_request(command=command,
+                              keys=[project, '00atf/'+atf_basename],
+                              atf_basename=atf_basename,
+                              atf_text=nammuText.encode('utf-8'))
+        client.send()
+        server_id = client.get_response_id()
+
+        # Wait for server to prepare response
+        self.log("        Request sent OK with ID " + server_id + "\n")
+        self.log("        Waiting for server to prepare response... ")
+        client.wait_for_response(server_id)
+        self.log("OK\n")
+        self.log("        Fetching response... ")
+
+        # Send new request to fetch results and server logs
+        # This shouldn't need a new client, but a new request inside the same client
+        client = SOAPClient(url, method='POST')
+        client.create_request(keys=[server_id])
+        client.send()
+        response = client.get_response()
+        self.log(" OK\n")
+        self.log("        Reading response... ")
+        oracc_log, request_log, autolem = client.get_server_logs()
+        self.log(" OK\n")
+
+        if autolem:
+            self.atfAreaController.setAtfAreaText(autolem)
+            self.log("        Lemmatised ATF received from server.\n")
+
+        if oracc_log:
+            validation_errors = self.get_validation_errors(oracc_log)
+            self.atfAreaController.view.error_highlight(validation_errors)
+            self.log("        See highlighted areas in the text for errors and check again.\n\n")
+        else:
+            self.log("        The ORACC server didn't report any validation errors.\n\n")
+
+    def get_validation_errors(self, oracc_log):
+        """
+        Reads the log from the oracc server from the validation, and returns a
+        dictionary with line numbers and error messages.
+        """
+        validation_errors = {}
+
+        for line in oracc_log.splitlines():
+            if ':' in line:
+                line_number = line.split(':')[1]
+                try:
+                    project_id = line.split(':')[2]
+                except IndexError:
+                    continue
+                error_message = line.split(project_id + ':')[1]
+                if line_number not in validation_errors.keys():
+                    validation_errors[line_number] = []
+                validation_errors[line_number].append(error_message)
+
+        validation_error_str = {}
+        for line_num, errors in validation_errors.iteritems():
+            error_message = "<html><font face=\"verdana\" size=\"3\">"
+            for error in errors:
+                error_message += "&#149; " + error + "<br/>"
+            error_message += "</font></html>"
+            validation_error_str[line_num] = error_message
+
+        return validation_error_str
 
 
     def printFile(self, event):
         '''
         Print file.
         '''
-        self.consoleController.addText("NammuController: Printing file...")
+        self.log("NammuController: Printing file...")
 
-        self.consoleController.addText("OK\n")
+        self.log("OK\n")
+
 
     def editSettings(self, event):
         '''
         Show settings window for edition.
         '''
-        self.consoleController.addText("NammuController: Changing settings...")
-        self.consoleController.addText("OK\n")
+        self.log("NammuController: Changing settings...")
+        self.log("OK\n")
 
 
     def displayModelView(self, event):
@@ -358,7 +441,7 @@ class NammuController(object):
         3. Send text to model view controller and delegate
         '''
         atfText = self.atfAreaController.getAtfAreaText()
-        #if self.currentFilename != None and atfText != None :
+        # if self.currentFilename != None and atfText != None :
         if self.currentFilename != None:
             #TODO Check if ATF is valid
             #This may imply parsing the text, so perhaps the model controller
@@ -380,8 +463,8 @@ class NammuController(object):
         '''
         Create bool for unicode, change value when clicked.
         '''
-        self.consoleController.addText("NammuController: Unicode...")
-        self.consoleController.addText("OK\n")
+        self.log("NammuController: Unicode...")
+        self.log("OK\n")
 
 
     def console(self, event):
@@ -389,19 +472,50 @@ class NammuController(object):
         Create bool for console, change value when clicked.
         Hide if being shown, show if hidden.
         '''
-        self.consoleController.addText("NammuController: Console...")
+        self.log("NammuController: Console...")
 
 
     def toolbar(self, event):
         '''
         Show/Hide Toolbar.
         '''
-        self.consoleController.addText("NammuController: Toolbar... ")
-        self.consoleController.addText("OK\n")
+        self.log("NammuController: Toolbar... ")
+        self.log("OK\n")
 
 
     def __getattr__(self, name):
         '''
         Handle calls to undefined methods.
         '''
-        self.consoleController.addText("!!!Undefined method " + name)
+        self.log("!!!Undefined method " + name)
+
+
+    def get_project(self):
+        '''
+        Search for project in text content.
+        First try to parse it and get it from the parser.
+        If that fails, try to find it with re ("#project: xxxx").
+        If that fails as well, display error message and ask for project.
+        '''
+        project = None
+        project_str = "#project:"
+
+        nammu_text = self.atfAreaController.getAtfAreaText()
+
+        if project_str in nammu_text:
+            try:
+                parsed_atf = self.parse(nammu_text)
+                project = parsed_atf.text.project
+            except SyntaxError:
+                # File can't be parsed but might still contain a project code
+                project = nammu_text.split(project_str)[1].split()[0]
+
+        return project
+
+
+    def log(self, string):
+        '''
+        By now we are outputting in the console directly. A better logging
+        method would be nice though.
+        '''
+        self.consoleController.addText(string)
