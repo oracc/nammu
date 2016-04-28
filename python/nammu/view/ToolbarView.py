@@ -43,15 +43,13 @@ class ToolbarView(JToolBar):
         tooltips['paste'] = 'Paste clipboard content'
         tooltips['validate'] = 'Check current ATF correctness'
         tooltips['lemmatise'] = 'Obtain lemmas for current ATF text'
-        # tooltips['unicode'] = 'Use Unicode characters'
-        # tooltips['console'] = 'View/Hide Console'
         tooltips['displayModelView'] = 'Change to ATF data model view'
         tooltips['editSettings'] = 'Change Nammu settings'
         tooltips['showHelp'] = 'Displays ATF documentation'
         tooltips['showAbout'] = 'Displays information about Nammu and ORACC'
         tooltips['quit'] = 'Exits Nammu'
 
-        for name, tooltip in tooltips.items():
+        for name in tooltips.items():
             icon = ImageIcon(self.findImageResource(name))
             button = JButton(icon, actionPerformed = getattr(self, name))
             button.setToolTipText(tooltips[name])
