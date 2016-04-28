@@ -10,9 +10,8 @@ Handles controller events.
 
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
-from java.io import FileWriter, IOException
 from java.lang import System, Integer
-import codecs, time, os
+import codecs, os
 
 from pyoracc.atf.atffile import AtfFile
 from ..view.NammuView import NammuView
@@ -341,12 +340,14 @@ class NammuController(object):
         '''
 
         # Build request.zip on the fly, pack all needed in it and send to server.
-        url = 'http://oracc.museum.upenn.edu:8085'
-
+        url = 'http://oracc.museum.upenn.edu'
+        port = 8085
+        url_dir = 'p'
+        
         self.log("        Sending request to server at " + url + "\n")
 
         # Create HTTP client and prepare all input arguments for request
-        client = SOAPClient(url, method='POST')
+        client = SOAPClient(url, port, url_dir, method='POST')
         atf_basename = os.path.basename(self.currentFilename)
         nammuText = self.atfAreaController.getAtfAreaText()
 
@@ -367,7 +368,7 @@ class NammuController(object):
 
         # Send new request to fetch results and server logs
         # This shouldn't need a new client, but a new request inside the same client
-        client = SOAPClient(url, method='POST')
+        client = SOAPClient(url, port, url_dir, method='POST')
         client.create_request(keys=[server_id])
         client.send()
         response = client.get_response()
