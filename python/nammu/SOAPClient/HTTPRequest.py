@@ -21,6 +21,7 @@ class HTTPRequest(object):
             else:
                 self.create_response_message(kwargs['keys'])
 
+
     def create_request_message(self, command, keys, atf_basename, atf_text):
         """
         Send attachment to server containing ATF file and necessary data to
@@ -37,13 +38,10 @@ class HTTPRequest(object):
         self.document = MIMEBase('*','*')
         self.set_document_payload(atf_basename, atf_text)
 
-        #The headers can't be created until the body is finished since they need
-        #it to populate the Content-Length header
+        # The headers can't be created until the body is finished since they need
+        # it to populate the Content-Length header
         self.set_multipart_headers()
 
-        print "*"*30
-        print self.mtompkg
-        print "*"*30
 
     def create_response_message(self, keys):
         """
@@ -54,6 +52,7 @@ class HTTPRequest(object):
         self.mtompkg = MIMEApplication(self.envelope, 'soap+xml', encode_7or8bit)
         self.mtompkg.add_header("Host", self.url)
 
+
     def set_response_headers(self):
         del(self.mtompkg['Content-Transfer-Encoding'])
         headers = ['Host', 'Content-Length', 'Connection']
@@ -61,16 +60,16 @@ class HTTPRequest(object):
         for header, value in zip(headers, values):
             self.mtompkg.add_header(header, value)
 
+
     def set_response_params(self):
         self.mtompkg.set_param('charset', 'utf-8')
 
-    def create_request_body(self):
-        pass
 
     def set_multipart_payload(self):
         self.set_payload_headers()
         self.set_payload_params()
         self.mtompkg.attach(self.rootpkg)
+
 
     def set_document_payload(self, atf_basename, atf_text):
         self.set_document_headers()
@@ -84,11 +83,13 @@ class HTTPRequest(object):
         self.document.set_payload(mem_data.getvalue())
         self.mtompkg.attach(self.document)
 
+
     def set_document_headers(self):
         headers = ['Content-ID', 'Content-Transfer-Encoding']
         values = ['<request_zip>', 'binary']
         for header, value in zip(headers, values):
             self.document.add_header(header, value)
+
 
     def set_payload_params(self):
         params = ['charset', 'type']
@@ -96,13 +97,15 @@ class HTTPRequest(object):
         for param, value in zip(params, values):
             self.rootpkg.set_param(param, value)
 
+
     def set_payload_headers(self):
-        #Content-Transfer-Encoding is set to 7bit by default
+        # Content-Transfer-Encoding is set to 7bit by default
         del(self.rootpkg['Content-Transfer-Encoding'])
         headers = ['Content-ID', 'Content-Transfer-Encoding']
         values = ['<SOAP-ENV:Envelope>', 'binary']
         for header, value in zip(headers, values):
             self.rootpkg.add_header(header, value)
+
 
     def set_multipart_headers(self):
         headers = ['Host', 'Content-Length', 'Connection']
@@ -111,24 +114,14 @@ class HTTPRequest(object):
         for header, value in zip(headers, values):
             self.mtompkg.add_header(header, value)
 
+
     def set_multipart_params(self):
         params = ['charset', 'type', 'start', 'start-info', 'boundary']
         values = ['utf-8', 'application/xop+xml', '<SOAP-ENV:Envelope>',
                   'application/soap+xml', '==========boundary========']
         for param, value in zip(params, values):
             self.mtompkg.set_param(param, value)
-    #
-    # def set_element_params(self, params, values, element):
-    #     d = dict(zip(params, values))
-    #     for param, value in d.iteritems():
-    #         element.set_param(param, value)
-    #     return element
-    #
-    # def set_element_headers(self, headers, values, element):
-    #     d = dict(zip(headers, values))
-    #     for header, value in d.iteritems():
-    #         element.add_header(header, value)
-    #     return element
+            
 
     def set_soap_envelope(self, **kwargs):
         """
@@ -179,8 +172,10 @@ class HTTPRequest(object):
                                            data=data)
         self.envelope = envelope
 
+
     def get_soap_envelope(self):
         return self.envelope
+
 
     def get_headers(self):
         """
@@ -188,26 +183,41 @@ class HTTPRequest(object):
         """
         return dict(self.mtompkg.items())
 
+
     def get_body(self):
         """
-        Return dict with message body/payload - ready to use by requests module.
+        Returns the body of the HTTP POST request containing the soap envelope 
+        including the encoded compressed ATF.
         """
-        headers = dict(self.mtompkg.items())
+        # Header and body on a HTTP SOAP/MTOM message is separated by \n\n 
         body = self.mtompkg.as_string().split('\n\n', 1)[1]
+        
+        # This returns the randomly created boundary string, which separates the
+        # different elements in the request (document, envelope and payload)
         boundary = self.mtompkg.get_boundary()
+        
+        # There's two different kinds of SOAP HTTP POST requests handled, due to
+        # the communication with the server being asynchronous:
+        # * One that contains an ATF attachment submitted for validation/lemm
+        # * One that contains only a request ID to ask for the validated/lemm'd
+        #   ATF.
+        # The boundary will be empty in the second case.
         if boundary != None:
+            # Encoded zip files start with "\n\nPK" and end with a new line 
+            # follwed by the ending boundary (in the form "--random_boundary--"
             attachment = body.split("\n\nPK")[1].split("\n--" + str(boundary))[0]
-            print attachment
+            # Some line endings are \n and some are \r\n. The email module 
+            # automatically replaces some of them causing the server not to 
+            # understand line endings correctly. For this, we need to first make
+            # sure all of the line endings are \n, then convert them all to 
+            # \r\n (to avoid having '\r\n' converted to '\r\r\n'.
+            # Note the encoding of the zipped ATF might coincidentally contain a 
+            # '\n' substring. We have to avoid replacing those, otherwise the
+            # zipped ATF will be corrupt and imposible to open by the server.  
             body = body.replace(attachment, '<attachment>')
-            body = body.replace('\r\n', '\r').replace('\n', '\r\n')
+            body = body.replace('\r\n', '\n').replace('\n', '\r\n')
             body = body.replace("<attachment>", attachment)
         else:
-            body = body.replace('\r\n', '\r').replace('\n', '\r\n')
+            body = body.replace('\r\n', '\n').replace('\n', '\r\n')
+            
         return body
-
-
-    def handle_server_error(self):
-        """
-        Raise an exception when server can't be reached or request times out.
-        """
-        pass
