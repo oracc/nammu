@@ -91,12 +91,12 @@ class SOAPClient(object):
         f = StringIO.StringIO()
         f.write(bytearray(binary_body))
 
-        # if zipfile.is_zipfile(f):
         memory_zip = ZipFile(f)
         zip_content = {name: memory_zip.read(name) for name in memory_zip.namelist()}
         oracc_log = zip_content['oracc.log']
         request_log = zip_content['request.log']
-        # See if server returns a lemmatised file
+
+        # Check if server returns a lemmatised file
         autolem = None 
         for key, value in zip_content.iteritems():
             if key.endswith("autolem.atf"):
