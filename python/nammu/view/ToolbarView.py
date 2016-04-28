@@ -14,7 +14,6 @@ from java.lang import ClassLoader
 class ToolbarView(JToolBar):
 
     def __init__(self, controller):
-
         # Give reference to controller to delegate action response
         self.controller = controller
 
@@ -49,22 +48,25 @@ class ToolbarView(JToolBar):
         tooltips['showAbout'] = 'Displays information about Nammu and ORACC'
         tooltips['quit'] = 'Exits Nammu'
 
-        for name in tooltips.items():
+        for name, tooltip in tooltips.items():
             icon = ImageIcon(self.findImageResource(name))
             button = JButton(icon, actionPerformed = getattr(self, name))
-            button.setToolTipText(tooltips[name])
+            button.setToolTipText(tooltip)
             self.add(button)
-            #Work out is separator is needed
+            # Work out is separator is needed
             if name in ['printFile', 'redo', 'paste', 'lemmatise', 'unicode',
                         'console', 'displayModelView', 'showAbout']:
                 self.addSeparator()
 
+
     def __getattr__(self, name):
         return getattr(self.controller, name)
+
 
     def validate(self, event=None):
         if event:
             return self.controller.mainController.validate(event)
+
 
     def findImageResource(self, name):
         #Create helper object to load icon images in jar
