@@ -109,7 +109,7 @@ class HTTPRequest(object):
 
     def set_multipart_headers(self):
         headers = ['Host', 'Content-Length', 'Connection']
-        values = [self.url, len(str(self.mtombody)), 'close']
+        values = [self.url, str(len(self.get_body())), 'close']
         for header, value in zip(headers, values):
             self.mtompkg.add_header(header, value)
 
