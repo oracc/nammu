@@ -33,7 +33,7 @@ class SOAPClient(object):
 
 
     def create_request(self, **kwargs):
-        url = self.url + ":" + self.port
+        url = "{}:{}".format(self.url, self.port)
         request = HTTPRequest(url, self.method, **kwargs)
         self.request = request
 
