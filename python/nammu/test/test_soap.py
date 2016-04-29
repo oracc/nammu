@@ -5,13 +5,12 @@ from ..SOAPClient.HTTPRequest import HTTPRequest
 
 class TestSOAP(object):
 
-    # Tests about headers need a small redesign to wo
-    def test_http_request_headers(self):
+    def test_http_post_validation_request_headers(self):
         goal_headers = {
             'Connection': 'close',
-            'Content-Type': 'multipart/related; boundary="============boundary============"; charset="utf-8"; type="application/xop+xml"; start="<SOAP-ENV:Envelope>"; start-info="application/soap+xml"',
+            'Content-Type': 'multipart/related; charset="utf-8"; type="application/xop+xml"; start="<SOAP-ENV:Envelope>"; start-info="application/soap+xml"; boundary="==========boundary========"',
             'Host': 'http://oracc.museum.upenn.edu:8085',
-            'Content-Length': '1500',
+            'Content-Length': '2011',
             'MIME-Version': '1.0'
         }
         client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
@@ -28,7 +27,7 @@ class TestSOAP(object):
             'Connection': 'close',
             'Content-Type': 'multipart/related; start="<SOAP-ENV:Envelope>"; boundary="============boundary============"; charset="utf-8"; type="application/xop+xml"; start-info="application/soap+xml"',
             'Host': 'http://oracc.museum.upenn.edu:8085',
-            'Content-Length': '1500',
+            'Content-Length': '2011',
             'MIME-Version': '1.0'
         }
         client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
