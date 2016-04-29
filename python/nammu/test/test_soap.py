@@ -1,11 +1,14 @@
 import pytest
 import xml.dom.minidom
 from ..SOAPClient.SOAPClient import SOAPClient
-from ..SOAPClient.HTTPRequest import HTTPRequest
 
 class TestSOAP(object):
 
     def test_http_post_validation_request_headers(self):
+        """
+        Tests the headers of the HTTP POST request for validation that contains 
+        the ATF file are correct.
+        """
         goal_headers = {
             'Connection': 'close',
             'Content-Type': 'multipart/related; charset="utf-8"; type="application/xop+xml"; start="<SOAP-ENV:Envelope>"; start-info="application/soap+xml"; boundary="==========boundary========"',
@@ -22,13 +25,16 @@ class TestSOAP(object):
         assert test_headers == goal_headers
 
 
-    def test_http_response_headers(self):
+    def test_http_post_request_ready_headers(self):
+        """
+        Tests the headers of the HTTP POST request that is sent once the server
+        has confirmed the validation/lemmatisation is ready.
+        """
         goal_headers = {
-            'Connection': 'close',
-            'Content-Type': 'multipart/related; start="<SOAP-ENV:Envelope>"; boundary="============boundary============"; charset="utf-8"; type="application/xop+xml"; start-info="application/soap+xml"',
-            'Host': 'http://oracc.museum.upenn.edu:8085',
-            'Content-Length': '2011',
-            'MIME-Version': '1.0'
+            'Host': 'http://oracc.museum.upenn.edu:8085', 
+            'Content-Transfer-Encoding': '7bit', 
+            'MIME-Version': '1.0', 
+            'Content-Type': 'application/soap+xml'
         }
         client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
         client.create_request(keys=['ZO3vNg'])
