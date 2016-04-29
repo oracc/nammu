@@ -1,21 +1,46 @@
 import pytest
 import xml.dom.minidom
 from ..SOAPClient.SOAPClient import SOAPClient
-from ..SOAPClient.HTTPRequest import HTTPRequest
 
 class TestSOAP(object):
 
-    @pytest.mark.xfail
-    def test_http_post_headers(self):
+    def test_http_post_validation_request_headers(self):
+        """
+        Tests the headers of the HTTP POST request for validation that contains 
+        the ATF file are correct.
+        """
         goal_headers = {
             'Connection': 'close',
-            'Content-Type': 'multipart/related; start="<SOAP-ENV:Envelope>"; charset="utf-8"; type="application/xop+xml"; boundary="============boundary============"; start-info="application/soap+xml"',
-            'Host': 'http://oracc.museum.upenn.edu:8085'
+            'Content-Type': 'multipart/related; charset="utf-8"; type="application/xop+xml"; start="<SOAP-ENV:Envelope>"; start-info="application/soap+xml"; boundary="==========boundary========"',
+            'Host': 'http://oracc.museum.upenn.edu:8085',
+            'Content-Length': '2011',
+            'MIME-Version': '1.0'
         }
-        client = SOAPClient('http://oracc.museum.upenn.edu:8085', method='POST')
-        request = client.create_request()
-        test_headers = requests.get_headers()
+        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
+        client.create_request(command='atf',
+                              keys=['tests/mini', '00atf/hyphens.atf'],
+                              atf_basename='hyphens.atf',
+                              atf_text=open('resources/test/request.zip').read())
+        test_headers = client.request.get_headers()
         assert test_headers == goal_headers
+
+
+    def test_http_post_request_ready_headers(self):
+        """
+        Tests the headers of the HTTP POST request that is sent once the server
+        has confirmed the validation/lemmatisation is ready.
+        """
+        goal_headers = {
+            'Host': 'http://oracc.museum.upenn.edu:8085', 
+            'Content-Transfer-Encoding': '7bit', 
+            'MIME-Version': '1.0', 
+            'Content-Type': 'application/soap+xml'
+        }
+        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
+        client.create_request(keys=['ZO3vNg'])
+        test_headers = client.request.get_headers()
+        assert test_headers == goal_headers
+
 
     def test_soap_request_envelope(self):
         goal_envelope = """<?xml version="1.0" encoding="UTF-8"?>
@@ -43,12 +68,16 @@ class TestSOAP(object):
                     </osc-meth:Request>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>"""
-        client = SOAPClient('http://oracc.museum.upenn.edu:8085', method='POST')
+        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
+        atf_basename = "hyphens.atf"
         client.create_request(command='atf',
-                              keys=['tests/mini', '00atf/hyphens.atf'],
-                              attachment='resources/test/request.zip')
+                              keys=['tests/mini', '00atf/' + atf_basename],
+                              atf_basename=atf_basename,
+                              atf_text=open('resources/test/request.zip').read())
+                
         test_envelope = client.request.get_soap_envelope()
         assert self.compare_soap_envelopes(test_envelope, goal_envelope)
+
 
     def test_soap_response_envelope(self):
         goal_envelope = """<?xml version="1.0" encoding="UTF-8"?>
@@ -69,15 +98,17 @@ class TestSOAP(object):
                     </osc-meth:Response>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>"""
-        client = SOAPClient('http://oracc.museum.upenn.edu:8085', method='POST')
+        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
         client.create_request(keys=['ZO3vNg'])
         test_envelope = client.request.get_soap_envelope()
         assert self.compare_soap_envelopes(test_envelope, goal_envelope)
-
+        
+        
     def compare_soap_envelopes(self, test, goal):
         test_xml = xml.dom.minidom.parseString(test)
         goal_xml = xml.dom.minidom.parseString(goal)
         return self.pretty_print(test_xml) == self.pretty_print(goal_xml)
+
 
     def pretty_print(self, str):
         pretty_str = ''
