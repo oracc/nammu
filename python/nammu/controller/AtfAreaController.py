@@ -59,3 +59,15 @@ class AtfAreaController(object):
             self.update_line_numbers()
         except CannotRedoException:
             pass
+
+
+    def copy(self):
+        self.view.editArea.copy()
+        
+    
+    def paste(self):
+        self.view.editArea.paste()
+        
+    
+    def cut(self):
+        self.view.editArea.cut()

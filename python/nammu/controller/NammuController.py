@@ -272,30 +272,15 @@ class NammuController(object):
 
 
     def copy(self, event):
-        '''
-        Note: check if JTextArea already has this functionality
-        '''
-        self.log("NammuController: Copying selected text...")
-
-        self.log(" OK\n")
+        self.atfAreaController.copy()
 
 
     def cut(self, event):
-        '''
-        Note: check if JTextArea already has this functionality
-        '''
-        self.log("NammuController: Cutting selected text...")
-
-        self.log(" OK\n")
+        self.atfAreaController.cut()
 
 
     def paste(self, event):
-        '''
-        Note: check if JTextArea already has this functionality
-        '''
-        self.log("NammuController: Pasting clipboard text...")
-
-        self.log(" OK\n")
+        self.atfAreaController.paste()
 
 
     def validate(self, event=None):
