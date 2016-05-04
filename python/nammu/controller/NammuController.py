@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on 15 Apr 2015
 
@@ -114,6 +115,7 @@ class NammuController(object):
 
             self.atfAreaController.clearAtfArea()
 
+
             fileChooser = JFileChooser()
             filter = FileNameExtensionFilter("ATF files", ["atf"])
             fileChooser.setFileFilter(filter)
@@ -124,6 +126,7 @@ class NammuController(object):
                 filename = atfFile.getCanonicalPath()
                 atfText = self.readTextFile(filename)
                 self.currentFilename = atfFile.getCanonicalPath()
+
                 self.atfAreaController.setAtfAreaText(atfText)
 
             # TODO: Else, prompt user to choose again before closing

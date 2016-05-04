@@ -27,8 +27,8 @@ class AtfEditArea(JTextPane):
             if self.parent_component.validation_errors:
                 try:
                     return self.parent_component.validation_errors[str(line_num)]
-                except KeyError:
-                    pass
+                except KeyError as err:
+                    print err 
 
 
     def get_line_num(self, position):

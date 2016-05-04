@@ -11,8 +11,8 @@ from java.awt import Font, BorderLayout, Dimension, Color
 from java.awt.event import KeyListener
 from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultHighlighter, StyleContext, StyleConstants
-from javax.swing.text import SimpleAttributeSet, AbstractDocument
-from javax.swing.undo import UndoManager
+from javax.swing.text import SimpleAttributeSet, AbstractDocument 
+from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener
 from pyoracc.atf.atflex import AtfLexer
 from .AtfEditArea import AtfEditArea
@@ -131,7 +131,8 @@ class AtfAreaView(JPanel):
                                                         attribs,
                                                         True)
 
-
+        
+        
     def syntax_highlight(self):
         """
         Implements syntax highlighting based on pyoracc.
@@ -168,12 +169,11 @@ class AtfAreaView(JPanel):
                                                      self.colors[color],
                                                      True)
 
-
     def setup_syntax_highlight_colours(self):
         # Syntax highlighting colors based on SOLARIZED
         self.colorlut = {}
 
-        # Black backgroud tones
+        # Black background tones
         self.colorlut['base03'] = (0, 43, 54)
         self.colorlut['base02'] = (7, 54, 66)
 
@@ -279,10 +279,110 @@ class AtfUndoableEditListener(UndoableEditListener):
     '''
     def __init__(self, undo_manager):
         self.undo_manager = undo_manager
+        self.currentCompound=CompoundEdit()
 
     def undoableEditHappened(self, event):
         edit = event.getEdit()
-        edit_type = edit.getType()
+        edit_type = str(edit.getType())
 
-        if (str(edit_type) == "INSERT" or str(edit_type) == "REMOVE") and edit.significant:
-            self.undo_manager.addEdit(edit)
+
+        if edit_type == "INSERT" or edit_type == "REMOVE":
+            self.currentCompound.end()
+            self.currentCompound=CompoundEdit()
+
+            self.undo_manager.addEdit(self.currentCompound)
+            
+        self.currentCompound.addEdit(edit)
+        #print self.undo_manager
+            
+                        
+# class AtfUndoManager(UndoableEditListener):
+#     '''
+#     Overrides the UndoManager's functionality so we can keep a list of custom
+#     CompoundEdits (INSERT/REMOVE + associated syntax highlight changes) instead 
+#     of a list of UndoableEdits (each change whether it is significant or not).
+#     '''
+#     def __init__(self):
+#         self.edits = [] # This contains a list of compound edits
+#         self.current_compound_edit = None 
+#         self.pointer = -1 # Points to last undone/redone edit
+#         
+#         
+#     def undoableEditHappened(self, event):
+#         edit = event.getEdit()
+#         self.addEdit(edit)
+#         
+#         
+#     def addEdit(self, edit):
+#         edit_type = str(edit.getType())
+#         print edit_type
+#         if edit_type == "INSERT" or edit_type == "REMOVE":
+#             # Stop current edit, add it to list of compound edits, create new 
+#             # compound edit to add to it later
+#             if self.current_compound_edit:
+#                 self.edits.append(self.current_compound_edit)
+#                 self.pointer += 1
+#             self.current_compound_edit = AtfCompoundEdit()
+#         # Always add edit to current_edit
+#         self.current_compound_edit.addEdit(edit) 
+#         print "# compound edits: " + str(len(self.edits)) + ", pointer = " + str(self.pointer)
+#         
+#         
+#     def undo(self):
+#         if self.canUndo():
+#             undo_edit = self.edits[self.pointer]
+#             undo_edit.undo()
+#             self.pointer -= 1
+#             
+#             
+#     def redo(self):
+#         if self.canRedo():
+#             self.pointer += 1
+#             redo_edit = self.edits[self.pointer]
+#             redo_edit.redo()
+#                 
+#         
+#     def canUndo(self):
+#         return self.pointer > -1
+#         
+#         
+#     def canRedo(self):
+#         return len(self.edits) > 0 and self.pointer < len(self.edits) -1
+#          
+#      
+# class AtfCompoundEdit(CompoundEdit):
+#     '''
+#     Overrides the CompoundEdit's functionality to group together an INSERT or
+#     REMOVE edit and the list of associated CHANGES to that edit.
+#     '''
+#     def __init__(self):
+#         self.edits = []
+#         self.isUnDone = False
+# 
+# 
+#     def getLength(self):
+#         return len(self.edits)
+# 
+# 
+#     def undo(self):
+#         CompoundEdit.undo(self)
+#         self.isUnDone = True
+# 
+# 
+#     def redo(self):
+#         CompoundEdit.redo(self)
+#         self.isUnDone = False
+# 
+# 
+#     def canUndo(self):
+#         return len(self.edits) and not self.isUnDone
+# 
+# 
+#     def canRedo(self):
+#         return len(self.edits) and self.isUnDone
+#     
+#     
+#     def addEdit(self, edit):
+#         self.edits.append(edit)
+#         print "# single edits: " + str(len(self.edits))
+

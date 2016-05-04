@@ -22,10 +22,16 @@ class AtfAreaController(object):
         # Get a reference to the view's undo_manager
         self.undo_manager = self.view.undo_manager
 
+
     def setAtfAreaText(self, text):
+
         self.view.editArea.setText(text)
+
         self.view.syntax_highlight()
+
+
         self.update_line_numbers()
+
 
 
     def getAtfAreaText(self):
@@ -47,9 +53,15 @@ class AtfAreaController(object):
 
     def undo(self):
         try:
+            self.view.edit_listener.currentCompound.end()
             self.undo_manager.undo()
+            
+            print "Undone"
             self.update_line_numbers()
-        except CannotUndoException:
+
+            print "Done LNs"
+        except CannotUndoException as err:
+            print err
             pass
 
 
