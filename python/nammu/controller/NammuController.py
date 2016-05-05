@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 '''
 Created on 15 Apr 2015
 
@@ -12,8 +11,8 @@ Handles controller events.
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
 from java.lang import System, Integer
-import codecs, os
 
+import codecs, os
 from pyoracc.atf.atffile import AtfFile
 from ..view.NammuView import NammuView
 from MenuController import MenuController
