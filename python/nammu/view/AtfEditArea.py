@@ -23,12 +23,13 @@ class AtfEditArea(JTextPane):
         if event:
             position = self.viewToModel(event.getPoint())
             line_num = self.get_line_num(position)
-            #Check if line_num has an error message assigned
+            # Check if line_num has an error message assigned
             if self.parent_component.validation_errors:
                 try:
                     return self.parent_component.validation_errors[str(line_num)]
-                except KeyError as err:
-                    print err 
+                except KeyError:
+                    # Current line has no error messages assigned
+                    pass
 
 
     def get_line_num(self, position):
