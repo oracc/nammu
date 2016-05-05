@@ -283,7 +283,25 @@ class AtfUndoableEditListener(UndoableEditListener):
     def __init__(self, undo_manager):
         self.undo_manager = undo_manager
         self.current_compound = CompoundEdit()
+        self.must_compound = False
 
+
+    def compound(self):
+        '''
+        Allows for external actions like setText() which adds two consecutive
+        INSERT events to manually start and stop a compound from outside
+        the undoableEditHappened() call.
+        '''
+        self.must_compound = True
+        self.current_compound.end()
+        self.undo_manager.addEdit(self.current_compound)
+        self.current_compound = CompoundEdit()
+
+        
+    def stop_compound(self):
+        self.must_compound = False
+        self.current_compound.end()
+        self.undo_manager.addEdit(self.current_compound)       
 
     def undoableEditHappened(self, event):
         edit = event.getEdit()
@@ -291,13 +309,13 @@ class AtfUndoableEditListener(UndoableEditListener):
 
         # If significant INSERT/REMOVE event happen, end and add current
         # edit compound to undo_manager and start a new one.
-        if edit_type == "INSERT" or edit_type == "REMOVE":
+        if (edit_type == "INSERT" or edit_type == "REMOVE") \
+            and not self.must_compound:
             # Explicitly end compound edits so their inProgress flag goes to
             # false. Note undo() only undoes compound edits when they are not
             # in progress.
             self.current_compound.end()
             self.current_compound = CompoundEdit()
-
             self.undo_manager.addEdit(self.current_compound)
             
         # Always add current edit to current compound  
