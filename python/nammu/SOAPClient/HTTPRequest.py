@@ -126,12 +126,12 @@ class HTTPRequest(object):
         """
         Format SOAP envelope to be attached in HTTP POST request.
         """
-        #The number of keys in the SOAP envelope depends on the command and
-        #the message type (Request/Response)
+        # The number of keys in the SOAP envelope depends on the command and
+        # the message type (Request/Response)
         osc_data_keys = ''
 
-        #Only Request messages have data, but the template has a reference to
-        #it in both cases.
+        # Only Request messages have data, but the template has a reference to
+        # it in both cases.
         data = ''
 
         if 'command' in kwargs.keys():

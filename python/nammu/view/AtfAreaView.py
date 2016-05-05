@@ -7,11 +7,11 @@ Initializes the ATF (edit/model) view and sets its layout.
 '''
 
 import re
-from java.awt import Font, BorderLayout, Dimension, Color
+from java.awt import BorderLayout, Dimension, Color
 from java.awt.event import KeyListener
-from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
-from javax.swing.text import DefaultHighlighter, StyleContext, StyleConstants
-from javax.swing.text import SimpleAttributeSet, AbstractDocument 
+from javax.swing import JScrollPane, JPanel
+from javax.swing.text import StyleContext, StyleConstants
+from javax.swing.text import SimpleAttributeSet 
 from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener
 from pyoracc.atf.atflex import AtfLexer
@@ -96,7 +96,6 @@ class AtfAreaView(JPanel):
                 StyleConstants.setForeground(attribs, Color.red)
                 line_numbers_sd = self.line_numbers_area.getStyledDocument()
                 edit_area_sd = self.editArea.getStyledDocument()
-
                 text = self.line_numbers_area.text
 
                 # Search for start position and length of line number
@@ -131,7 +130,6 @@ class AtfAreaView(JPanel):
                                                         attribs,
                                                         True)
 
-        
         
     def syntax_highlight(self):
         """
@@ -168,6 +166,7 @@ class AtfAreaView(JPanel):
                 self.edit_area_styledoc.setCharacterAttributes(tok.lexpos, mylength,
                                                      self.colors[color],
                                                      True)
+
 
     def setup_syntax_highlight_colours(self):
         # Syntax highlighting colors based on SOLARIZED
@@ -231,6 +230,7 @@ class AtfAreaView(JPanel):
         self.tokencolorlu['PROJECT']['transctrl'] = ('green', False)
         self.tokencolorlu['default'] = ('black', False)
 
+
     def repaint_line_numbers(self, n_lines):
         """
         Draws line numbers in corresponding panel.
@@ -289,7 +289,7 @@ class AtfUndoableEditListener(UndoableEditListener):
         edit = event.getEdit()
         edit_type = str(edit.getType())
 
-        # If significative INSERT/REMOVE event happen, end and add current
+        # If significant INSERT/REMOVE event happen, end and add current
         # edit compound to undo_manager and start a new one.
         if edit_type == "INSERT" or edit_type == "REMOVE":
             # Explicitly end compound edits so their inProgress flag goes to

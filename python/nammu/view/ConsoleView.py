@@ -50,6 +50,7 @@ class ConsoleView(JPanel):
         # Add to parent panel
         self.add(scrollingText, BorderLayout.CENTER)
 
+
     def scroll(self):
         '''
         Scroll down to bottom.

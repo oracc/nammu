@@ -116,8 +116,8 @@ class NammuController(object):
 
 
             fileChooser = JFileChooser()
-            filter = FileNameExtensionFilter("ATF files", ["atf"])
-            fileChooser.setFileFilter(filter)
+            file_filter = FileNameExtensionFilter("ATF files", ["atf"])
+            fileChooser.setFileFilter(file_filter)
             status = fileChooser.showDialog(self.view, "Choose file")
 
             if status == JFileChooser.APPROVE_OPTION:
