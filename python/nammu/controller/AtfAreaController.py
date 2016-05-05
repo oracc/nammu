@@ -33,8 +33,8 @@ class AtfAreaController(object):
 
     def clearAtfArea(self):
         self.view.editArea.setText("")
-        # Not sure we need this
-        # self.view.undo_manager.discardAllEdits()
+        # When opening a new file we should discard the previous edits
+        self.view.undo_manager.discardAllEdits()
 
 
     def update_line_numbers(self):
