@@ -15,23 +15,16 @@ class AtfAreaController(object):
     def __init__(self, mainControler):
         # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
-
         # Will also need delegating to parent presenter
         self.controller = mainControler
-
         # Get a reference to the view's undo_manager
         self.undo_manager = self.view.undo_manager
 
 
     def setAtfAreaText(self, text):
-
         self.view.editArea.setText(text)
-
         self.view.syntax_highlight()
-
-
         self.update_line_numbers()
-
 
 
     def getAtfAreaText(self):
@@ -40,28 +33,29 @@ class AtfAreaController(object):
 
     def clearAtfArea(self):
         self.view.editArea.setText("")
-        self.view.undo_manager.discardAllEdits()
+        # Not sure we need this
+        # self.view.undo_manager.discardAllEdits()
 
 
     def update_line_numbers(self):
         # Get how many lines are in the file
         n_lines = self.getAtfAreaText().count('\n')
-
         # Reload line numbers text panel
         self.view.repaint_line_numbers(n_lines)
 
 
     def undo(self):
         try:
-            self.view.edit_listener.currentCompound.end()
+            # CompoundEdits only get added  to the undo manager when the next 
+            # INSERT/REMOVE event happens. Thus, if we are adding changes to
+            # the current compound edit and we want to undo it before the next
+            # INSERT/REMOVE happens, we won't be able until it's been explicitly 
+            # ended.
+            self.view.edit_listener.current_compound.end()
             self.undo_manager.undo()
-            
-            print "Undone"
             self.update_line_numbers()
-
-            print "Done LNs"
-        except CannotUndoException as err:
-            print err
+        except CannotUndoException:
+            # This exception indicates we've reached the end of the edits vector
             pass
 
 
@@ -70,6 +64,7 @@ class AtfAreaController(object):
             self.undo_manager.redo()
             self.update_line_numbers()
         except CannotRedoException:
+            # This exception indicates we've reached the end of the edits vector
             pass
 
 
