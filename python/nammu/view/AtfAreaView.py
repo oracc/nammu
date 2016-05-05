@@ -274,115 +274,31 @@ class AtfAreaKeyListener(KeyListener):
 
 class AtfUndoableEditListener(UndoableEditListener):
     '''
-    Overrides the undoableEditHappened functionality to only count INSERT type
-    events instead of capturing other changes and events like highlighting, etc.
+    Overrides the undoableEditHappened functionality to group INSERT/REMOVE 
+    edit events with their associated CHANGE events (these correspond to 
+    highlighting only at the moment).
+    TODO: Make compounds save whole words so undoing is not so much of a pain 
+          for the user.
     '''
     def __init__(self, undo_manager):
         self.undo_manager = undo_manager
-        self.currentCompound=CompoundEdit()
+        self.current_compound = CompoundEdit()
+
 
     def undoableEditHappened(self, event):
         edit = event.getEdit()
         edit_type = str(edit.getType())
 
-
+        # If significative INSERT/REMOVE event happen, end and add current
+        # edit compound to undo_manager and start a new one.
         if edit_type == "INSERT" or edit_type == "REMOVE":
-            self.currentCompound.end()
-            self.currentCompound=CompoundEdit()
+            # Explicitly end compound edits so their inProgress flag goes to
+            # false. Note undo() only undoes compound edits when they are not
+            # in progress.
+            self.current_compound.end()
+            self.current_compound = CompoundEdit()
 
-            self.undo_manager.addEdit(self.currentCompound)
+            self.undo_manager.addEdit(self.current_compound)
             
-        self.currentCompound.addEdit(edit)
-        #print self.undo_manager
-            
-                        
-# class AtfUndoManager(UndoableEditListener):
-#     '''
-#     Overrides the UndoManager's functionality so we can keep a list of custom
-#     CompoundEdits (INSERT/REMOVE + associated syntax highlight changes) instead 
-#     of a list of UndoableEdits (each change whether it is significant or not).
-#     '''
-#     def __init__(self):
-#         self.edits = [] # This contains a list of compound edits
-#         self.current_compound_edit = None 
-#         self.pointer = -1 # Points to last undone/redone edit
-#         
-#         
-#     def undoableEditHappened(self, event):
-#         edit = event.getEdit()
-#         self.addEdit(edit)
-#         
-#         
-#     def addEdit(self, edit):
-#         edit_type = str(edit.getType())
-#         print edit_type
-#         if edit_type == "INSERT" or edit_type == "REMOVE":
-#             # Stop current edit, add it to list of compound edits, create new 
-#             # compound edit to add to it later
-#             if self.current_compound_edit:
-#                 self.edits.append(self.current_compound_edit)
-#                 self.pointer += 1
-#             self.current_compound_edit = AtfCompoundEdit()
-#         # Always add edit to current_edit
-#         self.current_compound_edit.addEdit(edit) 
-#         print "# compound edits: " + str(len(self.edits)) + ", pointer = " + str(self.pointer)
-#         
-#         
-#     def undo(self):
-#         if self.canUndo():
-#             undo_edit = self.edits[self.pointer]
-#             undo_edit.undo()
-#             self.pointer -= 1
-#             
-#             
-#     def redo(self):
-#         if self.canRedo():
-#             self.pointer += 1
-#             redo_edit = self.edits[self.pointer]
-#             redo_edit.redo()
-#                 
-#         
-#     def canUndo(self):
-#         return self.pointer > -1
-#         
-#         
-#     def canRedo(self):
-#         return len(self.edits) > 0 and self.pointer < len(self.edits) -1
-#          
-#      
-# class AtfCompoundEdit(CompoundEdit):
-#     '''
-#     Overrides the CompoundEdit's functionality to group together an INSERT or
-#     REMOVE edit and the list of associated CHANGES to that edit.
-#     '''
-#     def __init__(self):
-#         self.edits = []
-#         self.isUnDone = False
-# 
-# 
-#     def getLength(self):
-#         return len(self.edits)
-# 
-# 
-#     def undo(self):
-#         CompoundEdit.undo(self)
-#         self.isUnDone = True
-# 
-# 
-#     def redo(self):
-#         CompoundEdit.redo(self)
-#         self.isUnDone = False
-# 
-# 
-#     def canUndo(self):
-#         return len(self.edits) and not self.isUnDone
-# 
-# 
-#     def canRedo(self):
-#         return len(self.edits) and self.isUnDone
-#     
-#     
-#     def addEdit(self, edit):
-#         self.edits.append(edit)
-#         print "# single edits: " + str(len(self.edits))
-
+        # Always add current edit to current compound  
+        self.current_compound.addEdit(edit)
