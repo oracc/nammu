@@ -53,27 +53,31 @@ class AtfAreaController(object):
 
 
     def undo(self):
+        # CompoundEdits only get added  to the undo manager when the next 
+        # INSERT/REMOVE event happens. Thus, if we are adding changes to
+        # the current compound edit and we want to undo it before the next
+        # INSERT/REMOVE happens, we won't be able until it's been explicitly 
+        # ended.
+        self.view.edit_listener.current_compound.end()
         try:
-            # CompoundEdits only get added  to the undo manager when the next 
-            # INSERT/REMOVE event happens. Thus, if we are adding changes to
-            # the current compound edit and we want to undo it before the next
-            # INSERT/REMOVE happens, we won't be able until it's been explicitly 
-            # ended.
-            self.view.edit_listener.current_compound.end()
             self.undo_manager.undo()
-            self.update_line_numbers()
         except CannotUndoException:
             # This exception indicates we've reached the end of the edits vector
+            # Nothing to do
             pass
+        else:
+            self.update_line_numbers()
 
 
     def redo(self):
         try:
             self.undo_manager.redo()
-            self.update_line_numbers()
         except CannotRedoException:
             # This exception indicates we've reached the end of the edits vector
+            # Nothing to do
             pass
+        else:
+            self.update_line_numbers()
 
 
     def copy(self):
