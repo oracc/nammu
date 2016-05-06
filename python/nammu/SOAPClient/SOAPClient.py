@@ -1,10 +1,15 @@
-import requests
+import StringIO
 import logging
 import re
-import StringIO
 from zipfile import ZipFile
-import xml.etree.ElementTree as ET
+
+import requests
+from requests.exceptions import RequestException, Timeout, ConnectionError, \
+    HTTPError
+
 from HTTPRequest import HTTPRequest
+import xml.etree.ElementTree as ET
+
 
 class SOAPClient(object):
     """
@@ -45,7 +50,10 @@ class SOAPClient(object):
         url = "{}:{}".format(self.url, self.port)
         headers = dict(self.request.get_headers())
         body = self.request.get_body()
-        self.response = requests.post(url, data=body, headers=headers)
+        try:
+            self.response = requests.post(url, data=body, headers=headers)
+        except RequestException:
+            raise
         
 
     def get_response_text(self):
@@ -72,10 +80,16 @@ class SOAPClient(object):
         """
         url = "{}/{}/{}".format(self.url, self.url_dir, request_id)
         while True:
-            response = requests.get(url)
-            if response.text == "done\n":
-                return
-
+            try:
+                response = requests.get(url)
+            except RequestException:
+                raise
+            else:
+                if response.text == "done\n":
+                    return
+                elif response.text == "err_stat\n":
+                    raise Exception("UnknownServerError")
+                
 
     def get_response(self):
         return self.response.content
@@ -114,3 +128,4 @@ class SOAPClient(object):
             print "@"*30
 
         return oracc_log, request_log, autolem
+    
