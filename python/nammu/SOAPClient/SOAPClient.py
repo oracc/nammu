@@ -128,4 +128,3 @@ class SOAPClient(object):
             print "@"*30
 
         return oracc_log, request_log, autolem
-    
