@@ -50,12 +50,9 @@ class SOAPClient(object):
         url = "{}:{}".format(self.url, self.port)
         headers = dict(self.request.get_headers())
         body = self.request.get_body()
-        try:
-            self.response = requests.post(url, data=body, headers=headers)
-        except RequestException:
-            raise
-        
+        self.response = requests.post(url, data=body, headers=headers)
 
+        
     def get_response_text(self):
         return self.response.text
 
