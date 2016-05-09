@@ -350,56 +350,63 @@ class NammuController(object):
                               atf_basename=atf_basename,
                               atf_text=nammu_text.encode('utf-8'))
         
-        self.send_request(client)
-        
         try:
             self.send_request(client)
         except RequestException:
             self.log("        Error when trying to send first HTTP POST request.")
-        else:
-            server_id = client.get_response_id()
-            # Wait for server to prepare response
-            self.log("        Request sent OK with ID " + server_id + "\n")
-            self.log("        Waiting for server to prepare response... ")
-            try:
-                self.wait_for_response(client, server_id)
-            except RequestException, Exception:
-                self.log("        Error when trying to send HTTP GET request.")
-            else:
-                self.log("OK\n")
-                self.log("        Fetching response... ")
-                # Send new request to fetch results and server logs
-                # This shouldn't need a new client, but a new request inside the same client
-#                 client = SOAPClient(url, port, url_dir, method='POST')
-                client.create_request(keys=[server_id])
-                try:
-                    self.send_request(client)
-                except RequestException:
-                    self.log("        Error when trying to send last HTTP POST request.")
-                else:
-                    self.log(" OK\n")
-                    self.log("        Reading response... ")
-                    oracc_log, request_log, autolem = client.get_server_logs()
-                    self.log(" OK\n")
-            
-                    if autolem:
-                        self.atfAreaController.setAtfAreaText(autolem)
-                        self.log("        Lemmatised ATF received from server.\n")
-                        
-                    if request_log:
-                        # TODO: Add to logfile
-                        pass
-            
-                    if oracc_log:
-                        validation_errors = self.get_validation_errors(oracc_log)
-                        self.atfAreaController.view.error_highlight(validation_errors)
-                        self.log("        See highlighted areas in the text for errors and check again.\n\n")
-                        
-                    else:
-                        self.log("        The ORACC server didn't report any validation errors.\n\n")
-        finally:
             return
         
+        server_id = client.get_response_id()
+        
+        # Wait for server to prepare response
+        self.log("        Request sent OK with ID " + server_id + "\n")
+        self.log("        Waiting for server to prepare response... ")
+        try:
+            self.wait_for_response(client, server_id)
+        except RequestException:
+            self.log("        Error when trying to send HTTP GET request.")
+            return
+        
+        # Send new request to fetch results and server logs
+        # TODO: This shouldn't need a new client, but a new request inside the 
+        #       same client
+        # client = SOAPClient(url, port, url_dir, method='POST')
+        self.log("        Fetching response... ")
+        client.create_request(keys=[server_id])
+        try:
+            self.send_request(client)
+        except RequestException:
+            self.log("        Error when trying to send last HTTP POST request.")
+            return
+
+        # Retrieve server logs and lemmatised file from server SOAP response
+        self.log("        Reading response... ")
+        self.process_server_response(client.get_server_logs())
+
+                        
+    def process_server_response(self, oracc_log, request_log, autolem):
+        """
+        Last HTTP POST response retrieved from server will containg at least 
+        two files: 
+          * request.log: Output log from tools run in the ORACC server like
+                         ATF file unzip, etc.
+          * oracc.log: Validation error messages.
+        If we are lemmatising, it'll also return:
+          * <filename>_autolem.atf: lemmatised version of file
+        """
+        if request_log:
+            # TODO: Add to logfile
+            pass
+            
+        if oracc_log:
+            validation_errors = self.get_validation_errors(oracc_log)
+            self.atfAreaController.view.error_highlight(validation_errors)
+            self.log("        See highlighted areas in the text for errors and check again.\n\n")
+            
+        if autolem:
+            self.atfAreaController.setAtfAreaText(autolem)
+            self.log("        Lemmatised ATF received from server.\n")
+
 
     def send_request(self, client): 
         """
