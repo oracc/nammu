@@ -8,25 +8,25 @@ Initializes the menu view and sets its layout.
 
 import collections
 from .Menu import Menu
-from javax.swing import JMenuBar, JMenu, JMenuItem
+from javax.swing import JMenuBar
 from java.awt.event import KeyEvent
 
 class MenuView(JMenuBar):
 
     def __init__(self, controller):
-        #Save reference to controller to handle events
+        # Save reference to controller to handle events
         self.controller = controller
 
-        #TODO Refactor to avoid duplication - See issue#16
-        #https://github.com/UCL-RITS/nammu/issues/16
+        # TODO Refactor to avoid duplication - See issue#16
+        # https://github.com/UCL-RITS/nammu/issues/16
 
-        #Create dictionaries for the menus and the menu items
-        #with corresponding key event and related method name
-        #Note these need to be added to the menu in a certain order,
-        #so dict random order can be changed to element adition order
-        #with collections.OrderedDict and then adding the elements
-        #one by one. If all are added at the same time, there's no
-        #garantee of order.
+        # Create dictionaries for the menus and the menu items
+        # with corresponding key event and related method name
+        # Note these need to be added to the menu in a certain order,
+        # so dict random order can be changed to element adition order
+        # with collections.OrderedDict and then adding the elements
+        # one by one. If all are added at the same time, there's no
+        # garantee of order.
         menus = {}
         menus = collections.OrderedDict()
         menus['File'] = KeyEvent.VK_F
@@ -72,19 +72,19 @@ class MenuView(JMenuBar):
         menuItems["Help"]["Help"] = [KeyEvent.VK_H, "showHelp"]
         menuItems["Help"]["About"] = [KeyEvent.VK_A, "showAbout"]
 
-        #Menu Items after which there is a menu separator
+        # Menu Items after which there is a menu separator
         separators = { "File": ["Close", "Print"],
                 "Edit": ["Redo"],
                 "ATF": [],
                 "Window": ["Display Model View"],
                 "Help": ["Settings", "Help"] }
 
-        #Create menu items and add to menu bar
+        # Create menu items and add to menu bar
         for menuName, keyEvent in menus.items():
             menu = Menu(self, menuName, keyEvent, menuItems[menuName], separators[menuName])
             self.add(menu)
 
 
-    #Delegate methods not found here to view controller
+    # Delegate methods not found here to view controller
     def __getattr__(self, name):
         return getattr(self.controller, name)

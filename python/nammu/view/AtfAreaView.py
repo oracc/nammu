@@ -7,13 +7,14 @@ Initializes the ATF (edit/model) view and sets its layout.
 '''
 
 import re
-from java.awt import Font, BorderLayout, Dimension, Color
+from java.awt import BorderLayout, Dimension, Color
 from java.awt.event import KeyListener
-from javax.swing import JTextPane, JScrollPane, JPanel, BorderFactory
-from javax.swing.text import DefaultHighlighter, StyleContext, StyleConstants
-from javax.swing.text import SimpleAttributeSet, AbstractDocument
-from javax.swing.undo import UndoManager
+from javax.swing import JScrollPane, JPanel
+from javax.swing.text import StyleContext, StyleConstants
+from javax.swing.text import SimpleAttributeSet 
+from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener
+from contextlib import contextmanager
 from pyoracc.atf.atflex import AtfLexer
 from .AtfEditArea import AtfEditArea
 from .LineNumbersArea import LineNumbersArea
@@ -96,7 +97,6 @@ class AtfAreaView(JPanel):
                 StyleConstants.setForeground(attribs, Color.red)
                 line_numbers_sd = self.line_numbers_area.getStyledDocument()
                 edit_area_sd = self.editArea.getStyledDocument()
-
                 text = self.line_numbers_area.text
 
                 # Search for start position and length of line number
@@ -131,7 +131,7 @@ class AtfAreaView(JPanel):
                                                         attribs,
                                                         True)
 
-
+        
     def syntax_highlight(self):
         """
         Implements syntax highlighting based on pyoracc.
@@ -173,7 +173,7 @@ class AtfAreaView(JPanel):
         # Syntax highlighting colors based on SOLARIZED
         self.colorlut = {}
 
-        # Black backgroud tones
+        # Black background tones
         self.colorlut['base03'] = (0, 43, 54)
         self.colorlut['base02'] = (7, 54, 66)
 
@@ -231,6 +231,7 @@ class AtfAreaView(JPanel):
         self.tokencolorlu['PROJECT']['transctrl'] = ('green', False)
         self.tokencolorlu['default'] = ('black', False)
 
+
     def repaint_line_numbers(self, n_lines):
         """
         Draws line numbers in corresponding panel.
@@ -274,15 +275,50 @@ class AtfAreaKeyListener(KeyListener):
 
 class AtfUndoableEditListener(UndoableEditListener):
     '''
-    Overrides the undoableEditHappened functionality to only count INSERT type
-    events instead of capturing other changes and events like highlighting, etc.
+    Overrides the undoableEditHappened functionality to group INSERT/REMOVE 
+    edit events with their associated CHANGE events (these correspond to 
+    highlighting only at the moment).
+    TODO: Make compounds save whole words so undoing is not so much of a pain 
+          for the user.
     '''
     def __init__(self, undo_manager):
         self.undo_manager = undo_manager
+        self.current_compound = CompoundEdit()
+        self.must_compound = False
+
+
+    @contextmanager
+    def force_compound(self):
+        """
+        Wraps list of interactions with the text area that'll cause several
+        significant edit events that we want to put together in a compound
+        edit.
+        """
+        self.must_compound = False
+        self.current_compound.end()
+        self.undo_manager.addEdit(self.current_compound)  
+        try:
+            yield
+        finally:
+            self.must_compound = False
+            self.current_compound.end()
+            self.undo_manager.addEdit(self.current_compound)  
+
 
     def undoableEditHappened(self, event):
         edit = event.getEdit()
-        edit_type = edit.getType()
+        edit_type = str(edit.getType())
 
-        if (str(edit_type) == "INSERT" or str(edit_type) == "REMOVE") and edit.significant:
-            self.undo_manager.addEdit(edit)
+        # If significant INSERT/REMOVE event happen, end and add current
+        # edit compound to undo_manager and start a new one.
+        if (edit_type == "INSERT" or edit_type == "REMOVE") \
+            and not self.must_compound:
+            # Explicitly end compound edits so their inProgress flag goes to
+            # false. Note undo() only undoes compound edits when they are not
+            # in progress.
+            self.current_compound.end()
+            self.current_compound = CompoundEdit()
+            self.undo_manager.addEdit(self.current_compound)
+            
+        # Always add current edit to current compound  
+        self.current_compound.addEdit(edit)

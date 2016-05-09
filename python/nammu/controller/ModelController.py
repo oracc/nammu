@@ -83,8 +83,6 @@ class ModelController(object):
                             content.add(comment)
                             self.view.addLine(objectID, label, content)
                         
-                                                 
-                    
         
         #Display model view
         self.view.display()

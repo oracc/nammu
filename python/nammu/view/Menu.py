@@ -1,5 +1,4 @@
 from javax.swing import JMenu, JMenuItem
-from java.awt.event import KeyEvent
 
 class Menu(JMenu):
 
@@ -17,9 +16,9 @@ class Menu(JMenu):
     def createItems(self, menuItems):
         items = []
 
-        #Refer to MenuView's menuItems dictionary where each menu item has an
-        #array of two elements, the first is the key event and the second is the
-        #action asigned to the menu item
+        # Refer to MenuView's menuItems dictionary where each menu item has an
+        # array of two elements, the first is the key event and the second is 
+        # the action asigned to the menu item
         def getMethod(name):
             return menuItems[name][1]
 

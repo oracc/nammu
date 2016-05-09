@@ -11,8 +11,8 @@ Handles controller events.
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
 from java.lang import System, Integer
-import codecs, os
 
+import codecs, os
 from pyoracc.atf.atffile import AtfFile
 from ..view.NammuView import NammuView
 from MenuController import MenuController
@@ -114,9 +114,10 @@ class NammuController(object):
 
             self.atfAreaController.clearAtfArea()
 
+
             fileChooser = JFileChooser()
-            filter = FileNameExtensionFilter("ATF files", ["atf"])
-            fileChooser.setFileFilter(filter)
+            file_filter = FileNameExtensionFilter("ATF files", ["atf"])
+            fileChooser.setFileFilter(file_filter)
             status = fileChooser.showDialog(self.view, "Choose file")
 
             if status == JFileChooser.APPROVE_OPTION:
@@ -124,6 +125,7 @@ class NammuController(object):
                 filename = atfFile.getCanonicalPath()
                 atfText = self.readTextFile(filename)
                 self.currentFilename = atfFile.getCanonicalPath()
+
                 self.atfAreaController.setAtfAreaText(atfText)
 
             # TODO: Else, prompt user to choose again before closing
@@ -272,30 +274,15 @@ class NammuController(object):
 
 
     def copy(self, event):
-        '''
-        Note: check if JTextArea already has this functionality
-        '''
-        self.log("NammuController: Copying selected text...")
-
-        self.log(" OK\n")
+        self.atfAreaController.copy()
 
 
     def cut(self, event):
-        '''
-        Note: check if JTextArea already has this functionality
-        '''
-        self.log("NammuController: Cutting selected text...")
-
-        self.log(" OK\n")
+        self.atfAreaController.cut()
 
 
     def paste(self, event):
-        '''
-        Note: check if JTextArea already has this functionality
-        '''
-        self.log("NammuController: Pasting clipboard text...")
-
-        self.log(" OK\n")
+        self.atfAreaController.paste()
 
 
     def validate(self, event=None):
