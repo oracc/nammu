@@ -368,6 +368,9 @@ class NammuController(object):
             self.log("        Error when trying to send HTTP GET request.")
             self.log(str(re))
             return
+        except Exception as e:
+            self.log("        Server error.")
+            self.log(str(e))          
         
         # Send new request to fetch results and server logs
         # TODO: This shouldn't need a new client, but a new request inside the 
