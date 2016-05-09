@@ -4,8 +4,7 @@ import re
 from zipfile import ZipFile
 
 import requests
-from requests.exceptions import RequestException, Timeout, ConnectionError, \
-    HTTPError
+from requests.exceptions import RequestException
 
 from HTTPRequest import HTTPRequest
 import xml.etree.ElementTree as ET
