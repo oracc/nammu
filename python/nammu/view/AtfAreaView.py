@@ -14,6 +14,7 @@ from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet 
 from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener
+from contextlib import contextmanager
 from pyoracc.atf.atflex import AtfLexer
 from .AtfEditArea import AtfEditArea
 from .LineNumbersArea import LineNumbersArea
@@ -286,22 +287,23 @@ class AtfUndoableEditListener(UndoableEditListener):
         self.must_compound = False
 
 
-    def compound(self):
-        '''
-        Allows for external actions like setText() which adds two consecutive
-        INSERT events to manually start and stop a compound from outside
-        the undoableEditHappened() call.
-        '''
-        self.must_compound = True
-        self.current_compound.end()
-        self.undo_manager.addEdit(self.current_compound)
-        self.current_compound = CompoundEdit()
-
-        
-    def stop_compound(self):
+    @contextmanager
+    def force_compound(self):
+        """
+        Wraps list of interactions with the text area that'll cause several
+        significant edit events that we want to put together in a compound
+        edit.
+        """
         self.must_compound = False
         self.current_compound.end()
-        self.undo_manager.addEdit(self.current_compound)       
+        self.undo_manager.addEdit(self.current_compound)  
+        try:
+            yield
+        finally:
+            self.must_compound = False
+            self.current_compound.end()
+            self.undo_manager.addEdit(self.current_compound)  
+
 
     def undoableEditHappened(self, event):
         edit = event.getEdit()
