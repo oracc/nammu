@@ -352,8 +352,9 @@ class NammuController(object):
         
         try:
             self.send_request(client)
-        except RequestException:
+        except RequestException as re: 
             self.log("        Error when trying to send first HTTP POST request.")
+            self.log(str(re))
             return
         
         server_id = client.get_response_id()
@@ -363,8 +364,9 @@ class NammuController(object):
         self.log("        Waiting for server to prepare response... ")
         try:
             self.wait_for_response(client, server_id)
-        except RequestException:
+        except RequestException as re:
             self.log("        Error when trying to send HTTP GET request.")
+            self.log(str(re))
             return
         
         # Send new request to fetch results and server logs
@@ -375,8 +377,9 @@ class NammuController(object):
         client.create_request(keys=[server_id])
         try:
             self.send_request(client)
-        except RequestException:
+        except RequestException as re:
             self.log("        Error when trying to send last HTTP POST request.")
+            self.log(str(re))
             return
 
         # Retrieve server logs and lemmatised file from server SOAP response
