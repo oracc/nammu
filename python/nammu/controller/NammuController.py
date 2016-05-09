@@ -387,7 +387,8 @@ class NammuController(object):
 
         # Retrieve server logs and lemmatised file from server SOAP response
         self.log("        Reading response... ")
-        self.process_server_response(client.get_server_logs())
+        oracc_log, request_log, autolem = client.get_server_logs()
+        self.process_server_response(oracc_log, request_log, autolem)
 
                         
     def process_server_response(self, oracc_log, request_log, autolem):
