@@ -291,9 +291,9 @@ new one.\n\n")
             self.send_command("atf", project)
         else:
             # TODO: Prompt dialog
-            self.log("        No project found in file. Add project and retry.\n")
+            self.log("No project found in file. Add project and retry.\n")
 
-        self.log("        Validating ATF done.\n")
+        self.log("Validating ATF done.\n")
 
 
     def lemmatise(self, event):
@@ -309,7 +309,7 @@ new one.\n\n")
             self.send_command("lem", project)
         else:
             # TODO: Prompt dialog.
-            self.log("        No project found in file. Add project and retry.\n")
+            self.log("No project found in file. Add project and retry.\n")
 
 
     def send_command(self, command, project):
@@ -325,7 +325,7 @@ new one.\n\n")
         port = 8085
         url_dir = 'p'
         
-        self.log("        Sending request to server at " + url + "\n")
+        self.log("Sending request to server at " + url + "\n")
 
         # Create HTTP client and prepare all input arguments for request
         client = SOAPClient(url, port, url_dir, method='POST')
@@ -342,40 +342,40 @@ new one.\n\n")
         try:
             self.send_request(client)
         except RequestException as re: 
-            self.log("        Error when trying to send first HTTP POST request.")
+            self.log("Error when trying to send first HTTP POST request.")
             self.log(str(re))
             return
         
         server_id = client.get_response_id()
         
         # Wait for server to prepare response
-        self.log("        Request sent OK with ID " + server_id + "\n")
-        self.log("        Waiting for server to prepare response... ")
+        self.log("Request sent OK with ID " + server_id + "\n")
+        self.log("Waiting for server to prepare response... ")
         try:
             self.wait_for_response(client, server_id)
         except RequestException as re:
-            self.log("        Error when trying to send HTTP GET request.")
+            self.log("Error when trying to send HTTP GET request.")
             self.log(str(re))
             return
         except Exception as e:
-            self.log("        Server error.")
+            self.log("Server error.")
             self.log(str(e))          
         
         # Send new request to fetch results and server logs
         # TODO: This shouldn't need a new client, but a new request inside the 
         #       same client
         # client = SOAPClient(url, port, url_dir, method='POST')
-        self.log("        Fetching response... ")
+        self.log("Fetching response... ")
         client.create_request(keys=[server_id])
         try:
             self.send_request(client)
         except RequestException as re:
-            self.log("        Error when trying to send last HTTP POST request.")
+            self.log("Error when trying to send last HTTP POST request.")
             self.log(str(re))
             return
 
         # Retrieve server logs and lemmatised file from server SOAP response
-        self.log("        Reading response... ")
+        self.log("Reading response... ")
         oracc_log, request_log, autolem = client.get_server_logs()
         self.process_server_response(oracc_log, request_log, autolem)
 
@@ -398,12 +398,12 @@ new one.\n\n")
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
-            self.log("        See highlighted areas in the text for errors and \
+            self.log("See highlighted areas in the text for errors and \
                     validate again.\n\n")
             
         if autolem:
             self.atfAreaController.setAtfAreaText(autolem)
-            self.log("        Lemmatised ATF received from server.\n")
+            self.log("Lemmatised ATF received from server.\n")
 
 
     def send_request(self, client): 
@@ -416,13 +416,13 @@ new one.\n\n")
         try:
             client.send()
         except Timeout:
-            self.log("        ORACC server timed out after 5 seconds.\n")
+            self.log("ORACC server timed out after 5 seconds.\n")
             raise
         except ConnectionError:   
-            self.log("        Can't connect to ORACC server at " + client.url + ".\n")
+            self.log("Can't connect to ORACC server at " + client.url + ".\n")
             raise
         except HTTPError:
-            self.log("        ORACC server returned invalid HTTP response.\n")
+            self.log("ORACC server returned invalid HTTP response.\n")
             raise 
         
         
@@ -436,20 +436,20 @@ new one.\n\n")
         try:
             client.wait_for_response(server_id)    
         except Timeout:
-            self.log("        ORACC server timed out after 5 seconds.\n")
+            self.log("ORACC server timed out after 5 seconds.\n")
             raise
         except ConnectionError:   
-            self.log("        Can't connect to ORACC server at " + client.url + ".\n")
+            self.log("Can't connect to ORACC server at " + client.url + ".\n")
             raise
         except HTTPError:
-            self.log("        ORACC server returned invalid HTTP response.\n")  
+            self.log("RACC server returned invalid HTTP response.\n")  
             raise              
         except Exception as e:
             if e.args == "UnknownServerError":           
-                self.log("        ORACC server seems down. Contact server admin.\n")
+                self.log("ORACC server seems down. Contact server admin.\n")
                 raise
             else:
-                self.log("        Unexpected error when waiting for ORACC server to prepare response.")
+                self.log("Unexpected error when waiting for ORACC server to prepare response.")
                         
 
     def get_validation_errors(self, oracc_log):
@@ -614,4 +614,3 @@ new one.\n\n")
         request_log.setLevel(logging.DEBUG)
         request_log.propagate = True
         return logger, request_log
-    
