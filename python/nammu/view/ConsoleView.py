@@ -34,7 +34,6 @@ class ConsoleView(JPanel):
         self.editArea.font = Font("Courier New", Font.BOLD, 14)
         self.editArea.background = Color.BLACK
         self.editArea.foreground = Color.WHITE
-        self.editArea.text = "Console started. Nammu's log will appear here.\n\n"
 
         # Disable writting in the console
         self.editArea.setEditable(False)

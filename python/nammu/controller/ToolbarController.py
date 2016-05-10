@@ -36,8 +36,10 @@ class ToolbarController(object):
         """
         1. Show popup window with help (or just open firefox with ORACC info?)
         """
+        pass
 
     def showAbout(self):
         """
         1. Show popup window with help (or just open firefox with ORACC info?)
         """
+        pass

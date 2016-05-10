@@ -44,19 +44,10 @@ class NammuController(object):
         # Create this controller first since it's where the log will be displayed
         self.consoleController = ConsoleController(self)
 
-        # TODO replace with proper Logging functionality
-        self.log("NammuController: Creating subcontrollers...")
-
         # Create all the controllers
         self.menuController = MenuController(self)
         self.toolbarController = ToolbarController(self)
         self.atfAreaController = AtfAreaController(self)
-
-        # TODO: Only if everything went fine
-        self.log(" OK\n")
-
-        # Log next action
-        self.log("NammuController: Creating views...")
 
         # Create all the views and assigned them to appropriate controller
         self.view = NammuView(self)
@@ -64,15 +55,11 @@ class NammuController(object):
         self.view.addToolBar(self.toolbarController.view)
         self.view.addAtfArea(self.atfAreaController.view)
         self.view.addConsole(self.consoleController.view)
-        self.log(" OK\n")
-
-        # Log next action
-        self.log("NammuController: Display main view...")
-
+        self.log("Welcome to Nammu! Please open an ATF file or start typing a \
+new one.\n\n")
+        
         # Display Nammu's view
         self.view.display()
-
-        self.log(" OK\n")
 
         # Save current ATF filename
         # TODO: save array with all opened ATFs
@@ -267,9 +254,6 @@ class NammuController(object):
         '''
 
         if self.handleUnsaved():
-            self.log("NammuController: Exiting...")
-            self.log(" OK\n")
-            self.log("Bye! :)")
             System.exit(0)
 
 
@@ -306,6 +290,7 @@ class NammuController(object):
         if project:
             self.send_command("atf", project)
         else:
+            # TODO: Prompt dialog
             self.log("        No project found in file. Add project and retry.\n")
 
         self.log("        Validating ATF done.\n")
@@ -323,6 +308,7 @@ class NammuController(object):
         if project:
             self.send_command("lem", project)
         else:
+            # TODO: Prompt dialog.
             self.log("        No project found in file. Add project and retry.\n")
 
 
@@ -333,8 +319,8 @@ class NammuController(object):
         This method sends a command to the ORACC server along with all the
         necessary arguments to build the HTTP request.
         '''
-
-        # Build request.zip on the fly, pack all needed in it and send to server.
+        # Build request.zip on the fly, pack all needed in it and send to server
+        # TODO: Would be nice these are read from config file.
         url = 'http://oracc.museum.upenn.edu'
         port = 8085
         url_dir = 'p'
@@ -411,7 +397,9 @@ class NammuController(object):
         if oracc_log:
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
-            self.log("        See highlighted areas in the text for errors and check again.\n\n")
+            # TODO: Prompt dialog.
+            self.log("        See highlighted areas in the text for errors and \
+                    validate again.\n\n")
             
         if autolem:
             self.atfAreaController.setAtfAreaText(autolem)
@@ -423,6 +411,7 @@ class NammuController(object):
         Tries to send HTTP POST request to ORACC server and raise problems.
         TODO: When we have proper logging it'd be nice to move this to the 
         SOAPClient.
+        # TODO: Prompt dialog when exception occurs.
         """
         try:
             client.send()
@@ -442,6 +431,7 @@ class NammuController(object):
         Tries to send HTTP GET request to ORACC server and raise problems.
         TODO: When we have proper logging it'd be nice to move this to the 
         SOAPClient.
+        # TODO: Prompt dialog when exception occurs.
         """
         try:
             client.wait_for_response(server_id)    
@@ -495,6 +485,7 @@ class NammuController(object):
     def printFile(self, event):
         '''
         Print file.
+        TODO: Disable this button until functionality is implemented.
         '''
         self.log("NammuController: Printing file...")
 
@@ -504,6 +495,9 @@ class NammuController(object):
     def editSettings(self, event):
         '''
         Show settings window for edition.
+        TODO: ORACC Server URL should be in a config file editable from a 
+        settings form.
+        TODO: Disable this button until functionality is implemented.
         '''
         self.log("NammuController: Changing settings...")
         self.log("OK\n")
@@ -560,7 +554,8 @@ class NammuController(object):
 
     def __getattr__(self, name):
         '''
-        Handle calls to undefined methods.
+        Debug method to handle calls to undefined methods.
+        Ideally this method would never be called.
         '''
         self.log("!!!Undefined method " + name)
 
