@@ -449,7 +449,8 @@ new one.\n\n")
                 self.log("ORACC server seems down. Contact server admin.\n")
                 raise
             else:
-                self.log("Unexpected error when waiting for ORACC server to prepare response.")
+                self.log( \
+        "Unexpected error when waiting for ORACC server to prepare response.")
                         
 
     def get_validation_errors(self, oracc_log):
@@ -517,7 +518,8 @@ new one.\n\n")
             #can just receive the parsed object instead of the text
             self.modelController = ModelController(self, self.parse(atfText))
         else:
-            self.promptInfoPane("Open ATF file before trying to display model view.")
+            self.promptInfoPane(\
+                        "Open ATF file before trying to display model view.")
 
 
     def parse(self, text):

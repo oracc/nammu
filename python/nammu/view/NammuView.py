@@ -22,7 +22,8 @@ class NammuView(JFrame):
         self.setLayout(BorderLayout())
 
         # TODO
-        # Create splitPane with two empty panels for the ATF edition/console area
+        # Create splitPane with two empty panels for the ATF edition/console 
+        # area
 #         splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT);
 #
 #         atfAreaPanel = JPanel()

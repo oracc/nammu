@@ -26,7 +26,8 @@ class AtfEditArea(JTextPane):
             # Check if line_num has an error message assigned
             if self.parent_component.validation_errors:
                 try:
-                    error_msg = self.parent_component.validation_errors[line_num]
+                    error_msg = \
+                            self.parent_component.validation_errors[line_num]
                 except KeyError:
                     # Current line has no error messages assigned
                     pass

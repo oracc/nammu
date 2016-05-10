@@ -33,13 +33,15 @@ class HTTPRequest(object):
                                keys=keys,
                                atf_basename=atf_basename,
                                atf_text=atf_text)
-        self.rootpkg = MIMEApplication(self.envelope, 'xop+xml', encode_7or8bit)
+        self.rootpkg = MIMEApplication(self.envelope, \
+                                       'xop+xml', \
+                                       encode_7or8bit)
         self.set_multipart_payload()
         self.document = MIMEBase('*','*')
         self.set_document_payload(atf_basename, atf_text)
 
-        # The headers can't be created until the body is finished since they need
-        # it to populate the Content-Length header
+        # The headers can't be created until the body is finished since they 
+        # need it to populate the Content-Length header
         self.set_multipart_headers()
 
 
@@ -49,7 +51,9 @@ class HTTPRequest(object):
         validated/lemmatised/etc ATF file.
         """
         self.set_soap_envelope(keys=keys)
-        self.mtompkg = MIMEApplication(self.envelope, 'soap+xml', encode_7or8bit)
+        self.mtompkg = MIMEApplication(self.envelope, \
+                                       'soap+xml', \
+                                       encode_7or8bit)
         self.mtompkg.add_header("Host", self.url)
 
 
@@ -135,7 +139,8 @@ class HTTPRequest(object):
         data = ''
 
         if 'command' in kwargs.keys():
-            osc_data_keys += '<osc-data:key>{}</osc-data:key>'.format(kwargs['command'])
+            osc_data_keys += \
+                    '<osc-data:key>{}</osc-data:key>'.format(kwargs['command'])
             message_type = 'Request'
             data += """<osc-data:data>
                             <osc-data:item xmime5:contentType="*/*">
@@ -204,7 +209,8 @@ class HTTPRequest(object):
         if boundary != None:
             # Encoded zip files start with "\n\nPK" and end with a new line 
             # follwed by the ending boundary (in the form "--random_boundary--"
-            attachment = body.split("\n\nPK")[1].split("\n--" + str(boundary))[0]
+            attachment = \
+                        body.split("\n\nPK")[1].split("\n--" + str(boundary))[0]
             # Some line endings are \n and some are \r\n. The email module 
             # automatically replaces some of them causing the server not to 
             # understand line endings correctly. For this, we need to first make

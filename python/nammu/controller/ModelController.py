@@ -26,7 +26,6 @@ class ModelController(object):
         4. Think about whether the other user options should remain visible or
         should this just be shown in a separate window?
         """
-        
         #Create view with a reference to its controller to handle events
         self.view = ModelView(self)
         
@@ -42,8 +41,9 @@ class ModelController(object):
         #Add a new tab in the view per object in the text
         objectID = "&" + atfText.code + " = " + atfText.description
         self.view.addObject(objectID)
-        #TODO: ATF protocols are not saved in the model yet, but need to be passed here:
-        #self.view.objectTab[objectID].addMetadata(objectID, atfText.project, \
+        # TODO: ATF protocols are not saved in the model yet, but need to be 
+        # passed here:
+        # self.view.objectTab[objectID].addMetadata(objectID, atfText.project, \
         #                                          atfText.language, \
         #                                          atfText.protocols)
         self.view.addMetadata(objectID, atfText.project, \
@@ -52,14 +52,16 @@ class ModelController(object):
         for item in atfText.children:
             itemType = "@" + item.objecttype
             for side in item.children:
-                #TODO Display side type and make panel as convenient to show all sides
+                # TODO Display side type and make panel as convenient to show 
+                # all sides
                 if not(isinstance(side, Translation)):
                     sideType = side.objecttype
-                    #self.view.addText(objectID, itemType, sideType)
+                    # self.view.addText(objectID, itemType, sideType)
                     for line in side.children:
-                        #TODO Display label and words and lemmas in dropdown boxes
+                        # TODO Display label and words and lemmas in dropdown 
+                        # boxes
                         content = Vector()
-                        #TODO use polimorfism - see http://stackoverflow.com/questions/5579309/switch-instanceof
+                        # TODO use polimorfism - see http://stackoverflow.com/questions/5579309/switch-instanceof
                         if (isinstance(line, Line)):
                             label = line.label
                             words = " ".join(line.words)
@@ -67,7 +69,7 @@ class ModelController(object):
                             content.clear()
                             content.add(words)
                             content.add(lemmas)
-                            #content.add(translations)
+                            # content.add(translations)
                             self.view.addLine(objectID, label, content)
                         if (isinstance(line, Ruling)):
                             label = "$ ruling"
@@ -84,7 +86,7 @@ class ModelController(object):
                             self.view.addLine(objectID, label, content)
                         
         
-        #Display model view
+        # Display model view
         self.view.display()
         
         

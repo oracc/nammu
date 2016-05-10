@@ -25,7 +25,8 @@ class ConsoleView(JPanel):
         # Give reference to controller to delegate action response
         self.controller = controller
 
-        # Make text area occupy all available space and resize with parent window
+        # Make text area occupy all available space and resize with parent 
+        # window
         self.setLayout(BorderLayout())
 
         #Create console-looking area
@@ -35,7 +36,7 @@ class ConsoleView(JPanel):
         self.editArea.background = Color.BLACK
         self.editArea.foreground = Color.WHITE
 
-        # Disable writting in the console
+        # Disable writing in the console
         self.editArea.setEditable(False)
 
         # Will need scrolling controls

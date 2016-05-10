@@ -27,8 +27,8 @@ class ToolbarController(object):
     # showHelp that can be dealt with from MenuController.
 
     # Whenever a MenuController's method is invoked, __getattr__ will search for
-    # that given method name in this class. If it's not found, it'll delegate the
-    # action with same name to NammuController
+    # that given method name in this class. If it's not found, it'll delegate 
+    # the action with same name to NammuController
     def __getattr__(self, name):
         return getattr(self.mainController, name)
 

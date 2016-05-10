@@ -61,7 +61,8 @@ class MenuView(JMenuBar):
 
         menuItems["Window"] = {}
         menuItems["Window"] = collections.OrderedDict()
-        menuItems["Window"]["Display Model View"] = [KeyEvent.VK_M, "displayModelView"]
+        menuItems["Window"]["Display Model View"] = \
+                                            [KeyEvent.VK_M, "displayModelView"]
         menuItems["Window"]["View/Hide Console"] = [KeyEvent.VK_B, "console"]
         menuItems["Window"]["View/Hide Toolbar"] = [KeyEvent.VK_T, "toolbar"]
         menuItems["Window"]["Unicode Keyboard"] = [KeyEvent.VK_K, "unicode"]
@@ -81,7 +82,11 @@ class MenuView(JMenuBar):
 
         # Create menu items and add to menu bar
         for menuName, keyEvent in menus.items():
-            menu = Menu(self, menuName, keyEvent, menuItems[menuName], separators[menuName])
+            menu = Menu(self, \
+                        menuName, \
+                        keyEvent, \
+                        menuItems[menuName], \
+                        separators[menuName])
             self.add(menu)
 
 

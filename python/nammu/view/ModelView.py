@@ -23,7 +23,8 @@ class ModelView(JFrame):
         # Give reference to controller to delegate action response
         self.controller = controller
         
-        # Make text area occupy all available space and resize with parent window
+        # Make text area occupy all available space and resize with parent 
+        # window
         self.setLayout(BorderLayout())
         
         self.mainPanel = JTabbedPane()
