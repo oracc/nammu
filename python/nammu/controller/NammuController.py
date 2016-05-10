@@ -89,7 +89,7 @@ new one.\n\n")
         '''
 
         if self.handleUnsaved():
-            self.log("NammuController: Creating new file...")
+            self.log("Creating new file...")
             self.atfAreaController.clearAtfArea()
             self.currentFilename = None
             self.log(" OK\n")
@@ -105,7 +105,7 @@ new one.\n\n")
         '''
 
         if self.handleUnsaved():
-            self.log("NammuController: Opening file...")
+            self.log("Opening file...")
 
             self.atfAreaController.clearAtfArea()
 
@@ -150,7 +150,7 @@ new one.\n\n")
         2. Save current file in destination given by user
         '''
 
-        self.log("NammuController: Saving file...")
+        self.log("Saving file...")
 
         fileChooser = JFileChooser()
         status = fileChooser.showSaveDialog(self.view)
@@ -189,7 +189,7 @@ new one.\n\n")
         2. Clear text area
         '''
         if self.handleUnsaved():
-            self.log("NammuController: Closing file...")
+            self.log("Closing file...")
             self.currentFilename = None
             self.atfAreaController.clearAtfArea()
             self.log(" OK\n")
@@ -282,7 +282,7 @@ new one.\n\n")
         For now, we are validating using the SOAP webservices from ORACC server.
         However, the intention is to replace this with validation by pyoracc.
         '''
-        self.log("NammuController: Validating ATF file... \n")
+        self.log("Validating ATF file... \n")
 
         # Search for project name in file. If not found, don't validate
         project = self.get_project()
@@ -300,7 +300,7 @@ new one.\n\n")
         '''
         Connect to ORACC server and retrieved lemmatised version of ATF file.
         '''
-        self.log("NammuController: Lemmatising ATF file... \n")
+        self.log("Lemmatising ATF file... \n")
 
         # Search for project name in file. If not found, don't validate
         project = self.get_project()
@@ -399,7 +399,7 @@ new one.\n\n")
             self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
             self.log("See highlighted areas in the text for errors and \
-                    validate again.\n\n")
+validate again.\n")
             
         if autolem:
             self.atfAreaController.setAtfAreaText(autolem)
@@ -488,7 +488,7 @@ new one.\n\n")
         Print file.
         TODO: Disable this button until functionality is implemented.
         '''
-        self.log("NammuController: Printing file...")
+        self.log("Printing file...")
 
         self.log("OK\n")
 
@@ -500,7 +500,7 @@ new one.\n\n")
         settings form.
         TODO: Disable this button until functionality is implemented.
         '''
-        self.log("NammuController: Changing settings...")
+        self.log("Changing settings...")
         self.log("OK\n")
 
 
@@ -534,7 +534,7 @@ new one.\n\n")
         '''
         Create bool for unicode, change value when clicked.
         '''
-        self.log("NammuController: Unicode...")
+        self.log("Unicode...")
         self.log("OK\n")
 
 
@@ -543,14 +543,14 @@ new one.\n\n")
         Create bool for console, change value when clicked.
         Hide if being shown, show if hidden.
         '''
-        self.log("NammuController: Console...")
+        self.log("Console...")
 
 
     def toolbar(self, event):
         '''
         Show/Hide Toolbar.
         '''
-        self.log("NammuController: Toolbar... ")
+        self.log("Toolbar... ")
         self.log("OK\n")
 
 
