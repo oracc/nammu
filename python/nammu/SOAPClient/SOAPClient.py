@@ -1,5 +1,4 @@
 import StringIO
-import logging
 import re
 from zipfile import ZipFile
 
@@ -19,22 +18,7 @@ class SOAPClient(object):
         self.port = port
         self.url_dir = url_dir
         self.method = method
-        logging.basicConfig()
-        self.logger, self.request_log = self.setup_logger()
-
-
-    def setup_logger(self):
-        """
-        Creates logger to debug HTTP messages sent and responses received.
-        Output should be sent to Nammu's console.
-        """
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
-        request_log = logging.getLogger("requests.packages.urllib3")
-        request_log.setLevel(logging.DEBUG)
-        request_log.propagate = True
-        return logger, request_log
-
+        
 
     def create_request(self, **kwargs):
         url = "{}:{}".format(self.url, self.port)

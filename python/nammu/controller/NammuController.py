@@ -8,7 +8,7 @@ Handles controller events.
 @author: raquel-ucl
 '''
 
-import codecs, os
+import codecs, os, logging
 from java.lang import System, Integer
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
@@ -38,6 +38,9 @@ class NammuController(object):
         2. Create main view that'll bind all the components
         3. Create event/action handlers - EventBus?
         '''
+        # Set up logging system
+        self.logger, self.request_log = self.setup_logger()
+        
         # Create this controller first since it's where the log will be displayed
         self.consoleController = ConsoleController(self)
 
@@ -591,3 +594,18 @@ class NammuController(object):
         method would be nice though.
         '''
         self.consoleController.addText(string)
+    
+
+    def setup_logger(self):
+        """
+        Creates logger to debug HTTP messages sent and responses received.
+        Output should be sent to Nammu's console.
+        """
+        logging.basicConfig()
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+        request_log = logging.getLogger("requests.packages.urllib3")
+        request_log.setLevel(logging.DEBUG)
+        request_log.propagate = True
+        return logger, request_log
+    
