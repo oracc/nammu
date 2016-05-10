@@ -12,17 +12,15 @@ import codecs, os, logging
 from java.lang import System, Integer
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
-
-from pyoracc.atf.atffile import AtfFile
-from requests.exceptions import Timeout, ConnectionError, HTTPError,\
+from logging import StreamHandler
+from requests.exceptions import Timeout, ConnectionError, HTTPError, \
     RequestException
-
+from pyoracc.atf.atffile import AtfFile
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
 from MenuController import MenuController
 from ModelController import ModelController
 from ToolbarController import ToolbarController
-
 from ..SOAPClient.SOAPClient import SOAPClient
 from ..view.NammuView import NammuView
 
@@ -38,11 +36,13 @@ class NammuController(object):
         2. Create main view that'll bind all the components
         3. Create event/action handlers - EventBus?
         '''
-        # Set up logging system
-        self.logger, self.request_log = self.setup_logger()
-        
         # Create this controller first since it's where the log will be displayed
         self.consoleController = ConsoleController(self)
+        
+        # Set up logging system
+        self.logger = self.setup_logger()
+        
+
 
         # Create all the controllers
         self.menuController = MenuController(self)
@@ -55,8 +55,8 @@ class NammuController(object):
         self.view.addToolBar(self.toolbarController.view)
         self.view.addAtfArea(self.atfAreaController.view)
         self.view.addConsole(self.consoleController.view)
-        self.log("Welcome to Nammu! Please open an ATF file or start typing a \
-new one.\n\n")
+        self.log("Welcome to Nammu!")
+        self.log("Please open an ATF file or start typing to create a new one.")
         
         # Display Nammu's view
         self.view.display()
@@ -598,21 +598,66 @@ validate again.\n")
 #         logging.basicConfig(level=numeric_level)
         # Only INFO messages go to user's console. All log levels go to output
         # debug log.
-        if not loglevel:
-            self.consoleController.addText(string)
+#         if not loglevel:
+#             self.consoleController.addText(string)
         
         self.logger.log(logging.INFO, string)
     
 
     def setup_logger(self):
         """
-        Creates logger to debug HTTP messages sent and responses received.
-        Output should be sent to Nammu's console.
+        Creates logger for Nammu's functionality as well as to debug HTTP 
+        messages sent to the ORACC server and responses received.
+        Output should be sent to Nammu's console as well as a local logfile and
+        the system console.
         """
-        logging.basicConfig()
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.DEBUG)
-        request_log = logging.getLogger("requests.packages.urllib3")
-        request_log.setLevel(logging.DEBUG)
-        request_log.propagate = True
-        return logger, request_log
+        #logging.basicConfig()
+        logger = logging.getLogger('NammuController')
+        logger.setLevel(logging.INFO)
+        # create file handler which logs even debug messages
+        file_handler = logging.FileHandler('nammu.log')
+        file_handler.setLevel(logging.DEBUG)
+        # create console handler with a higher log level 
+        # TODO: Users might not be insterested on this.
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+
+        # create formatter and add it to the handlers
+        formatter = logging.Formatter( \
+                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
+        # add the handlers to the logger
+        logger.addHandler(file_handler)
+        logger.addHandler(console_handler)
+        
+        console_handler = NammuConsoleHandler(self.consoleController)
+        console_handler.setLevel(logging.INFO)
+        logger.addHandler(console_handler)
+        
+        # Nammu console format
+        console_formatter = logging.Formatter('%(message)s')
+
+        return logger
+    
+    
+class NammuConsoleHandler(StreamHandler):
+    """
+    Extends StreamHandler to make it print log messages in Nammu's console for 
+    the user to see.
+    """
+    def __init__(self, nammu_console):
+        """
+        Needs a reference to nammu to be able to get ahold of Nammu's console.
+        """
+        super(logging.StreamHandler, self).__init__()
+        self.nammu_console = nammu_console
+        
+    def emit(self, record):
+        """
+        This is the method that prints out the log message. Format the given
+        record and send to Nammu's console for the user to see.
+        """
+        msg = self.format(record)
+        self.nammu_console.addText(msg + "\n")
+        

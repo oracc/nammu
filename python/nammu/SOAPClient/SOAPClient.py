@@ -17,8 +17,7 @@ class SOAPClient(object):
         # TODO: Create logger in this module that reuses nammu controller's
         # logger configuration so output is in same file, but tells us it was 
         # produced in this module.
-        self.logger = logging.getLogger( \
-                                    "python.nammu.controller.NammuController")
+        self.logger, self.request_log = self.setup_logger()
         
 
     def create_request(self, **kwargs):
@@ -109,3 +108,41 @@ class SOAPClient(object):
                         zip_content[file])
         
         return oracc_log, request_log, autolem
+    
+    
+    def setup_logger(self):
+        """
+        Creates logger for Nammu's functionality as well as to debug HTTP 
+        messages sent to the ORACC server and responses received.
+        Output should be sent to Nammu's console as well as a local logfile and
+        the system console.
+        """
+        #logging.basicConfig()
+        logger = logging.getLogger('SOAPClient')
+        logger.setLevel(logging.INFO)
+        # create file handler which logs even debug messages
+        file_handler = logging.FileHandler('nammu.log')
+        file_handler.setLevel(logging.DEBUG)
+        # create console handler with a higher log level 
+        # TODO: Users might not be insterested on this.
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+
+        # create formatter and add it to the handlers
+        formatter = logging.Formatter( \
+                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
+        # add the handlers to the logger
+        logger.addHandler(file_handler)
+        logger.addHandler(console_handler)
+
+        # Nammu console format
+        console_formatter = logging.Formatter('%(message)s')
+
+        request_log = logging.getLogger("requests.packages.urllib3")
+        request_log.addHandler(file_handler)
+        request_log.addHandler(console_handler)
+        request_log.setLevel(logging.DEBUG)
+        request_log.propagate = True
+        return logger, request_log
