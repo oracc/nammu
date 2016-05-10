@@ -92,7 +92,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<libraries>
+                    <libraries>
+                        <param>logging</param>
 						<param>requests</param>
 						<param>pytest</param>
 						<param>mako</param>
