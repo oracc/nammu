@@ -583,12 +583,23 @@ new one.\n\n")
         return project
 
 
-    def log(self, string):
+    def log(self, string, loglevel=None):
         '''
         By now we are outputting in the console directly. A better logging
         method would be nice though.
+        No loglevel given means it's INFO.
         '''
-        self.consoleController.addText(string)
+        # Check loglevel corresponds to a logging level
+#         numeric_level = getattr(logging, loglevel.upper(), None)
+#         if not isinstance(numeric_level, int):
+#             raise ValueError('Invalid log level: %s' % loglevel)
+#         logging.basicConfig(level=numeric_level)
+        # Only INFO messages go to user's console. All log levels go to output
+        # debug log.
+        if not loglevel:
+            self.consoleController.addText(string)
+        
+        self.logger.log(logging.INFO, string)
     
 
     def setup_logger(self):
@@ -597,7 +608,7 @@ new one.\n\n")
         Output should be sent to Nammu's console.
         """
         logging.basicConfig()
-        logger = logging.getLogger()
+        logger = logging.getLogger(__name__)
         logger.setLevel(logging.DEBUG)
         request_log = logging.getLogger("requests.packages.urllib3")
         request_log.setLevel(logging.DEBUG)
