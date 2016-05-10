@@ -42,8 +42,6 @@ class NammuController(object):
         # Set up logging system
         self.logger = self.setup_logger()
         
-
-
         # Create all the controllers
         self.menuController = MenuController(self)
         self.toolbarController = ToolbarController(self)
@@ -55,8 +53,9 @@ class NammuController(object):
         self.view.addToolBar(self.toolbarController.view)
         self.view.addAtfArea(self.atfAreaController.view)
         self.view.addConsole(self.consoleController.view)
-        self.log("Welcome to Nammu!")
-        self.log("Please open an ATF file or start typing to create a new one.")
+        self.logger.info("Welcome to Nammu!")
+        self.logger.info( \
+                "Please open an ATF file or start typing to create a new one.")
         
         # Display Nammu's view
         self.view.display()
@@ -64,7 +63,6 @@ class NammuController(object):
         # Save current ATF filename
         # TODO: save array with all opened ATFs
         self.currentFilename = None
-
 
         # Configure the tooltip manager for tooltips to appear quicker and not
         # to vanish until mouse moves away
@@ -89,10 +87,9 @@ class NammuController(object):
         '''
 
         if self.handleUnsaved():
-            self.log("Creating new file...")
             self.atfAreaController.clearAtfArea()
             self.currentFilename = None
-            self.log(" OK\n")
+            self.logger.debug("New file created.")
 
 
     def openFile(self, event):
@@ -105,10 +102,7 @@ class NammuController(object):
         '''
 
         if self.handleUnsaved():
-            self.log("Opening file...")
-
             self.atfAreaController.clearAtfArea()
-
 
             fileChooser = JFileChooser()
             file_filter = FileNameExtensionFilter("ATF files", ["atf"])
@@ -125,7 +119,7 @@ class NammuController(object):
 
             # TODO: Else, prompt user to choose again before closing
 
-            self.log(" OK\n")
+            self.logger.debug("File %s successfully opened.", self.filename)
 
 
     def readTextFile(self, filename):
@@ -149,9 +143,6 @@ class NammuController(object):
         1. Check if current file has a filename
         2. Save current file in destination given by user
         '''
-
-        self.log("Saving file...")
-
         fileChooser = JFileChooser()
         status = fileChooser.showSaveDialog(self.view)
 
@@ -162,7 +153,7 @@ class NammuController(object):
             self.writeTextFile(filename, atfText)
             #TODO check returned status?
 
-        self.log(" OK\n")
+        self.logger.debug("File %s successfully saved.", filename)
 
 
     def writeTextFile(self, filename, text):
@@ -189,10 +180,10 @@ class NammuController(object):
         2. Clear text area
         '''
         if self.handleUnsaved():
-            self.log("Closing file...")
             self.currentFilename = None
             self.atfAreaController.clearAtfArea()
-            self.log(" OK\n")
+            self.logger.debug("File %s successfully closed.", \
+                              self.currentFilename)
 
 
     def unsavedChanges(self):
@@ -252,7 +243,6 @@ class NammuController(object):
         1. Check if file has unsaved changes
         2. Exit
         '''
-
         if self.handleUnsaved():
             System.exit(0)
 
@@ -282,7 +272,7 @@ class NammuController(object):
         For now, we are validating using the SOAP webservices from ORACC server.
         However, the intention is to replace this with validation by pyoracc.
         '''
-        self.log("Validating ATF file... \n")
+        self.logger.debug("Validating ATF file %s.", self.currentFilename)
 
         # Search for project name in file. If not found, don't validate
         project = self.get_project()
@@ -291,16 +281,18 @@ class NammuController(object):
             self.send_command("atf", project)
         else:
             # TODO: Prompt dialog
-            self.log("No project found in file. Add project and retry.\n")
+            self.logger.error( \
+                        "No project found in file %s. Add project and retry.", \
+                        self.currentFilename)
 
-        self.log("Validating ATF done.\n")
+        self.logger.debug("Validating ATF done.")
 
 
     def lemmatise(self, event):
         '''
         Connect to ORACC server and retrieved lemmatised version of ATF file.
         '''
-        self.log("Lemmatising ATF file... \n")
+        self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
 
         # Search for project name in file. If not found, don't validate
         project = self.get_project()
@@ -309,7 +301,10 @@ class NammuController(object):
             self.send_command("lem", project)
         else:
             # TODO: Prompt dialog.
-            self.log("No project found in file. Add project and retry.\n")
+            self.logger.error( \
+                            "No project found in file. Add project and retry.")
+            
+        self.logger.debug("Lemmatising ATF done.")
 
 
     def send_command(self, command, project):
@@ -325,7 +320,10 @@ class NammuController(object):
         port = 8085
         url_dir = 'p'
         
-        self.log("Sending request to server at " + url + "\n")
+        self.logger.debug("Sending request to server at %s:%d:%s.", \
+                          url, \
+                          port, \
+                          url_dir)
 
         # Create HTTP client and prepare all input arguments for request
         client = SOAPClient(url, port, url_dir, method='POST')
@@ -342,40 +340,41 @@ class NammuController(object):
         try:
             self.send_request(client)
         except RequestException as re: 
-            self.log("Error when trying to send first HTTP POST request.")
-            self.log(str(re))
+            self.logger.error( \
+                        "Error when trying to send first HTTP POST request.")
+            self.logger.exception(str(re))
             return
         
         server_id = client.get_response_id()
         
         # Wait for server to prepare response
-        self.log("Request sent OK with ID " + server_id + "\n")
-        self.log("Waiting for server to prepare response... ")
+        self.logger.debug("Request sent OK with ID %s", server_id)
+        self.logger.debug("Waiting for ORACC server to prepare response...")
         try:
             self.wait_for_response(client, server_id)
         except RequestException as re:
-            self.log("Error when trying to send HTTP GET request.")
-            self.log(str(re))
+            self.logger.error("Error when trying to send HTTP GET request.")
+            self.logger.exception(str(re))
             return
         except Exception as e:
-            self.log("Server error.")
-            self.log(str(e))          
+            self.logger.error("Server error.")
+            self.logger.exception(str(e))          
         
         # Send new request to fetch results and server logs
         # TODO: This shouldn't need a new client, but a new request inside the 
         #       same client
         # client = SOAPClient(url, port, url_dir, method='POST')
-        self.log("Fetching response... ")
+        self.logger.debug("Fetching response... ")
         client.create_request(keys=[server_id])
         try:
             self.send_request(client)
         except RequestException as re:
-            self.log("Error when trying to send last HTTP POST request.")
-            self.log(str(re))
+            self.logger.error("Error when trying to send last HTTP POST request.")
+            self.logger.exception(str(re))
             return
 
         # Retrieve server logs and lemmatised file from server SOAP response
-        self.log("Reading response... ")
+        self.logger.debug("Reading response sent by ORACC server... ")
         oracc_log, request_log, autolem = client.get_server_logs()
         self.process_server_response(oracc_log, request_log, autolem)
 
@@ -391,19 +390,22 @@ class NammuController(object):
           * <filename>_autolem.atf: lemmatised version of file
         """
         if request_log:
-            # TODO: Add to logfile
-            pass
+            self.logger.debug("Contents of request.log: \n%s", request_log)
             
         if oracc_log:
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
-            self.log("See highlighted areas in the text for errors and \
-validate again.\n")
+            self.logger.info("The validation returned some errors: \n%s", \
+                             oracc_log)
+            self.logger.info("See highlighted areas in the text for errors and \
+validate again.")
+        else:
+            self.logger.info("The validation returned no errors.")
             
         if autolem:
             self.atfAreaController.setAtfAreaText(autolem)
-            self.log("Lemmatised ATF received from server.\n")
+            self.logger.info("Lemmatised ATF received from ORACC server.")
 
 
     def send_request(self, client): 
@@ -416,13 +418,14 @@ validate again.\n")
         try:
             client.send()
         except Timeout:
-            self.log("ORACC server timed out after 5 seconds.\n")
+            self.logger.error("ORACC server timed out after 5 seconds.")
             raise
         except ConnectionError:   
-            self.log("Can't connect to ORACC server at " + client.url + ".\n")
+            self.logger.error("Can't connect to ORACC server at %s.", \
+                              client.url)
             raise
         except HTTPError:
-            self.log("ORACC server returned invalid HTTP response.\n")
+            self.logger.error("ORACC server returned invalid HTTP response.")
             raise 
         
         
@@ -436,20 +439,22 @@ validate again.\n")
         try:
             client.wait_for_response(server_id)    
         except Timeout:
-            self.log("ORACC server timed out after 5 seconds.\n")
+            self.logger.error("ORACC server timed out after 5 seconds.")
             raise
         except ConnectionError:   
-            self.log("Can't connect to ORACC server at " + client.url + ".\n")
+            self.logger.error("Can't connect to ORACC server at %s.", \
+                              client.url)
             raise
         except HTTPError:
-            self.log("RACC server returned invalid HTTP response.\n")  
+            self.logger.error("ORACC server returned invalid HTTP response.")  
             raise              
         except Exception as e:
             if e.args == "UnknownServerError":           
-                self.log("ORACC server seems down. Contact server admin.\n")
+                self.logger.error( \
+                            "ORACC server seems down. Contact server admin.")
                 raise
             else:
-                self.log( \
+                self.logger.error( \
         "Unexpected error when waiting for ORACC server to prepare response.")
                         
 
@@ -488,9 +493,7 @@ validate again.\n")
         Print file.
         TODO: Disable this button until functionality is implemented.
         '''
-        self.log("Printing file...")
-
-        self.log("OK\n")
+        self.logger.debug("Printing file...")
 
 
     def editSettings(self, event):
@@ -500,8 +503,7 @@ validate again.\n")
         settings form.
         TODO: Disable this button until functionality is implemented.
         '''
-        self.log("Changing settings...")
-        self.log("OK\n")
+        self.logger.debug("Changing settings...")
 
 
     def displayModelView(self, event):
@@ -534,8 +536,7 @@ validate again.\n")
         '''
         Create bool for unicode, change value when clicked.
         '''
-        self.log("Unicode...")
-        self.log("OK\n")
+        self.logger.debug("Unicode...")
 
 
     def console(self, event):
@@ -543,15 +544,14 @@ validate again.\n")
         Create bool for console, change value when clicked.
         Hide if being shown, show if hidden.
         '''
-        self.log("Console...")
+        self.logger.debug("Console...")
 
 
     def toolbar(self, event):
         '''
         Show/Hide Toolbar.
         '''
-        self.log("Toolbar... ")
-        self.log("OK\n")
+        self.logger.debug("Toolbar... ")
 
 
     def __getattr__(self, name):
@@ -559,7 +559,7 @@ validate again.\n")
         Debug method to handle calls to undefined methods.
         Ideally this method would never be called.
         '''
-        self.log("!!!Undefined method " + name)
+        self.logger.debug("!!!Undefined method " + name)
 
 
     def get_project(self):
@@ -584,24 +584,24 @@ validate again.\n")
 
         return project
 
-
-    def log(self, string, loglevel=None):
-        '''
-        By now we are outputting in the console directly. A better logging
-        method would be nice though.
-        No loglevel given means it's INFO.
-        '''
-        # Check loglevel corresponds to a logging level
-#         numeric_level = getattr(logging, loglevel.upper(), None)
-#         if not isinstance(numeric_level, int):
-#             raise ValueError('Invalid log level: %s' % loglevel)
-#         logging.basicConfig(level=numeric_level)
-        # Only INFO messages go to user's console. All log levels go to output
-        # debug log.
-#         if not loglevel:
-#             self.consoleController.addText(string)
-        
-        self.logger.log(logging.INFO, string)
+# 
+#     def log(self, string, loglevel=None):
+#         '''
+#         By now we are outputting in the console directly. A better logging
+#         method would be nice though.
+#         No loglevel given means it's INFO.
+#         '''
+#         # Check loglevel corresponds to a logging level
+# #         numeric_level = getattr(logging, loglevel.upper(), None)
+# #         if not isinstance(numeric_level, int):
+# #             raise ValueError('Invalid log level: %s' % loglevel)
+# #         logging.basicConfig(level=numeric_level)
+#         # Only INFO messages go to user's console. All log levels go to output
+#         # debug log.
+# #         if not loglevel:
+# #             self.consoleController.addText(string)
+#         
+#         self.logger.log(logging.INFO, string)
     
 
     def setup_logger(self):
@@ -613,7 +613,7 @@ validate again.\n")
         """
         #logging.basicConfig()
         logger = logging.getLogger('NammuController')
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
         # create file handler which logs even debug messages
         file_handler = logging.FileHandler('nammu.log')
         file_handler.setLevel(logging.DEBUG)
@@ -634,9 +634,6 @@ validate again.\n")
         console_handler = NammuConsoleHandler(self.consoleController)
         console_handler.setLevel(logging.INFO)
         logger.addHandler(console_handler)
-        
-        # Nammu console format
-        console_formatter = logging.Formatter('%(message)s')
 
         return logger
     
