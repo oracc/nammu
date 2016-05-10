@@ -1,9 +1,6 @@
-import StringIO, re, logging
+import StringIO, re, logging, requests
 from zipfile import ZipFile
-
-import requests
 from requests.exceptions import RequestException
-
 from HTTPRequest import HTTPRequest
 import xml.etree.ElementTree as ET
 
@@ -17,6 +14,9 @@ class SOAPClient(object):
         self.port = port
         self.url_dir = url_dir
         self.method = method
+        # TODO: Create logger in this module that reuses nammu controller's
+        # logger configuration so output is in same file, but tells us it was 
+        # produced in this module.
         self.logger = logging.getLogger( \
                                     "python.nammu.controller.NammuController")
         
@@ -82,13 +82,15 @@ class SOAPClient(object):
         returned binary-coded zip file.
         """
         self.response.content
-        binary_body = re.split('--==.*==', self.response.content)[2].split('\r\n')[5]
+        binary_body = re.split('--==.*==', \
+                               self.response.content)[2].split('\r\n')[5]
 
         f = StringIO.StringIO()
         f.write(bytearray(binary_body))
 
         memory_zip = ZipFile(f)
-        zip_content = {name: memory_zip.read(name) for name in memory_zip.namelist()}
+        zip_content = \
+                {name: memory_zip.read(name) for name in memory_zip.namelist()}
         oracc_log = zip_content['oracc.log']
         request_log = zip_content['request.log']
 
