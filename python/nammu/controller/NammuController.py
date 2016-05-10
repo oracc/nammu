@@ -12,7 +12,8 @@ import codecs, os, logging
 from java.lang import System, Integer
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
-from logging import StreamHandler
+from logging import StreamHandler, Formatter
+from logging.handlers import RotatingFileHandler
 from requests.exceptions import Timeout, ConnectionError, HTTPError, \
     RequestException
 from pyoracc.atf.atffile import AtfFile
@@ -584,25 +585,6 @@ validate again.")
 
         return project
 
-# 
-#     def log(self, string, loglevel=None):
-#         '''
-#         By now we are outputting in the console directly. A better logging
-#         method would be nice though.
-#         No loglevel given means it's INFO.
-#         '''
-#         # Check loglevel corresponds to a logging level
-# #         numeric_level = getattr(logging, loglevel.upper(), None)
-# #         if not isinstance(numeric_level, int):
-# #             raise ValueError('Invalid log level: %s' % loglevel)
-# #         logging.basicConfig(level=numeric_level)
-#         # Only INFO messages go to user's console. All log levels go to output
-#         # debug log.
-# #         if not loglevel:
-# #             self.consoleController.addText(string)
-#         
-#         self.logger.log(logging.INFO, string)
-    
 
     def setup_logger(self):
         """
@@ -614,16 +596,20 @@ validate again.")
         #logging.basicConfig()
         logger = logging.getLogger('NammuController')
         logger.setLevel(logging.DEBUG)
-        # create file handler which logs even debug messages
-        file_handler = logging.FileHandler('nammu.log')
+        # create file handler which logs debug messages.
+        # Make so it never grows bigger than 5MB.
+        file_handler = RotatingFileHandler('nammu.log', \
+                                           maxBytes = 5*1024*1024, \
+                                           backupCount = 1, \
+                                           encoding="utf-8")
         file_handler.setLevel(logging.DEBUG)
         # create console handler with a higher log level 
         # TODO: Users might not be insterested on this.
-        console_handler = logging.StreamHandler()
+        console_handler = StreamHandler()
         console_handler.setLevel(logging.DEBUG)
 
         # create formatter and add it to the handlers
-        formatter = logging.Formatter( \
+        formatter = Formatter( \
                         '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)
