@@ -1,5 +1,4 @@
-import StringIO
-import re
+import StringIO, re, logging
 from zipfile import ZipFile
 
 import requests
@@ -18,6 +17,8 @@ class SOAPClient(object):
         self.port = port
         self.url_dir = url_dir
         self.method = method
+        self.logger = logging.getLogger( \
+                                    "python.nammu.controller.NammuController")
         
 
     def create_request(self, **kwargs):
@@ -97,14 +98,12 @@ class SOAPClient(object):
             if key.endswith("autolem.atf"):
                 autolem = value
 
-        print zip_content.keys()
-        print "@"*30
-        print oracc_log
-        print "@"*30
-        print request_log
-        print "@"*30
-        if autolem:
-            print autolem
-            print "@"*30
-
+        self.logger.debug("The returned file from server contains: %s", \
+                          zip_content.keys())
+        
+        for file in zip_content.keys():
+            self.logger.debug("These are the contents of %s: \n%s", \
+                        file,
+                        zip_content[file])
+        
         return oracc_log, request_log, autolem
