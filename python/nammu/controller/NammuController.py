@@ -8,19 +8,24 @@ Handles controller events.
 @author: raquel-ucl
 '''
 
+import codecs, os
+from java.lang import System, Integer
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
-from java.lang import System, Integer
 
-import codecs, os
 from pyoracc.atf.atffile import AtfFile
-from ..view.NammuView import NammuView
-from MenuController import MenuController
-from ConsoleController import ConsoleController
+from requests.exceptions import Timeout, ConnectionError, HTTPError,\
+    RequestException
+
 from AtfAreaController import AtfAreaController
-from ToolbarController import ToolbarController
+from ConsoleController import ConsoleController
+from MenuController import MenuController
 from ModelController import ModelController
+from ToolbarController import ToolbarController
+
 from ..SOAPClient.SOAPClient import SOAPClient
+from ..view.NammuView import NammuView
+
 
 class NammuController(object):
 
@@ -335,45 +340,124 @@ class NammuController(object):
 
         # Create HTTP client and prepare all input arguments for request
         client = SOAPClient(url, port, url_dir, method='POST')
+        
         atf_basename = os.path.basename(self.currentFilename)
-        nammuText = self.atfAreaController.getAtfAreaText()
+        nammu_text = self.atfAreaController.getAtfAreaText()
 
         # Send request and check for returned process ID
         client.create_request(command=command,
                               keys=[project, '00atf/'+atf_basename],
                               atf_basename=atf_basename,
-                              atf_text=nammuText.encode('utf-8'))
-        client.send()
+                              atf_text=nammu_text.encode('utf-8'))
+        
+        try:
+            self.send_request(client)
+        except RequestException as re: 
+            self.log("        Error when trying to send first HTTP POST request.")
+            self.log(str(re))
+            return
+        
         server_id = client.get_response_id()
-
+        
         # Wait for server to prepare response
         self.log("        Request sent OK with ID " + server_id + "\n")
         self.log("        Waiting for server to prepare response... ")
-        client.wait_for_response(server_id)
-        self.log("OK\n")
-        self.log("        Fetching response... ")
-
+        try:
+            self.wait_for_response(client, server_id)
+        except RequestException as re:
+            self.log("        Error when trying to send HTTP GET request.")
+            self.log(str(re))
+            return
+        except Exception as e:
+            self.log("        Server error.")
+            self.log(str(e))          
+        
         # Send new request to fetch results and server logs
-        # This shouldn't need a new client, but a new request inside the same client
-        client = SOAPClient(url, port, url_dir, method='POST')
+        # TODO: This shouldn't need a new client, but a new request inside the 
+        #       same client
+        # client = SOAPClient(url, port, url_dir, method='POST')
+        self.log("        Fetching response... ")
         client.create_request(keys=[server_id])
-        client.send()
-        response = client.get_response()
-        self.log(" OK\n")
+        try:
+            self.send_request(client)
+        except RequestException as re:
+            self.log("        Error when trying to send last HTTP POST request.")
+            self.log(str(re))
+            return
+
+        # Retrieve server logs and lemmatised file from server SOAP response
         self.log("        Reading response... ")
         oracc_log, request_log, autolem = client.get_server_logs()
-        self.log(" OK\n")
+        self.process_server_response(oracc_log, request_log, autolem)
 
-        if autolem:
-            self.atfAreaController.setAtfAreaText(autolem)
-            self.log("        Lemmatised ATF received from server.\n")
-
+                        
+    def process_server_response(self, oracc_log, request_log, autolem):
+        """
+        Last HTTP POST response retrieved from server will containg at least 
+        two files: 
+          * request.log: Output log from tools run in the ORACC server like
+                         ATF file unzip, etc.
+          * oracc.log: Validation error messages.
+        If we are lemmatising, it'll also return:
+          * <filename>_autolem.atf: lemmatised version of file
+        """
+        if request_log:
+            # TODO: Add to logfile
+            pass
+            
         if oracc_log:
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
             self.log("        See highlighted areas in the text for errors and check again.\n\n")
-        else:
-            self.log("        The ORACC server didn't report any validation errors.\n\n")
+            
+        if autolem:
+            self.atfAreaController.setAtfAreaText(autolem)
+            self.log("        Lemmatised ATF received from server.\n")
+
+
+    def send_request(self, client): 
+        """
+        Tries to send HTTP POST request to ORACC server and raise problems.
+        TODO: When we have proper logging it'd be nice to move this to the 
+        SOAPClient.
+        """
+        try:
+            client.send()
+        except Timeout:
+            self.log("        ORACC server timed out after 5 seconds.\n")
+            raise
+        except ConnectionError:   
+            self.log("        Can't connect to ORACC server at " + client.url + ".\n")
+            raise
+        except HTTPError:
+            self.log("        ORACC server returned invalid HTTP response.\n")
+            raise 
+        
+        
+    def wait_for_response(self, client, server_id):
+        """
+        Tries to send HTTP GET request to ORACC server and raise problems.
+        TODO: When we have proper logging it'd be nice to move this to the 
+        SOAPClient.
+        """
+        try:
+            client.wait_for_response(server_id)    
+        except Timeout:
+            self.log("        ORACC server timed out after 5 seconds.\n")
+            raise
+        except ConnectionError:   
+            self.log("        Can't connect to ORACC server at " + client.url + ".\n")
+            raise
+        except HTTPError:
+            self.log("        ORACC server returned invalid HTTP response.\n")  
+            raise              
+        except Exception as e:
+            if e.args == "UnknownServerError":           
+                self.log("        ORACC server seems down. Contact server admin.\n")
+                raise
+            else:
+                self.log("        Unexpected error when waiting for ORACC server to prepare response.")
+                        
 
     def get_validation_errors(self, oracc_log):
         """

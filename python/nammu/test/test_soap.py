@@ -1,6 +1,7 @@
 import pytest
 import xml.dom.minidom
 from ..SOAPClient.SOAPClient import SOAPClient
+from requests.exceptions import ConnectionError
 
 class TestSOAP(object):
 
@@ -68,12 +69,14 @@ class TestSOAP(object):
                     </osc-meth:Request>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>"""
-        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
+        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', \
+                            method='POST')
         atf_basename = "hyphens.atf"
-        client.create_request(command='atf',
+        client.create_request(command = 'atf',
                               keys=['tests/mini', '00atf/' + atf_basename],
-                              atf_basename=atf_basename,
-                              atf_text=open('resources/test/request.zip').read())
+                              atf_basename = atf_basename,
+                              atf_text = \
+                              open('resources/test/request.zip').read())
                 
         test_envelope = client.request.get_soap_envelope()
         assert self.compare_soap_envelopes(test_envelope, goal_envelope)
@@ -98,7 +101,8 @@ class TestSOAP(object):
                     </osc-meth:Response>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>"""
-        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
+        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', \
+                            method='POST')
         client.create_request(keys=['ZO3vNg'])
         test_envelope = client.request.get_soap_envelope()
         assert self.compare_soap_envelopes(test_envelope, goal_envelope)
@@ -110,9 +114,23 @@ class TestSOAP(object):
         return self.pretty_print(test_xml) == self.pretty_print(goal_xml)
 
 
-    def pretty_print(self, str):
-        pretty_str = ''
-        for line in str.toprettyxml().split('\n'):
+    def pretty_print(self, string):
+        pretty_string = ''
+        for line in string.toprettyxml().split('\n'):
             if not line.strip() == '':
-                pretty_str += line
-        return pretty_str
+                pretty_string += line
+        return pretty_string
+    
+    
+    def test_soap_connection_error(self):
+        """
+        Requests library raises different exceptions, but we would need to 
+        create a mock server that would take quite a lot of time.
+        We can still test easily for ConnectionError exceptions.
+        """
+        with pytest.raises(ConnectionError) as e:
+            url = 'http://fake.oracc.url'
+            client = SOAPClient(url, 8085, None, method='POST') 
+            client.create_request(keys=['NGaXYv'])
+            client.send()
+        assert e.type == ConnectionError

@@ -46,7 +46,7 @@ class HTTPRequest(object):
     def create_response_message(self, keys):
         """
         Asks the server for the response request.zip attachment containing
-        validated/lemmantised/etc ATF file.
+        validated/lemmatised/etc ATF file.
         """
         self.set_soap_envelope(keys=keys)
         self.mtompkg = MIMEApplication(self.envelope, 'soap+xml', encode_7or8bit)
