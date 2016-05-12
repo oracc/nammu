@@ -83,13 +83,13 @@
 							<goal>jython</goal>
 						</goals>
 					</execution>
-					<!-- <execution>
+					<execution>
 						<id>packaging</id>
 						<phase>package</phase>
 						<goals>
 							<goal>jython</goal>
 						</goals>
-					</execution> -->
+					</execution>
 				</executions>
 				<configuration>
 					<libraries>
