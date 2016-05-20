@@ -81,15 +81,14 @@ class SOAPClient(object):
         returned binary-coded zip file.
         """
         self.response.content
-        binary_body = re.split('--==.*==', \
+        binary_body = re.split('--==.*==', 
                                self.response.content)[2].split('\r\n')[5]
 
         f = StringIO.StringIO()
         f.write(bytearray(binary_body))
 
         memory_zip = ZipFile(f)
-        zip_content = \
-                {name: memory_zip.read(name) for name in memory_zip.namelist()}
+        zip_content = {name: memory_zip.read(name) for name in memory_zip.namelist()}
         oracc_log = zip_content['oracc.log']
         request_log = zip_content['request.log']
 
@@ -99,11 +98,11 @@ class SOAPClient(object):
             if key.endswith("autolem.atf"):
                 autolem = value
 
-        self.logger.debug("The returned file from server contains: %s", \
+        self.logger.debug("The returned file from server contains: %s", 
                           zip_content.keys())
         
         for file in zip_content.keys():
-            self.logger.debug("These are the contents of %s: \n%s", \
+            self.logger.debug("These are the contents of %s: \n%s", 
                         file,
                         zip_content[file])
         
@@ -129,7 +128,7 @@ class SOAPClient(object):
         console_handler.setLevel(logging.DEBUG)
 
         # create formatter and add it to the handlers
-        formatter = logging.Formatter( \
+        formatter = logging.Formatter( 
                         '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)

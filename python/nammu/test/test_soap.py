@@ -17,11 +17,15 @@ class TestSOAP(object):
             'Content-Length': '2011',
             'MIME-Version': '1.0'
         }
-        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
-        client.create_request(command='atf',
-                              keys=['tests/mini', '00atf/hyphens.atf'],
-                              atf_basename='hyphens.atf',
-                              atf_text=open('resources/test/request.zip').read())
+        client = SOAPClient('http://oracc.museum.upenn.edu', 
+                            '8085', 
+                            'p', 
+                            method='POST')
+        client.create_request(
+                            command='atf',
+                            keys=['tests/mini', '00atf/hyphens.atf'],
+                            atf_basename='hyphens.atf',
+                            atf_text=open('resources/test/request.zip').read())
         test_headers = client.request.get_headers()
         assert test_headers == goal_headers
 
@@ -37,7 +41,10 @@ class TestSOAP(object):
             'MIME-Version': '1.0', 
             'Content-Type': 'application/soap+xml'
         }
-        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', method='POST')
+        client = SOAPClient('http://oracc.museum.upenn.edu', 
+                            '8085', 
+                            'p', 
+                            method='POST')
         client.create_request(keys=['ZO3vNg'])
         test_headers = client.request.get_headers()
         assert test_headers == goal_headers
@@ -69,14 +76,14 @@ class TestSOAP(object):
                     </osc-meth:Request>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>"""
-        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', \
+        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', 
                             method='POST')
         atf_basename = "hyphens.atf"
-        client.create_request(command = 'atf',
-                              keys=['tests/mini', '00atf/' + atf_basename],
-                              atf_basename = atf_basename,
-                              atf_text = \
-                              open('resources/test/request.zip').read())
+        client.create_request(
+                        command = 'atf',
+                        keys=['tests/mini', '00atf/' + atf_basename],
+                        atf_basename = atf_basename,
+                        atf_text = open('resources/test/request.zip').read())
                 
         test_envelope = client.request.get_soap_envelope()
         assert self.compare_soap_envelopes(test_envelope, goal_envelope)
@@ -101,7 +108,9 @@ class TestSOAP(object):
                     </osc-meth:Response>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>"""
-        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', \
+        client = SOAPClient('http://oracc.museum.upenn.edu', 
+                            '8085', 
+                            'p', 
                             method='POST')
         client.create_request(keys=['ZO3vNg'])
         test_envelope = client.request.get_soap_envelope()

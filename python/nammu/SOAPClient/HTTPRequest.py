@@ -33,8 +33,8 @@ class HTTPRequest(object):
                                keys=keys,
                                atf_basename=atf_basename,
                                atf_text=atf_text)
-        self.rootpkg = MIMEApplication(self.envelope, \
-                                       'xop+xml', \
+        self.rootpkg = MIMEApplication(self.envelope, 
+                                       'xop+xml', 
                                        encode_7or8bit)
         self.set_multipart_payload()
         self.document = MIMEBase('*','*')
@@ -51,8 +51,8 @@ class HTTPRequest(object):
         validated/lemmatised/etc ATF file.
         """
         self.set_soap_envelope(keys=keys)
-        self.mtompkg = MIMEApplication(self.envelope, \
-                                       'soap+xml', \
+        self.mtompkg = MIMEApplication(self.envelope, 
+                                       'soap+xml', 
                                        encode_7or8bit)
         self.mtompkg.add_header("Host", self.url)
 
@@ -132,15 +132,14 @@ class HTTPRequest(object):
         """
         # The number of keys in the SOAP envelope depends on the command and
         # the message type (Request/Response)
-        osc_data_keys = ''
+        keys = '' # osc-data keys
 
         # Only Request messages have data, but the template has a reference to
         # it in both cases.
         data = ''
 
         if 'command' in kwargs.keys():
-            osc_data_keys += \
-                    '<osc-data:key>{}</osc-data:key>'.format(kwargs['command'])
+            keys += '<osc-data:key>{}</osc-data:key>'.format(kwargs['command'])
             message_type = 'Request'
             data += """<osc-data:data>
                             <osc-data:item xmime5:contentType="*/*">
@@ -151,7 +150,7 @@ class HTTPRequest(object):
             message_type = 'Response'
 
         for key in kwargs['keys']:
-            osc_data_keys += '<osc-data:key>{}</osc-data:key>'.format(key)
+            keys += '<osc-data:key>{}</osc-data:key>'.format(key)
 
         envelope = """<?xml version="1.0" encoding="UTF-8"?>
             <SOAP-ENV:Envelope
@@ -172,7 +171,7 @@ class HTTPRequest(object):
                     </osc-meth:{type}>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>""".format(type=message_type,
-                                           keys=osc_data_keys,
+                                           keys=keys,
                                            data=data)
         self.envelope = envelope
 
@@ -198,7 +197,7 @@ class HTTPRequest(object):
         
         # This returns the randomly created boundary string, which separates the
         # different elements in the request (document, envelope and payload)
-        boundary = self.mtompkg.get_boundary()
+        bound = self.mtompkg.get_boundary()
         
         # There's two different kinds of SOAP HTTP POST requests handled, due to
         # the communication with the server being asynchronous:
@@ -206,11 +205,10 @@ class HTTPRequest(object):
         # * One that contains only a request ID to ask for the validated/lemm'd
         #   ATF.
         # The boundary will be empty in the second case.
-        if boundary != None:
+        if bound != None:
             # Encoded zip files start with "\n\nPK" and end with a new line 
             # follwed by the ending boundary (in the form "--random_boundary--"
-            attachment = \
-                        body.split("\n\nPK")[1].split("\n--" + str(boundary))[0]
+            attachment = body.split("\n\nPK")[1].split("\n--" + str(bound))[0]
             # Some line endings are \n and some are \r\n. The email module 
             # automatically replaces some of them causing the server not to 
             # understand line endings correctly. For this, we need to first make

@@ -9,13 +9,16 @@ Handles controller events.
 '''
 
 import codecs, os, logging, logging.config, yaml
+
 from java.lang import System, Integer
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
+
 from logging import StreamHandler, Formatter
 from logging.handlers import RotatingFileHandler
-from requests.exceptions import Timeout, ConnectionError, HTTPError, \
-    RequestException
+from requests.exceptions import Timeout, ConnectionError, HTTPError
+from requests.exceptions import RequestException
+
 from pyoracc.atf.atffile import AtfFile
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
@@ -55,7 +58,7 @@ class NammuController(object):
         self.view.addAtfArea(self.atfAreaController.view)
         self.view.addConsole(self.consoleController.view)
         self.logger.info("Welcome to Nammu!")
-        self.logger.info( \
+        self.logger.info(
                 "Please open an ATF file or start typing to create a new one.")
         
         # Display Nammu's view
@@ -183,7 +186,7 @@ class NammuController(object):
         if self.handleUnsaved():
             self.currentFilename = None
             self.atfAreaController.clearAtfArea()
-            self.logger.debug("File %s successfully closed.", \
+            self.logger.debug("File %s successfully closed.",
                               self.currentFilename)
 
 
@@ -224,9 +227,10 @@ class NammuController(object):
         2. Give Yes No Cancel options
         3. Return chosen option
         '''
-        result = JOptionPane.showConfirmDialog( \
-                self.view.getContentPane(), question, "Question", \
-                JOptionPane.YES_NO_CANCEL_OPTION)
+        result = JOptionPane.showConfirmDialog(self.view.getContentPane(), 
+                                               question, 
+                                               "Question", 
+                                               JOptionPane.YES_NO_CANCEL_OPTION)
         return result
 
 
@@ -234,9 +238,10 @@ class NammuController(object):
         '''
         1. Show popup with given information text
         '''
-        JOptionPane.showMessageDialog( \
-                self.view.getContentPane(), text, "Information", \
-                JOptionPane.INFORMATION_MESSAGE)
+        JOptionPane.showMessageDialog(self.view.getContentPane(), 
+                                      text, 
+                                      "Information",
+                                      JOptionPane.INFORMATION_MESSAGE)
 
 
     def quit(self, event):
@@ -282,8 +287,8 @@ class NammuController(object):
             self.send_command("atf", project)
         else:
             # TODO: Prompt dialog
-            self.logger.error( \
-                        "No project found in file %s. Add project and retry.", \
+            self.logger.error(
+                        "No project found in file %s. Add project and retry.", 
                         self.currentFilename)
 
         self.logger.debug("Validating ATF done.")
@@ -302,7 +307,7 @@ class NammuController(object):
             self.send_command("lem", project)
         else:
             # TODO: Prompt dialog.
-            self.logger.error( \
+            self.logger.error(
                             "No project found in file. Add project and retry.")
             
         self.logger.debug("Lemmatising ATF done.")
@@ -321,9 +326,9 @@ class NammuController(object):
         port = 8085
         url_dir = 'p'
         
-        self.logger.debug("Sending request to server at %s:%d:%s.", \
-                          url, \
-                          port, \
+        self.logger.debug("Sending request to server at %s:%d:%s.", 
+                          url, 
+                          port, 
                           url_dir)
 
         # Create HTTP client and prepare all input arguments for request
@@ -341,7 +346,7 @@ class NammuController(object):
         try:
             self.send_request(client)
         except RequestException as re: 
-            self.logger.error( \
+            self.logger.error( 
                         "Error when trying to send first HTTP POST request.")
             self.logger.exception(str(re))
             return
@@ -397,10 +402,10 @@ class NammuController(object):
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
-            self.logger.info("The validation returned some errors: \n%s", \
+            self.logger.info("The validation returned some errors: \n%s", 
                              oracc_log)
-            self.logger.info("See highlighted areas in the text for errors and \
-validate again.")
+            self.logger.info(
+            "See highlighted areas in the text for errors and validate again.")
         else:
             self.logger.info("The validation returned no errors.")
             
@@ -422,7 +427,7 @@ validate again.")
             self.logger.error("ORACC server timed out after 5 seconds.")
             raise
         except ConnectionError:   
-            self.logger.error("Can't connect to ORACC server at %s.", \
+            self.logger.error("Can't connect to ORACC server at %s.", 
                               client.url)
             raise
         except HTTPError:
@@ -443,7 +448,7 @@ validate again.")
             self.logger.error("ORACC server timed out after 5 seconds.")
             raise
         except ConnectionError:   
-            self.logger.error("Can't connect to ORACC server at %s.", \
+            self.logger.error("Can't connect to ORACC server at %s.", 
                               client.url)
             raise
         except HTTPError:
@@ -451,11 +456,11 @@ validate again.")
             raise              
         except Exception as e:
             if e.args == "UnknownServerError":           
-                self.logger.error( \
+                self.logger.error( 
                             "ORACC server seems down. Contact server admin.")
                 raise
             else:
-                self.logger.error( \
+                self.logger.error( 
         "Unexpected error when waiting for ORACC server to prepare response.")
                         
 
@@ -521,7 +526,7 @@ validate again.")
             #can just receive the parsed object instead of the text
             self.modelController = ModelController(self, self.parse(atfText))
         else:
-            self.promptInfoPane(\
+            self.promptInfoPane(
                         "Open ATF file before trying to display model view.")
 
 
@@ -598,9 +603,9 @@ validate again.")
         logger.setLevel(logging.DEBUG)
         # create file handler which logs debug messages.
         # Make so it never grows bigger than 5MB.
-        file_handler = RotatingFileHandler('nammu.log', \
-                                           maxBytes = 5*1024*1024, \
-                                           backupCount = 1, \
+        file_handler = RotatingFileHandler('nammu.log', 
+                                           maxBytes = 5*1024*1024, 
+                                           backupCount = 1, 
                                            encoding="utf-8")
         file_handler.setLevel(logging.DEBUG)
         # create console handler with a higher log level 
@@ -609,7 +614,7 @@ validate again.")
         console_handler.setLevel(logging.DEBUG)
 
         # create formatter and add it to the handlers
-        formatter = Formatter( \
+        formatter = Formatter(
                         '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)

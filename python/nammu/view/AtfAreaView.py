@@ -312,8 +312,8 @@ class AtfUndoableEditListener(UndoableEditListener):
 
         # If significant INSERT/REMOVE event happen, end and add current
         # edit compound to undo_manager and start a new one.
-        if (edit_type == "INSERT" or edit_type == "REMOVE") \
-            and not self.must_compound:
+        if (edit_type == "INSERT" or edit_type == "REMOVE") and \
+                                                        not self.must_compound:
             # Explicitly end compound edits so their inProgress flag goes to
             # false. Note undo() only undoes compound edits when they are not
             # in progress.

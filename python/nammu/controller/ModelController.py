@@ -46,8 +46,7 @@ class ModelController(object):
         # self.view.objectTab[objectID].addMetadata(objectID, atfText.project, \
         #                                          atfText.language, \
         #                                          atfText.protocols)
-        self.view.addMetadata(objectID, atfText.project, \
-                                                  atfText.language)
+        self.view.addMetadata(objectID, atfText.project, atfText.language)
 
         for item in atfText.children:
             itemType = "@" + item.objecttype

@@ -8,8 +8,8 @@ Might be merged with AtfAreaView in the future.
 '''
 
 from java.awt import BorderLayout, GridLayout
-from javax.swing import JScrollPane, JPanel, JFrame, JComboBox, JTabbedPane, \
-                        JLabel, BoxLayout, JButton
+from javax.swing import JScrollPane, JPanel, JFrame, JComboBox, JTabbedPane
+from javax.swing import JLabel, BoxLayout, JButton
 from __builtin__ import None
 
 class ModelView(JFrame):
@@ -41,10 +41,10 @@ class ModelView(JFrame):
         self.add(scrollingArea, BorderLayout.CENTER)
         
         # TODO: Where to get/store this information?
-        self.languages = { "akk-x-stdbab": "Akkadian Standard Babylonian", \
-                          "akk": "Akkadian", "sux": "", "a":"", \
-                          "akk-x-oldbab":"Akkadian Old Babylonian", "qpc": "", \
-                          "na": "", "nb": "", "x/n": "", \
+        self.languages = { "akk-x-stdbab": "Akkadian Standard Babylonian", 
+                          "akk": "Akkadian", "sux": "", "a":"", 
+                          "akk-x-oldbab":"Akkadian Old Babylonian", "qpc": "", 
+                          "na": "", "nb": "", "x/n": "", 
                           "akk-x-neoass": "Akkadian Neo Assyrian"}
         
         
