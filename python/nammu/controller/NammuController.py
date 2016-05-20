@@ -8,7 +8,7 @@ Handles controller events.
 @author: raquel-ucl
 '''
 
-import codecs, os, logging
+import codecs, os, logging, logging.config, yaml
 from java.lang import System, Integer
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
@@ -405,7 +405,7 @@ validate again.")
             self.logger.info("The validation returned no errors.")
             
         if autolem:
-            self.atfAreaController.setAtfAreaText(autolem)
+            self.atfAreaController.setAtfAreaText(autolem.decode('utf-8'))
             self.logger.info("Lemmatised ATF received from ORACC server.")
 
 
