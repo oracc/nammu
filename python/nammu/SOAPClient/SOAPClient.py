@@ -1,5 +1,6 @@
 import StringIO, re, logging, requests
 from zipfile import ZipFile
+from logging import Formatter
 from requests.exceptions import RequestException
 from HTTPRequest import HTTPRequest
 import xml.etree.ElementTree as ET
@@ -123,15 +124,17 @@ class SOAPClient(object):
         file_handler = logging.FileHandler('nammu.log')
         file_handler.setLevel(logging.DEBUG)
         # create console handler with a higher log level 
-        # TODO: Users might not be insterested on this.
+        # TODO: Users might not be interested on this.
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.DEBUG)
 
         # create formatter and add it to the handlers
-        formatter = logging.Formatter( 
-                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+        formatter = Formatter(
+                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s',
+                        '%Y-%m-%d %H:%M:%S')
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)
+        
         # add the handlers to the logger
         logger.addHandler(file_handler)
         logger.addHandler(console_handler)

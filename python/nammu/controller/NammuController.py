@@ -615,7 +615,8 @@ class NammuController(object):
 
         # create formatter and add it to the handlers
         formatter = Formatter(
-                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s',
+                        '%Y-%m-%d %H:%M:%S')
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)
         # add the handlers to the logger
