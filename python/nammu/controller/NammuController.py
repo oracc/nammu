@@ -123,7 +123,7 @@ class NammuController(object):
 
             # TODO: Else, prompt user to choose again before closing
 
-            self.logger.debug("File %s successfully opened.", self.filename)
+            self.logger.debug("File %s successfully opened.", filename)
 
 
     def readTextFile(self, filename):
@@ -326,11 +326,6 @@ class NammuController(object):
         port = 8085
         url_dir = 'p'
         
-        self.logger.debug("Sending request to server at %s:%d:%s.", 
-                          url, 
-                          port, 
-                          url_dir)
-
         # Create HTTP client and prepare all input arguments for request
         client = SOAPClient(url, port, url_dir, method='POST')
         
@@ -397,12 +392,12 @@ class NammuController(object):
         """
         if request_log:
             self.logger.debug("Contents of request.log: \n%s", request_log)
-            
+
         if oracc_log:
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
-            self.logger.info("The validation returned some errors: \n%s", 
+            self.logger.info("The validation returned some errors: \n%s",
                              oracc_log)
             self.logger.info(
             "See highlighted areas in the text for errors and validate again.")
@@ -598,32 +593,14 @@ class NammuController(object):
         Output should be sent to Nammu's console as well as a local logfile and
         the system console.
         """
-        #logging.basicConfig()
-        logger = logging.getLogger('NammuController')
-        logger.setLevel(logging.DEBUG)
-        # create file handler which logs debug messages.
-        # Make so it never grows bigger than 5MB.
-        file_handler = RotatingFileHandler('nammu.log', 
-                                           maxBytes = 5*1024*1024, 
-                                           backupCount = 1, 
-                                           encoding="utf-8")
-        file_handler.setLevel(logging.DEBUG)
-        # create console handler with a higher log level 
-        # TODO: Users might not be insterested on this.
-        console_handler = StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
+        path_to_config = "/Users/raquelalegre/workspace/ORACC/nammu/resources/config/logging.yaml"
+        logging.config.dictConfig(yaml.load(open(path_to_config, 'r')))
+        logger = logging.getLogger("NammuController")
 
         # create formatter and add it to the handlers
-        formatter = Formatter(
-                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s',
-                        '%Y-%m-%d %H:%M:%S')
-        file_handler.setFormatter(formatter)
-        console_handler.setFormatter(formatter)
-        # add the handlers to the logger
-        logger.addHandler(file_handler)
-        logger.addHandler(console_handler)
-        
         console_handler = NammuConsoleHandler(self.consoleController)
+        formatter = Formatter('%(message)s')
+        console_handler.setFormatter(formatter)
         console_handler.setLevel(logging.INFO)
         logger.addHandler(console_handler)
 
@@ -632,7 +609,7 @@ class NammuController(object):
     
 class NammuConsoleHandler(StreamHandler):
     """
-    Extends StreamHandler to make it print log messages in Nammu's console for 
+    Extends StreamHandler to make it print log messages in Nammu's console for
     the user to see.
     """
     def __init__(self, nammu_console):
@@ -641,12 +618,11 @@ class NammuConsoleHandler(StreamHandler):
         """
         super(logging.StreamHandler, self).__init__()
         self.nammu_console = nammu_console
-        
+
     def emit(self, record):
         """
         This is the method that prints out the log message. Format the given
         record and send to Nammu's console for the user to see.
         """
         msg = self.format(record)
-        self.nammu_console.addText(msg + "\n")
-        
+        self.nammu_console.addText(msg + "\n")    

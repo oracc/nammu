@@ -1,4 +1,4 @@
-import StringIO, re, logging, requests
+import StringIO, re, logging, requests, yaml
 from zipfile import ZipFile
 from logging import Formatter
 from requests.exceptions import RequestException
@@ -34,6 +34,9 @@ class SOAPClient(object):
         url = "{}:{}".format(self.url, self.port)
         headers = dict(self.request.get_headers())
         body = self.request.get_body()
+        self.logger.debug("Sending request to server at %s.", url)
+        self.logger.debug("HTTP request headers sent: %s", headers)
+        self.logger.debug("HTTP request body sent: %s", body)
         self.response = requests.post(url, data=body, headers=headers)
 
         
@@ -96,7 +99,7 @@ class SOAPClient(object):
         # Check if server returns a lemmatised file
         autolem = None 
         for key, value in zip_content.iteritems():
-            if key.endswith("autolem.atf"):
+            if key.endswith("autolem.atf"):             
                 autolem = value
 
         self.logger.debug("The returned file from server contains: %s", 
@@ -117,34 +120,10 @@ class SOAPClient(object):
         Output should be sent to Nammu's console as well as a local logfile and
         the system console.
         """
-        #logging.basicConfig()
-        logger = logging.getLogger('SOAPClient')
-        logger.setLevel(logging.INFO)
-        # create file handler which logs even debug messages
-        file_handler = logging.FileHandler('nammu.log')
-        file_handler.setLevel(logging.DEBUG)
-        # create console handler with a higher log level 
-        # TODO: Users might not be interested on this.
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
 
-        # create formatter and add it to the handlers
-        formatter = Formatter(
-                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s',
-                        '%Y-%m-%d %H:%M:%S')
-        file_handler.setFormatter(formatter)
-        console_handler.setFormatter(formatter)
+        path_to_config = "/Users/raquelalegre/workspace/ORACC/nammu/resources/config/logging.yaml"
+        logging.config.dictConfig(yaml.load(open(path_to_config, 'r')))
+        logger = logging.getLogger("SOAPClient")
+        requests_logger = logging.getLogger("requests.packages.urllib3")
         
-        # add the handlers to the logger
-        logger.addHandler(file_handler)
-        logger.addHandler(console_handler)
-
-        # Nammu console format
-        console_formatter = logging.Formatter('%(message)s')
-
-        request_log = logging.getLogger("requests.packages.urllib3")
-        request_log.addHandler(file_handler)
-        request_log.addHandler(console_handler)
-        request_log.setLevel(logging.DEBUG)
-        request_log.propagate = True
-        return logger, request_log
+        return logger, requests_logger
