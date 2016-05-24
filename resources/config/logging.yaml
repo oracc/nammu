@@ -68,8 +68,6 @@ loggers:
         
         handlers: [console, file_handler]
         
-        qualname: requests
-        
         propagate: no
 
 
