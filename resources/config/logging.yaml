@@ -1,4 +1,5 @@
 ---
+version: 1
 
 disable_existing_loggers: False
 
@@ -7,7 +8,7 @@ formatters:
     nammu_formatter:
 
         format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-		datefmt: "%Y-%m-%d %H:%M:%S"
+        datefmt: "%Y-%m-%d %H:%M:%S"
 
 
 handlers:
@@ -40,28 +41,18 @@ handlers:
         encoding: utf8
 
 
-    nammu_console:
-
-        class: python.nammu.controller.NammuConsoleHandler
-
-        level: INFO            
-
-        formatter: nammu_formatter
-
-        encoding: utf8
-
 
 loggers:
-	
-	NammuController:
-	
-		level: DEBUG
-		
-		handlers: [console, file_handler]
-		
-		propagate: no
-		
 
+    NammuController:
+
+        level: DEBUG
+
+        handlers: [console, file_handler]
+
+        propagate: no
+        
+        
     SOAPClient:
 
         level: DEBUG
@@ -69,12 +60,21 @@ loggers:
         handlers: [console, file_handler]
 
         propagate: no
+        
+        
+    requests.packages.urllib3:
+        
+        level: DEBUG
+        
+        handlers: [console, file_handler]
+        
+        propagate: yes
 
 
 root:
 
     level: INFO
 
-    handlers: [console, file_handler, nammu_console]
+    handlers: [console, file_handler]
 
 
