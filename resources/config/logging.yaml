@@ -68,7 +68,9 @@ loggers:
         
         handlers: [console, file_handler]
         
-        propagate: yes
+        qualname: requests
+        
+        propagate: no
 
 
 root:
