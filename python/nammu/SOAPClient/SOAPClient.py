@@ -131,7 +131,7 @@ class SOAPClient(object):
         console_handler.setLevel(logging.DEBUG)
 
         # create formatter and add it to the handlers
-        formatter = logging.Formatter( \
+        formatter = logging.Formatter( 
                         '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)

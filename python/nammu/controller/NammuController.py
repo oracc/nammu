@@ -593,15 +593,29 @@ class NammuController(object):
         Output should be sent to Nammu's console as well as a local logfile and
         the system console.
         """
-        #logging.basicConfig()
+        
+        # First of all check Operating System where we are running to save 
+        # log in appropriate place.
+        log_dir = ""
+        os_name = System.getProperty("os.name").lower()
+        if "mac" or "nix" or "nux" or "sunos" or "solaris" in os_name:
+            log_dir = "/var/log/"
+        elif "win" in os_name:
+            log_dir = os.path.join(os.environ['APPDATA'], 'log/')
+        else:
+            self.promptInfoPane("Operating System " + os_name + " not \
+            recognised. \nSaving Nammu's log in current folder.")
+            
+            
         logger = logging.getLogger('NammuController')
         logger.setLevel(logging.DEBUG)
         # create file handler which logs debug messages.
         # Make so it never grows bigger than 5MB.
-        file_handler = RotatingFileHandler('nammu.log', \
-                                           maxBytes = 5*1024*1024, \
-                                           backupCount = 1, \
+        file_handler = RotatingFileHandler(log_dir + 'nammu.log', 
+                                           maxBytes = 5*1024*1024, 
+                                           backupCount = 1, 
                                            encoding="utf-8")
+            
         file_handler.setLevel(logging.DEBUG)
         # create console handler with a higher log level
         # TODO: Users might not be insterested on this.
@@ -609,7 +623,7 @@ class NammuController(object):
         console_handler.setLevel(logging.DEBUG)
 
          # create formatter and add it to the handlers
-        formatter = Formatter( \
+        formatter = Formatter( 
                         '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)
