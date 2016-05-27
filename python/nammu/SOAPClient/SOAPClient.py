@@ -1,4 +1,4 @@
-import StringIO, re, logging, requests, yaml
+import StringIO, re, logging, logging.config, requests
 from zipfile import ZipFile
 from logging import Formatter
 from requests.exceptions import RequestException
@@ -120,10 +120,34 @@ class SOAPClient(object):
         Output should be sent to Nammu's console as well as a local logfile and
         the system console.
         """
+        logger = logging.getLogger('SOAPClient')
+        logger.setLevel(logging.DEBUG)
+        # create file handler which logs even debug messages
+        file_handler = logging.FileHandler('nammu.log')
+        file_handler.setLevel(logging.DEBUG)
+        # create console handler with a higher log level
+        # TODO: Users might not be insterested on this.
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
 
-        path_to_config = "/Users/raquelalegre/workspace/ORACC/nammu/resources/config/logging.yaml"
-        logging.config.dictConfig(yaml.load(open(path_to_config, 'r')))
-        logger = logging.getLogger("SOAPClient")
-        requests_logger = logging.getLogger("requests.packages.urllib3")
+        # create formatter and add it to the handlers
+        formatter = logging.Formatter( \
+                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
+        # add the handlers to the logger
+        logger.addHandler(file_handler)
+        logger.addHandler(console_handler)
+
+        # Nammu console format
+        console_formatter = logging.Formatter('%(message)s')
+
+        request_log = logging.getLogger("requests.packages.urllib3")
+        request_log.addHandler(file_handler)
+        request_log.addHandler(console_handler)
         
-        return logger, requests_logger
+        request_log.setLevel(logging.DEBUG)
+        
+        return logger, request_log
+    
+        

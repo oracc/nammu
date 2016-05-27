@@ -8,7 +8,7 @@ Handles controller events.
 @author: raquel-ucl
 '''
 
-import codecs, os, logging, logging.config, yaml
+import codecs, os, logging, logging.config
 
 from java.lang import System, Integer
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
@@ -593,16 +593,33 @@ class NammuController(object):
         Output should be sent to Nammu's console as well as a local logfile and
         the system console.
         """
-        path_to_config = "/Users/raquelalegre/workspace/ORACC/nammu/resources/config/logging.yaml"
-        logging.config.dictConfig(yaml.load(open(path_to_config, 'r')))
-        logger = logging.getLogger("NammuController")
+        #logging.basicConfig()
+        logger = logging.getLogger('NammuController')
+        logger.setLevel(logging.DEBUG)
+        # create file handler which logs debug messages.
+        # Make so it never grows bigger than 5MB.
+        file_handler = RotatingFileHandler('nammu.log', \
+                                           maxBytes = 5*1024*1024, \
+                                           backupCount = 1, \
+                                           encoding="utf-8")
+        file_handler.setLevel(logging.DEBUG)
+        # create console handler with a higher log level
+        # TODO: Users might not be insterested on this.
+        console_handler = StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
 
-        # create formatter and add it to the handlers
-        console_handler = NammuConsoleHandler(self.consoleController)
-        formatter = Formatter('%(message)s')
+         # create formatter and add it to the handlers
+        formatter = Formatter( \
+                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+        file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)
-        console_handler.setLevel(logging.INFO)
+        # add the handlers to the logger
+        logger.addHandler(file_handler)
         logger.addHandler(console_handler)
+
+        console_handler = NammuConsoleHandler(self.consoleController)
+        console_handler.setLevel(logging.INFO)
+        logger.addHandler(console_handler)    
 
         return logger
     
