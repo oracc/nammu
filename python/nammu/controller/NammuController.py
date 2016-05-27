@@ -596,17 +596,21 @@ class NammuController(object):
         
         # First of all check Operating System where we are running to save 
         # log in appropriate place.
-        log_dir = ""
         os_name = System.getProperty("os.name").lower()
         if "mac" or "nix" or "nux" or "sunos" or "solaris" in os_name:
-            log_dir = os.path.join(os.environ['HOME'], '.nammu/')
+            env_var_name = "HOME"
         elif "win" in os_name:
-            log_dir = os.path.join(os.environ['USERPROFILE'], '.nammu/')
-        else:
-            self.promptInfoPane("Operating System " + os_name + " not \
+            env_var_name = "USERPROFILE"
+        #else:
+        self.promptInfoPane("Operating System " + os_name + " not \
             recognised. \nSaving Nammu's log in current folder.")
             
-        if not os.path.exists(log_dir):
+        try:
+            log_dir = os.path.join(os.environ[env_var_name], '.nammu/')
+        except KeyError:
+            print "OS not recognised: " + os_name
+        
+        if not os.path.exists(log_dir) and log_dir is not "":
             os.makedirs(log_dir)            
             
         logger = logging.getLogger('NammuController')
@@ -620,13 +624,14 @@ class NammuController(object):
             
         file_handler.setLevel(logging.DEBUG)
         # create console handler with a higher log level
-        # TODO: Users might not be insterested on this.
+        # TODO: Users might not be interested on this.
         console_handler = StreamHandler()
         console_handler.setLevel(logging.DEBUG)
 
          # create formatter and add it to the handlers
         formatter = Formatter( 
-                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s',
+                        '%Y-%m-%d %H:%M:%S')
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)
         # add the handlers to the logger

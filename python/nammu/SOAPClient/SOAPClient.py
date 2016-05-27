@@ -1,4 +1,5 @@
-import StringIO, re, logging, logging.config, requests
+import StringIO, re, os, logging, logging.config, requests
+from java.lang import System
 from zipfile import ZipFile
 from logging import Formatter
 from requests.exceptions import RequestException
@@ -120,10 +121,27 @@ class SOAPClient(object):
         Output should be sent to Nammu's console as well as a local logfile and
         the system console.
         """
+        
+        # First of all check Operating System where we are running to save 
+        # log in appropriate place.
+        os_name = System.getProperty("os.name").lower()
+        if "mac" or "nix" or "nux" or "sunos" or "solaris" in os_name:
+            env_var_name = "HOME"
+        elif "win" in os_name:
+            env_var_name = "USERPROFILE"
+            
+        try:
+            log_dir = os.path.join(os.environ[env_var_name], '.nammu/')
+        except KeyError:
+            print "OS not recognised: " + os_name
+        
+        if not os.path.exists(log_dir) and log_dir is not "":
+            os.makedirs(log_dir)            
+            
         logger = logging.getLogger('SOAPClient')
         logger.setLevel(logging.DEBUG)
         # create file handler which logs even debug messages
-        file_handler = logging.FileHandler('nammu.log')
+        file_handler = logging.FileHandler(log_dir + 'nammu.log')
         file_handler.setLevel(logging.DEBUG)
         # create console handler with a higher log level
         # TODO: Users might not be insterested on this.
@@ -132,7 +150,8 @@ class SOAPClient(object):
 
         # create formatter and add it to the handlers
         formatter = logging.Formatter( 
-                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s',
+                        '%Y-%m-%d %H:%M:%S')
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)
         # add the handlers to the logger
