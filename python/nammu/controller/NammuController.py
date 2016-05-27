@@ -599,13 +599,15 @@ class NammuController(object):
         log_dir = ""
         os_name = System.getProperty("os.name").lower()
         if "mac" or "nix" or "nux" or "sunos" or "solaris" in os_name:
-            log_dir = "/var/log/"
+            log_dir = os.path.join(os.environ['HOME'], '.nammu/')
         elif "win" in os_name:
-            log_dir = os.path.join(os.environ['APPDATA'], 'log/')
+            log_dir = os.path.join(os.environ['USERPROFILE'], '.nammu/')
         else:
             self.promptInfoPane("Operating System " + os_name + " not \
             recognised. \nSaving Nammu's log in current folder.")
             
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)            
             
         logger = logging.getLogger('NammuController')
         logger.setLevel(logging.DEBUG)
