@@ -44,6 +44,23 @@
 
 		<plugins>
 
+			<!-- Make sure we delete all class files, not only those in the
+			     target folder. -->
+		    <plugin>
+			    <artifactId>maven-clean-plugin</artifactId>
+			    <version>3.0.0</version>
+			    <configuration>
+			      <filesets>
+					  <fileset>
+				          <directory>./python</directory>
+				          <includes>
+						      <include>**/*py.class</include>
+				          </includes>
+					  </fileset>
+			      </filesets>
+			    </configuration>
+		    </plugin>
+
 			<!-- Make sure resources like toolbar icons are copied to final
 			jar -->
 			<plugin>
