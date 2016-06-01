@@ -113,6 +113,7 @@ class NammuController(object):
             fileChooser.setFileFilter(file_filter)
             status = fileChooser.showDialog(self.view, "Choose file")
 
+            filename = ''
             if status == JFileChooser.APPROVE_OPTION:
                 atfFile = fileChooser.getSelectedFile()
                 filename = atfFile.getCanonicalPath()
