@@ -125,18 +125,24 @@ class SOAPClient(object):
         # First of all check Operating System where we are running to save 
         # log in appropriate place.
         os_name = System.getProperty("os.name").lower()
-        if "mac" or "nix" or "nux" or "sunos" or "solaris" in os_name:
+        unix_os = ['mac', 'nix', 'nux', 'sunos', 'solaris'] 
+        if any(x in os_name for x in unix_os):
             env_var_name = "HOME"
-        elif "win" in os_name:
+        elif 'win' in os_name:
             env_var_name = "USERPROFILE"
+        else:
+            print "Operating System {} not recognised.".format(os_name)
+            print "Saving Nammu's log in current folder."
             
+        log_dir = ""
         try:
             log_dir = os.path.join(os.environ[env_var_name], '.nammu/')
         except KeyError:
-            print "OS not recognised: " + os_name
+            print "Couldn't find {} environment variable.".format(env_var_name)
+            print "Can't save log file."
         
         if not os.path.exists(log_dir) and log_dir is not "":
-            os.makedirs(log_dir)            
+                os.makedirs(log_dir)              
             
         logger = logging.getLogger('SOAPClient')
         logger.setLevel(logging.DEBUG)
