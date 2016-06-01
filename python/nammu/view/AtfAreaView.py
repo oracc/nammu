@@ -18,6 +18,7 @@ from contextlib import contextmanager
 from pyoracc.atf.atflex import AtfLexer
 from .AtfEditArea import AtfEditArea
 from .LineNumbersArea import LineNumbersArea
+from ..utils import set_font
 
 
 class AtfAreaView(JPanel):
@@ -35,6 +36,9 @@ class AtfAreaView(JPanel):
         # Make text area occupy all available space and resize with parent
         # window
         self.setLayout(BorderLayout())
+        
+        # Set font
+        self.font = set_font('DejaVuSans')
 
         # Create text edition area
         self.editArea = AtfEditArea(self)
@@ -92,8 +96,8 @@ class AtfAreaView(JPanel):
             self.validation_errors = validation_errors
             for line_num, error in validation_errors.items():
                 attribs = SimpleAttributeSet()
-                StyleConstants.setFontFamily(attribs, "Monaco")
-                StyleConstants.setFontSize(attribs, 14)
+                StyleConstants.setFontFamily(attribs, self.font.getFamily())
+                StyleConstants.setFontSize(attribs, self.font.getSize())
                 StyleConstants.setForeground(attribs, Color.red)
                 line_numbers_sd = self.line_numbers_area.getStyledDocument()
                 edit_area_sd = self.editArea.getStyledDocument()
@@ -123,8 +127,8 @@ class AtfAreaView(JPanel):
                     length = position[1] - position[0]
                     # Highlight text line
                     attribs = SimpleAttributeSet()
-                    StyleConstants.setFontFamily(attribs, "Monaco")
-                    StyleConstants.setFontSize(attribs, 14)
+                    StyleConstants.setFontFamily(attribs, self.font.getFamily())
+                    StyleConstants.setFontSize(attribs, self.font.getSize())
                     StyleConstants.setBackground(attribs, Color.yellow)
                     edit_area_sd.setCharacterAttributes(position[0],
                                                         length,
@@ -323,3 +327,5 @@ class AtfUndoableEditListener(UndoableEditListener):
             
         # Always add current edit to current compound  
         self.current_compound.addEdit(edit)
+        
+
