@@ -137,7 +137,8 @@ class AtfAreaView(JPanel):
         Implements syntax highlighting based on pyoracc.
         """
         lexer = AtfLexer(skipinvalid=True).lexer
-        text = self.editArea.text
+        text = self.edit_area_styledoc.getText(0,
+                 self.edit_area_styledoc.getLength())
         splittext = text.split('\n')
         lexer.input(text)
         # Reset all styling
