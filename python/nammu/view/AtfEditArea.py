@@ -1,13 +1,14 @@
-from java.awt import Font
 from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
+
+from ..utils import set_font
 
 
 class AtfEditArea(JTextPane):
     def __init__(self, parent_component):
         self.parent_component = parent_component
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        self.font = Font("Monaco", Font.PLAIN, 14)
+        self.font = set_font('DejaVuSans')
         # If this is not done, no tooltips appear
         self.setToolTipText("")
         # Consume mouse events when over this JTextPane
@@ -33,7 +34,6 @@ class AtfEditArea(JTextPane):
                 else:
                     return err_msg
                 
-
 
     def get_line_num(self, position):
         """

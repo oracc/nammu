@@ -2,6 +2,7 @@ from java.awt import Color
 from javax.swing import JTextPane, BorderFactory
 from javax.swing.text import SimpleAttributeSet, StyleConstants, DefaultCaret
 
+from ..utils import set_font
 
 class LineNumbersArea(JTextPane):
     def __init__(self):
@@ -16,8 +17,9 @@ class LineNumbersArea(JTextPane):
 
         # Use default font style
         default_attribs = SimpleAttributeSet()
-        StyleConstants.setFontFamily(default_attribs, "Monaco")
-        StyleConstants.setFontSize(default_attribs, 14)
+        self.font = set_font('DejaVuSans')
+        StyleConstants.setFontFamily(default_attribs, self.font.getFamily())
+        StyleConstants.setFontSize(default_attribs, self.font.getSize())
         StyleConstants.setForeground(default_attribs, Color.gray)
         self.setCharacterAttributes(default_attribs, True)
 
