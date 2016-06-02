@@ -8,26 +8,28 @@ Handles controller events.
 @author: raquel-ucl
 '''
 
-import codecs, os, logging, logging.config
+import codecs, os, logging, logging.config, yaml, urllib
+from logging import StreamHandler, Formatter
+from logging.handlers import RotatingFileHandler
+from requests.exceptions import RequestException
+from requests.exceptions import Timeout, ConnectionError, HTTPError
 
-from java.lang import System, Integer
+from java.io import File
+from java.lang import System, Integer, ClassLoader
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
 from javax.swing.filechooser import FileNameExtensionFilter
 
-from logging import StreamHandler, Formatter
-from logging.handlers import RotatingFileHandler
-from requests.exceptions import Timeout, ConnectionError, HTTPError
-from requests.exceptions import RequestException
-
-from pyoracc.atf.atffile import AtfFile
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
 from MenuController import MenuController
 from ModelController import ModelController
 from ToolbarController import ToolbarController
+
+from pyoracc.atf.atffile import AtfFile
 from ..SOAPClient.SOAPClient import SOAPClient
-from ..view.NammuView import NammuView
+from ..utils import get_log_path
 from ..utils.NammuConsoleHandler import NammuConsoleHandler
+from ..view.NammuView import NammuView
 
 
 class NammuController(object):
@@ -588,65 +590,38 @@ class NammuController(object):
                 project = nammu_text.split(project_str)[1].split()[0]
 
         return project
-
-
+    
+    
     def setup_logger(self):
         """
-        Creates logger for Nammu's functionality as well as to debug HTTP 
+        Creates logger for Nammu's functionality as well as to debug HTTP
         messages sent to the ORACC server and responses received.
         Output should be sent to Nammu's console as well as a local logfile and
         the system console.
         """
+        # Create helper object to load log config from jar resources
+        # Load config details from yaml file.
+        # Note getResource returns a java.net.URL object which is incompatible
+        # with Python's open method, so we need to work around it by
+        # copying the file to the home directory and open from there.
+        loader = ClassLoader.getSystemClassLoader()
+        config_file_url = loader.getResource('resources/config/logging.yaml')
+        local_path_to_config = get_log_path('logging.yaml')
         
-        # First of all check Operating System where we are running to save 
-        # log in appropriate place.
-        os_name = System.getProperty("os.name").lower()
-        unix_os = ['mac', 'nix', 'nux', 'sunos', 'solaris'] 
-        if any(x in os_name for x in unix_os):
-            env_var_name = "HOME"
-        elif 'win' in os_name:
-            env_var_name = "USERPROFILE"
-        else:
-            print "Operating System {} not recognised.".format(os_name)
-            print "Saving Nammu's log in current folder."
-            
-        log_dir = ""
-        try:
-            log_dir = os.path.join(os.environ[env_var_name], '.nammu/')
-        except KeyError:
-            print "Couldn't find {} environment variable.".format(env_var_name)
-            print "Can't save log file."
+        # Check if log config file exists already. If so, just read it. 
+        # Otherwise, paste it from JAR's resources to there.
+        if not os.path.isfile(local_path_to_config): 
+            urllib.urlretrieve (str(config_file_url), local_path_to_config)
         
-        if not os.path.exists(log_dir) and log_dir is not "":
-                os.makedirs(log_dir)       
-            
-        logger = logging.getLogger('NammuController')
-        logger.setLevel(logging.DEBUG)
-        # create file handler which logs debug messages.
-        # Make so it never grows bigger than 5MB.
-        file_handler = RotatingFileHandler(log_dir + 'nammu.log', 
-                                           maxBytes = 5*1024*1024, 
-                                           backupCount = 1, 
-                                           encoding="utf-8")
-            
-        file_handler.setLevel(logging.DEBUG)
-        # create console handler with a higher log level
-        # TODO: Users might not be interested on this.
-        console_handler = StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
+        # Load YAML config
+        logging.config.dictConfig(yaml.load(open(local_path_to_config, 'r')))
+        logger = logging.getLogger("NammuController")
 
-         # create formatter and add it to the handlers
-        formatter = Formatter( 
-                        '%(asctime)s - %(levelname)s - %(name)s - %(message)s',
-                        '%Y-%m-%d %H:%M:%S')
-        file_handler.setFormatter(formatter)
-        console_handler.setFormatter(formatter)
-        # add the handlers to the logger
-        logger.addHandler(file_handler)
-        logger.addHandler(console_handler)
-
+        # create formatter and add it to the handlers
         console_handler = NammuConsoleHandler(self.consoleController)
-        console_handler.setLevel(logging.INFO)
-        logger.addHandler(console_handler)    
+        formatter = Formatter('%(message)s')
+        console_handler.setFormatter(formatter)
+        console_handler.setLevel(logging.DEBUG)
+        logger.addHandler(console_handler)
 
         return logger
