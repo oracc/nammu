@@ -1,4 +1,4 @@
-import StringIO, re, os, logging, logging.config, requests, yaml, urllib
+import StringIO, re, os, logging, logging.config, requests, urllib
 from java.lang import System, ClassLoader
 from zipfile import ZipFile
 from logging import Formatter
@@ -6,6 +6,12 @@ from requests.exceptions import RequestException
 from HTTPRequest import HTTPRequest
 import xml.etree.ElementTree as ET
 from ..utils import get_log_path, get_yaml_config
+
+# This is a temporary hack to work around the mvn test stage not finding yaml
+try:
+    import yaml
+except:
+    pass
 
 
 class SOAPClient(object):

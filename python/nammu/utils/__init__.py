@@ -1,10 +1,16 @@
 """
 Compilation of methods to be used from all Nammu classes.
 """
-import os, yaml
+import os, urllib
 from java.lang import ClassLoader, System
 from java.awt import Font
-     
+   
+# This is a temporary hack to work around the mvn test stage not finding yaml  
+try:
+    import yaml
+except:
+    pass
+        
         
 def set_font(font_name):
     """
@@ -89,7 +95,7 @@ def get_yaml_config():
     # Check if log config file exists already. If so, just read it. 
     # Otherwise, paste it from JAR's resources to there.
     if not os.path.isfile(local_path_to_config): 
-        urllib.urlretrieve (str(config_file_url), local_path_to_config)
+        urllib.urlretrieve(str(config_file_url), local_path_to_config)
     
     # Load YAML config
     yaml_dict = yaml.load(open(local_path_to_config, 'r'))
