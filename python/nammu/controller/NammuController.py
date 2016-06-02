@@ -607,7 +607,7 @@ class NammuController(object):
         console_handler = NammuConsoleHandler(self.consoleController)
         formatter = Formatter('%(message)s')
         console_handler.setFormatter(formatter)
-        console_handler.setLevel(logging.DEBUG)
+        console_handler.setLevel(logging.INFO)
         logger.addHandler(console_handler)
 
         return logger
