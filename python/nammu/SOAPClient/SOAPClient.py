@@ -122,8 +122,6 @@ class SOAPClient(object):
         Output should be sent to Nammu's console as well as a local logfile and
         the system console.
         """
-        yaml_dict = get_yaml_config()
-        logging.config.dictConfig(yaml_dict)
         logger = logging.getLogger("SOAPClient")
         requests_logger = logging.getLogger("requests.packages.urllib3")
 
