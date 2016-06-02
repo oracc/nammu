@@ -1,7 +1,7 @@
 """
 Compilation of methods to be used from all Nammu classes.
 """
-import os
+import os, yaml
 from java.lang import ClassLoader, System
 from java.awt import Font
      
@@ -36,7 +36,7 @@ def get_home_env_var():
         # Windows machines don't always have a %HOME% variable in place, but
         # they should always have %USERPROFILE% set up pointing to ~
         env_var_name = "USERPROFILE"
-    
+        
     return env_var_name
 
 
@@ -69,3 +69,33 @@ def get_log_path(filename):
             print "Saving log file and configuration in current folder."
         
     return os.path.join(log_dir, filename)
+
+
+def get_yaml_config():
+    '''
+    Load contents of logging.yaml into dictionary.
+    Note file_handler's filename needs to be an absolute path and hence
+    manually changed from here.
+    '''
+    # Create helper object to load log config from jar resources
+    # Load config details from yaml file.
+    # Note getResource returns a java.net.URL object which is incompatible
+    # with Python's open method, so we need to work around it by copying the 
+    # file to the home directory and open from there.
+    loader = ClassLoader.getSystemClassLoader()
+    config_file_url = loader.getResource('resources/config/logging.yaml')
+    local_path_to_config = get_log_path('logging.yaml')
+    
+    # Check if log config file exists already. If so, just read it. 
+    # Otherwise, paste it from JAR's resources to there.
+    if not os.path.isfile(local_path_to_config): 
+        urllib.urlretrieve (str(config_file_url), local_path_to_config)
+    
+    # Load YAML config
+    yaml_dict = yaml.load(open(local_path_to_config, 'r'))
+    
+    # Replace user given basename with absolute path to log file
+    logfile = yaml_dict['handlers']['file_handler']['filename']
+    yaml_dict['handlers']['file_handler']['filename'] = get_log_path(logfile)
+    
+    return yaml_dict
