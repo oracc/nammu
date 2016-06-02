@@ -27,7 +27,7 @@ from ToolbarController import ToolbarController
 
 from pyoracc.atf.atffile import AtfFile
 from ..SOAPClient.SOAPClient import SOAPClient
-from ..utils import get_log_path
+from ..utils import get_log_path, get_yaml_config
 from ..utils.NammuConsoleHandler import NammuConsoleHandler
 from ..view.NammuView import NammuView
 
@@ -599,22 +599,8 @@ class NammuController(object):
         Output should be sent to Nammu's console as well as a local logfile and
         the system console.
         """
-        # Create helper object to load log config from jar resources
-        # Load config details from yaml file.
-        # Note getResource returns a java.net.URL object which is incompatible
-        # with Python's open method, so we need to work around it by
-        # copying the file to the home directory and open from there.
-        loader = ClassLoader.getSystemClassLoader()
-        config_file_url = loader.getResource('resources/config/logging.yaml')
-        local_path_to_config = get_log_path('logging.yaml')
-        
-        # Check if log config file exists already. If so, just read it. 
-        # Otherwise, paste it from JAR's resources to there.
-        if not os.path.isfile(local_path_to_config): 
-            urllib.urlretrieve (str(config_file_url), local_path_to_config)
-        
-        # Load YAML config
-        logging.config.dictConfig(yaml.load(open(local_path_to_config, 'r')))
+        yaml_dict = get_yaml_config()
+        logging.config.dictConfig(yaml_dict)
         logger = logging.getLogger("NammuController")
 
         # create formatter and add it to the handlers
