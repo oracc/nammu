@@ -5,7 +5,7 @@ from logging import Formatter
 from requests.exceptions import RequestException
 from HTTPRequest import HTTPRequest
 import xml.etree.ElementTree as ET
-from ..utils import get_log_path, get_yaml_config
+
 
 class SOAPClient(object):
     """

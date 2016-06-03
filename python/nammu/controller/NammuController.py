@@ -27,7 +27,7 @@ from ToolbarController import ToolbarController
 
 from pyoracc.atf.atffile import AtfFile
 from ..SOAPClient.SOAPClient import SOAPClient
-from ..utils import get_log_path, get_yaml_config
+from ..utils import get_yaml_config
 from ..utils.NammuConsoleHandler import NammuConsoleHandler
 from ..view.NammuView import NammuView
 
