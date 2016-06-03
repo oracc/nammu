@@ -31,12 +31,6 @@ from ..utils import get_log_path, get_yaml_config
 from ..utils.NammuConsoleHandler import NammuConsoleHandler
 from ..view.NammuView import NammuView
 
-# This is a temporary hack to work around the mvn test stage not finding yaml
-try:
-    import yaml
-except:
-    pass
-
 
 class NammuController(object):
 

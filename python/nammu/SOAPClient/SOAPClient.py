@@ -7,13 +7,6 @@ from HTTPRequest import HTTPRequest
 import xml.etree.ElementTree as ET
 from ..utils import get_log_path, get_yaml_config
 
-# This is a temporary hack to work around the mvn test stage not finding yaml
-try:
-    import yaml
-except:
-    pass
-
-
 class SOAPClient(object):
     """
     Sends and retrieves information to and from the ORACC SOAP server.
