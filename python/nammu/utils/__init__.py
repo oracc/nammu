@@ -1,16 +1,11 @@
 """
 Compilation of methods to be used from all Nammu classes.
 """
-import os, urllib
+import os, zipfile, shutil
 from java.lang import ClassLoader, System
+from java.io import InputStreamReader, BufferedReader
 from java.awt import Font
-   
-# This is a temporary hack to work around the mvn test stage not finding yaml  
-try:
-    import yaml
-except:
-    pass
-        
+
         
 def set_font(font_name):
     """
@@ -90,18 +85,45 @@ def get_yaml_config():
     # file to the home directory and open from there.
     loader = ClassLoader.getSystemClassLoader()
     config_file_url = loader.getResource('resources/config/logging.yaml')
-    local_path_to_config = get_log_path('logging.yaml')
+    # In Unix getResource returns the path with prefix "file:" but in 
+    # Windows prefix is "jar:file:" 
+    path_to_jar = str(config_file_url).split('file:')[1]
+    path_to_jar = path_to_jar.split('!/resources/config/logging.yaml')[0]
+
+    path_to_config = get_log_path('logging.yaml')
     
     # Check if log config file exists already. If so, just read it. 
     # Otherwise, paste it from JAR's resources to there.
-    if not os.path.isfile(local_path_to_config): 
-        urllib.urlretrieve(str(config_file_url), local_path_to_config)
+    if not os.path.isfile(path_to_config):        
+        get_ver(path_to_jar, 'resources/config/logging.yaml', path_to_config)
     
     # Load YAML config
-    yaml_dict = yaml.load(open(local_path_to_config, 'r'))
+    # This is a temporary hack to work around the mvn test stage not finding yaml  
+    try:
+        import yaml
+    except:
+        pass
+                
+    yaml_dict = yaml.load(open(path_to_config, 'r'))
     
     # Replace user given basename with absolute path to log file
     logfile = yaml_dict['handlers']['file_handler']['filename']
     yaml_dict['handlers']['file_handler']['filename'] = get_log_path(logfile)
     
     return yaml_dict
+
+
+def get_ver(jar_file_path, source_rel_path, target_path):
+    zf = zipfile.ZipFile(jar_file_path, 'r')
+    try:
+        lst = zf.infolist()
+        for zi in lst:
+            fn = zi.filename
+            if fn.lower() == source_rel_path:
+                source_file = zf.open(fn)
+                target_file = file(target_path, "wb")
+                with source_file, target_file:
+                    shutil.copyfileobj(source_file, target_file)
+    finally:
+        zf.close()
+        
