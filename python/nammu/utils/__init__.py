@@ -88,7 +88,7 @@ def get_yaml_config():
     # In Unix getResource returns the path with prefix "file:" but in 
     # Windows prefix is "jar:file:" 
     path_to_jar = str(config_file_url).split('file:')[1]
-    path_to_jar = path_to_jar.split('!/resources/config/logging.yaml')[0]
+    path_to_jar = path_to_jar.replace('!/resources/config/logging.yaml','')
 
     path_to_config = get_log_path('logging.yaml')
     
@@ -114,6 +114,10 @@ def get_yaml_config():
 
 
 def get_ver(jar_file_path, source_rel_path, target_path):
+    '''
+    Opens Nammu's jar as a zip file, looks for the yaml config file and copies
+    it to ~/.nammu.
+    '''
     zf = zipfile.ZipFile(jar_file_path, 'r')
     try:
         lst = zf.infolist()
