@@ -11,7 +11,7 @@ def set_font(font_name):
     """
     Loads font from resources' ttf file. 
     """
-    path_to_ttf = 'resources/fonts/dejavu233/ttf/{}.ttf'.format(font_name)
+    path_to_ttf = 'resources/fonts/dejavu/ttf/{}.ttf'.format(font_name)
     loader = ClassLoader.getSystemClassLoader()
     stream = loader.getResourceAsStream(path_to_ttf)
     font = Font.createFont(Font.TRUETYPE_FONT, stream)
