@@ -159,6 +159,7 @@ class NammuController(object):
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
             filename = atfFile.getCanonicalPath()
+            self.currentFilename = filename
             atfText = self.atfAreaController.getAtfAreaText()
             self.writeTextFile(filename, atfText)
             #TODO check returned status?
@@ -585,7 +586,7 @@ class NammuController(object):
             try:
                 parsed_atf = self.parse(nammu_text)
                 project = parsed_atf.text.project
-            except SyntaxError:
+            except:
                 # File can't be parsed but might still contain a project code
                 project = nammu_text.split(project_str)[1].split()[0]
 
