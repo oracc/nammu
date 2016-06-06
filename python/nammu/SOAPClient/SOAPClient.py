@@ -100,7 +100,7 @@ class SOAPClient(object):
         # Check if server returns a lemmatised file
         autolem = None 
         for key, value in zip_content.iteritems():
-            if key.endswith("autolem.atf"):             
+            if key.endswith("autolem.atf"):
                 autolem = value
 
         self.logger.debug("The returned file from server contains: %s", 
