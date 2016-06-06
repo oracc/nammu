@@ -83,19 +83,21 @@ def get_yaml_config():
     # Note getResource returns a java.net.URL object which is incompatible
     # with Python's open method, so we need to work around it by copying the 
     # file to the home directory and open from there.
+    yaml_filename = 'logging.yaml'
+    yaml_path = 'resources/config/{}'.format(yaml_filename)
     loader = ClassLoader.getSystemClassLoader()
-    config_file_url = loader.getResource('resources/config/logging.yaml')
+    config_file_url = loader.getResource(yaml_path)
     # In Unix getResource returns the path with prefix "file:" but in 
     # Windows prefix is "jar:file:" 
     path_to_jar = str(config_file_url).split('file:')[1]
-    path_to_jar = path_to_jar.replace('!/resources/config/logging.yaml','')
+    path_to_jar = path_to_jar.replace('!{}'.format(yaml_path),'')
 
-    path_to_config = get_log_path('logging.yaml')
+    path_to_config = get_log_path(yaml_filename)
     
     # Check if log config file exists already. If so, just read it. 
     # Otherwise, paste it from JAR's resources to there.
     if not os.path.isfile(path_to_config):        
-        get_ver(path_to_jar, 'resources/config/logging.yaml', path_to_config)
+        get_ver(path_to_jar, yaml_path, path_to_config)
     
     # Load YAML config
     # This is a temporary hack to work around the mvn test stage not finding yaml  
