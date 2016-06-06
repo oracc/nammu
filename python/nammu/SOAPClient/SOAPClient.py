@@ -108,8 +108,8 @@ class SOAPClient(object):
         
         for file in zip_content.keys():
             self.logger.debug("These are the contents of %s: \n%s", 
-                        file,
-                        zip_content[file])
+                              file,
+                              zip_content[file])
         
         return oracc_log, request_log, autolem
 
