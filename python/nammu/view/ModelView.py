@@ -42,10 +42,10 @@ class ModelView(JFrame):
         
         # TODO: Where to get/store this information?
         self.languages = { "akk-x-stdbab": "Akkadian Standard Babylonian", 
-                          "akk": "Akkadian", "sux": "", "a":"", 
-                          "akk-x-oldbab":"Akkadian Old Babylonian", "qpc": "", 
-                          "na": "", "nb": "", "x/n": "", 
-                          "akk-x-neoass": "Akkadian Neo Assyrian"}
+                           "akk": "Akkadian", "sux": "", "a":"", 
+                           "akk-x-oldbab":"Akkadian Old Babylonian", "qpc": "", 
+                           "na": "", "nb": "", "x/n": "", 
+                           "akk-x-neoass": "Akkadian Neo Assyrian"}
         
         
     def addObject(self, objectID):
