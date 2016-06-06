@@ -110,7 +110,6 @@
 				</executions>
 				<configuration>
                     <libraries>
-                        <param>logging</param>
                         <param>pyyaml</param>
 						<param>requests</param>
 						<param>pytest</param>
