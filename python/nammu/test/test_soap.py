@@ -1,7 +1,8 @@
-import pytest
+import pytest, codecs, os, shutil
 import xml.dom.minidom
 from ..SOAPClient.SOAPClient import SOAPClient
 from requests.exceptions import ConnectionError
+
 
 class TestSOAP(object):
 
@@ -143,3 +144,31 @@ class TestSOAP(object):
             client.create_request(keys=['NGaXYv'])
             client.send()
         assert e.type == ConnectionError
+        
+        
+    @pytest.mark.skip(reason="takes too long and mvn test won't import pyoracc")
+    def test_whole_corpus_validates(self):
+        """
+        loop through list of files in the whole corpus, open each of them
+        in Nammu, then validate them.
+        This test is disabled by default because it's too long and also because
+        path to whole corpus is hardcoded to my local machine. Note we have
+        not been allowed to publish the whole corpus online yet.
+        """
+        # This fails at mvn test stage because it can't find pyoracc
+        from ..controller.NammuController import NammuController
+        # This might also break tests
+        nammu = NammuController()
+        whole_corpus = "/Users/raquel/workspace/ORACC/whole_corpus/whole_corpus"
+        for folder, subfolder, files in os.walk(whole_corpus):
+            for atf_filename in files:
+                nammu.currentFilename = folder + os.sep + atf_filename
+                text = codecs.open(nammu.currentFilename, encoding='utf-8').read()
+                nammu.atfAreaController.setAtfAreaText(text)
+                nammu.validate()
+                shutil.move(
+                        nammu.currentFilename, 
+                        "/Users/raquel/workspace/ORACC/whole_corpus/validated")
+                
+            
+        
