@@ -130,4 +130,3 @@ def get_ver(jar_file_path, source_rel_path, target_path):
                     shutil.copyfileobj(source_file, target_file)
     finally:
         zf.close()
-        
