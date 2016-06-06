@@ -392,14 +392,11 @@ class NammuController(object):
         Last HTTP POST response retrieved from server will containg at least 
         two files: 
           * request.log: Output log from tools run in the ORACC server like
-                         ATF file unzip, etc.
+                         ATF file unzip, etc. Logged from SOAPClient.
           * oracc.log: Validation error messages.
         If we are lemmatising, it'll also return:
           * <filename>_autolem.atf: lemmatised version of file
         """
-        if request_log:
-            self.logger.debug("Contents of request.log: \n%s", request_log)
-
         if oracc_log:
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
