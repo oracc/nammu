@@ -12,7 +12,7 @@ matrix:
 install:
   - |
     # Check if this is the PEP8 test instance and install pep8
-    if [ -z "$PEP8" ]; then
+    if ! [ -z "$PEP8" ]; then
        pip install --user pep8
     fi
 
@@ -20,7 +20,7 @@ script:
   - |
     # Check if this is the PEP8 test instance and run pep8
     if [ -z "$PEP8" ]; then
-      python -m pep8 python/
-    else
       mvn clean test
+    else
+      python -m pep8 python/
     fi
