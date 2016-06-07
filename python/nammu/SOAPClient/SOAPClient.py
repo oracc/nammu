@@ -93,7 +93,8 @@ class SOAPClient(object):
         f.write(bytearray(binary_body))
 
         memory_zip = ZipFile(f)
-        zip_content = {name: memory_zip.read(name) for name in memory_zip.namelist()}
+        namelist = memory_zip.namelist()
+        zip_content = {name: memory_zip.read(name) for name in namelist}
         oracc_log = zip_content['oracc.log']
         request_log = zip_content['request.log']
 

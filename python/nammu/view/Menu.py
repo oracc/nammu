@@ -26,7 +26,8 @@ class Menu(JMenu):
             return menuItems[name][0]
 
         for name, keyEvent in menuItems.items():
-            actionPerformed = getattr(self.menuView.controller, getMethod(name))
+            actionPerformed = getattr(self.menuView.controller,
+                                      getMethod(name))
             item = JMenuItem(name, actionPerformed=actionPerformed)
             item.setMnemonic(getKeyEvent(name))
             items.append(item)

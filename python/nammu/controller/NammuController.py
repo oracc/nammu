@@ -219,8 +219,8 @@ class NammuController(object):
         to clear up the text area.
         '''
         if self.unsavedChanges():
-            msg = "There are unsaved changes. Save now?"
-            option = self.promptOptionPane(msg)
+            option = self.promptOptionPane("There are unsaved changes. "
+                                           "Save now?")
             if option == 0:
                 self.saveFile()
             if option == 2:
@@ -233,10 +233,11 @@ class NammuController(object):
         2. Give Yes No Cancel options
         3. Return chosen option
         '''
+        option = JOptionPane.YES_NO_CANCEL_OPTION
         result = JOptionPane.showConfirmDialog(self.view.getContentPane(),
                                                question,
                                                "Question",
-                                               JOptionPane.YES_NO_CANCEL_OPTION)
+                                               option)
         return result
 
     def promptInfoPane(self, text):
@@ -368,8 +369,8 @@ class NammuController(object):
         try:
             self.send_request(client)
         except RequestException as re:
-            msg = "Error when trying to send last HTTP POST request."
-            self.logger.error(msg)
+            self.logger.error("Error when trying to send last HTTP POST "
+                              "request.")
             self.logger.exception(str(re))
             return
 
@@ -394,8 +395,8 @@ class NammuController(object):
             # TODO: Prompt dialog.
             self.logger.info("The validation returned some errors: \n%s",
                              oracc_log)
-            msg = "See highlighted areas in the text for errors and validate again."
-            self.logger.info(msg)
+            self.logger.info("See highlighted areas in the text for errors "
+                             "and validate again.")
         else:
             self.logger.info("The validation returned no errors.")
 
@@ -448,8 +449,8 @@ class NammuController(object):
                             "ORACC server seems down. Contact server admin.")
                 raise
             else:
-                msg = "Unexpected error when waiting for ORACC server to prepare response."
-                self.logger.error(msg)
+                self.logger.error("Unexpected error when waiting for ORACC "
+                                  "server to prepare response.")
 
     def get_validation_errors(self, oracc_log):
         """
@@ -572,8 +573,8 @@ class NammuController(object):
         """
         Creates logger for Nammu's functionality as well as to debug HTTP
         messages sent to the ORACC server and responses received.
-        Output should be sent to Nammu's console as well as a local logfile and
-        the system console.
+        Output should be sent to Nammu's console as well as a local logfile
+        and the system console.
         """
         yaml_dict = get_yaml_config()
         logging.config.dictConfig(yaml_dict)
