@@ -123,7 +123,9 @@ class AtfAreaView(JPanel):
                     # text_line = text_lines[int(line_num) - 1]
                     # match = re.finditer('\n', self.editArea.text)
                     #                                       [int(line_num) - 1]
-                    position = [m.start() for m in re.finditer(r"\n", self.editArea.text)][int(line_num) - 2:int(line_num)]
+                    text = re.finditer(r"\n", self.editArea.text)
+                    line_num = int(line_num)
+                    position = [m.start() for m in text][line_num - 2:line_num]
                     length = position[1] - position[0]
                     # Highlight text line
                     attribs = SimpleAttributeSet()
@@ -141,15 +143,17 @@ class AtfAreaView(JPanel):
         Implements syntax highlighting based on pyoracc.
         """
         lexer = AtfLexer(skipinvalid=True).lexer
+        edit_area_length = self.edit_area_styledoc.getLength()
         text = self.edit_area_styledoc.getText(0,
-                                               self.edit_area_styledoc.getLength())
+                                               edit_area_length)
         splittext = text.split('\n')
         lexer.input(text)
         # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
+        color = self.colors[defaultcolor]
         self.edit_area_styledoc.setCharacterAttributes(0,
                                                        len(text),
-                                                       self.colors[defaultcolor],
+                                                       color,
                                                        True)
         for tok in lexer:
             if tok.type in self.tokencolorlu:
@@ -170,9 +174,10 @@ class AtfAreaView(JPanel):
                     mylength = len(splittext[tok.lineno-1])
                 else:
                     mylength = len(tok.value)
+                color = self.colors[color]
                 self.edit_area_styledoc.setCharacterAttributes(tok.lexpos,
                                                                mylength,
-                                                               self.colors[color],
+                                                               color,
                                                                True)
 
     def setup_syntax_highlight_colours(self):
@@ -313,10 +318,11 @@ class AtfUndoableEditListener(UndoableEditListener):
 
         # If significant INSERT/REMOVE event happen, end and add current
         # edit compound to undo_manager and start a new one.
-        if (edit_type == "INSERT" or edit_type == "REMOVE") and not self.must_compound:
-            # Explicitly end compound edits so their inProgress flag goes to
-            # false. Note undo() only undoes compound edits when they are not
-            # in progress.
+        if ((edit_type == "INSERT" or edit_type == "REMOVE") and
+                not self.must_compound):
+            # Explicitly end compound edits so their inProgress flag goes
+            # to false. Note undo() only undoes compound edits when they
+            # are not in progress.
             self.current_compound.end()
             self.current_compound = CompoundEdit()
             self.undo_manager.addEdit(self.current_compound)

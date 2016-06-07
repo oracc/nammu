@@ -16,7 +16,12 @@ class TestSOAP(object):
         """
         goal_headers = {
             'Connection': 'close',
-            'Content-Type': 'multipart/related; charset="utf-8"; type="application/xop+xml"; start="<SOAP-ENV:Envelope>"; start-info="application/soap+xml"; boundary="==========boundary========"',
+            'Content-Type': ('multipart/related; '
+                             'charset="utf-8"; '
+                             'type="application/xop+xml"; '
+                             'start="<SOAP-ENV:Envelope>"; '
+                             'start-info="application/soap+xml"; '
+                             'boundary="==========boundary========"'),
             'Host': 'http://oracc.museum.upenn.edu:8085',
             'Content-Length': '2011',
             'MIME-Version': '1.0'
@@ -144,7 +149,8 @@ class TestSOAP(object):
             client.send()
         assert e.type == ConnectionError
 
-    @pytest.mark.skip(reason="takes too long and mvn test won't import pyoracc")
+    @pytest.mark.skip(reason=("takes too long and mvn test won't import "
+                              "pyoracc"))
     def test_whole_corpus_validates(self):
         """
         loop through list of files in the whole corpus, open each of them

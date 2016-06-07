@@ -57,8 +57,8 @@ class AtfAreaController(object):
         try:
             self.undo_manager.undo()
         except CannotUndoException:
-            # This exception indicates we've reached the end of the edits vector
-            # Nothing to do
+            # This exception indicates we've reached the end of the edits
+            # vector Nothing to do
             pass
         else:
             self.update_line_numbers()
@@ -67,8 +67,8 @@ class AtfAreaController(object):
         try:
             self.undo_manager.redo()
         except CannotRedoException:
-            # This exception indicates we've reached the end of the edits vector
-            # Nothing to do
+            # This exception indicates we've reached the end of the edits
+            # vector - Nothing to do
             pass
         else:
             self.update_line_numbers()
