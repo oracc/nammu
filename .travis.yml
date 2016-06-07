@@ -12,8 +12,7 @@ matrix:
 install:
   - |
     # Check if this is the PEP8 test instance and install pep8
-    echo $PEP8
-    pip install pep8
+    sudo pip install pep8
 
 script:
   - |
