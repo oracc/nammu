@@ -320,12 +320,12 @@ class AtfUndoableEditListener(UndoableEditListener):
         # edit compound to undo_manager and start a new one.
         if ((edit_type == "INSERT" or edit_type == "REMOVE") and
                 not self.must_compound):
-                # Explicitly end compound edits so their inProgress flag goes
-                # to false. Note undo() only undoes compound edits when they
-                # are not in progress.
-                self.current_compound.end()
-                self.current_compound = CompoundEdit()
-                self.undo_manager.addEdit(self.current_compound)
+            # Explicitly end compound edits so their inProgress flag goes
+            # to false. Note undo() only undoes compound edits when they
+            # are not in progress.
+            self.current_compound.end()
+            self.current_compound = CompoundEdit()
+            self.undo_manager.addEdit(self.current_compound)
 
         # Always add current edit to current compound
         self.current_compound.addEdit(edit)
