@@ -16,10 +16,10 @@ install:
       pip install pep8
 
 script:
-  # Check if this is the PEP8 test instance
-  if [ -z "$PEP8" ]; then
-    pip install pep8
-    pep8 python/
-  else
-    mvn clean test
-  fi
+    - |
+    # Check if this is the PEP8 test instance and run pep8
+    if [ -z "$PEP8" ]; then
+      pep8 python/
+    else
+      mvn clean test
+    fi
