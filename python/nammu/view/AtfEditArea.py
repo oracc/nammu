@@ -5,6 +5,7 @@ from ..utils import set_font
 
 
 class AtfEditArea(JTextPane):
+
     def __init__(self, parent_component):
         self.parent_component = parent_component
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
@@ -14,7 +15,6 @@ class AtfEditArea(JTextPane):
         # Consume mouse events when over this JTextPane
         listener = CustomMouseListener(self)
         self.addMouseListener(listener)
-
 
     def getToolTipText(self, event=None):
         """
@@ -33,7 +33,6 @@ class AtfEditArea(JTextPane):
                     pass
                 else:
                     return err_msg
-                
 
     def get_line_num(self, position):
         """
@@ -49,5 +48,6 @@ class CustomMouseListener(MouseAdapter):
     """
     def __init__(self, panel):
         self.panel = panel
+
     def mousePressed(self, event):
         offset = self.panel.viewToModel(event.getPoint())

@@ -11,7 +11,7 @@ from java.awt import BorderLayout, Dimension, Color
 from java.awt.event import KeyListener
 from javax.swing import JScrollPane, JPanel
 from javax.swing.text import StyleContext, StyleConstants
-from javax.swing.text import SimpleAttributeSet 
+from javax.swing.text import SimpleAttributeSet
 from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener
 from contextlib import contextmanager
@@ -36,7 +36,7 @@ class AtfAreaView(JPanel):
         # Make text area occupy all available space and resize with parent
         # window
         self.setLayout(BorderLayout())
-        
+
         # Set font
         self.font = set_font('DejaVuSans')
 
@@ -85,7 +85,6 @@ class AtfAreaView(JPanel):
         # Needs to be accessible from the AtfEditArea
         self.validation_errors = None
 
-
     def error_highlight(self, validation_errors):
         """
         Highlights line numbers and text lines that have errors.
@@ -122,12 +121,14 @@ class AtfAreaView(JPanel):
                     # Calculate postion of text line
                     # text_lines = self.editArea.text.splitlines()
                     # text_line = text_lines[int(line_num) - 1]
-                    # match = re.finditer('\n', self.editArea.text)[int(line_num) - 1]
+                    # match = re.finditer('\n', self.editArea.text)
+                    #                                       [int(line_num) - 1]
                     position = [m.start() for m in re.finditer(r"\n", self.editArea.text)][int(line_num) - 2:int(line_num)]
                     length = position[1] - position[0]
                     # Highlight text line
                     attribs = SimpleAttributeSet()
-                    StyleConstants.setFontFamily(attribs, self.font.getFamily())
+                    StyleConstants.setFontFamily(attribs,
+                                                 self.font.getFamily())
                     StyleConstants.setFontSize(attribs, self.font.getSize())
                     StyleConstants.setBackground(attribs, Color.yellow)
                     edit_area_sd.setCharacterAttributes(position[0],
@@ -135,21 +136,21 @@ class AtfAreaView(JPanel):
                                                         attribs,
                                                         True)
 
-        
     def syntax_highlight(self):
         """
         Implements syntax highlighting based on pyoracc.
         """
         lexer = AtfLexer(skipinvalid=True).lexer
         text = self.edit_area_styledoc.getText(0,
-                 self.edit_area_styledoc.getLength())
+                                               self.edit_area_styledoc.getLength())
         splittext = text.split('\n')
         lexer.input(text)
         # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
-        self.edit_area_styledoc.setCharacterAttributes(0, len(text),
-                                                    self.colors[defaultcolor],
-                                                    True)
+        self.edit_area_styledoc.setCharacterAttributes(0,
+                                                       len(text),
+                                                       self.colors[defaultcolor],
+                                                       True)
         for tok in lexer:
             if tok.type in self.tokencolorlu:
                 if type(self.tokencolorlu[tok.type]) is dict:
@@ -169,10 +170,10 @@ class AtfAreaView(JPanel):
                     mylength = len(splittext[tok.lineno-1])
                 else:
                     mylength = len(tok.value)
-                self.edit_area_styledoc.setCharacterAttributes(tok.lexpos, mylength,
-                                                     self.colors[color],
-                                                     True)
-
+                self.edit_area_styledoc.setCharacterAttributes(tok.lexpos,
+                                                               mylength,
+                                                               self.colors[color],
+                                                               True)
 
     def setup_syntax_highlight_colours(self):
         # Syntax highlighting colors based on SOLARIZED
@@ -202,7 +203,6 @@ class AtfAreaView(JPanel):
         self.colorlut['cyan'] = (42, 161, 152)
         self.colorlut['green'] = (133, 153, 0)
         self.colorlut['black'] = (0, 0, 0)
-
 
     def setup_syntax_highlight_tokens(self):
         self.tokencolorlu = {}
@@ -235,7 +235,6 @@ class AtfAreaView(JPanel):
         self.tokencolorlu['PROJECT']['flagged'] = ('magenta', False)
         self.tokencolorlu['PROJECT']['transctrl'] = ('green', False)
         self.tokencolorlu['default'] = ('black', False)
-
 
     def repaint_line_numbers(self, n_lines):
         """
@@ -280,17 +279,16 @@ class AtfAreaKeyListener(KeyListener):
 
 class AtfUndoableEditListener(UndoableEditListener):
     '''
-    Overrides the undoableEditHappened functionality to group INSERT/REMOVE 
-    edit events with their associated CHANGE events (these correspond to 
+    Overrides the undoableEditHappened functionality to group INSERT/REMOVE
+    edit events with their associated CHANGE events (these correspond to
     highlighting only at the moment).
-    TODO: Make compounds save whole words so undoing is not so much of a pain 
+    TODO: Make compounds save whole words so undoing is not so much of a pain
           for the user.
     '''
     def __init__(self, undo_manager):
         self.undo_manager = undo_manager
         self.current_compound = CompoundEdit()
         self.must_compound = False
-
 
     @contextmanager
     def force_compound(self):
@@ -301,14 +299,13 @@ class AtfUndoableEditListener(UndoableEditListener):
         """
         self.must_compound = False
         self.current_compound.end()
-        self.undo_manager.addEdit(self.current_compound)  
+        self.undo_manager.addEdit(self.current_compound)
         try:
             yield
         finally:
             self.must_compound = False
             self.current_compound.end()
-            self.undo_manager.addEdit(self.current_compound)  
-
+            self.undo_manager.addEdit(self.current_compound)
 
     def undoableEditHappened(self, event):
         edit = event.getEdit()
@@ -316,16 +313,13 @@ class AtfUndoableEditListener(UndoableEditListener):
 
         # If significant INSERT/REMOVE event happen, end and add current
         # edit compound to undo_manager and start a new one.
-        if (edit_type == "INSERT" or edit_type == "REMOVE") and \
-                                                        not self.must_compound:
+        if (edit_type == "INSERT" or edit_type == "REMOVE") and not self.must_compound:
             # Explicitly end compound edits so their inProgress flag goes to
             # false. Note undo() only undoes compound edits when they are not
             # in progress.
             self.current_compound.end()
             self.current_compound = CompoundEdit()
             self.undo_manager.addEdit(self.current_compound)
-            
-        # Always add current edit to current compound  
-        self.current_compound.addEdit(edit)
-        
 
+        # Always add current edit to current compound
+        self.current_compound.addEdit(edit)

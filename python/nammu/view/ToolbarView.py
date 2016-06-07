@@ -20,12 +20,12 @@ class ToolbarView(JToolBar):
         # TODO Refactor to avoid duplication - See issue#16
         # https://github.com/UCL-RITS/nammu/issues/16
 
-        # Content needs to be displayed in an orderly fashion so that buttons 
+        # Content needs to be displayed in an orderly fashion so that buttons
         # are placed where we expect them to be, not in the ramdon order dicts
         # have.
         # We also can't create the tooltips dict e.g.:
         # tooltips = { 'a' : 'A', 'b' : 'B', 'c' : 'C' }
-        # because it will still be randomly ordered. Elements need to be added 
+        # because it will still be randomly ordered. Elements need to be added
         # to the dict in the order we want them to be placed in the toolbar for
         # OrderedDict to work
         tooltips = {}
@@ -50,7 +50,7 @@ class ToolbarView(JToolBar):
 
         for name, tooltip in tooltips.items():
             icon = ImageIcon(self.findImageResource(name))
-            button = JButton(icon, actionPerformed = getattr(self, name))
+            button = JButton(icon, actionPerformed=getattr(self, name))
             button.setToolTipText(tooltip)
             self.add(button)
             # Work out is separator is needed
@@ -58,18 +58,15 @@ class ToolbarView(JToolBar):
                         'console', 'displayModelView', 'showAbout']:
                 self.addSeparator()
 
-
     def __getattr__(self, name):
         return getattr(self.controller, name)
-
 
     def validate(self, event=None):
         if event:
             return self.controller.mainController.validate(event)
 
-
     def findImageResource(self, name):
-        #Create helper object to load icon images in jar
+        # Create helper object to load icon images in jar
         loader = ClassLoader.getSystemClassLoader()
-        #Load image
+        # Load image
         return loader.getResource("resources/images/" + name.lower() + ".png")

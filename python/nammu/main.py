@@ -12,6 +12,6 @@ from controller.NammuController import NammuController
 def main():
     NammuController()
 
-    
+
 if __name__ == '__main__':
     main()

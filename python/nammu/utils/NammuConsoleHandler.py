@@ -1,6 +1,7 @@
 import logging
 from logging import StreamHandler
 
+
 class NammuConsoleHandler(StreamHandler):
     """
     Extends StreamHandler to make it print log messages in Nammu's console for

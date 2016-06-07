@@ -4,6 +4,7 @@ from javax.swing.text import SimpleAttributeSet, StyleConstants, DefaultCaret
 
 from ..utils import set_font
 
+
 class LineNumbersArea(JTextPane):
     def __init__(self):
         """

@@ -8,7 +8,12 @@ Handles controller events.
 @author: raquel-ucl
 '''
 
-import codecs, os, logging, logging.config, urllib
+import codecs
+import os
+import logging
+import logging.config
+import urllib
+
 from logging import StreamHandler, Formatter
 from logging.handlers import RotatingFileHandler
 from requests.exceptions import RequestException
@@ -43,12 +48,13 @@ class NammuController(object):
         2. Create main view that'll bind all the components
         3. Create event/action handlers - EventBus?
         '''
-        # Create this controller first since it's where the log will be displayed
+        # Create this controller first since it's where the log will be
+        # displayed
         self.consoleController = ConsoleController(self)
-        
+
         # Set up logging system
         self.logger = self.setup_logger()
-        
+
         # Create all the controllers
         self.menuController = MenuController(self)
         self.toolbarController = ToolbarController(self)
@@ -63,7 +69,7 @@ class NammuController(object):
         self.logger.info("Welcome to Nammu!")
         self.logger.info(
                 "Please open an ATF file or start typing to create a new one.")
-        
+
         # Display Nammu's view
         self.view.display()
 
@@ -79,10 +85,10 @@ class NammuController(object):
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
     # require interaction of several subcontrollers who have no visibility.
-    # Eg. action in menu will need modification of text area controlled elsewhere
-    # and not accessible from the menu controller that receives the action in the
-    # first instance; or eg. show help pop up can be dealt with from
-    # subcontroller
+    # Eg. action in menu will need modification of text area controlled
+    # elsewhere and not accessible from the menu controller that receives the
+    # action in the first instance; or eg. show help pop up can be dealt with
+    # from subcontroller
 
     def newFile(self, event):
         '''
@@ -97,7 +103,6 @@ class NammuController(object):
             self.atfAreaController.clearAtfArea()
             self.currentFilename = None
             self.logger.debug("New file created.")
-
 
     def openFile(self, event):
         '''
@@ -126,11 +131,10 @@ class NammuController(object):
                 self.atfAreaController.setAtfAreaText(atfText)
 
             # TODO: Else, prompt user to choose again before closing
-            
+
             # Display log only if user didn't cancel opening file action
             if filename:
                 self.logger.debug("File %s successfully opened.", filename)
-
 
     def readTextFile(self, filename):
         '''
@@ -147,7 +151,6 @@ class NammuController(object):
 #          System.out.println(e);
 #          System.exit(1);
 
-
     def saveFile(self, event):
         '''
         1. Check if current file has a filename
@@ -162,10 +165,9 @@ class NammuController(object):
             self.currentFilename = filename
             atfText = self.atfAreaController.getAtfAreaText()
             self.writeTextFile(filename, atfText)
-            #TODO check returned status?
+            # TODO check returned status?
 
         self.logger.debug("File %s successfully saved.", filename)
-
 
     def writeTextFile(self, filename, text):
         '''
@@ -184,7 +186,6 @@ class NammuController(object):
 #         JOptionPane.showMessageDialog(self.outer, ioex)
 #         System.exit(1)
 
-
     def closeFile(self, event):
         '''
         1. Check if file has unsaved changes
@@ -196,7 +197,6 @@ class NammuController(object):
             self.logger.debug("File %s successfully closed.",
                               self.currentFilename)
 
-
     def unsavedChanges(self):
         '''
         1. Check of any file is opened
@@ -204,7 +204,7 @@ class NammuController(object):
         3. Load file content
         4. Check if 2 and 3 differ and return the appropriate value
         '''
-        if self.currentFilename != None:
+        if self.currentFilename is not None:
             savedText = self.readTextFile(self.currentFilename)
             nammuText = self.atfAreaController.getAtfAreaText()
 
@@ -213,20 +213,19 @@ class NammuController(object):
             else:
                 return False
 
-
     def handleUnsaved(self):
         '''
-        Helper function to decide what to do with open ATF file before having to
-        clear up the text area.
+        Helper function to decide what to do with open ATF file before having
+        to clear up the text area.
         '''
         if self.unsavedChanges():
-            option = self.promptOptionPane("There are unsaved changes. Save now?")
+            msg = "There are unsaved changes. Save now?"
+            option = self.promptOptionPane(msg)
             if option == 0:
                 self.saveFile()
             if option == 2:
                 return False
         return True
-
 
     def promptOptionPane(self, question):
         '''
@@ -234,22 +233,20 @@ class NammuController(object):
         2. Give Yes No Cancel options
         3. Return chosen option
         '''
-        result = JOptionPane.showConfirmDialog(self.view.getContentPane(), 
-                                               question, 
-                                               "Question", 
+        result = JOptionPane.showConfirmDialog(self.view.getContentPane(),
+                                               question,
+                                               "Question",
                                                JOptionPane.YES_NO_CANCEL_OPTION)
         return result
-
 
     def promptInfoPane(self, text):
         '''
         1. Show popup with given information text
         '''
-        JOptionPane.showMessageDialog(self.view.getContentPane(), 
-                                      text, 
+        JOptionPane.showMessageDialog(self.view.getContentPane(),
+                                      text,
                                       "Information",
                                       JOptionPane.INFORMATION_MESSAGE)
-
 
     def quit(self, event):
         '''
@@ -259,30 +256,25 @@ class NammuController(object):
         if self.handleUnsaved():
             System.exit(0)
 
-
     def undo(self, event):
         self.atfAreaController.undo()
-
 
     def redo(self, event):
         self.atfAreaController.redo()
 
-
     def copy(self, event):
         self.atfAreaController.copy()
-
 
     def cut(self, event):
         self.atfAreaController.cut()
 
-
     def paste(self, event):
         self.atfAreaController.paste()
 
-
     def validate(self, event=None):
         '''
-        For now, we are validating using the SOAP webservices from ORACC server.
+        For now, we are validating using the SOAP webservices from ORACC
+        server.
         However, the intention is to replace this with validation by pyoracc.
         '''
         self.logger.debug("Validating ATF file %s.", self.currentFilename)
@@ -295,11 +287,10 @@ class NammuController(object):
         else:
             # TODO: Prompt dialog
             self.logger.error(
-                        "No project found in file %s. Add project and retry.", 
+                        "No project found in file %s. Add project and retry.",
                         self.currentFilename)
 
         self.logger.debug("Validating ATF done.")
-
 
     def lemmatise(self, event):
         '''
@@ -316,9 +307,8 @@ class NammuController(object):
             # TODO: Prompt dialog.
             self.logger.error(
                             "No project found in file. Add project and retry.")
-            
-        self.logger.debug("Lemmatising ATF done.")
 
+        self.logger.debug("Lemmatising ATF done.")
 
     def send_command(self, command, project):
         '''
@@ -327,15 +317,16 @@ class NammuController(object):
         This method sends a command to the ORACC server along with all the
         necessary arguments to build the HTTP request.
         '''
-        # Build request.zip on the fly, pack all needed in it and send to server
+        # Build request.zip on the fly, pack all needed in it and send to
+        # server
         # TODO: Would be nice these are read from config file.
         url = 'http://oracc.museum.upenn.edu'
         port = 8085
         url_dir = 'p'
-        
+
         # Create HTTP client and prepare all input arguments for request
         client = SOAPClient(url, port, url_dir, method='POST')
-        
+
         atf_basename = os.path.basename(self.currentFilename)
         nammu_text = self.atfAreaController.getAtfAreaText()
 
@@ -344,17 +335,17 @@ class NammuController(object):
                               keys=[project, '00atf/'+atf_basename],
                               atf_basename=atf_basename,
                               atf_text=nammu_text.encode('utf-8'))
-        
+
         try:
             self.send_request(client)
-        except RequestException as re: 
-            self.logger.error( 
+        except RequestException as re:
+            self.logger.error(
                         "Error when trying to send first HTTP POST request.")
             self.logger.exception(str(re))
             return
-        
+
         server_id = client.get_response_id()
-        
+
         # Wait for server to prepare response
         self.logger.debug("Request sent OK with ID %s", server_id)
         self.logger.debug("Waiting for ORACC server to prepare response...")
@@ -366,10 +357,10 @@ class NammuController(object):
             return
         except Exception as e:
             self.logger.error("Server error.")
-            self.logger.exception(str(e))          
-        
+            self.logger.exception(str(e))
+
         # Send new request to fetch results and server logs
-        # TODO: This shouldn't need a new client, but a new request inside the 
+        # TODO: This shouldn't need a new client, but a new request inside the
         #       same client
         # client = SOAPClient(url, port, url_dir, method='POST')
         self.logger.debug("Fetching response... ")
@@ -377,7 +368,8 @@ class NammuController(object):
         try:
             self.send_request(client)
         except RequestException as re:
-            self.logger.error("Error when trying to send last HTTP POST request.")
+            msg = "Error when trying to send last HTTP POST request."
+            self.logger.error(msg)
             self.logger.exception(str(re))
             return
 
@@ -386,11 +378,10 @@ class NammuController(object):
         oracc_log, request_log, autolem = client.get_server_logs()
         self.process_server_response(oracc_log, request_log, autolem)
 
-                        
     def process_server_response(self, oracc_log, request_log, autolem):
         """
-        Last HTTP POST response retrieved from server will containg at least 
-        two files: 
+        Last HTTP POST response retrieved from server will containg at least
+        two files:
           * request.log: Output log from tools run in the ORACC server like
                          ATF file unzip, etc. Logged from SOAPClient.
           * oracc.log: Validation error messages.
@@ -403,20 +394,19 @@ class NammuController(object):
             # TODO: Prompt dialog.
             self.logger.info("The validation returned some errors: \n%s",
                              oracc_log)
-            self.logger.info(
-            "See highlighted areas in the text for errors and validate again.")
+            msg = "See highlighted areas in the text for errors and validate again."
+            self.logger.info(msg)
         else:
             self.logger.info("The validation returned no errors.")
-            
+
         if autolem:
             self.atfAreaController.setAtfAreaText(autolem.decode('utf-8'))
             self.logger.info("Lemmatised ATF received from ORACC server.")
 
-
-    def send_request(self, client): 
+    def send_request(self, client):
         """
         Tries to send HTTP POST request to ORACC server and raise problems.
-        TODO: When we have proper logging it'd be nice to move this to the 
+        TODO: When we have proper logging it'd be nice to move this to the
         SOAPClient.
         # TODO: Prompt dialog when exception occurs.
         """
@@ -425,43 +415,41 @@ class NammuController(object):
         except Timeout:
             self.logger.error("ORACC server timed out after 5 seconds.")
             raise
-        except ConnectionError:   
-            self.logger.error("Can't connect to ORACC server at %s.", 
+        except ConnectionError:
+            self.logger.error("Can't connect to ORACC server at %s.",
                               client.url)
             raise
         except HTTPError:
             self.logger.error("ORACC server returned invalid HTTP response.")
-            raise 
-        
-        
+            raise
+
     def wait_for_response(self, client, server_id):
         """
         Tries to send HTTP GET request to ORACC server and raise problems.
-        TODO: When we have proper logging it'd be nice to move this to the 
+        TODO: When we have proper logging it'd be nice to move this to the
         SOAPClient.
         # TODO: Prompt dialog when exception occurs.
         """
         try:
-            client.wait_for_response(server_id)    
+            client.wait_for_response(server_id)
         except Timeout:
             self.logger.error("ORACC server timed out after 5 seconds.")
             raise
-        except ConnectionError:   
-            self.logger.error("Can't connect to ORACC server at %s.", 
+        except ConnectionError:
+            self.logger.error("Can't connect to ORACC server at %s.",
                               client.url)
             raise
         except HTTPError:
-            self.logger.error("ORACC server returned invalid HTTP response.")  
-            raise              
+            self.logger.error("ORACC server returned invalid HTTP response.")
+            raise
         except Exception as e:
-            if e.args == "UnknownServerError":           
-                self.logger.error( 
+            if e.args == "UnknownServerError":
+                self.logger.error(
                             "ORACC server seems down. Contact server admin.")
                 raise
             else:
-                self.logger.error( 
-        "Unexpected error when waiting for ORACC server to prepare response.")
-                        
+                msg = "Unexpected error when waiting for ORACC server to prepare response."
+                self.logger.error(msg)
 
     def get_validation_errors(self, oracc_log):
         """
@@ -492,7 +480,6 @@ class NammuController(object):
 
         return validation_error_str
 
-
     def printFile(self, event):
         '''
         Print file.
@@ -500,16 +487,14 @@ class NammuController(object):
         '''
         self.logger.debug("Printing file...")
 
-
     def editSettings(self, event):
         '''
         Show settings window for edition.
-        TODO: ORACC Server URL should be in a config file editable from a 
+        TODO: ORACC Server URL should be in a config file editable from a
         settings form.
         TODO: Disable this button until functionality is implemented.
         '''
         self.logger.debug("Changing settings...")
-
 
     def displayModelView(self, event):
         '''
@@ -519,15 +504,14 @@ class NammuController(object):
         '''
         atfText = self.atfAreaController.getAtfAreaText()
         # if self.currentFilename != None and atfText != None :
-        if self.currentFilename != None:
-            #TODO Check if ATF is valid
-            #This may imply parsing the text, so perhaps the model controller
-            #can just receive the parsed object instead of the text
+        if self.currentFilename is not None:
+            # TODO Check if ATF is valid
+            # This may imply parsing the text, so perhaps the model controller
+            # can just receive the parsed object instead of the text
             self.modelController = ModelController(self, self.parse(atfText))
         else:
             self.promptInfoPane(
                         "Open ATF file before trying to display model view.")
-
 
     def parse(self, text):
         '''
@@ -536,13 +520,11 @@ class NammuController(object):
         parsed = AtfFile(text)
         return parsed
 
-
     def unicode(self, event):
         '''
         Create bool for unicode, change value when clicked.
         '''
         self.logger.debug("Unicode...")
-
 
     def console(self, event):
         '''
@@ -551,13 +533,11 @@ class NammuController(object):
         '''
         self.logger.debug("Console...")
 
-
     def toolbar(self, event):
         '''
         Show/Hide Toolbar.
         '''
         self.logger.debug("Toolbar... ")
-
 
     def __getattr__(self, name):
         '''
@@ -565,7 +545,6 @@ class NammuController(object):
         Ideally this method would never be called.
         '''
         self.logger.debug("!!!Undefined method " + name)
-
 
     def get_project(self):
         '''
@@ -588,8 +567,7 @@ class NammuController(object):
                 project = nammu_text.split(project_str)[1].split()[0]
 
         return project
-    
-    
+
     def setup_logger(self):
         """
         Creates logger for Nammu's functionality as well as to debug HTTP

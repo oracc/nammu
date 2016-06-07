@@ -1,15 +1,18 @@
-import pytest, codecs, os, shutil
+import pytest
+import codecs
+import os
+import shutil
 import xml.dom.minidom
-from ..SOAPClient.SOAPClient import SOAPClient
 from requests.exceptions import ConnectionError
+from ..SOAPClient.SOAPClient import SOAPClient
 
 
 class TestSOAP(object):
 
     def test_http_post_validation_request_headers(self):
         """
-        Tests the headers of the HTTP POST request for validation that contains 
-        the ATF file are correct.
+        Tests the headers of the HTTP POST request for validation that
+        contains the ATF file are correct.
         """
         goal_headers = {
             'Connection': 'close',
@@ -18,9 +21,9 @@ class TestSOAP(object):
             'Content-Length': '2011',
             'MIME-Version': '1.0'
         }
-        client = SOAPClient('http://oracc.museum.upenn.edu', 
-                            '8085', 
-                            'p', 
+        client = SOAPClient('http://oracc.museum.upenn.edu',
+                            '8085',
+                            'p',
                             method='POST')
         client.create_request(
                             command='atf',
@@ -30,26 +33,24 @@ class TestSOAP(object):
         test_headers = client.request.get_headers()
         assert test_headers == goal_headers
 
-
     def test_http_post_request_ready_headers(self):
         """
         Tests the headers of the HTTP POST request that is sent once the server
         has confirmed the validation/lemmatisation is ready.
         """
         goal_headers = {
-            'Host': 'http://oracc.museum.upenn.edu:8085', 
-            'Content-Transfer-Encoding': '7bit', 
-            'MIME-Version': '1.0', 
+            'Host': 'http://oracc.museum.upenn.edu:8085',
+            'Content-Transfer-Encoding': '7bit',
+            'MIME-Version': '1.0',
             'Content-Type': 'application/soap+xml'
         }
-        client = SOAPClient('http://oracc.museum.upenn.edu', 
-                            '8085', 
-                            'p', 
+        client = SOAPClient('http://oracc.museum.upenn.edu',
+                            '8085',
+                            'p',
                             method='POST')
         client.create_request(keys=['ZO3vNg'])
         test_headers = client.request.get_headers()
         assert test_headers == goal_headers
-
 
     def test_soap_request_envelope(self):
         goal_envelope = """<?xml version="1.0" encoding="UTF-8"?>
@@ -77,18 +78,19 @@ class TestSOAP(object):
                     </osc-meth:Request>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>"""
-        client = SOAPClient('http://oracc.museum.upenn.edu', '8085', 'p', 
+        client = SOAPClient('http://oracc.museum.upenn.edu',
+                            '8085',
+                            'p',
                             method='POST')
         atf_basename = "hyphens.atf"
         client.create_request(
-                        command = 'atf',
+                        command='atf',
                         keys=['tests/mini', '00atf/' + atf_basename],
-                        atf_basename = atf_basename,
-                        atf_text = open('resources/test/request.zip').read())
-                
+                        atf_basename=atf_basename,
+                        atf_text=open('resources/test/request.zip').read())
+
         test_envelope = client.request.get_soap_envelope()
         assert self.compare_soap_envelopes(test_envelope, goal_envelope)
-
 
     def test_soap_response_envelope(self):
         goal_envelope = """<?xml version="1.0" encoding="UTF-8"?>
@@ -109,20 +111,18 @@ class TestSOAP(object):
                     </osc-meth:Response>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>"""
-        client = SOAPClient('http://oracc.museum.upenn.edu', 
-                            '8085', 
-                            'p', 
+        client = SOAPClient('http://oracc.museum.upenn.edu',
+                            '8085',
+                            'p',
                             method='POST')
         client.create_request(keys=['ZO3vNg'])
         test_envelope = client.request.get_soap_envelope()
         assert self.compare_soap_envelopes(test_envelope, goal_envelope)
-        
-        
+
     def compare_soap_envelopes(self, test, goal):
         test_xml = xml.dom.minidom.parseString(test)
         goal_xml = xml.dom.minidom.parseString(goal)
         return self.pretty_print(test_xml) == self.pretty_print(goal_xml)
-
 
     def pretty_print(self, string):
         pretty_string = ''
@@ -130,22 +130,20 @@ class TestSOAP(object):
             if not line.strip() == '':
                 pretty_string += line
         return pretty_string
-    
-    
+
     def test_soap_connection_error(self):
         """
-        Requests library raises different exceptions, but we would need to 
+        Requests library raises different exceptions, but we would need to
         create a mock server that would take quite a lot of time.
         We can still test easily for ConnectionError exceptions.
         """
         with pytest.raises(ConnectionError) as e:
             url = 'http://fake.oracc.url'
-            client = SOAPClient(url, 8085, None, method='POST') 
+            client = SOAPClient(url, 8085, None, method='POST')
             client.create_request(keys=['NGaXYv'])
             client.send()
         assert e.type == ConnectionError
-        
-        
+
     @pytest.mark.skip(reason="takes too long and mvn test won't import pyoracc")
     def test_whole_corpus_validates(self):
         """
@@ -159,16 +157,14 @@ class TestSOAP(object):
         from ..controller.NammuController import NammuController
         # This might also break tests
         nammu = NammuController()
-        whole_corpus = "/Users/raquel/workspace/ORACC/whole_corpus/whole_corpus"
-        for folder, subfolder, files in os.walk(whole_corpus):
+        corpus_path = "/Users/raquel/workspace/ORACC/whole_corpus/whole_corpus"
+        for folder, subfolder, files in os.walk(corpus_path):
             for atf_filename in files:
                 nammu.currentFilename = folder + os.sep + atf_filename
-                text = codecs.open(nammu.currentFilename, encoding='utf-8').read()
+                text = codecs.open(nammu.currentFilename,
+                                   encoding='utf-8').read()
                 nammu.atfAreaController.setAtfAreaText(text)
                 nammu.validate()
                 shutil.move(
-                        nammu.currentFilename, 
+                        nammu.currentFilename,
                         "/Users/raquel/workspace/ORACC/whole_corpus/validated")
-                
-            
-        
