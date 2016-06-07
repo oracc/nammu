@@ -6,6 +6,14 @@ matrix:
   include:
     - jdk: oraclejdk8
     - jdk: oraclejdk7
+    - jdk: oraclejdk8
+      env: PEP8=1
 
 script:
-  - mvn clean test 
+  # Check if this is the PEP8 test instance
+  if [ -z "$PEP8" ]; then
+    pip install pep8
+    pep8 python/
+  else
+    mvn clean test
+  fi
