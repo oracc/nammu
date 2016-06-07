@@ -9,6 +9,12 @@ matrix:
     - jdk: oraclejdk8
       env: PEP8=1
 
+install:
+    - |
+    # Check if this is the PEP8 test instance and install pep8
+    if [ -z "$PEP8" ]; then
+      pip install pep8
+
 script:
   # Check if this is the PEP8 test instance
   if [ -z "$PEP8" ]; then
