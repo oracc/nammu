@@ -1,0 +1,80 @@
+---
+version: 1
+
+disable_existing_loggers: False
+
+formatters:
+
+    nammu_formatter:
+
+        format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        datefmt: "%Y-%m-%d %H:%M:%S"
+
+
+handlers:
+
+    console:
+
+        class: logging.StreamHandler
+
+        level: DEBUG
+
+        formatter: nammu_formatter
+
+        stream: ext://sys.stdout
+
+
+    file_handler:
+
+        class: logging.handlers.RotatingFileHandler
+
+        level: DEBUG            
+
+        formatter: nammu_formatter
+
+        filename: nammu.log
+
+        maxBytes: 5242880 # 5MB
+
+        backupCount: 1
+
+        encoding: utf8
+
+
+
+loggers:
+
+    NammuController:
+
+        level: DEBUG
+
+        handlers: [console, file_handler]
+
+        propagate: no
+        
+        
+    SOAPClient:
+
+        level: DEBUG
+
+        handlers: [console, file_handler]
+
+        propagate: no
+        
+        
+    requests.packages.urllib3:
+        
+        level: DEBUG
+        
+        handlers: [console, file_handler]
+        
+        propagate: no
+
+
+root:
+
+    level: INFO
+
+    handlers: [console, file_handler]
+
+

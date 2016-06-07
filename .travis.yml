@@ -6,7 +6,6 @@ matrix:
   include:
     - jdk: oraclejdk8
     - jdk: oraclejdk7
-    - jdk: openjdk7
 
 script:
   - mvn clean test 

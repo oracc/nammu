@@ -8,6 +8,7 @@ Creates the menu view and handles menu actions.
 
 from ..view.MenuView import MenuView
 
+
 class MenuController(object):
 
     def __init__(self, mainController):
@@ -26,19 +27,21 @@ class MenuController(object):
     # showHelp that can be dealt with from MenuController.
 
     # Whenever a MenuController's method is invoked, __getattr__ will search for
-    # that given method name in this class. If it's not found, it'll delegate 
+    # that given method name in this class. If it's not found, it'll delegate
     # the action with same name to NammuController
     def __getattr__(self, name):
         return getattr(self.mainController, name)
 
     def showHelp(self):
         """
-        TODO: Show popup window with help (or just open firefox with ORACC info?)
+        TODO: Show popup window with help (or just open firefox with ORACC
+        info?)
         """
         pass
 
     def showAbout(self):
         """
-        TODO: Show popup window with help (or just open firefox with ORACC info?)
+        TODO: Show popup window with help (or just open firefox with ORACC
+        info?)
         """
         pass

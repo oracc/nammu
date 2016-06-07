@@ -1,11 +1,14 @@
 import StringIO
-import logging
 import re
-from zipfile import ZipFile
-
+import os
+import logging
+import logging.config
 import requests
+import urllib
+from java.lang import System, ClassLoader
+from zipfile import ZipFile
+from logging import Formatter
 from requests.exceptions import RequestException
-
 from HTTPRequest import HTTPRequest
 import xml.etree.ElementTree as ET
 
@@ -19,28 +22,15 @@ class SOAPClient(object):
         self.port = port
         self.url_dir = url_dir
         self.method = method
-        logging.basicConfig()
+        # TODO: Create logger in this module that reuses nammu controller's
+        # logger configuration so output is in same file, but tells us it was
+        # produced in this module.
         self.logger, self.request_log = self.setup_logger()
-
-
-    def setup_logger(self):
-        """
-        Creates logger to debug HTTP messages sent and responses received.
-        Output should be sent to Nammu's console.
-        """
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
-        request_log = logging.getLogger("requests.packages.urllib3")
-        request_log.setLevel(logging.DEBUG)
-        request_log.propagate = True
-        return logger, request_log
-
 
     def create_request(self, **kwargs):
         url = "{}:{}".format(self.url, self.port)
         request = HTTPRequest(url, self.method, **kwargs)
         self.request = request
-
 
     def send(self):
         """
@@ -49,19 +39,19 @@ class SOAPClient(object):
         url = "{}:{}".format(self.url, self.port)
         headers = dict(self.request.get_headers())
         body = self.request.get_body()
+        self.logger.debug("Sending request to server at %s.", url)
+        self.logger.debug("HTTP request headers sent: %s", headers)
+        self.logger.debug("HTTP request body sent: %s", body)
         self.response = requests.post(url, data=body, headers=headers)
 
-        
     def get_response_text(self):
         return self.response.text
-
 
     def get_response_id(self):
         xml_root = ET.fromstring(self.response.text)
         # This should be done with xpath. See XPath and namespaces sections
         # here: https://docs.python.org/2/library/xml.etree.elementtree.html
         return xml_root[0][0][0][0].text
-
 
     def wait_for_response(self, request_id):
         """
@@ -71,7 +61,8 @@ class SOAPClient(object):
         via HTTP GET until the request is ready.
         The response from the server can be:
         * "run\n" (request is being processed)
-        * "done\n" (request is ready - we can send a new SOAP request to get it)
+        * "done\n" (request is ready - we can send a new SOAP request to get
+                    it)
         *  "err_stat\n" (something bad happened and we have to mail Steve)
         """
         url = "{}/{}/{}".format(self.url, self.url_dir, request_id)
@@ -85,19 +76,18 @@ class SOAPClient(object):
                     return
                 elif response.text == "err_stat\n":
                     raise Exception("UnknownServerError")
-                
 
     def get_response(self):
         return self.response.content
 
-
     def get_server_logs(self):
         """
-        Manipulate response to substract the content of oracc.log that is in the
-        returned binary-coded zip file.
+        Manipulate response to substract the content of oracc.log that is in
+        the returned binary-coded zip file.
         """
         self.response.content
-        binary_body = re.split('--==.*==', self.response.content)[2].split('\r\n')[5]
+        binary_body = re.split('--==.*==',
+                               self.response.content)[2].split('\r\n')[5]
 
         f = StringIO.StringIO()
         f.write(bytearray(binary_body))
@@ -108,19 +98,29 @@ class SOAPClient(object):
         request_log = zip_content['request.log']
 
         # Check if server returns a lemmatised file
-        autolem = None 
+        autolem = None
         for key, value in zip_content.iteritems():
             if key.endswith("autolem.atf"):
                 autolem = value
 
-        print zip_content.keys()
-        print "@"*30
-        print oracc_log
-        print "@"*30
-        print request_log
-        print "@"*30
-        if autolem:
-            print autolem
-            print "@"*30
+        self.logger.debug("The returned file from server contains: %s",
+                          zip_content.keys())
+
+        for file in zip_content.keys():
+            self.logger.debug("These are the contents of %s: \n%s",
+                              file,
+                              zip_content[file])
 
         return oracc_log, request_log, autolem
+
+    def setup_logger(self):
+        """
+        Creates logger for Nammu's functionality as well as to debug HTTP
+        messages sent to the ORACC server and responses received.
+        Output should be sent to Nammu's console as well as a local logfile and
+        the system console.
+        """
+        logger = logging.getLogger("SOAPClient")
+        requests_logger = logging.getLogger("requests.packages.urllib3")
+
+        return logger, requests_logger

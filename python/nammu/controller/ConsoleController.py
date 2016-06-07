@@ -8,6 +8,7 @@ Creates the console view and handles console actions.
 
 from ..view.ConsoleView import ConsoleView
 
+
 class ConsoleController(object):
 
     def __init__(self, mainControler):

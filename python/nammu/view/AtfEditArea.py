@@ -1,19 +1,20 @@
-from java.awt import Font
 from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
 
+from ..utils import set_font
+
 
 class AtfEditArea(JTextPane):
+
     def __init__(self, parent_component):
         self.parent_component = parent_component
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        self.font = Font("Monaco", Font.PLAIN, 14)
+        self.font = set_font('DejaVuSans')
         # If this is not done, no tooltips appear
         self.setToolTipText("")
         # Consume mouse events when over this JTextPane
         listener = CustomMouseListener(self)
         self.addMouseListener(listener)
-
 
     def getToolTipText(self, event=None):
         """
@@ -26,14 +27,12 @@ class AtfEditArea(JTextPane):
             # Check if line_num has an error message assigned
             if self.parent_component.validation_errors:
                 try:
-                    error_msg = self.parent_component.validation_errors[line_num]
+                    err_msg = self.parent_component.validation_errors[line_num]
                 except KeyError:
                     # Current line has no error messages assigned
                     pass
                 else:
-                    return error_msg
-                
-
+                    return err_msg
 
     def get_line_num(self, position):
         """
@@ -49,5 +48,6 @@ class CustomMouseListener(MouseAdapter):
     """
     def __init__(self, panel):
         self.panel = panel
+
     def mousePressed(self, event):
         offset = self.panel.viewToModel(event.getPoint())

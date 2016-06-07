@@ -20,11 +20,10 @@ class AtfAreaController(object):
         # Get a reference to the view's undo_manager
         self.undo_manager = self.view.undo_manager
 
-
     def setAtfAreaText(self, text):
         '''
-        Need to manually force an edit compound because the setText() method 
-        triggers 2 consecutive INSERT events: one to set the text to "" and 
+        Need to manually force an edit compound because the setText() method
+        triggers 2 consecutive INSERT events: one to set the text to "" and
         another to set the text to the given text.
         Default behaviour of the compound edit would create a new edit for each
         INSERT event, so we have to manually group those two together.
@@ -34,16 +33,13 @@ class AtfAreaController(object):
             self.view.syntax_highlight()
         self.update_line_numbers()
 
-
     def getAtfAreaText(self):
         return self.view.editArea.getText()
-
 
     def clearAtfArea(self):
         self.view.editArea.setText("")
         # When opening a new file we should discard the previous edits
         self.view.undo_manager.discardAllEdits()
-
 
     def update_line_numbers(self):
         # Get how many lines are in the file
@@ -51,12 +47,11 @@ class AtfAreaController(object):
         # Reload line numbers text panel
         self.view.repaint_line_numbers(n_lines)
 
-
     def undo(self):
-        # CompoundEdits only get added  to the undo manager when the next 
+        # CompoundEdits only get added  to the undo manager when the next
         # INSERT/REMOVE event happens. Thus, if we are adding changes to
         # the current compound edit and we want to undo it before the next
-        # INSERT/REMOVE happens, we won't be able until it's been explicitly 
+        # INSERT/REMOVE happens, we won't be able until it's been explicitly
         # ended.
         self.view.edit_listener.current_compound.end()
         try:
@@ -68,7 +63,6 @@ class AtfAreaController(object):
         else:
             self.update_line_numbers()
 
-
     def redo(self):
         try:
             self.undo_manager.redo()
@@ -79,14 +73,11 @@ class AtfAreaController(object):
         else:
             self.update_line_numbers()
 
-
     def copy(self):
         self.view.editArea.copy()
-        
-    
+
     def paste(self):
         self.view.editArea.paste()
-        
-    
+
     def cut(self):
         self.view.editArea.cut()
