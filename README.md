@@ -1,5 +1,6 @@
 #Nammu: Desktop GUI for ORACC
 
+
 ##What is ORACC?
 ORACC is the [Open Richly Annotated Cuneiform Corpus](http://oracc.org). 
 It provides open-access, standards-based publication platforms, research tools 
@@ -7,11 +8,10 @@ and teaching resources for Assyriology and ancient Near Eastern History,
 hosting around 40 academic research projects worldwide. 
 
 ORACC has become established as one of the core online resources in the world 
-of ancient Near Eastern studies 
-It originated in an AHRC-funded research project [Prof. Eleanor Robson](https://www.ucl.ac.uk/history/people/academic-staff/eleanor-robson) 
+of ancient Near Eastern studies. It originated in an AHRC-funded research project 
+[Prof. Eleanor Robson](https://www.ucl.ac.uk/history/people/academic-staff/eleanor-robson) 
 ran at the University of Cambridge several years ago and is now continuing to 
 run from University College London. 
-
 
 
 ##What is Nammu?
@@ -35,22 +35,23 @@ Nammu is currently being developed by the [UCL Research Software Development Gro
 ## Validation of ATF files
 
 In order to validate ATF files, Nammu uses two approaches:
-* Online validation against ORACC server 
+* Online validation against ORACC server.
 * Offline validation using pyORACC, the new ATF parser developed by UCL RSDT.
 
-### Validation against the ORACC server
-The ORACC server is hosted at University of Pennsylvania and maintained by 
-[Prof. Steve Tinney](https://www.ling.upenn.edu/people/tinney).
-The ORACC server provides with SOAP webservices for validation and lemmatisation
-of ATF files. Nammu acts as a SOAP client, requesting the server for validation
-and lemmatisation of ATF files, and presenting the server output in the GUI.
+
+#### Validation against the ORACC server
+The ORACC server is hosted at University of Pennsylvania (Philadelphia) and 
+maintained by [Prof. Steve Tinney](https://www.ling.upenn.edu/people/tinney).
+The ORACC server provides with SOAP web services for validation and lemmatisation
+of ATF files. Nammu acts as a SOAP client, requesting the server to validate
+and lemmatise ATF files, and then presents the server output in the GUI.
 
 
-### Validation with pyORACC
+#### Validation with pyORACC
 Validation against the ORACC server requires the user to have Internet access. 
 Since this is not always the case, the UCL RSDG is also developing
-an ATF parsing tool to provide with initial ATF validation. This tool is called
-pyORACC and you can find more information about it 
+an ATF parsing tool to provide with offline initial ATF validation. 
+This tool is called pyORACC and you can find more information about it 
 [here](https://github.com/oracc/pyoracc).
 
 Nammu uses pyORACC in two different ways:
@@ -61,16 +62,18 @@ correctness like spelling errors in keywords, word ordering in each line, etc.
 It won't however highlight errors in the transliterated words, lemmas or translations.
 * Offline validation (under development): Users can select to do an offline 
 validation using pyORACC when they don't have Internet access. This will return 
-error messages coming from pyORACC that will guide the user to correct them.
+error messages coming from pyORACC and presented in the GUI to guide the user 
+on how to correct them.
 
-## How to install Nammu
+
+## How to run Nammu
 
 Nammu is being developed in [Jython](http://www.jython.org), an implementation
 of the Python language designed to run on the Java platform. 
 The installable for Nammu is a JAR file containg Nammu's code as well as all the
-necessary Java and Python libraries to run it, like pyORACC. 
-JAR files can be run in any platform as long as the Java Virtual Machine has 
-been installed. It doesn't require any other extra configuration.
+necessary Java and Python libraries to run it, like pyORACC, logging, etc.
+JAR files can be run in any platform as long as the [Java Virtual Machine](https://en.wikipedia.org/wiki/Java_virtual_machine) 
+has been installed. It doesn't require any other extra configuration.
 
 To run Nammu on your computer, you can download the JAR file [here] and just 
 double click on it to use it. 
@@ -79,24 +82,19 @@ Alternatively, you can also run it from the command line, like this:
 
 `java -jar /path/to/namu.jar`
 
+
 ## Nammu's configuration for advanced users:
 The first time Nammu is run, it will create automatically a hidden folder in 
 your home directory (`$HOME` in Unix machines and `%USERPROFILE%` in Windows 
 machines) called `.nammu`. Alternatively, this folder can be installed elsewhere
 by setting a new environment variable called `NAMMU_CONFIG_PATH` that points to 
-the desired location where the `.nammu` folder will be stored.
+the desired location where the `.nammu` folder and its contents will be stored.
 
-This folder will contain a logfile with DEBUG information output by Nammu and 
-a YAML file containing some configuration on how the log works.
+This folder will contain a log file with debug information output by Nammu and 
+a YAML file containing some configuration on how the logging works.
 
-
-### Nammu's logfile
-
-
-
-
-
-### Notes on software development
+You can see [here](https://github.com/oracc/nammu/blob/development/resources/config/logging.yaml) 
+the default logging configuration.
 
 
 ### Contributors
@@ -127,6 +125,9 @@ like this:
  java -jar  target/original-nammu-0.0.1-SNAPSHOT.jar 
  ```
 
+If you find any problem or need more information, you can create an issue 
+[here](https://github.com/oracc/nammu/issues).
+
 
 ## Links of interest
 
@@ -136,6 +137,3 @@ like this:
 * [ORACC at GitHub](https://github.com/oracc).
 * [Slides](http://slides.com/raquelalegre/oracc-7#/) for seminar about ORACC 
 and UCL RSDG collaboration at UCL Digital Humanities (27th April 2016)
-
-
-
