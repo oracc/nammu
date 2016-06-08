@@ -84,6 +84,8 @@ Alternatively, you can also run it from the command line, like this:
 
 
 ## Nammu's configuration for advanced users:
+
+#### Nammu's config and logging
 The first time Nammu is run, it will create automatically a hidden folder in 
 your home directory (`$HOME` in Unix machines and `%USERPROFILE%` in Windows 
 machines) called `.nammu`. Alternatively, this folder can be installed elsewhere
@@ -97,7 +99,7 @@ You can see [here](https://github.com/oracc/nammu/blob/development/resources/con
 the default logging configuration.
 
 
-### Contributors
+#### Contributors
 If you want to contribute to the code, or you want to install and run the code
 to customize it instead of just downloading the JAR file, you will first need
 to install a few requirements:
