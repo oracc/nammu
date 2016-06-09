@@ -11,7 +11,8 @@ ORACC has become established as one of the core online resources in the world
 of ancient Near Eastern studies. It originated in an AHRC-funded research project 
 [Prof. Eleanor Robson](https://www.ucl.ac.uk/history/people/academic-staff/eleanor-robson) 
 ran at the University of Cambridge several years ago and is now continuing to 
-run from University College London. 
+run from University College London in collaboration with University of 
+Pennsylvania (Philadelphia).
 
 
 ##What is Nammu?
@@ -23,20 +24,22 @@ upload transliterations of Sumerian texts in the form of text files in
 At the time of writing, ORACC content creators use an Emacs plugin for edition,
 validation and lemmatisation of ATF files. This plugin can only be installed as 
 part of [Emacs](http://oracc.museum.upenn.edu/doc/help/usingemacs/emacssetup/index.html), 
-which has a steep learning curve for some users. 
+which has a steep learning curve. 
 
 With Nammu, we intend to make a user friendly tool that would replace the use
-of the ORACC Emacs plugin. This would help lower the access barriers to the use 
+of the ORACC Emacs plugin. This will help lower the access barriers to the use 
 of ORACC, enabling more projects to adopt it.
 
-Nammu is currently being developed by the [UCL Research Software Development Group](https://www.ucl.ac.uk/research-it-services/about/research-software-development).
+Nammu is currently being developed by the 
+[UCL Research Software Development Group](https://www.ucl.ac.uk/research-it-services/about/research-software-development).
 
 
 ## Validation of ATF files
 
 In order to validate ATF files, Nammu uses two approaches:
 * Online validation against ORACC server.
-* Offline validation using pyORACC, the new ATF parser developed by UCL RSDT.
+* Offline validation using [pyORACC](https://github.com/oracc/pyoracc), the new 
+ATF parser developed by UCL RSDT.
 
 
 #### Validation against the ORACC server
@@ -100,6 +103,7 @@ the default logging configuration.
 
 
 #### Contributors
+
 If you want to contribute to the code, or you want to install and run the code
 to customize it instead of just downloading the JAR file, you will first need
 to install a few requirements:
