@@ -613,7 +613,7 @@ class NammuController(object):
         logger.addHandler(console_handler)
 
         return logger
-    
+
     def showHelp(self, event=None):
         """
         Show ATF validation help.
