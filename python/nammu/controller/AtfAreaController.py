@@ -77,9 +77,12 @@ class AtfAreaController(object):
 
     def copy(self):
         self.view.editArea.copy()
+        self.update_line_numbers()
 
     def paste(self):
         self.view.editArea.paste()
+        self.update_line_numbers()
 
     def cut(self):
         self.view.editArea.cut()
+        self.update_line_numbers()
