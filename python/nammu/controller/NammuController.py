@@ -306,6 +306,7 @@ class NammuController(object):
     def lemmatise(self, event):
         '''
         Connect to ORACC server and retrieved lemmatised version of ATF file.
+        Don't lemmatise if file doesn't validate.
         '''
         if self.currentFilename:
             self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
@@ -408,16 +409,19 @@ class NammuController(object):
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
-            self.logger.info("The validation returned some errors: \n%s",
+            self.logger.info("The server returned some errors: \n%s",
                              oracc_log)
-            self.logger.info("See highlighted areas in the text for errors "
-                             "and validate again.")
+            if autolem:
+                self.logger.info("You can't lemmatise a file that is not "
+                                 "valid.")
+            self.logger.info("Please, see highlighted areas and correct "
+                             " errors.")
+
         else:
             self.logger.info("The validation returned no errors.")
-
-        if autolem:
-            self.atfAreaController.setAtfAreaText(autolem.decode('utf-8'))
-            self.logger.info("Lemmatised ATF received from ORACC server.")
+            if autolem:
+                self.atfAreaController.setAtfAreaText(autolem.decode('utf-8'))
+                self.logger.info("Lemmatised ATF received from ORACC server.")
 
     def send_request(self, client):
         """
