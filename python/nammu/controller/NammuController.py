@@ -280,10 +280,10 @@ class NammuController(object):
         '''
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
-    
+
             # Search for project name in file. If not found, don't validate
             project = self.get_project()
-    
+
             if project:
                 self.send_command("atf", project)
             else:
@@ -297,11 +297,11 @@ class NammuController(object):
                     self.logger.error(
                             "No project found in file %s. "
                             "Add project and retry.",
-                            self.currentFilename)        
-    
+                            self.currentFilename)
+
             self.logger.debug("Validating ATF done.")
         else:
-            self.logger.error("Please save file before trying to validate.")               
+            self.logger.error("Please save file before trying to validate.")
 
     def lemmatise(self, event):
         '''
@@ -309,10 +309,10 @@ class NammuController(object):
         '''
         if self.currentFilename:
             self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
-    
+
             # Search for project name in file. If not found, don't validate
             project = self.get_project()
-    
+
             if project:
                 self.send_command("lem", project)
             else:
@@ -321,10 +321,10 @@ class NammuController(object):
                                 "No project found in file %s. "
                                 "Add project and retry.",
                                 self.currentFilename)
-    
+
             self.logger.debug("Lemmatising ATF done.")
         else:
-            self.logger.error("Please save file before trying to lemmatise.")   
+            self.logger.error("Please save file before trying to lemmatise.")
 
     def send_command(self, command, project):
         '''
