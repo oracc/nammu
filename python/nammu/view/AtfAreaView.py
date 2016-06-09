@@ -109,7 +109,7 @@ class AtfAreaView(JPanel):
                     # matching the line num, so we won't run into problems like
                     # getting 122 when we are searching for 12 or 22.
                     position = match.start()
-                    # Line numbers are as long as the number + 1 becase it is
+                    # Line numbers are as long as the number + 1 because it is
                     # followed by a colon
                     length = len(line_num) + 1
                     # Change style in line number panel
@@ -119,21 +119,24 @@ class AtfAreaView(JPanel):
                                                            True)
 
                     # Calculate postion of text line
-                    # text_lines = self.editArea.text.splitlines()
-                    # text_line = text_lines[int(line_num) - 1]
-                    # match = re.finditer('\n', self.editArea.text)
-                    #                                       [int(line_num) - 1]
                     text = re.finditer(r"\n", self.editArea.text)
                     line_num = int(line_num)
-                    position = [m.start() for m in text][line_num - 2:line_num]
-                    length = position[1] - position[0]
+                    if line_num >= 2:
+                        pos = [m.start() for m in text][line_num - 2:line_num]
+                    elif '\n' in self.editArea.text:
+                        # If error is in first line, highlight it
+                        pos = [0, self.editArea.text.index('\n')]
+                    else:
+                        # If no end of line, text is a one liner
+                        pos = [0, len(self.editArea.text)]
+                    length = pos[1] - pos[0]
                     # Highlight text line
                     attribs = SimpleAttributeSet()
                     StyleConstants.setFontFamily(attribs,
                                                  self.font.getFamily())
                     StyleConstants.setFontSize(attribs, self.font.getSize())
                     StyleConstants.setBackground(attribs, Color.yellow)
-                    edit_area_sd.setCharacterAttributes(position[0],
+                    edit_area_sd.setCharacterAttributes(pos[0],
                                                         length,
                                                         attribs,
                                                         True)
