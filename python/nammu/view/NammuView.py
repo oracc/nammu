@@ -53,7 +53,7 @@ class NammuView(JFrame):
 
     def display(self):
         self.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-        self.setTitle("~ Nammu v0.0.4 - pre-release ~")
+        self.setTitle("Nammu - pre-release")
         self.pack()
         self.setLocationRelativeTo(None)
 
