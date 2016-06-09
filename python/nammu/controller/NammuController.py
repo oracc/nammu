@@ -278,38 +278,53 @@ class NammuController(object):
         server.
         However, the intention is to replace this with validation by pyoracc.
         '''
-        self.logger.debug("Validating ATF file %s.", self.currentFilename)
-
-        # Search for project name in file. If not found, don't validate
-        project = self.get_project()
-
-        if project:
-            self.send_command("atf", project)
+        if self.currentFilename:
+            self.logger.debug("Validating ATF file %s.", self.currentFilename)
+    
+            # Search for project name in file. If not found, don't validate
+            project = self.get_project()
+    
+            if project:
+                self.send_command("atf", project)
+            else:
+                # TODO: Prompt dialog
+                if self.currentFilename:
+                    self.logger.error(
+                            "No project found in file %s. "
+                            "Add project and retry.",
+                            self.currentFilename)
+                else:
+                    self.logger.error(
+                            "No project found in file %s. "
+                            "Add project and retry.",
+                            self.currentFilename)        
+    
+            self.logger.debug("Validating ATF done.")
         else:
-            # TODO: Prompt dialog
-            self.logger.error(
-                        "No project found in file %s. Add project and retry.",
-                        self.currentFilename)
-
-        self.logger.debug("Validating ATF done.")
+            self.logger.error("Please save file before trying to validate.")               
 
     def lemmatise(self, event):
         '''
         Connect to ORACC server and retrieved lemmatised version of ATF file.
         '''
-        self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
-
-        # Search for project name in file. If not found, don't validate
-        project = self.get_project()
-
-        if project:
-            self.send_command("lem", project)
+        if self.currentFilename:
+            self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
+    
+            # Search for project name in file. If not found, don't validate
+            project = self.get_project()
+    
+            if project:
+                self.send_command("lem", project)
+            else:
+                # TODO: Prompt dialog.
+                self.logger.error(
+                                "No project found in file %s. "
+                                "Add project and retry.",
+                                self.currentFilename)
+    
+            self.logger.debug("Lemmatising ATF done.")
         else:
-            # TODO: Prompt dialog.
-            self.logger.error(
-                            "No project found in file. Add project and retry.")
-
-        self.logger.debug("Lemmatising ATF done.")
+            self.logger.error("Please save file before trying to lemmatise.")   
 
     def send_command(self, command, project):
         '''
@@ -565,7 +580,11 @@ class NammuController(object):
                 project = parsed_atf.text.project
             except:
                 # File can't be parsed but might still contain a project code
-                project = nammu_text.split(project_str)[1].split()[0]
+                try:
+                    project = nammu_text.split(project_str)[1].split()[0]
+                except IndexError:
+                    self.logger.error("Project format should be "
+                                      "'#project: xxx/xxx'.")
 
         return project
 
