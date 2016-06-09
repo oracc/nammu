@@ -114,8 +114,6 @@ class NammuController(object):
         '''
 
         if self.handleUnsaved():
-            self.atfAreaController.clearAtfArea()
-
             fileChooser = JFileChooser()
             file_filter = FileNameExtensionFilter("ATF files", ["atf"])
             fileChooser.setFileFilter(file_filter)
