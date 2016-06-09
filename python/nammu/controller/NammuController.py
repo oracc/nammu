@@ -104,7 +104,7 @@ class NammuController(object):
             self.currentFilename = None
             self.logger.debug("New file created.")
 
-    def openFile(self, event):
+    def openFile(self, event=None):
         '''
         1. Check if current file in text area has unsaved changes
             1.1 Prompt user for file saving
@@ -151,7 +151,7 @@ class NammuController(object):
 #          System.out.println(e);
 #          System.exit(1);
 
-    def saveFile(self, event):
+    def saveFile(self, event=None):
         '''
         1. Check if current file has a filename
         2. Save current file in destination given by user
@@ -186,7 +186,7 @@ class NammuController(object):
 #         JOptionPane.showMessageDialog(self.outer, ioex)
 #         System.exit(1)
 
-    def closeFile(self, event):
+    def closeFile(self, event=None):
         '''
         1. Check if file has unsaved changes
         2. Clear text area
