@@ -189,10 +189,10 @@ class NammuController(object):
         2. Clear text area
         '''
         if self.handleUnsaved():
-            self.currentFilename = None
             self.atfAreaController.clearAtfArea()
             self.logger.debug("File %s successfully closed.",
                               self.currentFilename)
+            self.currentFilename = None
 
     def unsavedChanges(self):
         '''
