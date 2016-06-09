@@ -164,8 +164,7 @@ class NammuController(object):
             atfText = self.atfAreaController.getAtfAreaText()
             self.writeTextFile(filename, atfText)
             # TODO check returned status?
-
-        self.logger.debug("File %s successfully saved.", filename)
+            self.logger.debug("File %s successfully saved.", filename)
 
     def writeTextFile(self, filename, text):
         '''
