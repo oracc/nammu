@@ -101,6 +101,7 @@ class NammuController(object):
 
         if self.handleUnsaved():
             self.atfAreaController.clearAtfArea()
+            self.view.setTitle("Nammu")
             self.currentFilename = None
             self.logger.debug("New file created.")
 
@@ -111,6 +112,7 @@ class NammuController(object):
                 1.1.1 Save file
         2. Display browser for user to choose file
         3. Load file in text area
+        4. Display file name in title bar
         '''
 
         if self.handleUnsaved():
@@ -119,20 +121,17 @@ class NammuController(object):
             fileChooser.setFileFilter(file_filter)
             status = fileChooser.showDialog(self.view, "Choose file")
 
-            filename = ''
             if status == JFileChooser.APPROVE_OPTION:
                 atfFile = fileChooser.getSelectedFile()
                 filename = atfFile.getCanonicalPath()
+                basename = atfFile.getName()
                 atfText = self.readTextFile(filename)
                 self.currentFilename = atfFile.getCanonicalPath()
-
                 self.atfAreaController.setAtfAreaText(atfText)
+                self.logger.debug("File %s successfully opened.", filename)
+                self.view.setTitle(basename)
 
             # TODO: Else, prompt user to choose again before closing
-
-            # Display log only if user didn't cancel opening file action
-            if filename:
-                self.logger.debug("File %s successfully opened.", filename)
 
     def readTextFile(self, filename):
         '''
@@ -190,6 +189,7 @@ class NammuController(object):
         '''
         if self.handleUnsaved():
             self.atfAreaController.clearAtfArea()
+            self.view.setTitle("Nammu")
             self.logger.debug("File %s successfully closed.",
                               self.currentFilename)
             self.currentFilename = None
