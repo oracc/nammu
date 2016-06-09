@@ -196,8 +196,8 @@ class NammuController(object):
 
     def unsavedChanges(self):
         '''
-        There are unsaved changes when the contents of the text area are 
-        different that those of the save file that is currently opened, and 
+        There are unsaved changes when the contents of the text area are
+        different that those of the save file that is currently opened, and
         when the user has inserted some text and not saved it yet.
         '''
         nammuText = self.atfAreaController.getAtfAreaText()
