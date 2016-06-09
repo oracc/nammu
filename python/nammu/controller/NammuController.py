@@ -196,19 +196,20 @@ class NammuController(object):
 
     def unsavedChanges(self):
         '''
-        1. Check of any file is opened
-        2. Load contents in text area
-        3. Load file content
-        4. Check if 2 and 3 differ and return the appropriate value
+        There are unsaved changes when the contents of the text area are 
+        different that those of the save file that is currently opened, and 
+        when the user has inserted some text and not saved it yet.
         '''
-        if self.currentFilename is not None:
-            savedText = self.readTextFile(self.currentFilename)
-            nammuText = self.atfAreaController.getAtfAreaText()
+        nammuText = self.atfAreaController.getAtfAreaText()
 
+        if self.currentFilename:
+            savedText = self.readTextFile(self.currentFilename)
             if savedText != nammuText:
                 return True
             else:
                 return False
+        elif nammuText:
+            return True
 
     def handleUnsaved(self):
         '''
