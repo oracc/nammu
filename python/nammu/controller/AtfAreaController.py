@@ -40,6 +40,8 @@ class AtfAreaController(object):
         self.view.editArea.setText("")
         # When opening a new file we should discard the previous edits
         self.view.undo_manager.discardAllEdits()
+        # Reload line numbers text panel
+        self.view.repaint_line_numbers(1)
 
     def update_line_numbers(self):
         # Get how many lines are in the file
