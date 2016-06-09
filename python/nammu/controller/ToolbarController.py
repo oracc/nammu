@@ -6,8 +6,6 @@ Creates the toolbar view and handles toolbar actions.
 @author: raquel-ucl
 '''
 
-from java.awt import Desktop
-from java.net import URI
 from ..view.ToolbarView import ToolbarView
 
 
@@ -33,25 +31,3 @@ class ToolbarController(object):
     # delegate the action with same name to NammuController
     def __getattr__(self, name):
         return getattr(self.mainController, name)
-
-    def showHelp(self, event=None):
-        """
-        Show ATF validation help.
-        """
-        self._open_website("http://oracc.museum.upenn.edu/doc/help/"
-                           "editinginatf/")
-
-    def showAbout(self, event=None):
-        """
-        Show repo's website with info about ORACC and Nammu.
-        """
-        self._open_website("https://github.com/oracc/nammu")
-
-    def _open_website(self, url):
-        uri = URI(url)
-        desktop = None
-        if Desktop.isDesktopSupported():
-            desktop = Desktop.getDesktop()
-
-        if desktop and desktop.isSupported(Desktop.Action.BROWSE):
-            desktop.browse(url)

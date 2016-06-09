@@ -19,6 +19,8 @@ from logging.handlers import RotatingFileHandler
 from requests.exceptions import RequestException
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 
+from java.awt import Desktop
+from java.net import URI
 from java.io import File
 from java.lang import System, Integer, ClassLoader
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
@@ -611,3 +613,24 @@ class NammuController(object):
         logger.addHandler(console_handler)
 
         return logger
+    
+    def showHelp(self, event=None):
+        """
+        Show ATF validation help.
+        """
+        self._open_website("http://oracc.museum.upenn.edu/doc/help/"
+                           "editinginatf/")
+
+    def showAbout(self, event=None):
+        """
+        Show repo's website with info about ORACC and Nammu.
+        """
+        self._open_website("https://github.com/oracc/nammu")
+
+    def _open_website(self, url):
+        uri = URI(url)
+        desktop = None
+        if Desktop.isDesktopSupported():
+            desktop = Desktop.getDesktop()
+        if desktop and desktop.isSupported(Desktop.Action.BROWSE):
+            desktop.browse(uri)
