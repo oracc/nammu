@@ -159,11 +159,13 @@ class NammuController(object):
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
             filename = atfFile.getCanonicalPath()
+            basename = atfFile.getName()
             self.currentFilename = filename
             atfText = self.atfAreaController.getAtfAreaText()
             self.writeTextFile(filename, atfText)
             # TODO check returned status?
             self.logger.debug("File %s successfully saved.", filename)
+            self.view.setTitle(basename)
 
     def writeTextFile(self, filename, text):
         '''
