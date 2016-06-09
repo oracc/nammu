@@ -6,6 +6,8 @@ Creates the toolbar view and handles toolbar actions.
 @author: raquel-ucl
 '''
 
+from java.awt import Desktop
+from java.net import URI
 from ..view.ToolbarView import ToolbarView
 
 
@@ -32,14 +34,24 @@ class ToolbarController(object):
     def __getattr__(self, name):
         return getattr(self.mainController, name)
 
-    def showHelp(self):
+    def showHelp(self, event=None):
         """
-        1. Show popup window with help (or just open firefox with ORACC info?)
+        Show ATF validation help.
         """
-        pass
+        self._open_website("http://oracc.museum.upenn.edu/doc/help/"
+                           "editinginatf/")
 
-    def showAbout(self):
+    def showAbout(self, event=None):
         """
-        1. Show popup window with help (or just open firefox with ORACC info?)
+        Show repo's website with info about ORACC and Nammu.
         """
-        pass
+        self._open_website("https://github.com/oracc/nammu")
+
+    def _open_website(self, url):
+        uri = URI(url)
+        desktop = None
+        if Desktop.isDesktopSupported():
+            desktop = Desktop.getDesktop()
+
+        if desktop and desktop.isSupported(Desktop.Action.BROWSE):
+            desktop.browse(url)
