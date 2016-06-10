@@ -282,7 +282,7 @@ class NammuController(object):
         '''
         # Clear previous log in Nammu's console
         self.consoleController.view.editArea.setText("")
-        
+
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
 
@@ -315,7 +315,7 @@ class NammuController(object):
         '''
         # Clear previous log in Nammu's console
         self.consoleController.view.editArea.setText("")
-        
+
         if self.currentFilename:
             self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
 
