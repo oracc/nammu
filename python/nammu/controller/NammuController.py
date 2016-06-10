@@ -19,6 +19,8 @@ from logging.handlers import RotatingFileHandler
 from requests.exceptions import RequestException
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 
+from java.awt import Desktop
+from java.net import URI
 from java.io import File
 from java.lang import System, Integer, ClassLoader
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager
@@ -101,40 +103,37 @@ class NammuController(object):
 
         if self.handleUnsaved():
             self.atfAreaController.clearAtfArea()
+            self.view.setTitle("Nammu")
             self.currentFilename = None
             self.logger.debug("New file created.")
 
-    def openFile(self, event):
+    def openFile(self, event=None):
         '''
         1. Check if current file in text area has unsaved changes
             1.1 Prompt user for file saving
                 1.1.1 Save file
         2. Display browser for user to choose file
         3. Load file in text area
+        4. Display file name in title bar
         '''
 
         if self.handleUnsaved():
-            self.atfAreaController.clearAtfArea()
-
             fileChooser = JFileChooser()
             file_filter = FileNameExtensionFilter("ATF files", ["atf"])
             fileChooser.setFileFilter(file_filter)
             status = fileChooser.showDialog(self.view, "Choose file")
 
-            filename = ''
             if status == JFileChooser.APPROVE_OPTION:
                 atfFile = fileChooser.getSelectedFile()
                 filename = atfFile.getCanonicalPath()
+                basename = atfFile.getName()
                 atfText = self.readTextFile(filename)
                 self.currentFilename = atfFile.getCanonicalPath()
-
                 self.atfAreaController.setAtfAreaText(atfText)
+                self.logger.debug("File %s successfully opened.", filename)
+                self.view.setTitle(basename)
 
             # TODO: Else, prompt user to choose again before closing
-
-            # Display log only if user didn't cancel opening file action
-            if filename:
-                self.logger.debug("File %s successfully opened.", filename)
 
     def readTextFile(self, filename):
         '''
@@ -151,7 +150,7 @@ class NammuController(object):
 #          System.out.println(e);
 #          System.exit(1);
 
-    def saveFile(self, event):
+    def saveFile(self, event=None):
         '''
         1. Check if current file has a filename
         2. Save current file in destination given by user
@@ -162,12 +161,13 @@ class NammuController(object):
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
             filename = atfFile.getCanonicalPath()
+            basename = atfFile.getName()
             self.currentFilename = filename
             atfText = self.atfAreaController.getAtfAreaText()
             self.writeTextFile(filename, atfText)
             # TODO check returned status?
-
-        self.logger.debug("File %s successfully saved.", filename)
+            self.logger.debug("File %s successfully saved.", filename)
+            self.view.setTitle(basename)
 
     def writeTextFile(self, filename, text):
         '''
@@ -186,32 +186,34 @@ class NammuController(object):
 #         JOptionPane.showMessageDialog(self.outer, ioex)
 #         System.exit(1)
 
-    def closeFile(self, event):
+    def closeFile(self, event=None):
         '''
         1. Check if file has unsaved changes
         2. Clear text area
         '''
         if self.handleUnsaved():
-            self.currentFilename = None
             self.atfAreaController.clearAtfArea()
+            self.view.setTitle("Nammu")
             self.logger.debug("File %s successfully closed.",
                               self.currentFilename)
+            self.currentFilename = None
 
     def unsavedChanges(self):
         '''
-        1. Check of any file is opened
-        2. Load contents in text area
-        3. Load file content
-        4. Check if 2 and 3 differ and return the appropriate value
+        There are unsaved changes when the contents of the text area are
+        different that those of the save file that is currently opened, and
+        when the user has inserted some text and not saved it yet.
         '''
-        if self.currentFilename is not None:
-            savedText = self.readTextFile(self.currentFilename)
-            nammuText = self.atfAreaController.getAtfAreaText()
+        nammuText = self.atfAreaController.getAtfAreaText()
 
+        if self.currentFilename:
+            savedText = self.readTextFile(self.currentFilename)
             if savedText != nammuText:
                 return True
             else:
                 return False
+        elif nammuText:
+            return True
 
     def handleUnsaved(self):
         '''
@@ -278,38 +280,54 @@ class NammuController(object):
         server.
         However, the intention is to replace this with validation by pyoracc.
         '''
-        self.logger.debug("Validating ATF file %s.", self.currentFilename)
+        if self.currentFilename:
+            self.logger.debug("Validating ATF file %s.", self.currentFilename)
 
-        # Search for project name in file. If not found, don't validate
-        project = self.get_project()
+            # Search for project name in file. If not found, don't validate
+            project = self.get_project()
 
-        if project:
-            self.send_command("atf", project)
+            if project:
+                self.send_command("atf", project)
+            else:
+                # TODO: Prompt dialog
+                if self.currentFilename:
+                    self.logger.error(
+                            "No project found in file %s. "
+                            "Add project and retry.",
+                            self.currentFilename)
+                else:
+                    self.logger.error(
+                            "No project found in file %s. "
+                            "Add project and retry.",
+                            self.currentFilename)
+
+            self.logger.debug("Validating ATF done.")
         else:
-            # TODO: Prompt dialog
-            self.logger.error(
-                        "No project found in file %s. Add project and retry.",
-                        self.currentFilename)
-
-        self.logger.debug("Validating ATF done.")
+            self.logger.error("Please save file before trying to validate.")
 
     def lemmatise(self, event):
         '''
         Connect to ORACC server and retrieved lemmatised version of ATF file.
+        Don't lemmatise if file doesn't validate.
         '''
-        self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
+        if self.currentFilename:
+            self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
 
-        # Search for project name in file. If not found, don't validate
-        project = self.get_project()
+            # Search for project name in file. If not found, don't validate
+            project = self.get_project()
 
-        if project:
-            self.send_command("lem", project)
+            if project:
+                self.send_command("lem", project)
+            else:
+                # TODO: Prompt dialog.
+                self.logger.error(
+                                "No project found in file %s. "
+                                "Add project and retry.",
+                                self.currentFilename)
+
+            self.logger.debug("Lemmatising ATF done.")
         else:
-            # TODO: Prompt dialog.
-            self.logger.error(
-                            "No project found in file. Add project and retry.")
-
-        self.logger.debug("Lemmatising ATF done.")
+            self.logger.error("Please save file before trying to lemmatise.")
 
     def send_command(self, command, project):
         '''
@@ -393,16 +411,19 @@ class NammuController(object):
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
-            self.logger.info("The validation returned some errors: \n%s",
+            self.logger.info("The server returned some errors: \n%s",
                              oracc_log)
-            self.logger.info("See highlighted areas in the text for errors "
-                             "and validate again.")
+            if autolem:
+                self.logger.info("You can't lemmatise a file that is not "
+                                 "valid.")
+            self.logger.info("Please, see highlighted areas and correct "
+                             " errors.")
+
         else:
             self.logger.info("The validation returned no errors.")
-
-        if autolem:
-            self.atfAreaController.setAtfAreaText(autolem.decode('utf-8'))
-            self.logger.info("Lemmatised ATF received from ORACC server.")
+            if autolem:
+                self.atfAreaController.setAtfAreaText(autolem.decode('utf-8'))
+                self.logger.info("Lemmatised ATF received from ORACC server.")
 
     def send_request(self, client):
         """
@@ -565,7 +586,11 @@ class NammuController(object):
                 project = parsed_atf.text.project
             except:
                 # File can't be parsed but might still contain a project code
-                project = nammu_text.split(project_str)[1].split()[0]
+                try:
+                    project = nammu_text.split(project_str)[1].split()[0]
+                except IndexError:
+                    self.logger.error("Project format should be "
+                                      "'#project: xxx/xxx'.")
 
         return project
 
@@ -588,3 +613,24 @@ class NammuController(object):
         logger.addHandler(console_handler)
 
         return logger
+
+    def showHelp(self, event=None):
+        """
+        Show ATF validation help.
+        """
+        self._open_website("http://oracc.museum.upenn.edu/doc/help/"
+                           "editinginatf/")
+
+    def showAbout(self, event=None):
+        """
+        Show repo's website with info about ORACC and Nammu.
+        """
+        self._open_website("https://github.com/oracc/nammu")
+
+    def _open_website(self, url):
+        uri = URI(url)
+        desktop = None
+        if Desktop.isDesktopSupported():
+            desktop = Desktop.getDesktop()
+        if desktop and desktop.isSupported(Desktop.Action.BROWSE):
+            desktop.browse(uri)

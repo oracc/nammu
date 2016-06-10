@@ -31,17 +31,3 @@ class MenuController(object):
     # delegate the action with same name to NammuController
     def __getattr__(self, name):
         return getattr(self.mainController, name)
-
-    def showHelp(self):
-        """
-        TODO: Show popup window with help (or just open firefox with ORACC
-        info?)
-        """
-        pass
-
-    def showAbout(self):
-        """
-        TODO: Show popup window with help (or just open firefox with ORACC
-        info?)
-        """
-        pass

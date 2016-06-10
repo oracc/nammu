@@ -5,7 +5,7 @@
 
 	<groupId>uk.ac.ucl.rc.development.oracc</groupId>
 	<artifactId>nammu</artifactId>
-	<version>0.0.4-prerelease</version>
+	<version>0.1</version>
 	<packaging>jar</packaging>
 
 	<name>nammu</name>
