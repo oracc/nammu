@@ -74,13 +74,23 @@ on how to correct them.
 
 Nammu is being developed in [Jython](http://www.jython.org), an implementation
 of the Python language designed to run on the Java platform. 
-The installable for Nammu is a JAR file containg Nammu's code as well as all the
+The installable for Nammu is a JAR file containing Nammu's code as well as all the
 necessary Java and Python libraries to run it, like pyORACC, logging, etc.
+
 JAR files can be run in any platform as long as the [Java Virtual Machine](https://en.wikipedia.org/wiki/Java_virtual_machine) 
 has been installed. It doesn't require any other extra configuration.
 
-To run Nammu on your computer, you can download the JAR file [here] and just 
-double click on it to use it. 
+To check if you have Java in your machine, open a terminal and type:
+
+`java`
+
+If this command is not recognised, you'll need to download and install the
+appropriate file for your Operating System from
+[this list](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+
+To run Nammu on your computer, you can download the JAR file 
+[here](https://github.com/oracc/nammu/releases/download/v0.1/nammu-0.1.jar)
+and just double click on it to use it.
 
 Alternatively, you can also run it from the command line, like this:
 
