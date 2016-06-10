@@ -20,4 +20,4 @@ class NammuConsoleHandler(StreamHandler):
         record and send to Nammu's console for the user to see.
         """
         msg = self.format(record)
-        self.nammu_console.addText(msg + "\n")
+        self.nammu_console.addText(msg.decode('utf-8') + "\n")
