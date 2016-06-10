@@ -280,6 +280,9 @@ class NammuController(object):
         server.
         However, the intention is to replace this with validation by pyoracc.
         '''
+        # Clear previous log in Nammu's console
+        self.consoleController.view.editArea.setText("")
+        
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
 
@@ -310,6 +313,9 @@ class NammuController(object):
         Connect to ORACC server and retrieved lemmatised version of ATF file.
         Don't lemmatise if file doesn't validate.
         '''
+        # Clear previous log in Nammu's console
+        self.consoleController.view.editArea.setText("")
+        
         if self.currentFilename:
             self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
 
