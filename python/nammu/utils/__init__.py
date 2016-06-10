@@ -9,15 +9,20 @@ from java.io import InputStreamReader, BufferedReader
 from java.awt import Font
 
 
-def set_font(font_name):
+def set_font():
     """
     Loads font from resources' ttf file.
+    DejaVuSans doesn't work in Retina display screens properly, so check OS,
+    if OSX then use Monaco instead.
     """
-    path_to_ttf = 'resources/fonts/dejavu/ttf/{}.ttf'.format(font_name)
-    loader = ClassLoader.getSystemClassLoader()
-    stream = loader.getResourceAsStream(path_to_ttf)
-    font = Font.createFont(Font.TRUETYPE_FONT, stream)
-    font = font.deriveFont(Font.PLAIN, 14)
+    if "mac" in System.getProperty("os.name").lower():
+        font = Font("Monaco", Font.PLAIN, 14)
+    else:
+        path_to_ttf = 'resources/fonts/dejavu/ttf/DejaVuSans.ttf'
+        loader = ClassLoader.getSystemClassLoader()
+        stream = loader.getResourceAsStream(path_to_ttf)
+        font = Font.createFont(Font.TRUETYPE_FONT, stream)
+        font = font.deriveFont(Font.PLAIN, 14)
     return font
 
 
