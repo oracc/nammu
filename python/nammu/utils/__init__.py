@@ -12,7 +12,7 @@ from java.awt import Font
 def set_font():
     """
     Loads font from resources' ttf file.
-    DejaVuSans doesn't work in Retina display screens properly, so check OS, 
+    DejaVuSans doesn't work in Retina display screens properly, so check OS,
     if OSX then use Monaco instead.
     """
     if "mac" in System.getProperty("os.name").lower():
