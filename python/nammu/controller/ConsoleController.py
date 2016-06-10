@@ -8,15 +8,15 @@ Creates the console view and handles console actions.
 
 from ..view.ConsoleView import ConsoleView
 
+
 class ConsoleController(object):
-    
+
     def __init__(self, mainControler):
-        
-        #Create view with a reference to its controller to handle events
+        # Create view with a reference to its controller to handle events
         self.view = ConsoleView(self)
-        
-        #Will also need delegating to parent presenter
+        # Will also need delegating to parent presenter
         self.controller = mainControler
-        
+
     def addText(self, text):
         self.view.editArea.append(text)
+        self.view.scroll()

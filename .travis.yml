@@ -1,0 +1,26 @@
+sudo: false
+
+language: java
+
+matrix:
+  include:
+    - jdk: oraclejdk8
+    - jdk: oraclejdk7
+    - jdk: oraclejdk8
+      env: PEP8=1
+
+install:
+  - |
+    # Check if this is the PEP8 test instance and install pep8
+    if ! [ -z "$PEP8" ]; then
+       pip install --user pep8
+    fi
+
+script:
+  - |
+    # Check if this is the PEP8 test instance and run pep8
+    if [ -z "$PEP8" ]; then
+      mvn clean test
+    else
+      python -m pep8 python/
+    fi
