@@ -18,7 +18,7 @@ class LineNumbersArea(JTextPane):
 
         # Use default font style
         default_attribs = SimpleAttributeSet()
-        self.font = set_font('DejaVuSans')
+        self.font = set_font()
         StyleConstants.setFontFamily(default_attribs, self.font.getFamily())
         StyleConstants.setFontSize(default_attribs, self.font.getSize())
         StyleConstants.setForeground(default_attribs, Color.gray)

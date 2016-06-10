@@ -38,7 +38,7 @@ class AtfAreaView(JPanel):
         self.setLayout(BorderLayout())
 
         # Set font
-        self.font = set_font('DejaVuSans')
+        self.font = set_font()
 
         # Create text edition area
         self.editArea = AtfEditArea(self)
