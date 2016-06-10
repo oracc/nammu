@@ -98,7 +98,7 @@ def get_yaml_config():
     # In Unix getResource returns the path with prefix "file:" but in
     # Windows prefix is "jar:file:"
     path_to_jar = str(config_file_url).split('file:')[1]
-    path_to_jar = path_to_jar.replace('!{}'.format(yaml_path), '')
+    path_to_jar = path_to_jar.split('!')[0]
 
     path_to_config = get_log_path(yaml_filename)
 
