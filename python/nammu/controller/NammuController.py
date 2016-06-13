@@ -79,8 +79,8 @@ class NammuController(object):
         self.view = NammuView(self)
         self.view.addMenuBar(self.menuController.view)
         self.view.addToolBar(self.toolbarController.view)
-        self.view.addAtfArea(self.atfAreaController.view)
-        self.view.addConsole(self.consoleController.view)
+        self.view.addCenterPane(self.atfAreaController.view,
+                                self.consoleController.view)
         self.logger.info("Welcome to Nammu!")
         self.logger.info(
                 "Please open an ATF file or start typing to create a new one.")
