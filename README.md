@@ -1,5 +1,8 @@
 #Nammu: Desktop GUI for ORACC
 
+To run Nammu on your computer, you can download it from 
+[here](https://github.com/oracc/nammu/releases/download/v0.1/nammu-0.1.jar)
+and just double click on it to open it. 
 
 ##What is ORACC?
 ORACC is the [Open Richly Annotated Cuneiform Corpus](http://oracc.org). 
@@ -34,6 +37,7 @@ Nammu is currently being developed by the
 [UCL Research Software Development Group](https://www.ucl.ac.uk/research-it-services/about/research-software-development).
 
 <img src="./doc/mockups/nammu_0.1.png" align="center" width="70%">
+
 
 ## Validation of ATF files
 
@@ -90,9 +94,10 @@ If you keep having trouble, you can also run it from the command line, like this
 
 `java -jar /path/to/namu.jar`
 
-This will output a clearer log message about what the problem is, that then you
-can create a new issue and tell us about your problem 
-[here](https://github.com/oracc/nammu/issues/new).
+This will output a clearer log message about what the problem is.
+
+If you run into trouble, you can create a new issue and tell us about your 
+problem [here](https://github.com/oracc/nammu/issues/new).
 
 
 ## Nammu's configuration for advanced users:
@@ -152,6 +157,16 @@ like this:
 
 If you find any problem or need more information, you can create an issue 
 [here](https://github.com/oracc/nammu/issues).
+
+
+## License
+
+Nammu is free software and has been licensed under the GNU General Public 
+License. You can read the full license text 
+[here](https://www.gnu.org/licenses/gpl-3.0.en.html). 
+
+If you want to reuse Nammu's code and have any concerns about the implications 
+of this license, please get in touch with us at `rc-softdev` (at) `ucl.ac.uk`.
 
 
 ## Links of interest
