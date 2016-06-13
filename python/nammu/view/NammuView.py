@@ -57,7 +57,7 @@ class NammuView(JFrame):
 
     def addToolBar(self, toolbarView):
         self.getContentPane().add(toolbarView, BorderLayout.NORTH)
-        
+
     def addCenterPane(self, atfAreaView, consoleView):
         splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
         splitPane.setTopComponent(atfAreaView)
