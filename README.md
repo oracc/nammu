@@ -159,6 +159,16 @@ If you find any problem or need more information, you can create an issue
 [here](https://github.com/oracc/nammu/issues).
 
 
+## License
+
+Nammu is free software and has been licensed under the GNU General Public 
+License. You can read the full license text 
+[here](https://www.gnu.org/licenses/gpl-3.0.en.html). 
+
+If you want to reuse Nammu's code and have any concerns about the implications 
+of this license, please get in touch with us at `rc-softdev` (at) `ucl.ac.uk`.
+
+
 ## Links of interest
 
 * [ORACC](http://oracc.museum.upenn.edu)'s official website.
