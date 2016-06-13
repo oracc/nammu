@@ -1,3 +1,22 @@
+'''
+Copyright 2015, 2016 University College London.
+
+This file is part of Nammu.
+
+Nammu is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Nammu is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 import zipfile
 from email.mime.application import MIMEApplication
 from email.encoders import encode_7or8bit
@@ -7,10 +26,10 @@ from cStringIO import StringIO
 
 
 class HTTPRequest(object):
-    """
+    '''
     Builds an HTTP GET or POST request that ORACC's server understands to send
     and retrieve ATF data.
-    """
+    '''
     def __init__(self, url, method, **kwargs):
         self.method = method
         self.url = url
