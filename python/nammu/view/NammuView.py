@@ -18,7 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from java.awt import BorderLayout
-from javax.swing import JFrame
+from javax.swing import JFrame, JSplitPane
 from __builtin__ import None
 
 
@@ -57,12 +57,13 @@ class NammuView(JFrame):
 
     def addToolBar(self, toolbarView):
         self.getContentPane().add(toolbarView, BorderLayout.NORTH)
-
-    def addAtfArea(self, atfAreaView):
-        self.getContentPane().add(atfAreaView, BorderLayout.CENTER)
-
-    def addConsole(self, consoleView):
-        self.getContentPane().add(consoleView, BorderLayout.SOUTH)
+        
+    def addCenterPane(self, atfAreaView, consoleView):
+        splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+        splitPane.setTopComponent(atfAreaView)
+        splitPane.setBottomComponent(consoleView)
+        splitPane.setDividerSize(5)
+        self.getContentPane().add(splitPane, BorderLayout.CENTER)
 
     def display(self):
         self.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
