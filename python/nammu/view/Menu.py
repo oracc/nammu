@@ -1,4 +1,6 @@
 '''
+Copyright 2015, 2016 University College London.
+
 This file is part of Nammu.
 
 Nammu is free software: you can redistribute it and/or modify
