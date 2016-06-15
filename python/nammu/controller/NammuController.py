@@ -131,7 +131,11 @@ class NammuController(object):
         '''
 
         if self.handleUnsaved():
-            fileChooser = JFileChooser()
+            if self.currentFilename:
+                default_path = os.path.dirname(self.currentFilename)
+            else:
+                default_path = os.getcwd()
+            fileChooser = JFileChooser(default_path)
             file_filter = FileNameExtensionFilter("ATF files", ["atf"])
             fileChooser.setFileFilter(file_filter)
             status = fileChooser.showDialog(self.view, "Choose file")
@@ -168,7 +172,11 @@ class NammuController(object):
         1. Check if current file has a filename
         2. Save current file in destination given by user
         '''
-        fileChooser = JFileChooser()
+        if self.currentFilename:
+            default_path = os.path.dirname(self.currentFilename)
+        else:
+            default_path = os.getcwd()
+        fileChooser = JFileChooser(default_path)
         status = fileChooser.showSaveDialog(self.view)
 
         if status == JFileChooser.APPROVE_OPTION:
