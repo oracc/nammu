@@ -50,6 +50,7 @@ class AtfAreaController(object):
         return self.view.editArea.getText()
 
     def clearAtfArea(self):
+        self.view.editArea.setText("")
         # When opening a new file we should discard the previous edits
         self.view.undo_manager.discardAllEdits()
         # Reload line numbers text panel
