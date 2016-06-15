@@ -296,6 +296,12 @@ class NammuController(object):
         # Clear previous log in Nammu's console
         self.consoleController.view.editArea.setText("")
 
+        # Clear tooltips from last validation
+        self.atfAreaController.clearToolTips()
+
+        # Clear colouring in line number from previous validation
+        self.atfAreaController.update_line_numbers()
+
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
 
@@ -328,6 +334,12 @@ class NammuController(object):
         '''
         # Clear previous log in Nammu's console
         self.consoleController.view.editArea.setText("")
+
+        # Clear tooltips from last validation
+        self.atfAreaController.clearToolTips()
+
+        # Clear colouring in line number from previous validation
+        self.atfAreaController.update_line_numbers()
 
         if self.currentFilename:
             self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)

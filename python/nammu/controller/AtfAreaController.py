@@ -55,6 +55,15 @@ class AtfAreaController(object):
         self.view.undo_manager.discardAllEdits()
         # Reload line numbers text panel
         self.view.repaint_line_numbers(0)
+        # Clear tooltips
+        self.clearToolTips()
+
+    def clearToolTips(self):
+        '''
+        We don't want tooltips from previous validations appearing after the
+        file has been re-validated or another file has been opened.
+        '''
+        self.view.editArea.setToolTipText(None)
 
     def update_line_numbers(self):
         # Get how many lines are in the file
