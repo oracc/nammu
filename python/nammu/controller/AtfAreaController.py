@@ -56,7 +56,7 @@ class AtfAreaController(object):
         self.view.repaint_line_numbers(0)
         # Clear tooltips
         self.clearToolTips()
-        
+
     def clearToolTips(self):
         '''
         We don't want tooltips from previous validations appearing after the

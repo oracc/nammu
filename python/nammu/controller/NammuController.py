@@ -298,7 +298,7 @@ class NammuController(object):
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
-        
+
         # Clear colouring in line number from previous validation
         self.atfAreaController.update_line_numbers()
 
@@ -334,10 +334,10 @@ class NammuController(object):
         '''
         # Clear previous log in Nammu's console
         self.consoleController.view.editArea.setText("")
-        
-         # Clear tooltips from last validation
+
+        # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
-        
+
         # Clear colouring in line number from previous validation
         self.atfAreaController.update_line_numbers()
 
