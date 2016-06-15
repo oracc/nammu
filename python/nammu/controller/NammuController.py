@@ -169,26 +169,23 @@ class NammuController(object):
 
     def saveFile(self, event=None):
         '''
-        1. Check if current file has a filename
-        2. Save current file in destination given by user
+        If file being edited has a path, then overwrite with latest changes.
+        If file was created from scratch and has no path, prompt JFileChooser
+        to save in desired location.
         '''
-        if self.currentFilename:
-            default_path = os.path.dirname(self.currentFilename)
-        else:
-            default_path = os.getcwd()
-        fileChooser = JFileChooser(default_path)
-        status = fileChooser.showSaveDialog(self.view)
-
-        if status == JFileChooser.APPROVE_OPTION:
-            atfFile = fileChooser.getSelectedFile()
-            filename = atfFile.getCanonicalPath()
-            basename = atfFile.getName()
-            self.currentFilename = filename
-            atfText = self.atfAreaController.getAtfAreaText()
-            self.writeTextFile(filename, atfText)
-            # TODO check returned status?
-            self.logger.debug("File %s successfully saved.", filename)
-            self.view.setTitle(basename)
+        if not self.currentFilename:
+            fileChooser = JFileChooser(os.getcwd())
+            status = fileChooser.showSaveDialog(self.view)
+            if status == JFileChooser.APPROVE_OPTION:
+                atfFile = fileChooser.getSelectedFile()
+                filename = atfFile.getCanonicalPath()
+                basename = atfFile.getName()
+                self.currentFilename = filename
+                self.view.setTitle(basename)
+        atfText = self.atfAreaController.getAtfAreaText()
+        # Wrap in try/except?
+        self.writeTextFile(self.currentFilename, atfText)
+        self.logger.debug("File %s successfully saved.", self.currentFilename)
 
     def writeTextFile(self, filename, text):
         '''
