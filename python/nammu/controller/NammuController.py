@@ -431,11 +431,12 @@ class NammuController(object):
             self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
             if autolem:
-                self.logger.info("The lemmatisation returned some errors: \n%s",
+                self.logger.info("The lemmatisation returned some "
+                                 "errors: \n%s",
                                  oracc_log)
             else:
                 self.logger.info("The server returned some errors: \n%s",
-                             oracc_log)
+                                 oracc_log)
             self.logger.info("Please, see highlighted areas and correct "
                              "errors.")
 
