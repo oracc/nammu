@@ -86,12 +86,15 @@ class AtfAreaView(JPanel):
         # Syntax highlight setup
         sc = StyleContext.getDefaultStyleContext()
         self.setup_syntax_highlight_colours()
-        self.colors = {}
+        self.attribs = {}
         for color in self.colorlut:
-            self.colors[color] = sc.addAttribute(
-                                           SimpleAttributeSet.EMPTY,
-                                           StyleConstants.Foreground,
-                                           Color(*self.colorlut[color]))
+            attribs = SimpleAttributeSet()
+            StyleConstants.setFontFamily(attribs,
+                                         self.font.getFamily())
+            StyleConstants.setFontSize(attribs, self.font.getSize())
+            StyleConstants.setForeground(attribs, Color(*self.colorlut[color]))
+#             StyleConstants.setBackground(attribs, Color.yellow)
+            self.attribs[color] = attribs
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
         self.setup_syntax_highlight_tokens()
 
@@ -166,10 +169,10 @@ class AtfAreaView(JPanel):
         lexer.input(text)
         # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
-        color = self.colors[defaultcolor]
+        attribs = self.attribs[defaultcolor]
         self.edit_area_styledoc.setCharacterAttributes(0,
                                                        len(text),
-                                                       color,
+                                                       attribs,
                                                        True)
         for tok in lexer:
             if tok.type in self.tokencolorlu:
@@ -190,10 +193,10 @@ class AtfAreaView(JPanel):
                     mylength = len(splittext[tok.lineno-1])
                 else:
                     mylength = len(tok.value)
-                color = self.colors[color]
+                attribs = self.attribs[color]
                 self.edit_area_styledoc.setCharacterAttributes(tok.lexpos,
                                                                mylength,
-                                                               color,
+                                                               attribs,
                                                                True)
 
     def setup_syntax_highlight_colours(self):
