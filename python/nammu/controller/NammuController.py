@@ -146,6 +146,9 @@ class NammuController(object):
                 basename = atfFile.getName()
                 atfText = self.readTextFile(filename)
                 self.currentFilename = atfFile.getCanonicalPath()
+                # Clear ATF area before adding next text to clean up tooltips
+                # and such
+                self.atfAreaController.clearAtfArea()
                 self.atfAreaController.setAtfAreaText(atfText)
                 self.logger.debug("File %s successfully opened.", filename)
                 self.view.setTitle(basename)
