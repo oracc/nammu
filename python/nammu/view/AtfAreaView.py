@@ -87,7 +87,7 @@ class AtfAreaView(JPanel):
         self.set_up_syntax_highlight()
         
         # Needs to be accessible from the AtfEditArea
-        self.validation_errors = None
+        self.validation_errors = {}
         
     def set_up_syntax_highlight(self):
         '''
@@ -95,7 +95,7 @@ class AtfAreaView(JPanel):
         '''
         self.setup_syntax_highlight_colours()
     
-        def get_attribs(color):
+        def get_attribs(color, error=False):
             '''
             Closure to make the generation of font styling cleaner.
             Note closures need to be defined before being invoked.
@@ -107,13 +107,21 @@ class AtfAreaView(JPanel):
                                        self.font.getSize())
             StyleConstants.setForeground(attribs, 
                                          Color(*self.colorlut[color]))
+            # Add yellow background to error line styling
+            # White if no error, otherwise it'll keep on being yellow forever
+            if error:
+                StyleConstants.setBackground(attribs, Color.yellow)
+            else:
+                StyleConstants.setBackground(attribs, Color.white)
             return attribs
         
         # Create a dictionary of attributes, two per possible font colour:
         # one with yellow background for errors and another with default bg.
         self.attribs = {}
+        self.error_attribs = {}
         for color in self.colorlut:
             self.attribs[color] = get_attribs(color)
+            self.error_attribs[color] = get_attribs(color, True)
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
         self.setup_syntax_highlight_tokens()
 
@@ -209,7 +217,10 @@ class AtfAreaView(JPanel):
                     mylength = len(splittext[tok.lineno-1])
                 else:
                     mylength = len(tok.value)
-                attribs = self.attribs[color]
+                if tok.lineno in self.validation_errors.keys():
+                    attribs = self.error_attribs[color]
+                else:
+                    attribs = self.attribs[color]
                 self.edit_area_styledoc.setCharacterAttributes(tok.lexpos,
                                                                mylength,
                                                                attribs,
