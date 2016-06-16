@@ -193,11 +193,18 @@ class AtfAreaView(JPanel):
         lexer.input(text)
         # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
-        attribs = self.attribs[defaultcolor]
-        self.edit_area_styledoc.setCharacterAttributes(0,
-                                                       len(text),
-                                                       attribs,
-                                                       True)
+        # Keep background style from validation errors
+        line_num = 1
+        for line in splittext:
+            if line_num in self.validation_errors.keys():
+                attribs = self.error_attribs[defaultcolor]
+            else:
+                attribs = self.attribs[defaultcolor]    
+            line_num += 1
+            self.edit_area_styledoc.setCharacterAttributes(0,
+                                                           len(line),
+                                                           attribs,
+                                                           True)
         for tok in lexer:
             if tok.type in self.tokencolorlu:
                 if type(self.tokencolorlu[tok.type]) is dict:
