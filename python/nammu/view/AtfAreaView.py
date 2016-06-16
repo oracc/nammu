@@ -88,15 +88,13 @@ class AtfAreaView(JPanel):
         self.setup_syntax_highlight_colours()
         self.colors = {}
         for color in self.colorlut:
-            self.colors[color] = sc.addAttribute(
-                                           SimpleAttributeSet.EMPTY,
-                                           StyleConstants.Foreground,
-                                           Color(*self.colorlut[color]))
+            self.colors[color] = Color(*self.colorlut[color])
+            
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
         self.setup_syntax_highlight_tokens()
-
-        # Needs to be accessible from the AtfEditArea
-        self.validation_errors = None
+        
+        # Needs to be accessible from the AtfEditArea and syntax highlighter
+        self.validation_errors = {}
 
     def error_highlight(self, validation_errors):
         """
@@ -131,7 +129,7 @@ class AtfAreaView(JPanel):
                                                            attribs,
                                                            True)
 
-                    # Calculate postion of text line
+                    # Calculate position of text line
                     text = re.finditer(r"\n", self.editArea.text)
                     line_num = int(line_num)
                     if line_num >= 2:
@@ -164,37 +162,69 @@ class AtfAreaView(JPanel):
                                                edit_area_length)
         splittext = text.split('\n')
         lexer.input(text)
-        # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
         color = self.colors[defaultcolor]
-        self.edit_area_styledoc.setCharacterAttributes(0,
-                                                       len(text),
-                                                       color,
-                                                       True)
+        
         for tok in lexer:
-            if tok.type in self.tokencolorlu:
-                if type(self.tokencolorlu[tok.type]) is dict:
-                    # the token should be styled differently depending
-                    # on state
-                    try:
-                        state = lexer.current_state()
-                        color = self.tokencolorlu[tok.type][state][0]
-                        styleline = self.tokencolorlu[tok.type][state][1]
-                    except KeyError:
-                        color = self.tokencolorlu['default'][0]
-                        styleline = self.tokencolorlu['default'][1]
-                else:
-                    color = self.tokencolorlu[tok.type][0]
-                    styleline = self.tokencolorlu[tok.type][1]
-                if styleline:
-                    mylength = len(splittext[tok.lineno-1])
-                else:
-                    mylength = len(tok.value)
-                color = self.colors[color]
-                self.edit_area_styledoc.setCharacterAttributes(tok.lexpos,
-                                                               mylength,
-                                                               color,
-                                                               True)
+            defaultcolor = self.tokencolorlu['default'][0]
+            color = self.colors[defaultcolor]
+            if tok.lineno in self.validation_errors.keys():
+                if tok.type in self.tokencolorlu:
+                    if type(self.tokencolorlu[tok.type]) is dict:
+                        # the token should be styled differently depending
+                        # on state
+                        try:
+                            state = lexer.current_state()
+                            color = self.tokencolorlu[tok.type][state][0]
+                            styleline = self.tokencolorlu[tok.type][state][1]
+                        except KeyError:
+                            color = self.tokencolorlu['default'][0]
+                            styleline = self.tokencolorlu['default'][1]
+                    else:
+                        color = self.tokencolorlu[tok.type][0]
+                        styleline = self.tokencolorlu[tok.type][1]
+                    if styleline:
+                        mylength = len(splittext[tok.lineno-1])
+                    else:
+                        mylength = len(tok.value)
+                    attribs = SimpleAttributeSet()
+                    StyleConstants.setFontFamily(attribs, 
+                                                 self.font.getFamily())
+                    StyleConstants.setFontSize(attribs, self.font.getSize())
+                    StyleConstants.setForeground(attribs, self.colors[color])
+                    StyleConstants.setBackground(error_attribs, Color.yellow)
+                    self.edit_area_styledoc.setCharacterAttributes(tok.lexpos,
+                                                                   mylength,
+                                                                   attribs,
+                                                                   True)
+            else:
+                if tok.type in self.tokencolorlu:
+                    if isinstance(self.tokencolorlu[tok.type], dict):
+                        # the token should be styled differently depending
+                        # on state
+                        try:
+                            state = lexer.current_state()
+                            color = self.tokencolorlu[tok.type][state][0]
+                            styleline = self.tokencolorlu[tok.type][state][1]
+                        except KeyError:
+                            color = self.tokencolorlu['default'][0]
+                            styleline = self.tokencolorlu['default'][1]
+                    else:
+                        color = self.tokencolorlu[tok.type][0]
+                        styleline = self.tokencolorlu[tok.type][1]
+                    if styleline:
+                        mylength = len(splittext[tok.lineno-1])
+                    else:
+                        mylength = len(tok.value)
+                    attribs = SimpleAttributeSet()
+                    StyleConstants.setFontFamily(attribs, 
+                                                 self.font.getFamily())
+                    StyleConstants.setFontSize(attribs, self.font.getSize())
+                    StyleConstants.setForeground(attribs, self.colors[color])
+                    self.edit_area_styledoc.setCharacterAttributes(tok.lexpos,
+                                                                   mylength,
+                                                                   attribs,
+                                                                   True)
 
     def setup_syntax_highlight_colours(self):
         # Syntax highlighting colors based on SOLARIZED
