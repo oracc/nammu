@@ -64,6 +64,8 @@ class NammuView(JFrame):
         splitPane.setBottomComponent(consoleView)
         splitPane.setDividerSize(5)
         self.getContentPane().add(splitPane, BorderLayout.CENTER)
+        # Make console's high remain smaller compared to edit area
+        splitPane.setResizeWeight(0.9)
 
     def display(self):
         self.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
