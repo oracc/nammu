@@ -84,22 +84,38 @@ class AtfAreaView(JPanel):
         self.add(scrollingText, BorderLayout.CENTER)
 
         # Syntax highlight setup
-        sc = StyleContext.getDefaultStyleContext()
+        self.set_up_syntax_highlight()
+        
+        # Needs to be accessible from the AtfEditArea
+        self.validation_errors = None
+        
+    def set_up_syntax_highlight(self):
+        '''
+        Initialize colours, listeners and tokens to be syntax highlighted.
+        '''
         self.setup_syntax_highlight_colours()
-        self.attribs = {}
-        for color in self.colorlut:
+    
+        def get_attribs(color):
+            '''
+            Closure to make the generation of font styling cleaner.
+            Note closures need to be defined before being invoked.
+            '''
             attribs = SimpleAttributeSet()
             StyleConstants.setFontFamily(attribs,
                                          self.font.getFamily())
-            StyleConstants.setFontSize(attribs, self.font.getSize())
-            StyleConstants.setForeground(attribs, Color(*self.colorlut[color]))
-#             StyleConstants.setBackground(attribs, Color.yellow)
-            self.attribs[color] = attribs
+            StyleConstants.setFontSize(attribs, 
+                                       self.font.getSize())
+            StyleConstants.setForeground(attribs, 
+                                         Color(*self.colorlut[color]))
+            return attribs
+        
+        # Create a dictionary of attributes, two per possible font colour:
+        # one with yellow background for errors and another with default bg.
+        self.attribs = {}
+        for color in self.colorlut:
+            self.attribs[color] = get_attribs(color)
         self.editArea.addKeyListener(AtfAreaKeyListener(self))
         self.setup_syntax_highlight_tokens()
-
-        # Needs to be accessible from the AtfEditArea
-        self.validation_errors = None
 
     def error_highlight(self, validation_errors):
         """
