@@ -255,6 +255,8 @@ class AtfAreaView(JPanel):
         self.tokencolorlu['PROJECT'] = {}
         self.tokencolorlu['PROJECT']['flagged'] = ('magenta', False)
         self.tokencolorlu['PROJECT']['transctrl'] = ('green', False)
+        self.tokencolorlu['OPENR'] = ('green', False)
+        self.tokencolorlu['CLOSER'] = ('green', False)
         self.tokencolorlu['default'] = ('black', False)
 
     def repaint_line_numbers(self, n_lines):
