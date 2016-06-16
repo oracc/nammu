@@ -160,52 +160,42 @@ class NammuController(object):
         return text
         # TODO: Check if selected file is ATF or at least text file!
 
-#        try:
-#          reader = FileReader(f)
-#          self.outer._editArea.read(reader, "")  # Use TextComponent read
-#        except IOException,ioex:
-#          System.out.println(e);
-#          System.exit(1);
-
     def saveFile(self, event=None):
         '''
-        1. Check if current file has a filename
-        2. Save current file in destination given by user
+        If file being edited has a path, then overwrite with latest changes.
+        If file was created from scratch and has no path, prompt JFileChooser
+        to save in desired location.
         '''
-        if self.currentFilename:
-            default_path = os.path.dirname(self.currentFilename)
+        if not self.currentFilename:
+            fileChooser = JFileChooser(os.getcwd())
+            status = fileChooser.showSaveDialog(self.view)
+            if status == JFileChooser.APPROVE_OPTION:
+                atfFile = fileChooser.getSelectedFile()
+                filename = atfFile.getCanonicalPath()
+                basename = atfFile.getName()
+                self.currentFilename = filename
+                self.view.setTitle(basename)
+        atfText = self.atfAreaController.getAtfAreaText()
+        try:
+            self.writeTextFile(self.currentFilename, atfText)
+        except:
+            self.logger.error("There was an error trying to save %s.",
+                              self.currentFilename)
         else:
-            default_path = os.getcwd()
-        fileChooser = JFileChooser(default_path)
-        status = fileChooser.showSaveDialog(self.view)
-
-        if status == JFileChooser.APPROVE_OPTION:
-            atfFile = fileChooser.getSelectedFile()
-            filename = atfFile.getCanonicalPath()
-            basename = atfFile.getName()
-            self.currentFilename = filename
-            atfText = self.atfAreaController.getAtfAreaText()
-            self.writeTextFile(filename, atfText)
-            # TODO check returned status?
-            self.logger.debug("File %s successfully saved.", filename)
-            self.view.setTitle(basename)
+            self.logger.debug("File %s successfully saved.",
+                              self.currentFilename)
 
     def writeTextFile(self, filename, text):
         '''
         Action to execute when saving an ATF.
         '''
-        f = codecs.open(filename, "w", "utf-8")
-        f.write(text)
-        f.close()
-
-        # TODO return status?
-
-#       try:
-#         writer = FileWriter(f)
-#         self.outer._editArea.write(writer)  # TextComponent write
-#       except IOException,ioex:
-#         JOptionPane.showMessageDialog(self.outer, ioex)
-#         System.exit(1)
+        try:
+            f = codecs.open(filename, "w", "utf-8")
+            f.write(text)
+            f.close()
+        except IOError as e:
+            self.logger.error(str(e))
+            raise
 
     def closeFile(self, event=None):
         '''
