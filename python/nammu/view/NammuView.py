@@ -1,19 +1,32 @@
 '''
-Created on 15 Apr 2015
+Copyright 2015, 2016 University College London.
 
-Main View class.
-Initializes the view components and sets components layout.
+This file is part of Nammu.
 
-@author: raquel-ucl
+Nammu is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Nammu is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from java.awt import BorderLayout
-from javax.swing import JFrame
+from javax.swing import JFrame, JSplitPane
 from __builtin__ import None
 
 
 class NammuView(JFrame):
-
+    '''
+    Main View class.
+    Initializes the view components and sets components layout.
+    '''
     def __init__(self, controller):
         # Give reference to controller to delegate action response
         self.controller = controller
@@ -45,15 +58,18 @@ class NammuView(JFrame):
     def addToolBar(self, toolbarView):
         self.getContentPane().add(toolbarView, BorderLayout.NORTH)
 
-    def addAtfArea(self, atfAreaView):
-        self.getContentPane().add(atfAreaView, BorderLayout.CENTER)
-
-    def addConsole(self, consoleView):
-        self.getContentPane().add(consoleView, BorderLayout.SOUTH)
+    def addCenterPane(self, atfAreaView, consoleView):
+        splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+        splitPane.setTopComponent(atfAreaView)
+        splitPane.setBottomComponent(consoleView)
+        splitPane.setDividerSize(5)
+        self.getContentPane().add(splitPane, BorderLayout.CENTER)
+        # Make console's high remain smaller compared to edit area
+        splitPane.setResizeWeight(0.9)
 
     def display(self):
         self.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-        self.setTitle("Nammu - pre-release")
+        self.setTitle("Nammu")
         self.pack()
         self.setLocationRelativeTo(None)
 

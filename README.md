@@ -1,5 +1,8 @@
 #Nammu: Desktop GUI for ORACC
 
+To run Nammu on your computer, you can download it from 
+[here](https://github.com/oracc/nammu/releases/download/v0.1.1/nammu-0.1.1.jar)
+and just double click on it to open it. 
 
 ##What is ORACC?
 ORACC is the [Open Richly Annotated Cuneiform Corpus](http://oracc.org). 
@@ -34,6 +37,7 @@ Nammu is currently being developed by the
 [UCL Research Software Development Group](https://www.ucl.ac.uk/research-it-services/about/research-software-development).
 
 <img src="./doc/mockups/nammu_0.1.png" align="center" width="70%">
+
 
 ## Validation of ATF files
 
@@ -72,19 +76,28 @@ on how to correct them.
 
 ## How to run Nammu
 
-Nammu is being developed in [Jython](http://www.jython.org), an implementation
-of the Python language designed to run on the Java platform. 
-The installable for Nammu is a JAR file containg Nammu's code as well as all the
-necessary Java and Python libraries to run it, like pyORACC, logging, etc.
-JAR files can be run in any platform as long as the [Java Virtual Machine](https://en.wikipedia.org/wiki/Java_virtual_machine) 
-has been installed. It doesn't require any other extra configuration.
+To run Nammu on your computer, you can download it from 
+[here](https://github.com/oracc/nammu/releases/download/v0.1/nammu-0.1.jar)
+and just double click on it to open it and use it. 
 
-To run Nammu on your computer, you can download the JAR file [here] and just 
-double click on it to use it. 
+If you find any problem trying to open it, it might be that you don't have Java
+installed. You can check if you do by opening a terminal and typing:
 
-Alternatively, you can also run it from the command line, like this:
+`java`
+
+If that command is not recognised, then you'll need to download and install
+the Java Runtime Environment (JRE). You can find the appropriate JRE 
+installable file for your operating system 
+[here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html).
+
+If you keep having trouble, you can also run it from the command line, like this:
 
 `java -jar /path/to/namu.jar`
+
+This will output a clearer log message about what the problem is.
+
+If you run into trouble, you can create a new issue and tell us about your 
+problem [here](https://github.com/oracc/nammu/issues/new).
 
 
 ## Nammu's configuration for advanced users:
@@ -102,6 +115,16 @@ a YAML file containing some configuration on how the logging works.
 You can see [here](https://github.com/oracc/nammu/blob/development/resources/config/logging.yaml) 
 the default logging configuration.
 
+#### Notes on Nammu's software development
+
+Nammu is being developed in [Jython](http://www.jython.org), an 
+implementation of the Python language designed to run on the Java platform. 
+The installable for Nammu is a JAR file containing Nammu's code as well as all 
+the necessary Java and Python libraries to run it, like pyORACC, logging, etc.
+
+JAR files can be run in any platform as long as the 
+[Java Virtual Machine](https://en.wikipedia.org/wiki/Java_virtual_machine) 
+has been installed. It doesn't require any other extra configuration.
 
 #### Contributors
 
@@ -134,6 +157,16 @@ like this:
 
 If you find any problem or need more information, you can create an issue 
 [here](https://github.com/oracc/nammu/issues).
+
+
+## License
+
+Nammu is free software and has been licensed under the GNU General Public 
+License. You can read the full license text 
+[here](https://www.gnu.org/licenses/gpl-3.0.en.html). 
+
+If you want to reuse Nammu's code and have any concerns about the implications 
+of this license, please get in touch with us at `rc-softdev` (at) `ucl.ac.uk`.
 
 
 ## Links of interest

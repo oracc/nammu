@@ -1,11 +1,20 @@
 '''
-Created on 15 Apr 2015
+Copyright 2015, 2016 University College London.
 
-Main Controller class.
-Initialises the controller classes and displays the view.
-Handles controller events.
+This file is part of Nammu.
 
-@author: raquel-ucl
+Nammu is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Nammu is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import codecs
@@ -40,7 +49,11 @@ from ..view.NammuView import NammuView
 
 
 class NammuController(object):
-
+    '''
+    Main Controller class.
+    Initialises the controller classes and displays the view.
+    Handles controller events.
+    '''
     def __init__(self):
         '''
         Initialise main controller of the application:
@@ -66,8 +79,8 @@ class NammuController(object):
         self.view = NammuView(self)
         self.view.addMenuBar(self.menuController.view)
         self.view.addToolBar(self.toolbarController.view)
-        self.view.addAtfArea(self.atfAreaController.view)
-        self.view.addConsole(self.consoleController.view)
+        self.view.addCenterPane(self.atfAreaController.view,
+                                self.consoleController.view)
         self.logger.info("Welcome to Nammu!")
         self.logger.info(
                 "Please open an ATF file or start typing to create a new one.")
@@ -118,7 +131,11 @@ class NammuController(object):
         '''
 
         if self.handleUnsaved():
-            fileChooser = JFileChooser()
+            if self.currentFilename:
+                default_path = os.path.dirname(self.currentFilename)
+            else:
+                default_path = os.getcwd()
+            fileChooser = JFileChooser(default_path)
             file_filter = FileNameExtensionFilter("ATF files", ["atf"])
             fileChooser.setFileFilter(file_filter)
             status = fileChooser.showDialog(self.view, "Choose file")
@@ -129,6 +146,9 @@ class NammuController(object):
                 basename = atfFile.getName()
                 atfText = self.readTextFile(filename)
                 self.currentFilename = atfFile.getCanonicalPath()
+                # Clear ATF area before adding next text to clean up tooltips
+                # and such
+                self.atfAreaController.clearAtfArea()
                 self.atfAreaController.setAtfAreaText(atfText)
                 self.logger.debug("File %s successfully opened.", filename)
                 self.view.setTitle(basename)
@@ -143,48 +163,42 @@ class NammuController(object):
         return text
         # TODO: Check if selected file is ATF or at least text file!
 
-#        try:
-#          reader = FileReader(f)
-#          self.outer._editArea.read(reader, "")  # Use TextComponent read
-#        except IOException,ioex:
-#          System.out.println(e);
-#          System.exit(1);
-
     def saveFile(self, event=None):
         '''
-        1. Check if current file has a filename
-        2. Save current file in destination given by user
+        If file being edited has a path, then overwrite with latest changes.
+        If file was created from scratch and has no path, prompt JFileChooser
+        to save in desired location.
         '''
-        fileChooser = JFileChooser()
-        status = fileChooser.showSaveDialog(self.view)
-
-        if status == JFileChooser.APPROVE_OPTION:
-            atfFile = fileChooser.getSelectedFile()
-            filename = atfFile.getCanonicalPath()
-            basename = atfFile.getName()
-            self.currentFilename = filename
-            atfText = self.atfAreaController.getAtfAreaText()
-            self.writeTextFile(filename, atfText)
-            # TODO check returned status?
-            self.logger.debug("File %s successfully saved.", filename)
-            self.view.setTitle(basename)
+        if not self.currentFilename:
+            fileChooser = JFileChooser(os.getcwd())
+            status = fileChooser.showSaveDialog(self.view)
+            if status == JFileChooser.APPROVE_OPTION:
+                atfFile = fileChooser.getSelectedFile()
+                filename = atfFile.getCanonicalPath()
+                basename = atfFile.getName()
+                self.currentFilename = filename
+                self.view.setTitle(basename)
+        atfText = self.atfAreaController.getAtfAreaText()
+        try:
+            self.writeTextFile(self.currentFilename, atfText)
+        except:
+            self.logger.error("There was an error trying to save %s.",
+                              self.currentFilename)
+        else:
+            self.logger.debug("File %s successfully saved.",
+                              self.currentFilename)
 
     def writeTextFile(self, filename, text):
         '''
         Action to execute when saving an ATF.
         '''
-        f = codecs.open(filename, "w", "utf-8")
-        f.write(text)
-        f.close()
-
-        # TODO return status?
-
-#       try:
-#         writer = FileWriter(f)
-#         self.outer._editArea.write(writer)  # TextComponent write
-#       except IOException,ioex:
-#         JOptionPane.showMessageDialog(self.outer, ioex)
-#         System.exit(1)
+        try:
+            f = codecs.open(filename, "w", "utf-8")
+            f.write(text)
+            f.close()
+        except IOError as e:
+            self.logger.error(str(e))
+            raise
 
     def closeFile(self, event=None):
         '''
@@ -280,6 +294,15 @@ class NammuController(object):
         server.
         However, the intention is to replace this with validation by pyoracc.
         '''
+        # Clear previous log in Nammu's console
+        self.consoleController.view.editArea.setText("")
+
+        # Clear tooltips from last validation
+        self.atfAreaController.clearToolTips()
+
+        # Clear colouring in line number from previous validation
+        self.atfAreaController.update_line_numbers()
+
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
 
@@ -310,6 +333,15 @@ class NammuController(object):
         Connect to ORACC server and retrieved lemmatised version of ATF file.
         Don't lemmatise if file doesn't validate.
         '''
+        # Clear previous log in Nammu's console
+        self.consoleController.view.editArea.setText("")
+
+        # Clear tooltips from last validation
+        self.atfAreaController.clearToolTips()
+
+        # Clear colouring in line number from previous validation
+        self.atfAreaController.update_line_numbers()
+
         if self.currentFilename:
             self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
 
@@ -411,13 +443,15 @@ class NammuController(object):
             validation_errors = self.get_validation_errors(oracc_log)
             self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
-            self.logger.info("The server returned some errors: \n%s",
-                             oracc_log)
             if autolem:
-                self.logger.info("You can't lemmatise a file that is not "
-                                 "valid.")
+                self.logger.info("The lemmatisation returned some "
+                                 "errors: \n%s",
+                                 oracc_log)
+            else:
+                self.logger.info("The server returned some errors: \n%s",
+                                 oracc_log)
             self.logger.info("Please, see highlighted areas and correct "
-                             " errors.")
+                             "errors.")
 
         else:
             self.logger.info("The validation returned no errors.")

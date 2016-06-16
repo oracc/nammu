@@ -1,9 +1,20 @@
 '''
-Created on 15 Apr 2015
+Copyright 2015, 2016 University College London.
 
-Creates the ATF area (edit/object) view and handles its actions.
+This file is part of Nammu.
 
-@author: raquel-ucl
+Nammu is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Nammu is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from javax.swing.undo import CannotUndoException, CannotRedoException
@@ -11,7 +22,9 @@ from ..view.AtfAreaView import AtfAreaView
 
 
 class AtfAreaController(object):
-
+    '''
+    Creates the ATF area (edit/object) view and handles its actions.
+    '''
     def __init__(self, mainControler):
         # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
@@ -42,6 +55,15 @@ class AtfAreaController(object):
         self.view.undo_manager.discardAllEdits()
         # Reload line numbers text panel
         self.view.repaint_line_numbers(0)
+        # Clear tooltips
+        self.clearToolTips()
+
+    def clearToolTips(self):
+        '''
+        We don't want tooltips from previous validations appearing after the
+        file has been re-validated or another file has been opened.
+        '''
+        self.view.editArea.setToolTipText(None)
 
     def update_line_numbers(self):
         # Get how many lines are in the file
