@@ -59,7 +59,39 @@ class AtfEditArea(JTextPane):
         """
         text = self.text[0:position]
         return text.count('\n') + 1
-
+    
+    def setText(self, text):
+        '''
+        Override JTextPane's setText to call syntax highlighting so that when 
+        you paste text via 
+        '''
+        super(AtfEditArea, self).setText(text)
+        self.parent_component.syntax_highlight()
+        
+    def cut(self):
+        '''
+        Override JTextPane's cut to call syntax highlighting so that when 
+        you paste text via 
+        '''
+        super(AtfEditArea, self).cut()
+        self.parent_component.syntax_highlight()
+        
+    def copy(self):
+        '''
+        Override JTextPane's copy to call syntax highlighting so that when 
+        you paste text via 
+        '''
+        super(AtfEditArea, self).copy()
+        self.parent_component.syntax_highlight()
+        
+    def paste(self):
+        '''
+        Override JTextPane's paste to call syntax highlighting so that when 
+        you paste text via 
+        '''
+        super(AtfEditArea, self).paste()
+        self.parent_component.syntax_highlight()
+        
 
 class CustomMouseListener(MouseAdapter):
     """
