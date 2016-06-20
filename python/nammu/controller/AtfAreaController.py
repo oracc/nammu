@@ -118,11 +118,10 @@ class AtfAreaController(object):
             pass
         else:
             self.update_line_numbers()
-        
+
     def __getattr__(self, name):
         '''
-        Calls to copy, paste and cut methods are just passed to text area. 
+        Calls to copy, paste and cut methods are just passed to text area.
         '''
         if name in ('copy', 'paste', 'cut'):
             return getattr(self.view.editArea, name)
-            
