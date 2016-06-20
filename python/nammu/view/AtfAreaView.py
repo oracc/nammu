@@ -85,16 +85,16 @@ class AtfAreaView(JPanel):
 
         # Syntax highlight setup
         self.set_up_syntax_highlight()
-        
+
         # Needs to be accessible from the AtfEditArea
         self.validation_errors = {}
-        
+
     def set_up_syntax_highlight(self):
         '''
         Initialize colours, listeners and tokens to be syntax highlighted.
         '''
         self.setup_syntax_highlight_colours()
-    
+
         def get_attribs(color, error=False):
             '''
             Closure to make the generation of font styling cleaner.
@@ -103,9 +103,9 @@ class AtfAreaView(JPanel):
             attribs = SimpleAttributeSet()
             StyleConstants.setFontFamily(attribs,
                                          self.font.getFamily())
-            StyleConstants.setFontSize(attribs, 
+            StyleConstants.setFontSize(attribs,
                                        self.font.getSize())
-            StyleConstants.setForeground(attribs, 
+            StyleConstants.setForeground(attribs,
                                          Color(*self.colorlut[color]))
             # Add yellow background to error line styling
             # White if no error, otherwise it'll keep on being yellow forever
@@ -114,7 +114,7 @@ class AtfAreaView(JPanel):
             else:
                 StyleConstants.setBackground(attribs, Color.white)
             return attribs
-        
+
         # Create a dictionary of attributes, two per possible font colour:
         # one with yellow background for errors and another with default bg.
         self.attribs = {}
@@ -162,7 +162,9 @@ class AtfAreaView(JPanel):
                     textiter = re.finditer(r"\n", self.editArea.text)
                     line_num = int(line_num)
                     if line_num != 1:
-                        pos = [m.start() for m in textiter][line_num - 2:line_num]
+                        begin = line_num - 2
+                        end = line_num
+                        pos = [m.start() for m in textiter][begin:end]
                     else:
                         pos = [0, len(line)]
                     length = pos[1] - pos[0]
@@ -195,7 +197,7 @@ class AtfAreaView(JPanel):
             if str(line_num) in self.validation_errors.keys():
                 attribs = self.error_attribs[defaultcolor]
             else:
-                attribs = self.attribs[defaultcolor]    
+                attribs = self.attribs[defaultcolor]
             textiter = re.finditer(r"\n", text)
             if line_num != 1:
                 pos = [m.start() for m in textiter][line_num - 2:line_num]

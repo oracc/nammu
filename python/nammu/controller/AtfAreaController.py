@@ -59,7 +59,7 @@ class AtfAreaController(object):
         self.clearToolTips()
         # Clear validation errors
         self.clear_validation_errors()
-        
+
     def clear_validation_errors(self):
         '''
         Clear validation errors not to inherit wrong styling from previously
