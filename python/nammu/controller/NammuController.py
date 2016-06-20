@@ -439,9 +439,10 @@ class NammuController(object):
         If we are lemmatising, it'll also return:
           * <filename>_autolem.atf: lemmatised version of file
         """
+        validation_errors = self.get_validation_errors(oracc_log)
+        self.atfAreaController.view.validation_errors = validation_errors
         if oracc_log:
-            validation_errors = self.get_validation_errors(oracc_log)
-            self.atfAreaController.view.error_highlight(validation_errors)
+            self.atfAreaController.view.syntax_highlight()
             # TODO: Prompt dialog.
             if autolem:
                 self.logger.info("The lemmatisation returned some "
