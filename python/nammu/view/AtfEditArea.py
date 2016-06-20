@@ -49,7 +49,9 @@ class AtfEditArea(JTextPane):
                     err_msg = self.parent_component.validation_errors[line_num]
                 except KeyError:
                     # Current line has no error messages assigned
-                    pass
+                    # Returning None also switches off tooltips from previous
+                    # validation errors.
+                    return None
                 else:
                     return err_msg
 
