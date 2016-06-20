@@ -131,8 +131,8 @@ class AtfAreaView(JPanel):
         Receives a dictionary with line numbers and error messages and repaints
         the line numbers and text lines to highlight errors.
         """
+        self.validation_errors = validation_errors
         if validation_errors:
-            self.validation_errors = validation_errors
             for line_num, error in validation_errors.items():
                 attribs = SimpleAttributeSet()
                 StyleConstants.setFontFamily(attribs, self.font.getFamily())
@@ -158,17 +158,13 @@ class AtfAreaView(JPanel):
                                                            attribs,
                                                            True)
 
-                    # Calculate postion of text line
-                    text = re.finditer(r"\n", self.editArea.text)
+                    # Calculate position of text line
+                    textiter = re.finditer(r"\n", self.editArea.text)
                     line_num = int(line_num)
-                    if line_num >= 2:
-                        pos = [m.start() for m in text][line_num - 2:line_num]
-                    elif '\n' in self.editArea.text:
-                        # If error is in first line, highlight it
-                        pos = [0, self.editArea.text.index('\n')]
+                    if line_num != 1:
+                        pos = [m.start() for m in textiter][line_num - 2:line_num]
                     else:
-                        # If no end of line, text is a one liner
-                        pos = [0, len(self.editArea.text)]
+                        pos = [0, len(line)]
                     length = pos[1] - pos[0]
                     # Highlight text line
                     attribs = SimpleAttributeSet()
@@ -196,13 +192,18 @@ class AtfAreaView(JPanel):
         # Keep background style from validation errors
         line_num = 1
         for line in splittext:
-            if line_num in self.validation_errors.keys():
+            if str(line_num) in self.validation_errors.keys():
                 attribs = self.error_attribs[defaultcolor]
             else:
                 attribs = self.attribs[defaultcolor]    
+            textiter = re.finditer(r"\n", text)
+            if line_num != 1:
+                pos = [m.start() for m in textiter][line_num - 2:line_num]
+            else:
+                pos = [0, len(line)]
             line_num += 1
-            self.edit_area_styledoc.setCharacterAttributes(0,
-                                                           len(line),
+            self.edit_area_styledoc.setCharacterAttributes(pos[0],
+                                                           len(line) + 1,
                                                            attribs,
                                                            True)
         for tok in lexer:
@@ -224,7 +225,7 @@ class AtfAreaView(JPanel):
                     mylength = len(splittext[tok.lineno-1])
                 else:
                     mylength = len(tok.value)
-                if tok.lineno in self.validation_errors.keys():
+                if str(tok.lineno) in self.validation_errors.keys():
                     attribs = self.error_attribs[color]
                 else:
                     attribs = self.attribs[color]
