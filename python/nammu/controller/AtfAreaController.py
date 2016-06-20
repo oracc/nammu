@@ -47,9 +47,17 @@ class AtfAreaController(object):
         self.update_line_numbers()
 
     def getAtfAreaText(self):
+        '''
+        Short hand for getting Nammu's text area's content.
+        '''
         return self.view.editArea.getText()
 
     def clearAtfArea(self):
+        '''
+        Every time we clear the ATF text area we also need to clear the edits
+        pile, repaint the line numbers and remove the styling from previous
+        validation highlight.
+        '''
         self.view.editArea.setText("")
         # When opening a new file we should discard the previous edits
         self.view.undo_manager.discardAllEdits()
@@ -75,17 +83,22 @@ class AtfAreaController(object):
         self.view.editArea.setToolTipText(None)
 
     def update_line_numbers(self):
+        '''
+        Update line numbers area when text length changes.
+        '''
         # Get how many lines are in the file
         n_lines = self.getAtfAreaText().count('\n')
         # Reload line numbers text panel
         self.view.repaint_line_numbers(n_lines)
 
     def undo(self):
-        # CompoundEdits only get added  to the undo manager when the next
-        # INSERT/REMOVE event happens. Thus, if we are adding changes to
-        # the current compound edit and we want to undo it before the next
-        # INSERT/REMOVE happens, we won't be able until it's been explicitly
-        # ended.
+        '''
+        CompoundEdits only get added  to the undo manager when the next
+        INSERT/REMOVE event happens. Thus, if we are adding changes to
+        the current compound edit and we want to undo it before the next
+        INSERT/REMOVE happens, we won't be able until it's been explicitly
+        ended.
+        '''
         self.view.edit_listener.current_compound.end()
         try:
             self.undo_manager.undo()
@@ -105,15 +118,11 @@ class AtfAreaController(object):
             pass
         else:
             self.update_line_numbers()
-
-    def copy(self):
-        self.view.editArea.copy()
-        self.update_line_numbers()
-
-    def paste(self):
-        self.view.editArea.paste()
-        self.update_line_numbers()
-
-    def cut(self):
-        self.view.editArea.cut()
-        self.update_line_numbers()
+        
+    def __getattr__(self, name):
+        '''
+        Calls to copy, paste and cut methods are just passed to text area. 
+        '''
+        if name in ('copy', 'paste', 'cut'):
+            return getattr(self.view.editArea, name)
+            
