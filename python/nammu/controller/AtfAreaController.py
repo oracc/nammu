@@ -57,6 +57,15 @@ class AtfAreaController(object):
         self.view.repaint_line_numbers(0)
         # Clear tooltips
         self.clearToolTips()
+        # Clear validation errors
+        self.clear_validation_errors()
+        
+    def clear_validation_errors(self):
+        '''
+        Clear validation errors not to inherit wrong styling from previously
+        open files.
+        '''
+        self.view.validation_errors = {}
 
     def clearToolTips(self):
         '''
