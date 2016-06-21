@@ -58,3 +58,9 @@ projects:
         - saa17
         - saa18
         - saa19
+        
+protocols:
+    - math
+    - legacy
+    - lexical
+    - mylines
