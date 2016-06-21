@@ -14,3 +14,4 @@ parsetab.py
 .tags
 **/.cache
 **/effective-pom*.xml
+*.atf
