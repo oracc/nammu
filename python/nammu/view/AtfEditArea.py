@@ -69,6 +69,7 @@ class AtfEditArea(JTextPane):
         '''
         super(AtfEditArea, self).setText(text)
         self.controller.syntax_highlight()
+        self.controller.update_line_numbers()
 
     def cut(self):
         '''

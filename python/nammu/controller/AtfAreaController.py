@@ -47,7 +47,6 @@ class AtfAreaController(object):
         self.line_numbers_styledoc = self.line_numbers_area.getStyledDocument()
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
-#       self.syntax_highlighter = SyntaxHighlighter(self.line_numbers_styledoc)
 
     def setAtfAreaText(self, text):
         '''
@@ -59,7 +58,6 @@ class AtfAreaController(object):
         '''
         with self.view.edit_listener.force_compound():
             self.view.edit_area.setText(text)
-        self.update_line_numbers()
 
     def getAtfAreaText(self):
         '''
@@ -153,4 +151,7 @@ class AtfAreaController(object):
         self.line_numbers_area.setText(numbers)
 
     def syntax_highlight(self):
+        '''
+        Short hand for syntax highlighting.
+        '''
         self.syntax_highlighter.syntax_highlight()
