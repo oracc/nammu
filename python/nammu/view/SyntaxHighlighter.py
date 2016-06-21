@@ -148,7 +148,7 @@ class SyntaxHighlighter:
         self.lexer.lineno = 1
         while self.lexer.current_state() != 'INITIAL':
             self.lexer.pop_state()
-            
+
         # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
 
@@ -172,7 +172,7 @@ class SyntaxHighlighter:
                                                  len(line) + 1,
                                                  attribs,
                                                  True)
-            
+
         # Go through each token in the text, check which type it is to assign
         # a colour to it, check which position it is to set up default or
         # error background, etc.
