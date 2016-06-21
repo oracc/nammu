@@ -106,7 +106,7 @@ class NammuController(object):
 
     def newFile(self, event):
         '''
-        Checks if current file in text area has unsaved changes and prompts 
+        Checks if current file in text area has unsaved changes and prompts
         user for file saving.
         Then displays window for the user to choose ATF protocol, language and
         project, and presents a template in the text area.

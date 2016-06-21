@@ -29,14 +29,12 @@ class NewAtfController:
         self.languages = config['languages']
         self.protocols = config['protocols']
         self.template = ''
-        self.view = NewAtfView(self, 
+        self.view = NewAtfView(self,
                                self.projects,
                                self.languages,
                                self.protocols)
         self.view.display()
-        
+
     def get_user_input(self):
         user_input = ''
         return user_input
-        
-    

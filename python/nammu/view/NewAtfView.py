@@ -31,7 +31,7 @@ class NewAtfView(JFrame):
         self.projects = projects
         self.languages = languages
         self.protocols = protocols
-        
+
     def display(self):
         '''
         Displays window.
@@ -41,31 +41,31 @@ class NewAtfView(JFrame):
         self.pack()
         self.setLocationRelativeTo(None)
         self.visible = 1
-    
+
     def build(self):
         '''
         Puts all the window components together in the JFrame
         '''
         layout = GridLayout(4, 5)
-        
+
     def add_and_row(self):
         '''
         Builds the &-line row.
         '''
         pass
-    
+
     def add_projects_row(self):
         '''
         Builds the projects row.
         '''
         pass
-    
+
     def add_language_row(self):
         '''
         Builds the language row.
         '''
         pass
-    
+
     def add_protocols_row(self):
         '''
         Builds the protocols row.
