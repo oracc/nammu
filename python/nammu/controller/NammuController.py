@@ -42,7 +42,7 @@ from requests.exceptions import RequestException
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 
 from ..SOAPClient.SOAPClient import SOAPClient
-from ..utils import get_yaml_config
+from ..utils import get_yaml_config, get_log_path
 from ..utils.NammuConsoleHandler import NammuConsoleHandler
 from ..view.NammuView import NammuView
 
@@ -639,7 +639,11 @@ class NammuController(object):
         Output should be sent to Nammu's console as well as a local logfile
         and the system console.
         """
-        yaml_dict = get_yaml_config()
+        yaml_dict = get_yaml_config('logging.yaml')
+        # Replace user given basename with absolute path to log file
+        logfile = yaml_dict['handlers']['file_handler']['filename']
+        yaml_dict['handlers']['file_handler']['filename'] = get_log_path(
+                                                                    logfile)
         logging.config.dictConfig(yaml_dict)
         logger = logging.getLogger("NammuController")
 

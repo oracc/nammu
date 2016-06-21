@@ -100,7 +100,7 @@ def get_log_path(filename):
     return os.path.join(log_dir, filename)
 
 
-def get_yaml_config():
+def get_yaml_config(yaml_filename):
     '''
     Load contents of logging.yaml into dictionary.
     Note file_handler's filename needs to be an absolute path and hence
@@ -111,7 +111,6 @@ def get_yaml_config():
     # Note getResource returns a java.net.URL object which is incompatible
     # with Python's open method, so we need to work around it by copying the
     # file to the home directory and open from there.
-    yaml_filename = 'logging.yaml'
     yaml_path = 'resources/config/{}'.format(yaml_filename)
     loader = ClassLoader.getSystemClassLoader()
     config_file_url = loader.getResource(yaml_path)
@@ -125,7 +124,7 @@ def get_yaml_config():
     # Check if log config file exists already. If so, just read it.
     # Otherwise, paste it from JAR's resources to there.
     if not os.path.isfile(path_to_config):
-        get_ver(path_to_jar, yaml_path, path_to_config)
+        copy_yaml_to_home(path_to_jar, yaml_path, path_to_config)
 
     # Load YAML config
     # This is a temporary hack to work around the mvn test stage not finding
@@ -135,16 +134,10 @@ def get_yaml_config():
     except:
         pass
 
-    yaml_dict = yaml.load(open(path_to_config, 'r'))
-
-    # Replace user given basename with absolute path to log file
-    logfile = yaml_dict['handlers']['file_handler']['filename']
-    yaml_dict['handlers']['file_handler']['filename'] = get_log_path(logfile)
-
-    return yaml_dict
+    return yaml.load(open(path_to_config, 'r'))
 
 
-def get_ver(jar_file_path, source_rel_path, target_path):
+def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
     '''
     Opens Nammu's jar as a zip file, looks for the yaml config file and copies
     it to ~/.nammu.
