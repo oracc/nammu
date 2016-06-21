@@ -296,9 +296,6 @@ class NammuController(object):
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
 
-        # Clear colouring in line number from previous validation
-        self.atfAreaController.update_line_numbers()
-
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
 
@@ -334,9 +331,6 @@ class NammuController(object):
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
-
-        # Clear colouring in line number from previous validation
-        self.atfAreaController.update_line_numbers()
 
         if self.currentFilename:
             self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
@@ -438,8 +432,10 @@ class NammuController(object):
         # Check if there were any validation errors and pass them to the
         # ATF area to refresh syntax highlighting.
         self.process_validation_errors(oracc_log)
+        # Always syntax highlight, not only when there are errors, otherwise
+        # old error lines' styling won't be cleared!
+        self.atfAreaController.syntax_highlight()
         if oracc_log:
-            self.atfAreaController.syntax_highlight()
             # TODO: Prompt dialog.
             if autolem:
                 self.logger.info("The lemmatisation returned some "
