@@ -18,30 +18,28 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import codecs
-import os
+from logging import StreamHandler, Formatter
 import logging
 import logging.config
-import urllib
-
-from logging import StreamHandler, Formatter
 from logging.handlers import RotatingFileHandler
-from requests.exceptions import RequestException
-from requests.exceptions import Timeout, ConnectionError, HTTPError
-
-from java.awt import Desktop
-from java.net import URI
-from java.io import File
-from java.lang import System, Integer, ClassLoader
-from javax.swing import JFileChooser, JOptionPane, ToolTipManager
-from javax.swing.filechooser import FileNameExtensionFilter
+import os
+import urllib
 
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
 from MenuController import MenuController
 from ModelController import ModelController
 from ToolbarController import ToolbarController
-
+from java.awt import Desktop
+from java.io import File
+from java.lang import System, Integer, ClassLoader
+from java.net import URI
+from javax.swing import JFileChooser, JOptionPane, ToolTipManager
+from javax.swing.filechooser import FileNameExtensionFilter
 from pyoracc.atf.atffile import AtfFile
+from requests.exceptions import RequestException
+from requests.exceptions import Timeout, ConnectionError, HTTPError
+
 from ..SOAPClient.SOAPClient import SOAPClient
 from ..utils import get_yaml_config
 from ..utils.NammuConsoleHandler import NammuConsoleHandler
@@ -113,7 +111,6 @@ class NammuController(object):
         2. Clear text area
         3. See GitHub issue: https://github.com/UCL-RITS/nammu/issues/6
         '''
-
         if self.handleUnsaved():
             self.atfAreaController.clearAtfArea()
             self.view.setTitle("Nammu")
@@ -129,7 +126,6 @@ class NammuController(object):
         3. Load file in text area
         4. Display file name in title bar
         '''
-
         if self.handleUnsaved():
             if self.currentFilename:
                 default_path = os.path.dirname(self.currentFilename)
@@ -295,13 +291,10 @@ class NammuController(object):
         However, the intention is to replace this with validation by pyoracc.
         '''
         # Clear previous log in Nammu's console
-        self.consoleController.view.editArea.setText("")
+        self.consoleController.view.edit_area.setText("")
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
-
-        # Clear colouring in line number from previous validation
-        self.atfAreaController.update_line_numbers()
 
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
@@ -334,13 +327,10 @@ class NammuController(object):
         Don't lemmatise if file doesn't validate.
         '''
         # Clear previous log in Nammu's console
-        self.consoleController.view.editArea.setText("")
+        self.consoleController.view.edit_area.setText("")
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
-
-        # Clear colouring in line number from previous validation
-        self.atfAreaController.update_line_numbers()
 
         if self.currentFilename:
             self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
@@ -439,9 +429,13 @@ class NammuController(object):
         If we are lemmatising, it'll also return:
           * <filename>_autolem.atf: lemmatised version of file
         """
+        # Check if there were any validation errors and pass them to the
+        # ATF area to refresh syntax highlighting.
+        self.process_validation_errors(oracc_log)
+        # Always syntax highlight, not only when there are errors, otherwise
+        # old error lines' styling won't be cleared!
+        self.atfAreaController.syntax_highlight()
         if oracc_log:
-            validation_errors = self.get_validation_errors(oracc_log)
-            self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
             if autolem:
                 self.logger.info("The lemmatisation returned some "
@@ -507,13 +501,12 @@ class NammuController(object):
                 self.logger.error("Unexpected error when waiting for ORACC "
                                   "server to prepare response.")
 
-    def get_validation_errors(self, oracc_log):
+    def process_validation_errors(self, oracc_log):
         """
-        Reads the log from the oracc server from the validation, and returns a
-        dictionary with line numbers and error messages.
+        Reads the log from the oracc server from the validation, and refreshes
+        the dictionary with line numbers and error messages.
         """
-        validation_errors = {}
-
+        validation_errors_server = {}
         for line in oracc_log.splitlines():
             if ':' in line:
                 line_number = line.split(':')[1]
@@ -522,19 +515,20 @@ class NammuController(object):
                 except IndexError:
                     continue
                 error_message = line.split(project_id + ':')[1]
-                if line_number not in validation_errors.keys():
-                    validation_errors[line_number] = []
-                validation_errors[line_number].append(error_message)
+                if line_number not in validation_errors_server.keys():
+                    validation_errors_server[line_number] = []
+                validation_errors_server[line_number].append(error_message)
 
-        validation_error_str = {}
-        for line_num, errors in validation_errors.iteritems():
+        validation_errors = {}
+        for line_num, errors in validation_errors_server.iteritems():
             error_message = "<html><font face=\"verdana\" size=\"3\">"
             for error in errors:
                 error_message += "&#149; " + error + "<br/>"
             error_message += "</font></html>"
-            validation_error_str[line_num] = error_message
+            validation_errors[line_num] = error_message
 
-        return validation_error_str
+        # Refresh validation errors
+        self.atfAreaController.set_validation_errors(validation_errors)
 
     def printFile(self, event):
         '''

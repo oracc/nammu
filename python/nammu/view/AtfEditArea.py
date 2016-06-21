@@ -25,8 +25,8 @@ from ..utils import set_font
 
 class AtfEditArea(JTextPane):
 
-    def __init__(self, parent_component):
-        self.parent_component = parent_component
+    def __init__(self, controller):
+        self.controller = controller
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.font = set_font()
         # If this is not done, no tooltips appear
@@ -44,12 +44,14 @@ class AtfEditArea(JTextPane):
             position = self.viewToModel(event.getPoint())
             line_num = str(self.get_line_num(position))
             # Check if line_num has an error message assigned
-            if self.parent_component.validation_errors:
+            if self.controller.validation_errors:
                 try:
-                    err_msg = self.parent_component.validation_errors[line_num]
+                    err_msg = self.controller.validation_errors[line_num]
                 except KeyError:
                     # Current line has no error messages assigned
-                    pass
+                    # Returning None also switches off tooltips from previous
+                    # validation errors.
+                    return None
                 else:
                     return err_msg
 
@@ -59,6 +61,42 @@ class AtfEditArea(JTextPane):
         """
         text = self.text[0:position]
         return text.count('\n') + 1
+
+    def setText(self, text):
+        '''
+        Override JTextPane's setText to call syntax highlighting so that it
+        still works when you set text from elsewhere in the code.
+        '''
+        super(AtfEditArea, self).setText(text)
+        self.controller.syntax_highlight()
+        self.controller.update_line_numbers()
+
+    def cut(self):
+        '''
+        Override JTextPane's cut to call syntax highlighting so that it still
+        works when user cuts text via toolbar button or mouse.
+        '''
+        super(AtfEditArea, self).cut()
+        self.controller.syntax_highlight()
+        self.controller.update_line_numbers()
+
+    def copy(self):
+        '''
+        Override JTextPane's copy to call syntax highlighting so that it still
+        works when user copies text via toolbar button or mouse.
+        '''
+        super(AtfEditArea, self).copy()
+        self.controller.syntax_highlight()
+        self.controller.update_line_numbers()
+
+    def paste(self):
+        '''
+        Override JTextPane's paste to call syntax highlighting so that it still
+        works when user pastes text via toolbar button or mouse.
+        '''
+        super(AtfEditArea, self).paste()
+        self.controller.syntax_highlight()
+        self.controller.update_line_numbers()
 
 
 class CustomMouseListener(MouseAdapter):
