@@ -18,7 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from java.awt import GridLayout
-from javax.swing import JFrame
+from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList
 
 
 class NewAtfView(JFrame):
@@ -36,6 +36,7 @@ class NewAtfView(JFrame):
         '''
         Displays window.
         '''
+        self.build()
         self.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
         self.setTitle("New ATF template")
         self.pack()
@@ -46,28 +47,44 @@ class NewAtfView(JFrame):
         '''
         Puts all the window components together in the JFrame
         '''
-        layout = GridLayout(4, 5)
+        self.setLayout(GridLayout(6, 5))
+        self.add_and_row()
+        self.add_projects_row()
+        self.add_language_row()
+        self.add_protocols_row()
 
     def add_and_row(self):
         '''
         Builds the &-line row.
         '''
-        pass
+        self.add(JLabel('&'))
+        self.add(JTextField())
+        self.add(JLabel('='))
+        self.add(JTextField())
+        self.add(JLabel('?'))
 
     def add_projects_row(self):
         '''
         Builds the projects row.
         '''
-        pass
+        self.add(JLabel('project: '))
+        self.add(JComboBox(self.projects.keys()))
+        self.add(JLabel('/'))
+        self.add(JComboBox())
+        self.add(JLabel('?'))
 
     def add_language_row(self):
         '''
         Builds the language row.
         '''
-        pass
+        self.add(JLabel('language: '))
+        self.add(JComboBox(self.languages.keys()))
+        self.add(JLabel('?'))
 
     def add_protocols_row(self):
         '''
         Builds the protocols row.
         '''
-        pass
+        self.add(JLabel('protocols: '))
+        self.add(JList(self.protocols))
+        self.add(JLabel('?'))
