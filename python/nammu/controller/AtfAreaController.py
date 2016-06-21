@@ -59,7 +59,6 @@ class AtfAreaController(object):
         '''
         with self.view.edit_listener.force_compound():
             self.view.edit_area.setText(text)
-            self.syntax_highlight()
         self.update_line_numbers()
 
     def getAtfAreaText(self):
