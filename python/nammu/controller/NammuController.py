@@ -30,6 +30,7 @@ from ConsoleController import ConsoleController
 from MenuController import MenuController
 from ModelController import ModelController
 from ToolbarController import ToolbarController
+from NewAtfController import NewAtfController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
@@ -105,17 +106,26 @@ class NammuController(object):
 
     def newFile(self, event):
         '''
-        1. Check if current file in text area has unsaved changes
-            1.1 Prompt user for file saving
-                1.1.1 Save file
-        2. Clear text area
-        3. See GitHub issue: https://github.com/UCL-RITS/nammu/issues/6
+        Checks if current file in text area has unsaved changes and prompts 
+        user for file saving.
+        Then displays window for the user to choose ATF protocol, language and
+        project, and presents a template in the text area.
         '''
         if self.handleUnsaved():
-            self.atfAreaController.clearAtfArea()
-            self.view.setTitle("Nammu")
             self.currentFilename = None
-            self.logger.debug("New file created.")
+            self.view.setTitle("Nammu")
+            # Open window for user to enter ATF template contents
+            new_atf_controller = NewAtfController(self)
+            # In case user cancels
+            if new_atf_controller.get_user_input():
+                # If there is a template, print it on the text area
+                if new_atf_controller.template:
+                    self.atfAreaController.setAtfAreaText(
+                                                new_atf_controller.template)
+                else:
+                    # User chose to start from blank
+                    self.atfAreaController.clearAtfArea()
+                self.logger.debug("New file created.")
 
     def openFile(self, event=None):
         '''
