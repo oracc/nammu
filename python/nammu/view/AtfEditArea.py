@@ -25,8 +25,8 @@ from ..utils import set_font
 
 class AtfEditArea(JTextPane):
 
-    def __init__(self, parent_component):
-        self.parent_component = parent_component
+    def __init__(self, controller):
+        self.controller = controller
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.font = set_font()
         # If this is not done, no tooltips appear
@@ -44,9 +44,9 @@ class AtfEditArea(JTextPane):
             position = self.viewToModel(event.getPoint())
             line_num = str(self.get_line_num(position))
             # Check if line_num has an error message assigned
-            if self.parent_component.validation_errors:
+            if self.controller.validation_errors:
                 try:
-                    err_msg = self.parent_component.validation_errors[line_num]
+                    err_msg = self.controller.validation_errors[line_num]
                 except KeyError:
                     # Current line has no error messages assigned
                     # Returning None also switches off tooltips from previous
@@ -68,7 +68,7 @@ class AtfEditArea(JTextPane):
         still works when you set text from elsewhere in the code.
         '''
         super(AtfEditArea, self).setText(text)
-        self.parent_component.syntax_highlight()
+        self.controller.syntax_highlight()
 
     def cut(self):
         '''
@@ -76,8 +76,8 @@ class AtfEditArea(JTextPane):
         works when user cuts text via toolbar button or mouse.
         '''
         super(AtfEditArea, self).cut()
-        self.parent_component.syntax_highlight()
-        self.parent_component.controller.update_line_numbers()
+        self.controller.syntax_highlight()
+        self.controller.update_line_numbers()
 
     def copy(self):
         '''
@@ -85,8 +85,8 @@ class AtfEditArea(JTextPane):
         works when user copies text via toolbar button or mouse.
         '''
         super(AtfEditArea, self).copy()
-        self.parent_component.syntax_highlight()
-        self.parent_component.controller.update_line_numbers()
+        self.controller.syntax_highlight()
+        self.controller.update_line_numbers()
 
     def paste(self):
         '''
@@ -94,8 +94,8 @@ class AtfEditArea(JTextPane):
         works when user pastes text via toolbar button or mouse.
         '''
         super(AtfEditArea, self).paste()
-        self.parent_component.syntax_highlight()
-        self.parent_component.controller.update_line_numbers()
+        self.controller.syntax_highlight()
+        self.controller.update_line_numbers()
 
 
 class CustomMouseListener(MouseAdapter):

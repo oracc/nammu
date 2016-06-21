@@ -31,5 +31,5 @@ class ConsoleController(object):
         self.controller = mainControler
 
     def addText(self, text):
-        self.view.editArea.append(text)
+        self.view.edit_area.append(text)
         self.view.scroll()
