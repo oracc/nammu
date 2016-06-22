@@ -119,7 +119,7 @@ class NewAtfView(JFrame):
                              9,
                              SpringLayout.NORTH,
                              self)
-        layout.putConstraint(SpringLayout.EAST
+        layout.putConstraint(SpringLayout.EAST,
                              self.pane,
                              15,
                              SpringLayout.EAST,
