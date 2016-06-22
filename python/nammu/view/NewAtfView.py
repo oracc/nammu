@@ -51,11 +51,11 @@ class NewAtfView(JFrame):
         '''
         Puts all the window components together in the JFrame
         '''
-        self.setLayout(GridLayout(5, 1))
+        self.setLayout(GridLayout(4, 1))
         self.add_ampersand_row()
         self.add_projects_row()
         self.add_language_row()
-        self.add_protocols_row()
+#         self.add_protocols_row()
         self.add_buttons_row()
 
     def add_ampersand_row(self):
