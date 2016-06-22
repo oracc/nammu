@@ -83,18 +83,18 @@ class NewAtfView(JFrame):
         '''
         Builds the language row.
         '''
+        # Build own panel with SpringLayout.
         panel = JPanel()
         layout = SpringLayout()
         panel.setLayout(layout)
-        
+        # Create necessary components and add them to panel.
         language_label = JLabel('language: ')
         language_combo = JComboBox(self.languages.keys())
         help_label = JLabel('?')
-        
         panel.add(language_label)
         panel.add(language_combo)
         panel.add(help_label)
-        
+        # Set up constraints to tell panel how to position components.
         layout.putConstraint(SpringLayout.WEST,
                              language_label,
                              15,
@@ -135,7 +135,7 @@ class NewAtfView(JFrame):
                              10,
                              SpringLayout.SOUTH,
                              help_label)
-        
+        # Add this to NewAtf JFrame
         self.add(panel)
 
     def add_protocols_row(self):
