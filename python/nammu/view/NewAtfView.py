@@ -52,14 +52,14 @@ class NewAtfView(JFrame):
         '''
         layout = BoxLayout(self.getContentPane(), BoxLayout.Y_AXIS)
         self.setLayout(layout)
-        
+
         # Create all necessary panels
         ampersand_panel = self.build_ampersand_row()
         project_panel = self.build_projects_row()
         language_panel = self.build_language_row()
 #         self.build_protocols_row()
         buttons_panel = self.build_buttons_row()
-        
+
         # Add panels to main JFrame
         self.add(ampersand_panel)
         self.add(project_panel)
