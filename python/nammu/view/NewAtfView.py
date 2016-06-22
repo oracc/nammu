@@ -166,6 +166,7 @@ class NewAtfView(JFrame):
         # Create necessary components and add them to panel.
         project_label = JLabel('Project: ')
         left_combo = JComboBox(self.projects.keys())
+        left_combo.setEditable(True)
         slash_label = JLabel('/')
         right_combo = JComboBox()
         tooltip_text = ("<html><body>Choose project from list or insert a new "
