@@ -32,6 +32,7 @@ class NewAtfView(JFrame):
         self.languages = languages
         self.protocols = protocols
         self.springLayout = SpringLayout()
+        self.pane = self.getContentPane()
 
     def display(self):
         '''
@@ -60,11 +61,6 @@ class NewAtfView(JFrame):
         '''
         Builds the &-line row.
         '''
-#         self.springLayout.putConstraint(SpringLayout.WEST,
-#                                         JLabel('&'),
-#                                         5,
-#                                         SpringLayout.WEST,
-#                                         self)
         self.add(JLabel('&'))
         self.add(JTextField())
         self.add(JLabel('='))
@@ -85,9 +81,54 @@ class NewAtfView(JFrame):
         '''
         Builds the language row.
         '''
-        self.add(JLabel('language: '))
-        self.add(JComboBox(self.languages.keys()))
-        self.add(JLabel('?'))
+        layout = SpringLayout()
+        self.setLayout(layout)
+        language_label = JLabel('language: ')
+        language_combo = JComboBox(self.languages.keys())
+        help_label = JLabel('?')
+        self.add(language_label)
+        self.add(language_combo)
+        self.add(help_label)
+        layout.putConstraint(SpringLayout.WEST,
+                             language_label,
+                             15,
+                             SpringLayout.WEST,
+                             self.pane)
+        layout.putConstraint(SpringLayout.NORTH,
+                             language_label,
+                             9,
+                             SpringLayout.NORTH,
+                             self.pane)
+        layout.putConstraint(SpringLayout.WEST,
+                             language_combo,
+                             5,
+                             SpringLayout.EAST,
+                             language_label)
+        layout.putConstraint(SpringLayout.NORTH,
+                             language_combo,
+                             5,
+                             SpringLayout.NORTH,
+                             self)
+        layout.putConstraint(SpringLayout.WEST,
+                             help_label,
+                             5,
+                             SpringLayout.EAST,
+                             language_combo)
+        layout.putConstraint(SpringLayout.NORTH,
+                             help_label,
+                             9,
+                             SpringLayout.NORTH,
+                             self)
+        layout.putConstraint(SpringLayout.EAST
+                             self.pane,
+                             15,
+                             SpringLayout.EAST,
+                             help_label)
+        layout.putConstraint(SpringLayout.SOUTH,
+                             self.pane,
+                             10,
+                             SpringLayout.SOUTH,
+                             help_label)
 
     def add_protocols_row(self):
         '''
