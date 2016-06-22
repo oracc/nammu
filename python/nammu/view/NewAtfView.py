@@ -17,8 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from java.awt import GridLayout
-from javax.swing import SpringLayout, JPanel
+from javax.swing import SpringLayout, JPanel, BoxLayout
 from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
 
 
@@ -51,14 +50,23 @@ class NewAtfView(JFrame):
         '''
         Puts all the window components together in the JFrame
         '''
-        self.setLayout(GridLayout(4, 1))
-        self.add_ampersand_row()
-        self.add_projects_row()
-        self.add_language_row()
-#         self.add_protocols_row()
-        self.add_buttons_row()
+        layout = BoxLayout(self.getContentPane(), BoxLayout.Y_AXIS)
+        self.setLayout(layout)
+        
+        # Create all necessary panels
+        ampersand_panel = self.build_ampersand_row()
+        project_panel = self.build_projects_row()
+        language_panel = self.build_language_row()
+#         self.build_protocols_row()
+        buttons_panel = self.build_buttons_row()
+        
+        # Add panels to main JFrame
+        self.add(ampersand_panel)
+        self.add(project_panel)
+        self.add(language_panel)
+        self.add(buttons_panel)
 
-    def add_ampersand_row(self):
+    def build_ampersand_row(self):
         '''
         Builds the &-line row.
         '''
@@ -139,9 +147,9 @@ class NewAtfView(JFrame):
                              SpringLayout.SOUTH,
                              help_label)
         # Add this to NewAtf JFrame
-        self.add(panel)
+        return panel
 
-    def add_projects_row(self):
+    def build_projects_row(self):
         '''
         Builds the projects row.
         '''
@@ -222,9 +230,9 @@ class NewAtfView(JFrame):
                              SpringLayout.SOUTH,
                              help_label)
         # Add this to NewAtf JFrame
-        self.add(panel)
+        return panel
 
-    def add_language_row(self):
+    def build_language_row(self):
         '''
         Builds the language row.
         '''
@@ -281,9 +289,9 @@ class NewAtfView(JFrame):
                              SpringLayout.SOUTH,
                              help_label)
         # Add this to NewAtf JFrame
-        self.add(panel)
+        return panel
 
-    def add_protocols_row(self):
+    def build_protocols_row(self):
         '''
         Builds the protocols row.
         '''
@@ -340,9 +348,9 @@ class NewAtfView(JFrame):
                              SpringLayout.SOUTH,
                              protocols_label)
         # Add this to NewAtf JFrame
-        self.add(panel)
+        return panel
 
-    def add_buttons_row(self):
+    def build_buttons_row(self):
         '''
         Add OK/Cancel/Blank buttons.
         '''
@@ -400,4 +408,4 @@ class NewAtfView(JFrame):
                              SpringLayout.SOUTH,
                              cancel_button)
         # Add this to NewAtf JFrame
-        self.add(panel)
+        return panel
