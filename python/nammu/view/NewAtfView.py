@@ -40,7 +40,7 @@ class NewAtfView(JFrame):
         self.build()
         self.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
         self.setTitle("New ATF template")
-#         self.pack()
+        self.pack()
         self.setLocationRelativeTo(None)
         self.visible = 1
 
@@ -48,12 +48,13 @@ class NewAtfView(JFrame):
         '''
         Puts all the window components together in the JFrame
         '''
-        self.add_and_row()
+        self.setLayout(SpringLayout())
+#         self.add_and_row()
 #         self.add_projects_row()
-#         self.add_language_row()
+        self.add_language_row()
 #         self.add_protocols_row()
 #         self.add_buttons_row()
-        self.setLayout(self.layout)
+#         self.setLayout(self.layout)
 
     def add_and_row(self):
         '''
