@@ -31,6 +31,7 @@ class NewAtfView(JFrame):
         self.projects = projects
         self.languages = languages
         self.protocols = protocols
+        self.springLayout = SpringLayout()
 
     def display(self):
         '''
@@ -39,7 +40,7 @@ class NewAtfView(JFrame):
         self.build()
         self.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
         self.setTitle("New ATF template")
-        self.pack()
+#         self.pack()
         self.setLocationRelativeTo(None)
         self.visible = 1
 
@@ -47,17 +48,22 @@ class NewAtfView(JFrame):
         '''
         Puts all the window components together in the JFrame
         '''
-        self.setLayout(SpringLayout())
         self.add_and_row()
-        self.add_projects_row()
-        self.add_language_row()
-        self.add_protocols_row()
-        self.add_buttons_row()
+#         self.add_projects_row()
+#         self.add_language_row()
+#         self.add_protocols_row()
+#         self.add_buttons_row()
+        self.setLayout(self.layout)
 
     def add_and_row(self):
         '''
         Builds the &-line row.
         '''
+#         self.springLayout.putConstraint(SpringLayout.WEST,
+#                                         JLabel('&'),
+#                                         5,
+#                                         SpringLayout.WEST,
+#                                         self)
         self.add(JLabel('&'))
         self.add(JTextField())
         self.add(JLabel('='))
@@ -89,7 +95,7 @@ class NewAtfView(JFrame):
         self.add(JLabel('protocols: '))
         self.add(JList(self.protocols))
         self.add(JLabel('?'))
-        
+
     def add_buttons_row(self):
         '''
         Add OK/Cancel/Blank buttons.
@@ -97,4 +103,3 @@ class NewAtfView(JFrame):
         self.add(JButton('Create template'))
         self.add(JButton('Leave blank'))
         self.add(JButton('Cancel'))
-
