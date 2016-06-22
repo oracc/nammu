@@ -51,33 +51,178 @@ class NewAtfView(JFrame):
         '''
         Puts all the window components together in the JFrame
         '''
-        self.setLayout(GridLayout(1, 4))
-#         self.add_and_row()
-#         self.add_projects_row()
+        self.setLayout(GridLayout(5, 1))
+        self.add_ampersand_row()
+        self.add_projects_row()
         self.add_language_row()
-#         self.add_protocols_row()
-#         self.add_buttons_row()
-#         self.setLayout(self.layout)
+        self.add_protocols_row()
+        self.add_buttons_row()
 
-    def add_and_row(self):
+    def add_ampersand_row(self):
         '''
         Builds the &-line row.
         '''
-        self.add(JLabel('&'))
-        self.add(JTextField())
-        self.add(JLabel('='))
-        self.add(JTextField())
-        self.add(JLabel('?'))
+        # Build own panel with SpringLayout.
+        panel = JPanel()
+        layout = SpringLayout()
+        panel.setLayout(layout)
+        # Create necessary components and add them to panel.
+        ampersand_label = JLabel("CDLI's ID: ")
+        left_field = JTextField('&...')
+        equals_label = JLabel('=')
+        right_field = JTextField()
+        help_label = JLabel('?')
+        panel.add(ampersand_label)
+        panel.add(left_field)
+        panel.add(equals_label)
+        panel.add(right_field)
+        panel.add(help_label)
+        # Set up constraints to tell panel how to position components.
+        layout.putConstraint(SpringLayout.WEST,
+                             ampersand_label,
+                             20,
+                             SpringLayout.WEST,
+                             panel)
+        layout.putConstraint(SpringLayout.NORTH,
+                             ampersand_label,
+                             23,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             left_field,
+                             5,
+                             SpringLayout.EAST,
+                             ampersand_label)
+        layout.putConstraint(SpringLayout.NORTH,
+                             left_field,
+                             20,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             equals_label,
+                             5,
+                             SpringLayout.EAST,
+                             left_field)
+        layout.putConstraint(SpringLayout.NORTH,
+                             equals_label,
+                             23,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             right_field,
+                             5,
+                             SpringLayout.EAST,
+                             equals_label)
+        layout.putConstraint(SpringLayout.NORTH,
+                             right_field,
+                             20,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             help_label,
+                             5,
+                             SpringLayout.EAST,
+                             right_field)
+        layout.putConstraint(SpringLayout.NORTH,
+                             help_label,
+                             23,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.EAST,
+                             panel,
+                             15,
+                             SpringLayout.EAST,
+                             help_label)
+        layout.putConstraint(SpringLayout.SOUTH,
+                             panel,
+                             10,
+                             SpringLayout.SOUTH,
+                             help_label)
+        # Add this to NewAtf JFrame
+        self.add(panel)
 
     def add_projects_row(self):
         '''
         Builds the projects row.
         '''
-        self.add(JLabel('project: '))
-        self.add(JComboBox(self.projects.keys()))
-        self.add(JLabel('/'))
-        self.add(JComboBox())
-        self.add(JLabel('?'))
+        # Build own panel with SpringLayout.
+        panel = JPanel()
+        layout = SpringLayout()
+        panel.setLayout(layout)
+        # Create necessary components and add them to panel.
+        project_label = JLabel('Project: ')
+        left_combo = JComboBox(self.projects.keys())
+        slash_label = JLabel('/')
+        right_combo = JComboBox()
+        help_label = JLabel('?')
+        panel.add(project_label)
+        panel.add(left_combo)
+        panel.add(slash_label)
+        panel.add(right_combo)
+        panel.add(help_label)
+        # Set up constraints to tell panel how to position components.
+        layout.putConstraint(SpringLayout.WEST,
+                             project_label,
+                             15,
+                             SpringLayout.WEST,
+                             panel)
+        layout.putConstraint(SpringLayout.NORTH,
+                             project_label,
+                             18,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             left_combo,
+                             5,
+                             SpringLayout.EAST,
+                             project_label)
+        layout.putConstraint(SpringLayout.NORTH,
+                             left_combo,
+                             15,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             slash_label,
+                             5,
+                             SpringLayout.EAST,
+                             left_combo)
+        layout.putConstraint(SpringLayout.NORTH,
+                             slash_label,
+                             18,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             right_combo,
+                             5,
+                             SpringLayout.EAST,
+                             slash_label)
+        layout.putConstraint(SpringLayout.NORTH,
+                             right_combo,
+                             15,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             help_label,
+                             5,
+                             SpringLayout.EAST,
+                             right_combo)
+        layout.putConstraint(SpringLayout.NORTH,
+                             help_label,
+                             18,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.EAST,
+                             panel,
+                             15,
+                             SpringLayout.EAST,
+                             help_label)
+        layout.putConstraint(SpringLayout.SOUTH,
+                             panel,
+                             10,
+                             SpringLayout.SOUTH,
+                             help_label)
+        # Add this to NewAtf JFrame
+        self.add(panel)
 
     def add_language_row(self):
         '''
@@ -88,7 +233,7 @@ class NewAtfView(JFrame):
         layout = SpringLayout()
         panel.setLayout(layout)
         # Create necessary components and add them to panel.
-        language_label = JLabel('language: ')
+        language_label = JLabel('Language: ')
         language_combo = JComboBox(self.languages.keys())
         help_label = JLabel('?')
         panel.add(language_label)
@@ -102,7 +247,7 @@ class NewAtfView(JFrame):
                              panel)
         layout.putConstraint(SpringLayout.NORTH,
                              language_label,
-                             9,
+                             18,
                              SpringLayout.NORTH,
                              panel)
         layout.putConstraint(SpringLayout.WEST,
@@ -112,7 +257,7 @@ class NewAtfView(JFrame):
                              language_label)
         layout.putConstraint(SpringLayout.NORTH,
                              language_combo,
-                             5,
+                             15,
                              SpringLayout.NORTH,
                              panel)
         layout.putConstraint(SpringLayout.WEST,
@@ -122,7 +267,7 @@ class NewAtfView(JFrame):
                              language_combo)
         layout.putConstraint(SpringLayout.NORTH,
                              help_label,
-                             9,
+                             18,
                              SpringLayout.NORTH,
                              panel)
         layout.putConstraint(SpringLayout.EAST,
@@ -142,14 +287,117 @@ class NewAtfView(JFrame):
         '''
         Builds the protocols row.
         '''
-        self.add(JLabel('protocols: '))
-        self.add(JList(self.protocols))
-        self.add(JLabel('?'))
+        # Build own panel with SpringLayout.
+        panel = JPanel()
+        layout = SpringLayout()
+        panel.setLayout(layout)
+        # Create necessary components and add them to panel.
+        protocols_label = JLabel('Protocols: ')
+        protocols_list = JList(self.protocols)
+        help_label = JLabel('?')
+        panel.add(protocols_label)
+        panel.add(protocols_list)
+        panel.add(help_label)
+        # Set up constraints to tell panel how to position components.
+        layout.putConstraint(SpringLayout.WEST,
+                             protocols_label,
+                             15,
+                             SpringLayout.WEST,
+                             panel)
+        layout.putConstraint(SpringLayout.NORTH,
+                             protocols_label,
+                             18,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             protocols_list,
+                             5,
+                             SpringLayout.EAST,
+                             protocols_label)
+        layout.putConstraint(SpringLayout.NORTH,
+                             protocols_list,
+                             15,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             help_label,
+                             5,
+                             SpringLayout.EAST,
+                             protocols_list)
+        layout.putConstraint(SpringLayout.NORTH,
+                             help_label,
+                             18,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.EAST,
+                             panel,
+                             15,
+                             SpringLayout.EAST,
+                             help_label)
+        layout.putConstraint(SpringLayout.SOUTH,
+                             panel,
+                             10,
+                             SpringLayout.SOUTH,
+                             help_label)
+        # Add this to NewAtf JFrame
+        self.add(panel)
 
     def add_buttons_row(self):
         '''
         Add OK/Cancel/Blank buttons.
         '''
-        self.add(JButton('Create template'))
-        self.add(JButton('Leave blank'))
-        self.add(JButton('Cancel'))
+        # Build own panel with SpringLayout.
+        panel = JPanel()
+        layout = SpringLayout()
+        panel.setLayout(layout)
+        # Create necessary components and add them to panel.
+        create_button = JButton('Create template')
+        leave_button = JButton('Leave blank')
+        cancel_button = JButton('Cancel')
+        panel.add(create_button)
+        panel.add(leave_button)
+        panel.add(cancel_button)
+
+        # Set up constraints to tell panel how to position components.
+        layout.putConstraint(SpringLayout.WEST,
+                             create_button,
+                             15,
+                             SpringLayout.WEST,
+                             panel)
+        layout.putConstraint(SpringLayout.NORTH,
+                             create_button,
+                             15,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             leave_button,
+                             5,
+                             SpringLayout.EAST,
+                             create_button)
+        layout.putConstraint(SpringLayout.NORTH,
+                             leave_button,
+                             15,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             cancel_button,
+                             5,
+                             SpringLayout.EAST,
+                             leave_button)
+        layout.putConstraint(SpringLayout.NORTH,
+                             cancel_button,
+                             15,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.EAST,
+                             panel,
+                             15,
+                             SpringLayout.EAST,
+                             cancel_button)
+        layout.putConstraint(SpringLayout.SOUTH,
+                             panel,
+                             10,
+                             SpringLayout.SOUTH,
+                             cancel_button)
+        # Add this to NewAtf JFrame
+        self.add(panel)
