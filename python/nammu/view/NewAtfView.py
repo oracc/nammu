@@ -41,6 +41,7 @@ class NewAtfView(JFrame):
         '''
         self.build()
         self.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
+        self.setResizable(False)
         self.setTitle("New ATF template")
         self.pack()
         self.setLocationRelativeTo(None)
