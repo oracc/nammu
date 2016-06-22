@@ -17,7 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from javax.swing import SpringLayout
+from java.awt import GridLayout
+from javax.swing import SpringLayout, JPanel
 from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
 
 
@@ -49,7 +50,7 @@ class NewAtfView(JFrame):
         '''
         Puts all the window components together in the JFrame
         '''
-        self.setLayout(SpringLayout())
+        self.setLayout(GridLayout(1, 4))
 #         self.add_and_row()
 #         self.add_projects_row()
         self.add_language_row()
@@ -81,24 +82,28 @@ class NewAtfView(JFrame):
         '''
         Builds the language row.
         '''
+        panel = JPanel()
         layout = SpringLayout()
-        self.setLayout(layout)
+        panel.setLayout(layout)
+        
         language_label = JLabel('language: ')
         language_combo = JComboBox(self.languages.keys())
         help_label = JLabel('?')
-        self.add(language_label)
-        self.add(language_combo)
-        self.add(help_label)
+        
+        panel.add(language_label)
+        panel.add(language_combo)
+        panel.add(help_label)
+        
         layout.putConstraint(SpringLayout.WEST,
                              language_label,
                              15,
                              SpringLayout.WEST,
-                             self.pane)
+                             panel)
         layout.putConstraint(SpringLayout.NORTH,
                              language_label,
                              9,
                              SpringLayout.NORTH,
-                             self.pane)
+                             panel)
         layout.putConstraint(SpringLayout.WEST,
                              language_combo,
                              5,
@@ -108,7 +113,7 @@ class NewAtfView(JFrame):
                              language_combo,
                              5,
                              SpringLayout.NORTH,
-                             self)
+                             panel)
         layout.putConstraint(SpringLayout.WEST,
                              help_label,
                              5,
@@ -118,17 +123,19 @@ class NewAtfView(JFrame):
                              help_label,
                              9,
                              SpringLayout.NORTH,
-                             self)
+                             panel)
         layout.putConstraint(SpringLayout.EAST,
-                             self.pane,
+                             panel,
                              15,
                              SpringLayout.EAST,
                              help_label)
         layout.putConstraint(SpringLayout.SOUTH,
-                             self.pane,
+                             panel,
                              10,
                              SpringLayout.SOUTH,
                              help_label)
+        
+        self.add(panel)
 
     def add_protocols_row(self):
         '''
