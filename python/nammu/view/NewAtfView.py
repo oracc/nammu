@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from java.awt import GridLayout
-from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList
+from javax.swing import SpringLayout
+from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
 
 
 class NewAtfView(JFrame):
@@ -47,11 +47,12 @@ class NewAtfView(JFrame):
         '''
         Puts all the window components together in the JFrame
         '''
-        self.setLayout(GridLayout(6, 5))
+        self.setLayout(SpringLayout())
         self.add_and_row()
         self.add_projects_row()
         self.add_language_row()
         self.add_protocols_row()
+        self.add_buttons_row()
 
     def add_and_row(self):
         '''
@@ -88,3 +89,12 @@ class NewAtfView(JFrame):
         self.add(JLabel('protocols: '))
         self.add(JList(self.protocols))
         self.add(JLabel('?'))
+        
+    def add_buttons_row(self):
+        '''
+        Add OK/Cancel/Blank buttons.
+        '''
+        self.add(JButton('Create template'))
+        self.add(JButton('Leave blank'))
+        self.add(JButton('Cancel'))
+
