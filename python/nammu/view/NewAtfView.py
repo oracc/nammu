@@ -90,9 +90,9 @@ class NewAtfView(JFrame):
                              panel)
         layout.putConstraint(SpringLayout.WEST,
                              left_field,
-                             5,
-                             SpringLayout.EAST,
-                             ampersand_label)
+                             90,
+                             SpringLayout.WEST,
+                             panel)
         layout.putConstraint(SpringLayout.NORTH,
                              left_field,
                              20,
@@ -173,9 +173,9 @@ class NewAtfView(JFrame):
                              panel)
         layout.putConstraint(SpringLayout.WEST,
                              left_combo,
-                             5,
-                             SpringLayout.EAST,
-                             project_label)
+                             90,
+                             SpringLayout.WEST,
+                             panel)
         layout.putConstraint(SpringLayout.NORTH,
                              left_combo,
                              15,
@@ -252,9 +252,9 @@ class NewAtfView(JFrame):
                              panel)
         layout.putConstraint(SpringLayout.WEST,
                              language_combo,
-                             5,
-                             SpringLayout.EAST,
-                             language_label)
+                             90,
+                             SpringLayout.WEST,
+                             panel)
         layout.putConstraint(SpringLayout.NORTH,
                              language_combo,
                              15,
@@ -311,9 +311,9 @@ class NewAtfView(JFrame):
                              panel)
         layout.putConstraint(SpringLayout.WEST,
                              protocols_list,
-                             5,
-                             SpringLayout.EAST,
-                             protocols_label)
+                             90,
+                             SpringLayout.WEST,
+                             panel)
         layout.putConstraint(SpringLayout.NORTH,
                              protocols_list,
                              15,
@@ -338,7 +338,7 @@ class NewAtfView(JFrame):
                              panel,
                              10,
                              SpringLayout.SOUTH,
-                             help_label)
+                             protocols_label)
         # Add this to NewAtf JFrame
         self.add(panel)
 
