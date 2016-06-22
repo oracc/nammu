@@ -17,8 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from javax.swing import SpringLayout, JPanel, BoxLayout
+from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon
 from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
+from ..utils import find_image_resource
 
 
 class NewAtfView(JFrame):
@@ -79,7 +80,12 @@ class NewAtfView(JFrame):
         left_field = JTextField('&...')
         equals_label = JLabel('=')
         right_field = JTextField()
-        help_label = JLabel('?')
+        tooltip_text = ("<html><body>This is the ID and text's designation "
+                        "according to<br/>the CDLI catalog. If your text is "
+                        "not yet in the<br/>catalog, please email "
+                        "cdli@cdli.ucla.edu to get<br/>an ID and designation."
+                        )
+        help_label = self.build_help_label(tooltip_text)
         panel.add(ampersand_label)
         panel.add(left_field)
         panel.add(equals_label)
@@ -162,7 +168,10 @@ class NewAtfView(JFrame):
         left_combo = JComboBox(self.projects.keys())
         slash_label = JLabel('/')
         right_combo = JComboBox()
-        help_label = JLabel('?')
+        tooltip_text = ("<html><body>Choose project from list or insert a new "
+                        "one.<br/>You can leave the right-hand field blank."
+                        "</body><html>")
+        help_label = self.build_help_label(tooltip_text)
         panel.add(project_label)
         panel.add(left_combo)
         panel.add(slash_label)
@@ -243,7 +252,8 @@ class NewAtfView(JFrame):
         # Create necessary components and add them to panel.
         language_label = JLabel('Language: ')
         language_combo = JComboBox(self.languages.keys())
-        help_label = JLabel('?')
+        tooltip_text = "Choose a language from the dropdown menu."
+        help_label = self.build_help_label(tooltip_text)
         panel.add(language_label)
         panel.add(language_combo)
         panel.add(help_label)
@@ -302,7 +312,7 @@ class NewAtfView(JFrame):
         # Create necessary components and add them to panel.
         protocols_label = JLabel('Protocols: ')
         protocols_list = JList(self.protocols)
-        help_label = JLabel('?')
+        help_label = self.build_help_label()
         panel.add(protocols_label)
         panel.add(protocols_list)
         panel.add(help_label)
@@ -409,3 +419,10 @@ class NewAtfView(JFrame):
                              cancel_button)
         # Add this to NewAtf JFrame
         return panel
+
+    def build_help_label(self, tooltip_text):
+        icon = ImageIcon(find_image_resource('smallhelp'))
+        label = JLabel()
+        label.setIcon(icon)
+        label.setToolTipText(tooltip_text)
+        return label
