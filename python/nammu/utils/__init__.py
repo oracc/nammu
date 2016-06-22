@@ -154,3 +154,10 @@ def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
                     shutil.copyfileobj(source_file, target_file)
     finally:
         zf.close()
+        
+
+def find_image_resource(name):
+    # Create helper object to load icon images in jar
+    loader = ClassLoader.getSystemClassLoader()
+    # Load image
+    return loader.getResource("resources/images/" + name.lower() + ".png")
