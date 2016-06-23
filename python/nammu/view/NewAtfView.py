@@ -378,7 +378,7 @@ class NewAtfView(JFrame):
         layout = SpringLayout()
         panel.setLayout(layout)
         # Create necessary components and add them to panel.
-        create_button = JButton('Create template', 
+        create_button = JButton('Create template',
                                 actionPerformed=self.create_template)
         leave_button = JButton('Leave blank', actionPerformed=self.blank)
         cancel_button = JButton('Cancel', actionPerformed=self.cancel)
@@ -436,16 +436,16 @@ class NewAtfView(JFrame):
         label.setIcon(icon)
         label.setToolTipText(tooltip_text)
         return label
-    
+
     def cancel(self, event):
         self.dispose()
-    
+
     def blank(self, event):
         self.controller.set_template()
         self.dispose()
-    
+
     def create_template(self, event):
-        and_line = "{} = {}".format(self.left_field.getText(), 
+        and_line = "{} = {}".format(self.left_field.getText(),
                                     self.right_field.getText())
         project_line = "#project: {}".format(
                                             self.left_combo.getSelectedItem())
@@ -453,7 +453,7 @@ class NewAtfView(JFrame):
             project_line = "{}/{}".format(project_line,
                                           self.right_combo.getSelectedItem())
         language = self.language_combo.getSelectedItem()
-        
+
         self.controller.template = ('{}\n'
                                     '{}\n'
                                     '#atf: lang {}\n'
@@ -462,7 +462,6 @@ class NewAtfView(JFrame):
                                                                  language))
         self.controller.set_template()
         self.dispose()
-        
 
 
 class ComboActionListener(ActionListener):
