@@ -35,6 +35,5 @@ class NewAtfController:
                                self.protocols)
         self.view.display()
 
-    def get_user_input(self):
-        user_input = ''
-        return user_input
+    def set_template(self):
+        self.controller.atfAreaController.setAtfAreaText(self.template)

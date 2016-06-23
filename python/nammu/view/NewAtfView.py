@@ -78,9 +78,9 @@ class NewAtfView(JFrame):
         panel.setLayout(layout)
         # Create necessary components and add them to panel.
         ampersand_label = JLabel("CDLI's ID: ")
-        left_field = JTextField('&...')
+        self.left_field = JTextField('&')
         equals_label = JLabel('=')
-        right_field = JTextField()
+        self.right_field = JTextField()
         tooltip_text = ("<html><body>This is the ID and text's designation "
                         "according to<br/>the CDLI catalog. If your text is "
                         "not yet in the<br/>catalog, please email "
@@ -88,9 +88,9 @@ class NewAtfView(JFrame):
                         )
         help_label = self.build_help_label(tooltip_text)
         panel.add(ampersand_label)
-        panel.add(left_field)
+        panel.add(self.left_field)
         panel.add(equals_label)
-        panel.add(right_field)
+        panel.add(self.right_field)
         panel.add(help_label)
         # Set up constraints to tell panel how to position components.
         layout.putConstraint(SpringLayout.WEST,
@@ -104,12 +104,12 @@ class NewAtfView(JFrame):
                              SpringLayout.NORTH,
                              panel)
         layout.putConstraint(SpringLayout.WEST,
-                             left_field,
+                             self.left_field,
                              90,
                              SpringLayout.WEST,
                              panel)
         layout.putConstraint(SpringLayout.NORTH,
-                             left_field,
+                             self.left_field,
                              20,
                              SpringLayout.NORTH,
                              panel)
@@ -117,19 +117,19 @@ class NewAtfView(JFrame):
                              equals_label,
                              5,
                              SpringLayout.EAST,
-                             left_field)
+                             self.left_field)
         layout.putConstraint(SpringLayout.NORTH,
                              equals_label,
                              23,
                              SpringLayout.NORTH,
                              panel)
         layout.putConstraint(SpringLayout.WEST,
-                             right_field,
+                             self.right_field,
                              5,
                              SpringLayout.EAST,
                              equals_label)
         layout.putConstraint(SpringLayout.NORTH,
-                             right_field,
+                             self.right_field,
                              20,
                              SpringLayout.NORTH,
                              panel)
@@ -137,7 +137,7 @@ class NewAtfView(JFrame):
                              help_label,
                              5,
                              SpringLayout.EAST,
-                             right_field)
+                             self.right_field)
         layout.putConstraint(SpringLayout.NORTH,
                              help_label,
                              23,
@@ -166,14 +166,14 @@ class NewAtfView(JFrame):
         panel.setLayout(layout)
         # Create necessary components and add them to panel.
         project_label = JLabel('Project: ')
-        right_combo = JComboBox()
-        right_combo.setEditable(True)
+        self.right_combo = JComboBox()
+        self.right_combo.setEditable(True)
 
-        left_combo = JComboBox(self.projects.keys())
-        action_listener = ComboActionListener(right_combo,
+        self.left_combo = JComboBox(self.projects.keys())
+        action_listener = ComboActionListener(self.right_combo,
                                               self.projects)
-        left_combo.addActionListener(action_listener)
-        left_combo.setEditable(True)
+        self.left_combo.addActionListener(action_listener)
+        self.left_combo.setEditable(True)
 
         slash_label = JLabel('/')
 
@@ -182,9 +182,9 @@ class NewAtfView(JFrame):
                         "</body><html>")
         help_label = self.build_help_label(tooltip_text)
         panel.add(project_label)
-        panel.add(left_combo)
+        panel.add(self.left_combo)
         panel.add(slash_label)
-        panel.add(right_combo)
+        panel.add(self.right_combo)
         panel.add(help_label)
         # Set up constraints to tell panel how to position components.
         layout.putConstraint(SpringLayout.WEST,
@@ -198,12 +198,12 @@ class NewAtfView(JFrame):
                              SpringLayout.NORTH,
                              panel)
         layout.putConstraint(SpringLayout.WEST,
-                             left_combo,
+                             self.left_combo,
                              90,
                              SpringLayout.WEST,
                              panel)
         layout.putConstraint(SpringLayout.NORTH,
-                             left_combo,
+                             self.left_combo,
                              15,
                              SpringLayout.NORTH,
                              panel)
@@ -211,19 +211,19 @@ class NewAtfView(JFrame):
                              slash_label,
                              5,
                              SpringLayout.EAST,
-                             left_combo)
+                             self.left_combo)
         layout.putConstraint(SpringLayout.NORTH,
                              slash_label,
                              18,
                              SpringLayout.NORTH,
                              panel)
         layout.putConstraint(SpringLayout.WEST,
-                             right_combo,
+                             self.right_combo,
                              5,
                              SpringLayout.EAST,
                              slash_label)
         layout.putConstraint(SpringLayout.NORTH,
-                             right_combo,
+                             self.right_combo,
                              15,
                              SpringLayout.NORTH,
                              panel)
@@ -231,7 +231,7 @@ class NewAtfView(JFrame):
                              help_label,
                              5,
                              SpringLayout.EAST,
-                             right_combo)
+                             self.right_combo)
         layout.putConstraint(SpringLayout.NORTH,
                              help_label,
                              18,
@@ -260,11 +260,11 @@ class NewAtfView(JFrame):
         panel.setLayout(layout)
         # Create necessary components and add them to panel.
         language_label = JLabel('Language: ')
-        language_combo = JComboBox(self.languages.keys())
+        self.language_combo = JComboBox(self.languages.keys())
         tooltip_text = "Choose a language from the dropdown menu."
         help_label = self.build_help_label(tooltip_text)
         panel.add(language_label)
-        panel.add(language_combo)
+        panel.add(self.language_combo)
         panel.add(help_label)
         # Set up constraints to tell panel how to position components.
         layout.putConstraint(SpringLayout.WEST,
@@ -278,12 +278,12 @@ class NewAtfView(JFrame):
                              SpringLayout.NORTH,
                              panel)
         layout.putConstraint(SpringLayout.WEST,
-                             language_combo,
+                             self.language_combo,
                              90,
                              SpringLayout.WEST,
                              panel)
         layout.putConstraint(SpringLayout.NORTH,
-                             language_combo,
+                             self.language_combo,
                              15,
                              SpringLayout.NORTH,
                              panel)
@@ -291,7 +291,7 @@ class NewAtfView(JFrame):
                              help_label,
                              5,
                              SpringLayout.EAST,
-                             language_combo)
+                             self.language_combo)
         layout.putConstraint(SpringLayout.NORTH,
                              help_label,
                              18,
@@ -378,9 +378,10 @@ class NewAtfView(JFrame):
         layout = SpringLayout()
         panel.setLayout(layout)
         # Create necessary components and add them to panel.
-        create_button = JButton('Create template')
-        leave_button = JButton('Leave blank')
-        cancel_button = JButton('Cancel')
+        create_button = JButton('Create template', 
+                                actionPerformed=self.create_template)
+        leave_button = JButton('Leave blank', actionPerformed=self.blank)
+        cancel_button = JButton('Cancel', actionPerformed=self.cancel)
         panel.add(create_button)
         panel.add(leave_button)
         panel.add(cancel_button)
@@ -435,6 +436,33 @@ class NewAtfView(JFrame):
         label.setIcon(icon)
         label.setToolTipText(tooltip_text)
         return label
+    
+    def cancel(self, event):
+        self.dispose()
+    
+    def blank(self, event):
+        self.controller.set_template()
+        self.dispose()
+    
+    def create_template(self, event):
+        and_line = "{} = {}".format(self.left_field.getText(), 
+                                    self.right_field.getText())
+        project_line = "#project: {}".format(
+                                            self.left_combo.getSelectedItem())
+        if self.right_combo.getSelectedItem():
+            project_line = "{}/{}".format(project_line,
+                                          self.right_combo.getSelectedItem())
+        language = self.language_combo.getSelectedItem()
+        
+        self.controller.template = ('{}\n'
+                                    '{}\n'
+                                    '#atf: lang {}\n'
+                                    '#atf: use unicode\n'.format(and_line,
+                                                                 project_line,
+                                                                 language))
+        self.controller.set_template()
+        self.dispose()
+        
 
 
 class ComboActionListener(ActionListener):

@@ -116,16 +116,7 @@ class NammuController(object):
             self.view.setTitle("Nammu")
             # Open window for user to enter ATF template contents
             new_atf_controller = NewAtfController(self)
-            # In case user cancels
-            if new_atf_controller.get_user_input():
-                # If there is a template, print it on the text area
-                if new_atf_controller.template:
-                    self.atfAreaController.setAtfAreaText(
-                                                new_atf_controller.template)
-                else:
-                    # User chose to start from blank
-                    self.atfAreaController.clearAtfArea()
-                self.logger.debug("New file created.")
+            self.logger.debug("New file created from template.")
 
     def openFile(self, event=None):
         '''
