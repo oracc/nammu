@@ -19,6 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon
 from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
+from java.awt.event import ActionListener
 from ..utils import find_image_resource
 
 
@@ -165,10 +166,17 @@ class NewAtfView(JFrame):
         panel.setLayout(layout)
         # Create necessary components and add them to panel.
         project_label = JLabel('Project: ')
-        left_combo = JComboBox(self.projects.keys())
-        left_combo.setEditable(True)
-        slash_label = JLabel('/')
         right_combo = JComboBox()
+        right_combo.setEditable(True)
+
+        left_combo = JComboBox(self.projects.keys())
+        action_listener = ComboActionListener(right_combo,
+                                              self.projects)
+        left_combo.addActionListener(action_listener)
+        left_combo.setEditable(True)
+
+        slash_label = JLabel('/')
+
         tooltip_text = ("<html><body>Choose project from list or insert a new "
                         "one.<br/>You can leave the right-hand field blank."
                         "</body><html>")
@@ -427,3 +435,29 @@ class NewAtfView(JFrame):
         label.setIcon(icon)
         label.setToolTipText(tooltip_text)
         return label
+
+
+class ComboActionListener(ActionListener):
+    '''
+    Handle dynamically loading right side combo depending on what user chooses
+    in left hand combo.
+    Note normally can be directly assigned to actionPerformed, but not with
+    JComboBox because Jython.
+    '''
+    def __init__(self, right_combo, projects):
+        super(ComboActionListener, self).__init__()
+        self.right_combo = right_combo
+        self.projects = projects
+
+    def actionPerformed(self, event):
+        project = event.getSource().getSelectedItem()
+        self.right_combo.removeAllItems()
+        # In case they type a new project
+        try:
+            subprojects = self.projects[project]
+        except KeyError:
+            return
+        # Populate combo box only if project has subprojects
+        if subprojects:
+            for subproject in subprojects:
+                self.right_combo.addItem(subproject)
