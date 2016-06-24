@@ -169,7 +169,7 @@ class NewAtfView(JFrame):
         self.right_combo = JComboBox()
         self.right_combo.setEditable(True)
 
-        self.left_combo = JComboBox(self.projects.keys())
+        self.left_combo = JComboBox(sorted(self.projects.keys()))
         action_listener = ComboActionListener(self.right_combo,
                                               self.projects)
         self.left_combo.addActionListener(action_listener)
