@@ -19,7 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 import collections
 from javax.swing import JToolBar, ImageIcon, JButton
-from java.lang import ClassLoader
+from ..utils import find_image_resource
 
 
 class ToolbarView(JToolBar):
@@ -62,7 +62,7 @@ class ToolbarView(JToolBar):
         tooltips['quit'] = 'Exits Nammu'
 
         for name, tooltip in tooltips.items():
-            icon = ImageIcon(self.findImageResource(name))
+            icon = ImageIcon(find_image_resource(name))
             button = JButton(icon, actionPerformed=getattr(self, name))
             button.setToolTipText(tooltip)
             self.add(button)
@@ -77,9 +77,3 @@ class ToolbarView(JToolBar):
     def validate(self, event=None):
         if event:
             return self.controller.mainController.validate(event)
-
-    def findImageResource(self, name):
-        # Create helper object to load icon images in jar
-        loader = ClassLoader.getSystemClassLoader()
-        # Load image
-        return loader.getResource("resources/images/" + name.lower() + ".png")

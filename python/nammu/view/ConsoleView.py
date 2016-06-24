@@ -44,21 +44,21 @@ class ConsoleView(JPanel):
         self.setLayout(BorderLayout())
 
         # Create console-looking area
-        self.editArea = JTextArea()
-        self.editArea.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        self.editArea.font = Font("Courier New", Font.BOLD, 14)
-        self.editArea.background = Color.BLACK
-        self.editArea.foreground = Color.WHITE
+        self.edit_area = JTextArea()
+        self.edit_area.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
+        self.edit_area.font = Font("Courier New", Font.BOLD, 14)
+        self.edit_area.background = Color.BLACK
+        self.edit_area.foreground = Color.WHITE
 
         # Disable writing in the console
-        self.editArea.setEditable(False)
+        self.edit_area.setEditable(False)
 
         # Will need scrolling controls
-        scrollingText = JScrollPane(self.editArea)
+        scrollingText = JScrollPane(self.edit_area)
         scrollingText.setPreferredSize(Dimension(1, 150))
 
         # Make text area auto scroll down to last printed line
-        caret = self.editArea.getCaret()
+        caret = self.edit_area.getCaret()
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE)
 
         # Add to parent panel
@@ -68,4 +68,5 @@ class ConsoleView(JPanel):
         '''
         Scroll down to bottom.
         '''
-        self.editArea.setCaretPosition(self.editArea.getDocument().getLength())
+        length = self.edit_area.getDocument().getLength()
+        self.edit_area.setCaretPosition(length)

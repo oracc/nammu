@@ -31,6 +31,8 @@ class NammuConsoleHandler(StreamHandler):
         Needs a reference to nammu to be able to get ahold of Nammu's console.
         """
         super(logging.StreamHandler, self).__init__()
+        # Fixes an innocuous but ugly error message when exiting Nammu.
+        self.stream = None
         self.nammu_console = nammu_console
 
     def emit(self, record):

@@ -18,32 +18,31 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import codecs
-import os
+from logging import StreamHandler, Formatter
 import logging
 import logging.config
-import urllib
-
-from logging import StreamHandler, Formatter
 from logging.handlers import RotatingFileHandler
-from requests.exceptions import RequestException
-from requests.exceptions import Timeout, ConnectionError, HTTPError
-
-from java.awt import Desktop
-from java.net import URI
-from java.io import File
-from java.lang import System, Integer, ClassLoader
-from javax.swing import JFileChooser, JOptionPane, ToolTipManager
-from javax.swing.filechooser import FileNameExtensionFilter
+import os
+import urllib
 
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
 from MenuController import MenuController
 from ModelController import ModelController
 from ToolbarController import ToolbarController
-
+from NewAtfController import NewAtfController
+from java.awt import Desktop
+from java.io import File
+from java.lang import System, Integer, ClassLoader
+from java.net import URI
+from javax.swing import JFileChooser, JOptionPane, ToolTipManager
+from javax.swing.filechooser import FileNameExtensionFilter
 from pyoracc.atf.atffile import AtfFile
+from requests.exceptions import RequestException
+from requests.exceptions import Timeout, ConnectionError, HTTPError
+
 from ..SOAPClient.SOAPClient import SOAPClient
-from ..utils import get_yaml_config
+from ..utils import get_yaml_config, save_yaml_config, get_log_path
 from ..utils.NammuConsoleHandler import NammuConsoleHandler
 from ..view.NammuView import NammuView
 
@@ -83,7 +82,9 @@ class NammuController(object):
                                 self.consoleController.view)
         self.logger.info("Welcome to Nammu!")
         self.logger.info(
-                "Please open an ATF file or start typing to create a new one.")
+                "You can choose an option from the menu to open an ATF or "
+                "create a new one from \na template, or just start typing in "
+                "the text area.")
 
         # Display Nammu's view
         self.view.display()
@@ -107,18 +108,17 @@ class NammuController(object):
 
     def newFile(self, event):
         '''
-        1. Check if current file in text area has unsaved changes
-            1.1 Prompt user for file saving
-                1.1.1 Save file
-        2. Clear text area
-        3. See GitHub issue: https://github.com/UCL-RITS/nammu/issues/6
+        Checks if current file in text area has unsaved changes and prompts
+        user for file saving.
+        Then displays window for the user to choose ATF protocol, language and
+        project, and presents a template in the text area.
         '''
-
         if self.handleUnsaved():
-            self.atfAreaController.clearAtfArea()
-            self.view.setTitle("Nammu")
             self.currentFilename = None
-            self.logger.debug("New file created.")
+            self.view.setTitle("Nammu")
+            # Open window for user to enter ATF template contents
+            new_atf_controller = NewAtfController(self)
+            self.logger.debug("New file created from template.")
 
     def openFile(self, event=None):
         '''
@@ -129,7 +129,6 @@ class NammuController(object):
         3. Load file in text area
         4. Display file name in title bar
         '''
-
         if self.handleUnsaved():
             if self.currentFilename:
                 default_path = os.path.dirname(self.currentFilename)
@@ -168,7 +167,9 @@ class NammuController(object):
         If file being edited has a path, then overwrite with latest changes.
         If file was created from scratch and has no path, prompt JFileChooser
         to save in desired location.
+        Also checks for project name, and if found, makes it default.
         '''
+        atfText = self.atfAreaController.getAtfAreaText()
         if not self.currentFilename:
             fileChooser = JFileChooser(os.getcwd())
             status = fileChooser.showSaveDialog(self.view)
@@ -178,15 +179,24 @@ class NammuController(object):
                 basename = atfFile.getName()
                 self.currentFilename = filename
                 self.view.setTitle(basename)
-        atfText = self.atfAreaController.getAtfAreaText()
+            else:
+                return
         try:
             self.writeTextFile(self.currentFilename, atfText)
         except:
             self.logger.error("There was an error trying to save %s.",
                               self.currentFilename)
         else:
-            self.logger.debug("File %s successfully saved.",
-                              self.currentFilename)
+            self.logger.info("File %s successfully saved.",
+                             self.currentFilename)
+
+        # Find project and add to setting.yaml as default
+        project = self.get_project()
+        if project:
+            settings = get_yaml_config('settings.yaml')
+            if settings['projects']['default'] != project:
+                settings['projects']['default'] = [project]
+                save_yaml_config(settings)
 
     def writeTextFile(self, filename, text):
         '''
@@ -295,13 +305,10 @@ class NammuController(object):
         However, the intention is to replace this with validation by pyoracc.
         '''
         # Clear previous log in Nammu's console
-        self.consoleController.view.editArea.setText("")
+        self.consoleController.view.edit_area.setText("")
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
-
-        # Clear colouring in line number from previous validation
-        self.atfAreaController.update_line_numbers()
 
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
@@ -334,13 +341,10 @@ class NammuController(object):
         Don't lemmatise if file doesn't validate.
         '''
         # Clear previous log in Nammu's console
-        self.consoleController.view.editArea.setText("")
+        self.consoleController.view.edit_area.setText("")
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
-
-        # Clear colouring in line number from previous validation
-        self.atfAreaController.update_line_numbers()
 
         if self.currentFilename:
             self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
@@ -439,9 +443,13 @@ class NammuController(object):
         If we are lemmatising, it'll also return:
           * <filename>_autolem.atf: lemmatised version of file
         """
+        # Check if there were any validation errors and pass them to the
+        # ATF area to refresh syntax highlighting.
+        self.process_validation_errors(oracc_log)
+        # Always syntax highlight, not only when there are errors, otherwise
+        # old error lines' styling won't be cleared!
+        self.atfAreaController.syntax_highlight()
         if oracc_log:
-            validation_errors = self.get_validation_errors(oracc_log)
-            self.atfAreaController.view.error_highlight(validation_errors)
             # TODO: Prompt dialog.
             if autolem:
                 self.logger.info("The lemmatisation returned some "
@@ -507,13 +515,12 @@ class NammuController(object):
                 self.logger.error("Unexpected error when waiting for ORACC "
                                   "server to prepare response.")
 
-    def get_validation_errors(self, oracc_log):
+    def process_validation_errors(self, oracc_log):
         """
-        Reads the log from the oracc server from the validation, and returns a
-        dictionary with line numbers and error messages.
+        Reads the log from the oracc server from the validation, and refreshes
+        the dictionary with line numbers and error messages.
         """
-        validation_errors = {}
-
+        validation_errors_server = {}
         for line in oracc_log.splitlines():
             if ':' in line:
                 line_number = line.split(':')[1]
@@ -522,19 +529,20 @@ class NammuController(object):
                 except IndexError:
                     continue
                 error_message = line.split(project_id + ':')[1]
-                if line_number not in validation_errors.keys():
-                    validation_errors[line_number] = []
-                validation_errors[line_number].append(error_message)
+                if line_number not in validation_errors_server.keys():
+                    validation_errors_server[line_number] = []
+                validation_errors_server[line_number].append(error_message)
 
-        validation_error_str = {}
-        for line_num, errors in validation_errors.iteritems():
+        validation_errors = {}
+        for line_num, errors in validation_errors_server.iteritems():
             error_message = "<html><font face=\"verdana\" size=\"3\">"
             for error in errors:
                 error_message += "&#149; " + error + "<br/>"
             error_message += "</font></html>"
-            validation_error_str[line_num] = error_message
+            validation_errors[line_num] = error_message
 
-        return validation_error_str
+        # Refresh validation errors
+        self.atfAreaController.set_validation_errors(validation_errors)
 
     def printFile(self, event):
         '''
@@ -635,7 +643,11 @@ class NammuController(object):
         Output should be sent to Nammu's console as well as a local logfile
         and the system console.
         """
-        yaml_dict = get_yaml_config()
+        yaml_dict = get_yaml_config('logging.yaml')
+        # Replace user given basename with absolute path to log file
+        logfile = yaml_dict['handlers']['file_handler']['filename']
+        yaml_dict['handlers']['file_handler']['filename'] = get_log_path(
+                                                                    logfile)
         logging.config.dictConfig(yaml_dict)
         logger = logging.getLogger("NammuController")
 
