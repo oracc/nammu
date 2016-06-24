@@ -20,6 +20,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon
 from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
 from java.awt.event import ActionListener
+from java.awt import Dimension
 from ..utils import find_image_resource
 
 
@@ -177,7 +178,20 @@ class NewAtfView(JFrame):
                                      project != 'default'
                                      ])
           
-        self.left_combo = JComboBox(projects)
+        self.left_combo = JComboBox(create_project_list()[0])
+        # Make left combo keep size no matter how long project names are
+        self.left_combo.setPreferredSize(Dimension(125, 30))
+        self.left_combo.setMinimumSize(self.left_combo.getPreferredSize())
+        self.left_combo.setMaximumSize(self.left_combo.getPreferredSize())
+        self.left_combo.setSize(self.left_combo.getPreferredSize())
+        
+        self.right_combo = JComboBox(create_project_list()[1])
+        # Prevent right combo to change sizes dynamically 
+        self.right_combo.setPreferredSize(Dimension(100, 30))
+        self.right_combo.setMinimumSize(self.left_combo.getPreferredSize())
+        self.right_combo.setMaximumSize(self.left_combo.getPreferredSize())
+        self.right_combo.setSize(self.left_combo.getPreferredSize())
+        
         action_listener = ComboActionListener(self.right_combo,
                                               self.projects)
         self.left_combo.addActionListener(action_listener)
