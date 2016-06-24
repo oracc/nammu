@@ -60,7 +60,6 @@ class NewAtfView(JFrame):
         ampersand_panel = self.build_ampersand_row()
         project_panel = self.build_projects_row()
         language_panel = self.build_language_row()
-#         self.build_protocols_row()
         buttons_panel = self.build_buttons_row()
 
         # Add panels to main JFrame
@@ -346,65 +345,6 @@ class NewAtfView(JFrame):
                              10,
                              SpringLayout.SOUTH,
                              help_label)
-        # Add this to NewAtf JFrame
-        return panel
-
-    def build_protocols_row(self):
-        '''
-        Builds the protocols row.
-        '''
-        # Build own panel with SpringLayout.
-        panel = JPanel()
-        layout = SpringLayout()
-        panel.setLayout(layout)
-        # Create necessary components and add them to panel.
-        protocols_label = JLabel('Protocols: ')
-        protocols_list = JList(self.protocols)
-        help_label = self.build_help_label()
-        panel.add(protocols_label)
-        panel.add(protocols_list)
-        panel.add(help_label)
-        # Set up constraints to tell panel how to position components.
-        layout.putConstraint(SpringLayout.WEST,
-                             protocols_label,
-                             15,
-                             SpringLayout.WEST,
-                             panel)
-        layout.putConstraint(SpringLayout.NORTH,
-                             protocols_label,
-                             18,
-                             SpringLayout.NORTH,
-                             panel)
-        layout.putConstraint(SpringLayout.WEST,
-                             protocols_list,
-                             90,
-                             SpringLayout.WEST,
-                             panel)
-        layout.putConstraint(SpringLayout.NORTH,
-                             protocols_list,
-                             15,
-                             SpringLayout.NORTH,
-                             panel)
-        layout.putConstraint(SpringLayout.WEST,
-                             help_label,
-                             5,
-                             SpringLayout.EAST,
-                             protocols_list)
-        layout.putConstraint(SpringLayout.NORTH,
-                             help_label,
-                             18,
-                             SpringLayout.NORTH,
-                             panel)
-        layout.putConstraint(SpringLayout.EAST,
-                             panel,
-                             15,
-                             SpringLayout.EAST,
-                             help_label)
-        layout.putConstraint(SpringLayout.SOUTH,
-                             panel,
-                             10,
-                             SpringLayout.SOUTH,
-                             protocols_label)
         # Add this to NewAtf JFrame
         return panel
 
