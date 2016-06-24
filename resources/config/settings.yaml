@@ -21,7 +21,7 @@ languages:
     Udgalnun: sux-x-udgalnun
     
 projects:
-    latest:
+    default:
         - cams/gkab
     cams:
         - gkab
