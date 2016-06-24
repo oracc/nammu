@@ -17,19 +17,20 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon
+from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon, JDialog
 from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
 from java.awt.event import ActionListener
-from java.awt import Dimension
+from java.awt import Dimension, Dialog
 from ..utils import find_image_resource
 
 
-class NewAtfView(JFrame):
+class NewAtfView(JDialog):
     '''
     Prompt user to choose some options to create a template for a new ATF
     file.
     '''
     def __init__(self, controller, projects, languages, protocols):
+        self.modalityType = Dialog.ModalityType.APPLICATION_MODAL
         self.controller = controller
         self.projects = projects
         self.languages = languages
