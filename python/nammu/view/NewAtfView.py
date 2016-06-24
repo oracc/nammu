@@ -492,13 +492,16 @@ class NewAtfView(JFrame):
             project_line = "{}/{}".format(project_line,
                                           self.right_combo.getSelectedItem())
         language = self.language_combo.getSelectedItem()
+        language_code = self.languages[language]
 
         self.controller.template = ('{}\n'
                                     '{}\n'
                                     '#atf: lang {}\n'
                                     '#atf: use unicode\n'.format(and_line,
                                                                  project_line,
-                                                                 language))
+                                                                 language_code
+                                                                 )
+                                    )
         self.controller.set_template()
         self.dispose()
 
