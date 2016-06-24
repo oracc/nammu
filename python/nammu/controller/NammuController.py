@@ -42,7 +42,7 @@ from requests.exceptions import RequestException
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 
 from ..SOAPClient.SOAPClient import SOAPClient
-from ..utils import get_yaml_config, get_log_path
+from ..utils import get_yaml_config, save_yaml_config, get_log_path
 from ..utils.NammuConsoleHandler import NammuConsoleHandler
 from ..view.NammuView import NammuView
 
@@ -165,6 +165,7 @@ class NammuController(object):
         If file being edited has a path, then overwrite with latest changes.
         If file was created from scratch and has no path, prompt JFileChooser
         to save in desired location.
+        Also checks for project name, and if found, makes it default.
         '''
         if not self.currentFilename:
             fileChooser = JFileChooser(os.getcwd())
@@ -182,8 +183,16 @@ class NammuController(object):
             self.logger.error("There was an error trying to save %s.",
                               self.currentFilename)
         else:
-            self.logger.debug("File %s successfully saved.",
-                              self.currentFilename)
+            self.logger.info("File %s successfully saved.",
+                             self.currentFilename)
+
+        # Find project and add to setting.yaml as default
+        project = self.get_project()
+        if project:
+            settings = get_yaml_config('settings.yaml')
+            if settings['projects']['default'] != project:
+                settings['projects']['default'] = [project]
+                save_yaml_config(settings)
 
     def writeTextFile(self, filename, text):
         '''

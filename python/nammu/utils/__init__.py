@@ -137,6 +137,25 @@ def get_yaml_config(yaml_filename):
     return yaml.load(open(path_to_config, 'r'))
 
 
+def save_yaml_config(config):
+    '''
+    Overwrites settings with given config dict.
+    '''
+    # Get config path
+    path_to_config = get_log_path('settings.yaml')
+
+    # This is a temporary hack to work around the mvn test stage not finding
+    # yaml
+    try:
+        import yaml
+    except:
+        pass
+
+    # Save given config in yaml file
+    with open(path_to_config, 'w') as outfile:
+        outfile.write(yaml.safe_dump(config))
+
+
 def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
     '''
     Opens Nammu's jar as a zip file, looks for the yaml config file and copies

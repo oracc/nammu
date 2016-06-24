@@ -183,11 +183,11 @@ class NewAtfView(JFrame):
             projects = [default_project]
             subprojects = [default_subproject]
             # User created projects might not be in default dictionary
-            if default_project in self.projects.keys():
-                for project in self.projects.keys():
-                    if (project != default_project and project != 'default'):
-                        projects.append(project)
+            for project in self.projects.keys():
+                if (project != default_project and project != 'default'):
+                    projects.append(project)
                 # Default project might not have subproject
+            if default_project in self.projects.keys():
                 if default_subproject:
                     for subproject in self.projects[default_project]:
                         if (subproject != default_subproject):
