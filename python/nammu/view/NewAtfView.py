@@ -170,13 +170,27 @@ class NewAtfView(JFrame):
         self.right_combo = JComboBox()
         self.right_combo.setEditable(True)
 
-        # Prepare list of projects
-        projects= self.projects['default'] + sorted([
-                                     project 
-                                     for project in self.projects.keys() 
-                                     if project != self.projects['default'] and
-                                     project != 'default'
-                                     ])
+        def create_project_list():
+            '''
+            Prepares list of projects and subprojects ordered with the default 
+            one first.
+            '''
+            default_project = self.projects['default'][0].split('/')[0]
+            if '/' in self.projects['default'][0]:
+                default_subproject = self.projects['default'][0].split('/')[1]
+            else:
+                default_subproject = ''
+            projects = [default_project]
+            subprojects = [default_subproject]
+            for project in self.projects.keys():
+                if (project != default_project and 
+                    project != 'default'):
+                    projects.append(project)
+            if default_subproject:
+                for subproject in self.projects[default_project]:
+                    if (subproject != default_subproject):
+                        subprojects.append(subproject)
+            return projects, subprojects
           
         self.left_combo = JComboBox(create_project_list()[0])
         # Make left combo keep size no matter how long project names are
@@ -196,6 +210,7 @@ class NewAtfView(JFrame):
                                               self.projects)
         self.left_combo.addActionListener(action_listener)
         self.left_combo.setEditable(True)
+        self.right_combo.setEditable(True)
 
         slash_label = JLabel('/')
 
