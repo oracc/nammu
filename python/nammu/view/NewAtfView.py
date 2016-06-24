@@ -172,7 +172,7 @@ class NewAtfView(JFrame):
 
         def create_project_list():
             '''
-            Prepares list of projects and subprojects ordered with the default 
+            Prepares list of projects and subprojects ordered with the default
             one first.
             '''
             default_project = self.projects['default'][0].split('/')[0]
@@ -185,8 +185,7 @@ class NewAtfView(JFrame):
             # User created projects might not be in default dictionary
             if default_project in self.projects.keys():
                 for project in self.projects.keys():
-                    if (project != default_project and 
-                        project != 'default'):
+                    if (project != default_project and project != 'default'):
                         projects.append(project)
                 # Default project might not have subproject
                 if default_subproject:
@@ -194,21 +193,21 @@ class NewAtfView(JFrame):
                         if (subproject != default_subproject):
                             subprojects.append(subproject)
             return projects, subprojects
-          
+
         self.left_combo = JComboBox(create_project_list()[0])
         # Make left combo keep size no matter how long project names are
         self.left_combo.setPreferredSize(Dimension(125, 30))
         self.left_combo.setMinimumSize(self.left_combo.getPreferredSize())
         self.left_combo.setMaximumSize(self.left_combo.getPreferredSize())
         self.left_combo.setSize(self.left_combo.getPreferredSize())
-        
+
         self.right_combo = JComboBox(create_project_list()[1])
-        # Prevent right combo to change sizes dynamically 
+        # Prevent right combo to change sizes dynamically
         self.right_combo.setPreferredSize(Dimension(100, 30))
         self.right_combo.setMinimumSize(self.left_combo.getPreferredSize())
         self.right_combo.setMaximumSize(self.left_combo.getPreferredSize())
         self.right_combo.setSize(self.left_combo.getPreferredSize())
-        
+
         action_listener = ComboActionListener(self.right_combo,
                                               self.projects)
         self.left_combo.addActionListener(action_listener)
