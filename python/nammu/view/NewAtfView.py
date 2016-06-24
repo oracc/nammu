@@ -182,14 +182,17 @@ class NewAtfView(JFrame):
                 default_subproject = ''
             projects = [default_project]
             subprojects = [default_subproject]
-            for project in self.projects.keys():
-                if (project != default_project and 
-                    project != 'default'):
-                    projects.append(project)
-            if default_subproject:
-                for subproject in self.projects[default_project]:
-                    if (subproject != default_subproject):
-                        subprojects.append(subproject)
+            # User created projects might not be in default dictionary
+            if default_project in self.projects.keys():
+                for project in self.projects.keys():
+                    if (project != default_project and 
+                        project != 'default'):
+                        projects.append(project)
+                # Default project might not have subproject
+                if default_subproject:
+                    for subproject in self.projects[default_project]:
+                        if (subproject != default_subproject):
+                            subprojects.append(subproject)
             return projects, subprojects
           
         self.left_combo = JComboBox(create_project_list()[0])
