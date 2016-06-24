@@ -82,7 +82,9 @@ class NammuController(object):
                                 self.consoleController.view)
         self.logger.info("Welcome to Nammu!")
         self.logger.info(
-                "Please open an ATF file or start typing to create a new one.")
+                "You can choose an option from the menu to open an ATF or "
+                "create a new one from a template, or just start typing in "
+                "the text area.")
 
         # Display Nammu's view
         self.view.display()
