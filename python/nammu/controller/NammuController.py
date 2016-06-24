@@ -30,6 +30,7 @@ from ConsoleController import ConsoleController
 from MenuController import MenuController
 from ModelController import ModelController
 from ToolbarController import ToolbarController
+from NewAtfController import NewAtfController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
@@ -41,7 +42,7 @@ from requests.exceptions import RequestException
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 
 from ..SOAPClient.SOAPClient import SOAPClient
-from ..utils import get_yaml_config
+from ..utils import get_yaml_config, save_yaml_config, get_log_path
 from ..utils.NammuConsoleHandler import NammuConsoleHandler
 from ..view.NammuView import NammuView
 
@@ -81,7 +82,9 @@ class NammuController(object):
                                 self.consoleController.view)
         self.logger.info("Welcome to Nammu!")
         self.logger.info(
-                "Please open an ATF file or start typing to create a new one.")
+                "You can choose an option from the menu to open an ATF or "
+                "create a new one from \na template, or just start typing in "
+                "the text area.")
 
         # Display Nammu's view
         self.view.display()
@@ -105,17 +108,17 @@ class NammuController(object):
 
     def newFile(self, event):
         '''
-        1. Check if current file in text area has unsaved changes
-            1.1 Prompt user for file saving
-                1.1.1 Save file
-        2. Clear text area
-        3. See GitHub issue: https://github.com/UCL-RITS/nammu/issues/6
+        Checks if current file in text area has unsaved changes and prompts
+        user for file saving.
+        Then displays window for the user to choose ATF protocol, language and
+        project, and presents a template in the text area.
         '''
         if self.handleUnsaved():
-            self.atfAreaController.clearAtfArea()
-            self.view.setTitle("Nammu")
             self.currentFilename = None
-            self.logger.debug("New file created.")
+            self.view.setTitle("Nammu")
+            # Open window for user to enter ATF template contents
+            new_atf_controller = NewAtfController(self)
+            self.logger.debug("New file created from template.")
 
     def openFile(self, event=None):
         '''
@@ -164,7 +167,9 @@ class NammuController(object):
         If file being edited has a path, then overwrite with latest changes.
         If file was created from scratch and has no path, prompt JFileChooser
         to save in desired location.
+        Also checks for project name, and if found, makes it default.
         '''
+        atfText = self.atfAreaController.getAtfAreaText()
         if not self.currentFilename:
             fileChooser = JFileChooser(os.getcwd())
             status = fileChooser.showSaveDialog(self.view)
@@ -174,15 +179,24 @@ class NammuController(object):
                 basename = atfFile.getName()
                 self.currentFilename = filename
                 self.view.setTitle(basename)
-        atfText = self.atfAreaController.getAtfAreaText()
+            else:
+                return
         try:
             self.writeTextFile(self.currentFilename, atfText)
         except:
             self.logger.error("There was an error trying to save %s.",
                               self.currentFilename)
         else:
-            self.logger.debug("File %s successfully saved.",
-                              self.currentFilename)
+            self.logger.info("File %s successfully saved.",
+                             self.currentFilename)
+
+        # Find project and add to setting.yaml as default
+        project = self.get_project()
+        if project:
+            settings = get_yaml_config('settings.yaml')
+            if settings['projects']['default'] != project:
+                settings['projects']['default'] = [project]
+                save_yaml_config(settings)
 
     def writeTextFile(self, filename, text):
         '''
@@ -629,7 +643,11 @@ class NammuController(object):
         Output should be sent to Nammu's console as well as a local logfile
         and the system console.
         """
-        yaml_dict = get_yaml_config()
+        yaml_dict = get_yaml_config('logging.yaml')
+        # Replace user given basename with absolute path to log file
+        logfile = yaml_dict['handlers']['file_handler']['filename']
+        yaml_dict['handlers']['file_handler']['filename'] = get_log_path(
+                                                                    logfile)
         logging.config.dictConfig(yaml_dict)
         logger = logging.getLogger("NammuController")
 
