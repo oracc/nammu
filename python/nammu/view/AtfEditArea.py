@@ -53,7 +53,7 @@ class AtfEditArea(JTextPane):
                     # validation errors.
                     return None
                 else:
-                    return err_msg
+                    return err_msg.decode('utf-8')
 
     def get_line_num(self, position):
         """
