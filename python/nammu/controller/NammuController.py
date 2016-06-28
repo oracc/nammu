@@ -580,8 +580,12 @@ class NammuController(object):
         '''
         Parse input string, could be just a line or a whole file content.
         '''
-        parsed = AtfFile(text)
-        return parsed
+        try:
+            parsed = AtfFile(text)
+        except (SyntaxError, AttributeError) as e:
+            self.logger.error(e.msg)
+        else:
+            return parsed
 
     def unicode(self, event):
         '''
