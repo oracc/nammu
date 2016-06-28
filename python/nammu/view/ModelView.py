@@ -36,7 +36,7 @@ class ModelView(JFrame):
 
         # Give reference to controller to delegate action response
         self.controller = controller
-        
+
         # Get list of projects, languages and protocols from config settings
         config = get_yaml_config('settings.yaml')
         self.languages = config['languages']
@@ -59,7 +59,7 @@ class ModelView(JFrame):
 
         # Add notice panel
         self.add(self.addNotice(), BorderLayout.NORTH)
-        
+
         # Add to parent panel
         self.add(scrollingArea, BorderLayout.CENTER)
 
@@ -160,10 +160,10 @@ class ModelView(JFrame):
 
         # Add metadataPanel to object tab in main panel
         self.objectTabs[objectID].add(metadataPanel)
-        
+
     def addNotice(self):
         """
-        Add a panel that notifies the user about the model view not being 
+        Add a panel that notifies the user about the model view not being
         ready yet.
         """
         panel = JPanel()
