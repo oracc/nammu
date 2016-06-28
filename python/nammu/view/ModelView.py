@@ -57,20 +57,11 @@ class ModelView(JFrame):
         # Will need scrolling controls
         scrollingArea = JScrollPane(self.mainPanel)
 
+        # Add notice panel
+        self.add(self.addNotice(), BorderLayout.NORTH)
+        
         # Add to parent panel
         self.add(scrollingArea, BorderLayout.CENTER)
-
-        # TODO: Where to get/store this information?
-        self.languages = {"akk-x-stdbab": "Akkadian Standard Babylonian",
-                          "akk": "Akkadian",
-                          "sux": "",
-                          "a": "",
-                          "akk-x-oldbab": "Akkadian Old Babylonian",
-                          "qpc": "",
-                          "na": "",
-                          "nb": "",
-                          "x/n": "",
-                          "akk-x-neoass": "Akkadian Neo Assyrian"}
 
     def addObject(self, objectID):
         """
@@ -169,5 +160,15 @@ class ModelView(JFrame):
 
         # Add metadataPanel to object tab in main panel
         self.objectTabs[objectID].add(metadataPanel)
-
-    # TODO: def addSide(self, sideType, content):
+        
+    def addNotice(self):
+        """
+        Add a panel that notifies the user about the model view not being 
+        ready yet.
+        """
+        panel = JPanel()
+        panel.setBackground(Color.yellow)
+        label = JLabel("Please note Nammu's model view is under "
+                       "construction.")
+        panel.add(label)
+        return panel
