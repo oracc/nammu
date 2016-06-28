@@ -567,8 +567,7 @@ class NammuController(object):
         3. Send text to model view controller and delegate
         '''
         atfText = self.atfAreaController.getAtfAreaText()
-        # if self.currentFilename != None and atfText != None :
-        if self.currentFilename is not None:
+        if self.currentFilename or atfText:
             # TODO Check if ATF is valid
             # This may imply parsing the text, so perhaps the model controller
             # can just receive the parsed object instead of the text
