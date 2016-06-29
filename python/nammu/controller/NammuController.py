@@ -582,8 +582,13 @@ class NammuController(object):
         '''
         try:
             parsed = AtfFile(text)
-        except (SyntaxError, AttributeError) as e:
-            self.logger.error(e.msg)
+        except SyntaxError as e:
+            self.logger.error("There is a syntax error near character '{}' "
+                              "in line {} and position {}".format(
+                                                        e.text.strip('\n'),
+                                                        e.lineno,
+                                                        e.offset + 1)
+                              )
         else:
             return parsed
 
