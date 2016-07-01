@@ -64,3 +64,15 @@ protocols:
     - legacy
     - lexical
     - mylines
+    
+keystrokes:
+    'undo': 'meta Z'
+    'redo': 'meta shift Z'
+    'saveFile': 'meta S'
+    'newFile': 'meta N'
+    'openFile': 'meta O'
+    'closeFile': 'meta X'
+    'quit': 'meta Q'a
+    'validate': 'meta D'
+    'lemmatise': 'meta L'
+    'showHelp': 'F1'
