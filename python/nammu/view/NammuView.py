@@ -22,8 +22,6 @@ from java.awt.event import KeyEvent
 from javax.swing import JFrame, JSplitPane, KeyStroke, AbstractAction
 from javax.swing import JComponent
 
-from ..utils import get_yaml_config
-
 
 class NammuView(JFrame):
     '''
@@ -39,7 +37,7 @@ class NammuView(JFrame):
         self.setLayout(BorderLayout())
 
         # Get key bindings configuration from settings
-        key_strokes = get_yaml_config('settings.yaml')['keystrokes']
+        key_strokes = self.controller.config['keystrokes']
 
         # Configure key bindings for undo/redo
         # First decide when key bindings can be triggered:

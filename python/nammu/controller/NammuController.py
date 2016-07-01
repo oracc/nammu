@@ -69,6 +69,9 @@ class NammuController(object):
         # Set up logging system
         self.logger = self.setup_logger()
 
+        # Load Nammu's settings
+        self.config = get_yaml_config('settings.yaml')
+
         # Create all the controllers
         self.menuController = MenuController(self)
         self.toolbarController = ToolbarController(self)
@@ -193,10 +196,9 @@ class NammuController(object):
         # Find project and add to setting.yaml as default
         project = self.get_project()
         if project:
-            settings = get_yaml_config('settings.yaml')
-            if settings['projects']['default'] != project:
-                settings['projects']['default'] = [project]
-                save_yaml_config(settings)
+            if self.config['projects']['default'] != project:
+                self.config['projects']['default'] = [project]
+                save_yaml_config(self.config)
 
     def writeTextFile(self, filename, text):
         '''
