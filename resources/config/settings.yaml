@@ -19,7 +19,7 @@ languages:
     Emesal: sux-x-emesal
     Syllabic: sux-x-syllabic
     Udgalnun: sux-x-udgalnun
-    
+
 projects:
     default:
         - cams/gkab
@@ -31,7 +31,7 @@ projects:
         - nineveh
         - obale
     etcsri:
-    rimanum:  
+    rimanum:
     rinap:
         - rinap1
         - rinap3
@@ -58,21 +58,21 @@ projects:
         - saa17
         - saa18
         - saa19
-        
+
 protocols:
     - math
     - legacy
     - lexical
     - mylines
-    
+
 keystrokes:
-    'undo': 'meta Z'
-    'redo': 'meta shift Z'
-    'saveFile': 'meta S'
-    'newFile': 'meta N'
-    'openFile': 'meta O'
-    'closeFile': 'meta X'
-    'quit': 'meta Q'a
-    'validate': 'meta D'
-    'lemmatise': 'meta L'
-    'showHelp': 'F1'
+    undo: meta Z
+    redo: meta shift Z
+    saveFile: meta S
+    newFile: meta N
+    openFile: meta O
+    closeFile: meta X
+    quit: meta Q
+    validate: meta D
+    lemmatise: meta L
+    showHelp: F1
