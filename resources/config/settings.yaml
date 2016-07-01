@@ -72,7 +72,6 @@ keystrokes:
     newFile: VK_N
     openFile: VK_O
     closeFile: VK_X
-    quit: VK_Q
     validate: VK_D
     lemmatise: VK_L
     showHelp: VK_H
