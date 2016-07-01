@@ -66,13 +66,13 @@ protocols:
     - mylines
 
 keystrokes:
-    undo: meta Z
-    redo: meta shift Z
-    saveFile: meta S
-    newFile: meta N
-    openFile: meta O
-    closeFile: meta X
-    quit: meta Q
-    validate: meta D
-    lemmatise: meta L
-    showHelp: F1
+    undo: VK_Z
+    redo: VK_Y
+    saveFile: VK_S
+    newFile: VK_N
+    openFile: VK_O
+    closeFile: VK_X
+    quit: VK_Q
+    validate: VK_D
+    lemmatise: VK_L
+    showHelp: VK_H

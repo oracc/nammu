@@ -17,7 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from java.awt import BorderLayout
+from java.awt import BorderLayout, Toolkit
+from java.awt.event import KeyEvent
 from javax.swing import JFrame, JSplitPane, KeyStroke, AbstractAction
 from javax.swing import JComponent
 
@@ -49,10 +50,11 @@ class NammuView(JFrame):
         # AbstractAction subclass.
         pane = self.getContentPane()
         for action, key in key_strokes.iteritems():
-            pane.getInputMap(condition).put(KeyStroke.getKeyStroke(key),
-                                            action)
-            pane.getActionMap().put(action,
-                                    KeyStrokeAction(self, action))
+            key_stroke = KeyStroke.getKeyStroke(
+                        getattr(KeyEvent, key),
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
+            pane.getInputMap(condition).put(key_stroke, action)
+            pane.getActionMap().put(action, KeyStrokeAction(self, action))
 
         # TODO
         # Create splitPane with two empty panels for the ATF edition/console
