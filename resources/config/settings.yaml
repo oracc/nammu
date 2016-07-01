@@ -1,4 +1,6 @@
 ---
+version: 0.1
+
 languages:
     Early Akkadian: akk-x-earakk
     Old Akkadian: akk-x-oldakk
