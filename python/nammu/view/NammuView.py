@@ -18,8 +18,10 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from java.awt import BorderLayout
-from javax.swing import JFrame, JSplitPane
-from __builtin__ import None
+from javax.swing import JFrame, JSplitPane, KeyStroke, AbstractAction
+from javax.swing import JComponent
+
+from ..utils import get_yaml_config
 
 
 class NammuView(JFrame):
@@ -34,6 +36,23 @@ class NammuView(JFrame):
         # All window components apart from the menu will go in the JFrame's
         # content pane
         self.setLayout(BorderLayout())
+
+        # Get key bindings configuration from settings
+        key_strokes = get_yaml_config('settings.yaml')['keystrokes']
+
+        # Configure key bindings for undo/redo
+        # First decide when key bindings can be triggered:
+        condition = JComponent.WHEN_IN_FOCUSED_WINDOW
+
+        # InputMap maps key strokes to actions in string format (e.g. 'undo')
+        # ActionMap maps string actions (e.g. 'undo') with a custom
+        # AbstractAction subclass.
+        pane = self.getContentPane()
+        for action, key in key_strokes.iteritems():
+            pane.getInputMap(condition).put(KeyStroke.getKeyStroke(key),
+                                            action)
+            pane.getActionMap().put(action,
+                                    KeyStrokeAction(self, action))
 
         # TODO
         # Create splitPane with two empty panels for the ATF edition/console
@@ -75,3 +94,19 @@ class NammuView(JFrame):
 
         # Display Nammu window
         self.visible = 1
+
+
+class KeyStrokeAction(AbstractAction):
+    '''
+    Needed to be assigned to key strokes via JComponent's ActionMap.
+    '''
+    def __init__(self, component, action):
+        self.component = component
+        self.action = action
+
+    def actionPerformed(self, event):
+        '''
+        Overrides AbstractAction's actionPerform to executed the given action
+        in the component's controller.
+        '''
+        getattr(self.component.controller, self.action)()
