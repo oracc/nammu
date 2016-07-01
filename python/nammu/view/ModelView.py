@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from java.awt import BorderLayout, GridLayout
+from java.awt import BorderLayout, GridLayout, Color, Dimension
 from javax.swing import JScrollPane, JPanel, JFrame, JComboBox, JTabbedPane
 from javax.swing import JLabel, BoxLayout, JButton
+from ..utils import get_yaml_config
 from __builtin__ import None
 
 
@@ -36,6 +37,12 @@ class ModelView(JFrame):
         # Give reference to controller to delegate action response
         self.controller = controller
 
+        # Get list of projects, languages and protocols from config settings
+        config = get_yaml_config('settings.yaml')
+        self.languages = config['languages']
+        self.protocols = config['protocols']
+        self.projects = config['projects']
+
         # Make text area occupy all available space and resize with parent
         # window
         self.setLayout(BorderLayout())
@@ -50,20 +57,11 @@ class ModelView(JFrame):
         # Will need scrolling controls
         scrollingArea = JScrollPane(self.mainPanel)
 
+        # Add notice panel
+        self.add(self.addNotice(), BorderLayout.NORTH)
+
         # Add to parent panel
         self.add(scrollingArea, BorderLayout.CENTER)
-
-        # TODO: Where to get/store this information?
-        self.languages = {"akk-x-stdbab": "Akkadian Standard Babylonian",
-                          "akk": "Akkadian",
-                          "sux": "",
-                          "a": "",
-                          "akk-x-oldbab": "Akkadian Old Babylonian",
-                          "qpc": "",
-                          "na": "",
-                          "nb": "",
-                          "x/n": "",
-                          "akk-x-neoass": "Akkadian Neo Assyrian"}
 
     def addObject(self, objectID):
         """
@@ -106,6 +104,11 @@ class ModelView(JFrame):
         label = JLabel(category)
 
         combo = JComboBox(text)
+        combo.setEditable(True)
+        combo.setPreferredSize(Dimension(500, 20))
+        combo.setSize(combo.getPreferredSize())
+        combo.setMinimumSize(combo.getPreferredSize())
+        combo.setMaximumSize(combo.getPreferredSize())
 
         buttonsPanel = JPanel()
         addButton = JButton("Add")
@@ -136,15 +139,17 @@ class ModelView(JFrame):
         projectLabel = JLabel("Project: ")
         projectValue = JLabel(project)
 
-        # TODO Check language not found
         languageLabel = JLabel("Language: ")
-        languageValue = JLabel(self.languages[language])
+        languageValue = JLabel(language)
+        # If language code is in the settings, then display name instead
+        # of code
+        for lang, code in self.languages.iteritems():
+            if code == language:
+                languageValue.setText(lang)
 
         # TODO Protocols not yet in parsed object
         protocolsLabel = JLabel("ATF Protocols: ")
-        protocolsBox = JComboBox()
-        # for protocol in protocols:
-        #     protocolBox.add(protocol)
+        protocolsBox = JComboBox(self.protocols)
 
         metadataPanel.add(projectLabel)
         metadataPanel.add(projectValue)
@@ -156,4 +161,14 @@ class ModelView(JFrame):
         # Add metadataPanel to object tab in main panel
         self.objectTabs[objectID].add(metadataPanel)
 
-    # TODO: def addSide(self, sideType, content):
+    def addNotice(self):
+        """
+        Add a panel that notifies the user about the model view not being
+        ready yet.
+        """
+        panel = JPanel()
+        panel.setBackground(Color.yellow)
+        label = JLabel("Please note Nammu's model view is under "
+                       "construction.")
+        panel.add(label)
+        return panel

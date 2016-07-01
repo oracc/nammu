@@ -567,8 +567,7 @@ class NammuController(object):
         3. Send text to model view controller and delegate
         '''
         atfText = self.atfAreaController.getAtfAreaText()
-        # if self.currentFilename != None and atfText != None :
-        if self.currentFilename is not None:
+        if self.currentFilename or atfText:
             # TODO Check if ATF is valid
             # This may imply parsing the text, so perhaps the model controller
             # can just receive the parsed object instead of the text
@@ -581,8 +580,17 @@ class NammuController(object):
         '''
         Parse input string, could be just a line or a whole file content.
         '''
-        parsed = AtfFile(text)
-        return parsed
+        try:
+            parsed = AtfFile(text)
+        except SyntaxError as e:
+            self.logger.error("There is a syntax error near character '{}' "
+                              "in line {} and position {}".format(
+                                                        e.text.strip('\n'),
+                                                        e.lineno,
+                                                        e.offset + 1)
+                              )
+        else:
+            return parsed
 
     def unicode(self, event):
         '''
