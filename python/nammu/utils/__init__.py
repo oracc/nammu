@@ -141,6 +141,43 @@ def get_yaml_config(yaml_filename):
     return yaml.load(open(path_to_config, 'r'))
 
 
+def update_yaml_config(path_to_jar, yaml_path, path_to_config):
+    '''
+    Load local config and jar config. Compare versions, if they differ,
+    update local version with newer one.
+    '''
+    # This is a temporary hack to work around the mvn test stage not finding
+    # yaml
+    try:
+        import yaml
+    except:
+        pass
+
+    # Load JAR config, or development version if running from console and not
+    # from JAR
+    try:
+        jar_contents = zipfile.ZipFile(path_to_jar, 'r')
+    except zipfile.BadZipfile:
+        jar_config = yaml.load(open(path_to_jar, 'r'))
+    else:
+        jar_config = yaml.load(jar_contents.open(yaml_path))
+
+    # Load local config
+    local_config = yaml.load(open(path_to_config, 'r'))
+
+    # Load version numbers
+    jar_version = jar_config['version']
+
+    if 'version' in local_config and local_config['version'] == jar_version:
+        # Nothing to do, local config is up to date
+        return
+    else:
+        # Different version of version key doesn't exist in config, merge
+        # dicts and replace locally
+        jar_config.update(local_config)
+        save_yaml_config(jar_config)
+
+
 def save_yaml_config(config):
     '''
     Overwrites settings with given config dict.
