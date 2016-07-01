@@ -102,7 +102,7 @@ def get_log_path(filename):
 
 def get_yaml_config(yaml_filename):
     '''
-    Load contents of logging.yaml into dictionary.
+    Load contents of <yaml_filename> into dictionary.
     Note file_handler's filename needs to be an absolute path and hence
     manually changed from here.
     '''
@@ -121,10 +121,14 @@ def get_yaml_config(yaml_filename):
 
     path_to_config = get_log_path(yaml_filename)
 
-    # Check if log config file exists already. If so, just read it.
-    # Otherwise, paste it from JAR's resources to there.
+    # Check if log config file exists already.
+    # If it doesn't, paste it from JAR's resources to there.
+    # If it does, check is up to date with latest version
     if not os.path.isfile(path_to_config):
         copy_yaml_to_home(path_to_jar, yaml_path, path_to_config)
+    else:
+        # We are running from the JAR file, not the local console
+        update_yaml_config(path_to_jar, yaml_path, path_to_config)
 
     # Load YAML config
     # This is a temporary hack to work around the mvn test stage not finding
@@ -161,8 +165,12 @@ def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
     Opens Nammu's jar as a zip file, looks for the yaml config file and copies
     it to ~/.nammu.
     '''
-    zf = zipfile.ZipFile(jar_file_path, 'r')
     try:
+        zf = zipfile.ZipFile(jar_file_path, 'r')
+    except zipfile.BadZipfile:
+        shutil.copyfileobj(file(source_rel_path, "wb"),
+                           file(target_path, "wb"))
+    else:
         lst = zf.infolist()
         for zi in lst:
             fn = zi.filename
