@@ -40,14 +40,14 @@ class ModelController(object):
         4. Think about whether the other user options should remain visible or
         should this just be shown in a separate window?
         """
+        # Will also need delegating to parent presenter
+        self.controller = mainControler
+        
         # Load settings config:
         self.config = self.controller.config
 
         # Create view with a reference to its controller to handle events
         self.view = ModelView(self)
-
-        # Will also need delegating to parent presenter
-        self.controller = mainControler
 
         # Get ATF object parsed from text displated in text area
         self.atf = parsedAtf

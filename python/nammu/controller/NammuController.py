@@ -578,7 +578,7 @@ class NammuController(object):
             self.promptInfoPane(
                         "Open ATF file before trying to display model view.")
 
-    def parse(self, event=None):
+    def parse(self, text, event=None):
         '''
         Parse input string, could be just a line or a whole file content.
         '''
