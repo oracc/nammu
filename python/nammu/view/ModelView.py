@@ -36,8 +36,6 @@ class ModelView(JFrame):
         self.controller = controller
 
         # Get list of projects, languages and protocols from config settings
-        print
-        print self.controller.config
         self.languages = self.controller.config['languages']
         self.protocols = self.controller.config['protocols']
         self.projects = self.controller.config['projects']
