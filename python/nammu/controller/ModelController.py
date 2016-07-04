@@ -42,7 +42,7 @@ class ModelController(object):
         """
         # Will also need delegating to parent presenter
         self.controller = mainControler
-        
+
         # Load settings config:
         self.config = self.controller.config
 
