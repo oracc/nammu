@@ -69,6 +69,9 @@ class NammuController(object):
         # Set up logging system
         self.logger = self.setup_logger()
 
+        # Load Nammu's settings
+        self.config = get_yaml_config('settings.yaml')
+
         # Create all the controllers
         self.menuController = MenuController(self)
         self.toolbarController = ToolbarController(self)
@@ -106,7 +109,7 @@ class NammuController(object):
     # action in the first instance; or eg. show help pop up can be dealt with
     # from subcontroller
 
-    def newFile(self, event):
+    def newFile(self, event=None):
         '''
         Checks if current file in text area has unsaved changes and prompts
         user for file saving.
@@ -193,10 +196,9 @@ class NammuController(object):
         # Find project and add to setting.yaml as default
         project = self.get_project()
         if project:
-            settings = get_yaml_config('settings.yaml')
-            if settings['projects']['default'] != project:
-                settings['projects']['default'] = [project]
-                save_yaml_config(settings)
+            if self.config['projects']['default'] != project:
+                self.config['projects']['default'] = [project]
+                save_yaml_config(self.config)
 
     def writeTextFile(self, filename, text):
         '''
@@ -275,7 +277,7 @@ class NammuController(object):
                                       "Information",
                                       JOptionPane.INFORMATION_MESSAGE)
 
-    def quit(self, event):
+    def quit(self, event=None):
         '''
         1. Check if file has unsaved changes
         2. Exit
@@ -283,19 +285,19 @@ class NammuController(object):
         if self.handleUnsaved():
             System.exit(0)
 
-    def undo(self, event):
+    def undo(self, event=None):
         self.atfAreaController.undo()
 
-    def redo(self, event):
+    def redo(self, event=None):
         self.atfAreaController.redo()
 
-    def copy(self, event):
+    def copy(self, event=None):
         self.atfAreaController.copy()
 
-    def cut(self, event):
+    def cut(self, event=None):
         self.atfAreaController.cut()
 
-    def paste(self, event):
+    def paste(self, event=None):
         self.atfAreaController.paste()
 
     def validate(self, event=None):
@@ -335,7 +337,7 @@ class NammuController(object):
         else:
             self.logger.error("Please save file before trying to validate.")
 
-    def lemmatise(self, event):
+    def lemmatise(self, event=None):
         '''
         Connect to ORACC server and retrieved lemmatised version of ATF file.
         Don't lemmatise if file doesn't validate.
@@ -544,14 +546,14 @@ class NammuController(object):
         # Refresh validation errors
         self.atfAreaController.set_validation_errors(validation_errors)
 
-    def printFile(self, event):
+    def printFile(self, event=None):
         '''
         Print file.
         TODO: Disable this button until functionality is implemented.
         '''
         self.logger.debug("Printing file...")
 
-    def editSettings(self, event):
+    def editSettings(self, event=None):
         '''
         Show settings window for edition.
         TODO: ORACC Server URL should be in a config file editable from a
@@ -560,7 +562,7 @@ class NammuController(object):
         '''
         self.logger.debug("Changing settings...")
 
-    def displayModelView(self, event):
+    def displayModelView(self, event=None):
         '''
         1. Check if a file is opened or not
         2. Check if file is valid before trying to display model view
@@ -576,7 +578,7 @@ class NammuController(object):
             self.promptInfoPane(
                         "Open ATF file before trying to display model view.")
 
-    def parse(self, text):
+    def parse(self, event=None):
         '''
         Parse input string, could be just a line or a whole file content.
         '''
@@ -592,20 +594,20 @@ class NammuController(object):
         else:
             return parsed
 
-    def unicode(self, event):
+    def unicode(self, event=None):
         '''
         Create bool for unicode, change value when clicked.
         '''
         self.logger.debug("Unicode...")
 
-    def console(self, event):
+    def console(self, event=None):
         '''
         Create bool for console, change value when clicked.
         Hide if being shown, show if hidden.
         '''
         self.logger.debug("Console...")
 
-    def toolbar(self, event):
+    def toolbar(self, event=None):
         '''
         Show/Hide Toolbar.
         '''
@@ -616,7 +618,7 @@ class NammuController(object):
         Debug method to handle calls to undefined methods.
         Ideally this method would never be called.
         '''
-        self.logger.debug("!!!Undefined method " + name)
+        self.logger.debug("Undefined method " + name)
 
     def get_project(self):
         '''

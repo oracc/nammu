@@ -20,8 +20,6 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 from java.awt import BorderLayout, GridLayout, Color, Dimension
 from javax.swing import JScrollPane, JPanel, JFrame, JComboBox, JTabbedPane
 from javax.swing import JLabel, BoxLayout, JButton
-from ..utils import get_yaml_config
-from __builtin__ import None
 
 
 class ModelView(JFrame):
@@ -38,10 +36,9 @@ class ModelView(JFrame):
         self.controller = controller
 
         # Get list of projects, languages and protocols from config settings
-        config = get_yaml_config('settings.yaml')
-        self.languages = config['languages']
-        self.protocols = config['protocols']
-        self.projects = config['projects']
+        self.languages = self.controller.config['languages']
+        self.protocols = self.controller.config['protocols']
+        self.projects = self.controller.config['projects']
 
         # Make text area occupy all available space and resize with parent
         # window

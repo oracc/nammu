@@ -40,6 +40,9 @@ class ModelController(object):
         4. Think about whether the other user options should remain visible or
         should this just be shown in a separate window?
         """
+        # Load settings config:
+        self.config = self.controller.config
+
         # Create view with a reference to its controller to handle events
         self.view = ModelView(self)
 
