@@ -89,8 +89,8 @@ class AtfAreaKeyListener(KeyListener):
         # Make sure we only syntax highlight when the key pressed is not an
         # action key (i.e. arrows, F1, ...) or is not shift, ctrl, alt, caps
         # lock or cmd.
-        if ((not ke.isActionKey()) and 
-            (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
+        if ((not ke.isActionKey()) and
+                (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
             self.controller.syntax_highlight()
             # Check length hasn't changed, otherwise repaint line numbers
             number_lines = self.controller.line_numbers_area.text.count('\n')
