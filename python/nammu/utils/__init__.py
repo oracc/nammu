@@ -133,10 +133,7 @@ def get_yaml_config(yaml_filename):
     # Load YAML config
     # This is a temporary hack to work around the mvn test stage not finding
     # yaml
-    try:
-        import yaml
-    except:
-        pass
+    import yaml
 
     return yaml.load(open(path_to_config, 'r'))
 
@@ -148,10 +145,7 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config):
     '''
     # This is a temporary hack to work around the mvn test stage not finding
     # yaml
-    try:
-        import yaml
-    except:
-        pass
+    import yaml
 
     # Load JAR config, or development version if running from console and not
     # from JAR
@@ -187,10 +181,7 @@ def save_yaml_config(config):
 
     # This is a temporary hack to work around the mvn test stage not finding
     # yaml
-    try:
-        import yaml
-    except:
-        pass
+    import yaml
 
     # Save given config in yaml file
     with open(path_to_config, 'w') as outfile:
