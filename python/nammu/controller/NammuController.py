@@ -86,7 +86,7 @@ class NammuController(object):
         self.logger.info("Welcome to Nammu!")
         self.logger.info(
                 "You can choose an option from the menu to open an ATF or "
-                "create a new one from \na template, or just start typing in "
+                "create a new one from a template, or just start typing in "
                 "the text area.")
 
         # Display Nammu's view
