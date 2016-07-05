@@ -44,7 +44,7 @@ class AtfAreaController(object):
         # Initialise validation errors
         self.validation_errors = {}
         # Needed by syntax highlighter
-        self.edit_area_styledoc = self.edit_area.getStyledDocument() 
+        self.edit_area_styledoc = self.edit_area.getStyledDocument()
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
 
@@ -126,7 +126,6 @@ class AtfAreaController(object):
         '''
         if name in ('copy', 'paste', 'cut'):
             return getattr(self.view.edit_area, name)
-
 
     def syntax_highlight(self):
         '''
