@@ -61,13 +61,13 @@ class AtfAreaView(JPanel):
 
         # Create panel that'll contain the ScrollPane and the line numbers
         container = JPanel(BorderLayout())
+        container.setPreferredSize(Dimension(1, 500))
         container.add(self.edit_area, BorderLayout.CENTER)
         container.add(self.line_numbers_area, BorderLayout.WEST)
 
         # Will need scrolling controls that scroll line numbers and text lines
         # simultaneously
         scrollingText = JScrollPane(container)
-        scrollingText.setPreferredSize(Dimension(1, 500))
         scrollingText.getVerticalScrollBar().setUnitIncrement(16)
         # Add to parent panel
         self.add(scrollingText, BorderLayout.CENTER)
