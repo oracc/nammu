@@ -119,6 +119,7 @@ class AtfAreaController(object):
             # vector Nothing to do
             pass
         else:
+            self.syntax_highlight()
             self.update_line_numbers()
 
     def redo(self):
@@ -129,6 +130,7 @@ class AtfAreaController(object):
             # vector - Nothing to do
             pass
         else:
+            self.syntax_highlight()
             self.update_line_numbers()
 
     def __getattr__(self, name):

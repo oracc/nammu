@@ -17,17 +17,15 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from ..utils import get_yaml_config
 from ..view.NewAtfView import NewAtfView
 
 
 class NewAtfController:
     def __init__(self, maincontroller):
         self.controller = maincontroller
-        config = get_yaml_config('settings.yaml')
-        self.projects = config['projects']
-        self.languages = config['languages']
-        self.protocols = config['protocols']
+        self.projects = self.controller.config['projects']
+        self.languages = self.controller.config['languages']
+        self.protocols = self.controller.config['protocols']
         self.template = ''
         self.view = NewAtfView(self,
                                self.projects,
