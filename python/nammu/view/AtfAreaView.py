@@ -27,7 +27,6 @@ from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener
 from contextlib import contextmanager
 from .AtfEditArea import AtfEditArea
-from .LineNumbersArea import LineNumbersArea
 
 
 class AtfAreaView(JPanel):
@@ -92,11 +91,6 @@ class AtfAreaKeyListener(KeyListener):
         if ((not ke.isActionKey()) and
                 (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
             self.controller.syntax_highlight()
-            # Check length hasn't changed, otherwise repaint line numbers
-            number_lines = self.controller.line_numbers_area.text.count('\n')
-            text_lines = self.controller.edit_area.text.count('\n')
-            if number_lines - 1 != text_lines:
-                self.controller.repaint_line_numbers(text_lines)
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.

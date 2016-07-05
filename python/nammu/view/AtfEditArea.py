@@ -69,7 +69,6 @@ class AtfEditArea(JTextPane):
         '''
         super(AtfEditArea, self).setText(text)
         self.controller.syntax_highlight()
-        self.controller.update_line_numbers()
 
     def cut(self):
         '''
@@ -78,7 +77,6 @@ class AtfEditArea(JTextPane):
         '''
         super(AtfEditArea, self).cut()
         self.controller.syntax_highlight()
-        self.controller.update_line_numbers()
 
     def copy(self):
         '''
@@ -87,7 +85,6 @@ class AtfEditArea(JTextPane):
         '''
         super(AtfEditArea, self).copy()
         self.controller.syntax_highlight()
-        self.controller.update_line_numbers()
 
     def paste(self):
         '''
@@ -96,7 +93,6 @@ class AtfEditArea(JTextPane):
         '''
         super(AtfEditArea, self).paste()
         self.controller.syntax_highlight()
-        self.controller.update_line_numbers()
 
 
 class CustomMouseListener(MouseAdapter):
