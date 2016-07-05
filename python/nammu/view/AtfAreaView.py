@@ -58,20 +58,15 @@ class AtfAreaView(JPanel):
         self.edit_area.getDocument().addUndoableEditListener(
                                                         self.edit_listener)
 
-        # Create panel that'll contain the ScrollPane and the line numbers
-        container = JPanel(BorderLayout())
-        container.setPreferredSize(Dimension(1, 500))
-        container.add(self.edit_area, BorderLayout.CENTER)
-        container.add(self.line_numbers_area, BorderLayout.WEST)
+        # Sort out layout by synch-ing line numbers and text area and putting
+        # only the text area in a scroll pane as indicated in the
+        # TextLineNumber tutorial.
+        self.edit_area.setPreferredSize(Dimension(1, 500))
+        container = JScrollPane(self.edit_area)
+        container.setRowHeaderView(self.line_numbers_area)
+        self.add(container, BorderLayout.CENTER)
 
-        # Will need scrolling controls that scroll line numbers and text lines
-        # simultaneously
-        scrollingText = JScrollPane(container)
-        scrollingText.getVerticalScrollBar().setUnitIncrement(16)
-        # Add to parent panel
-        self.add(scrollingText, BorderLayout.CENTER)
-
-        # Ket listener that triggers syntax highlighting, etc. upon key release
+        # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
 
 
