@@ -465,7 +465,7 @@ class NammuController(object):
             if autolem:
                 self.atfAreaController.setAtfAreaText(autolem.decode('utf-8'))
                 self.logger.info("Lemmatised ATF received from ORACC server.")
-        
+
         # Always syntax highlight, not only when there are errors, otherwise
         # old error lines' styling won't be cleared!
         self.atfAreaController.syntax_highlight()

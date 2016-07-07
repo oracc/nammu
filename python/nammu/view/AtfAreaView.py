@@ -122,22 +122,24 @@ class AtfUndoableEditListener(UndoableEditListener):
         self.current_compound = CompoundEdit()
         self.must_compound = False
 
-    @contextmanager
-    def force_compound(self):
+    def force_start_compound(self):
         """
         Wraps list of interactions with the text area that'll cause several
         significant edit events that we want to put together in a compound
         edit.
         """
-        self.must_compound = False
+        empty_compound = CompoundEdit()
+        if not self.must_compound:
+            self.must_compound = True
+            if not self.current_compound.equals(empty_compound):
+                self.current_compound.end()
+                self.undo_manager.addEdit(self.current_compound)
+            self.current_compound = CompoundEdit()
+
+    def force_stop_compound(self):
         self.current_compound.end()
         self.undo_manager.addEdit(self.current_compound)
-        try:
-            yield
-        finally:
-            self.must_compound = False
-            self.current_compound.end()
-            self.undo_manager.addEdit(self.current_compound)
+        self.must_compound = False
 
     def undoableEditHappened(self, event):
         edit = event.getEdit()
