@@ -45,6 +45,8 @@ class ConsoleView(JPanel):
 
         # Create console-looking area
         self.edit_area = JTextArea()
+        self.edit_area.setLineWrap(True)
+        self.edit_area.setWrapStyleWord(True)
         self.edit_area.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.edit_area.font = Font("Courier New", Font.BOLD, 14)
         self.edit_area.background = Color.BLACK
