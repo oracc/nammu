@@ -56,8 +56,9 @@ class AtfAreaController(object):
         Default behaviour of the compound edit would create a new edit for each
         INSERT event, so we have to manually group those two together.
         '''
-        with self.view.edit_listener.force_compound():
-            self.view.edit_area.setText(text)
+        self.view.edit_listener.force_start_compound()
+        self.view.edit_area.setText(text)
+        self.view.edit_listener.force_stop_compound()
 
     def getAtfAreaText(self):
         '''
@@ -71,7 +72,7 @@ class AtfAreaController(object):
         pile, repaint the line numbers and remove the styling from previous
         validation highlight.
         '''
-        self.view.edit_area.setText("")
+        self.setAtfAreaText("")
         # When opening a new file we should discard the previous edits
         self.view.undo_manager.discardAllEdits()
         # Reload line numbers text panel
