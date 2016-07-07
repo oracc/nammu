@@ -448,9 +448,6 @@ class NammuController(object):
         # Check if there were any validation errors and pass them to the
         # ATF area to refresh syntax highlighting.
         self.process_validation_errors(oracc_log)
-        # Always syntax highlight, not only when there are errors, otherwise
-        # old error lines' styling won't be cleared!
-        self.atfAreaController.syntax_highlight()
         if oracc_log:
             # TODO: Prompt dialog.
             if autolem:
@@ -468,6 +465,10 @@ class NammuController(object):
             if autolem:
                 self.atfAreaController.setAtfAreaText(autolem.decode('utf-8'))
                 self.logger.info("Lemmatised ATF received from ORACC server.")
+        
+        # Always syntax highlight, not only when there are errors, otherwise
+        # old error lines' styling won't be cleared!
+        self.atfAreaController.syntax_highlight()
 
     def send_request(self, client):
         """
