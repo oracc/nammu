@@ -27,7 +27,6 @@ from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener
 from contextlib import contextmanager
 from .AtfEditArea import AtfEditArea
-from .LineNumbersArea import LineNumbersArea
 
 
 class AtfAreaView(JPanel):
@@ -59,20 +58,15 @@ class AtfAreaView(JPanel):
         self.edit_area.getDocument().addUndoableEditListener(
                                                         self.edit_listener)
 
-        # Create panel that'll contain the ScrollPane and the line numbers
-        container = JPanel(BorderLayout())
-        container.add(self.edit_area, BorderLayout.CENTER)
-        container.add(self.line_numbers_area, BorderLayout.WEST)
+        # Sort out layout by synch-ing line numbers and text area and putting
+        # only the text area in a scroll pane as indicated in the
+        # TextLineNumber tutorial.
+        self.edit_area.setPreferredSize(Dimension(1, 500))
+        container = JScrollPane(self.edit_area)
+        container.setRowHeaderView(self.line_numbers_area)
+        self.add(container, BorderLayout.CENTER)
 
-        # Will need scrolling controls that scroll line numbers and text lines
-        # simultaneously
-        scrollingText = JScrollPane(container)
-        scrollingText.setPreferredSize(Dimension(1, 500))
-        scrollingText.getVerticalScrollBar().setUnitIncrement(16)
-        # Add to parent panel
-        self.add(scrollingText, BorderLayout.CENTER)
-
-        # Ket listener that triggers syntax highlighting, etc. upon key release
+        # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
 
 
@@ -92,11 +86,6 @@ class AtfAreaKeyListener(KeyListener):
         if ((not ke.isActionKey()) and
                 (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
             self.controller.syntax_highlight()
-            # Check length hasn't changed, otherwise repaint line numbers
-            number_lines = self.controller.line_numbers_area.text.count('\n')
-            text_lines = self.controller.edit_area.text.count('\n')
-            if number_lines - 1 != text_lines:
-                self.controller.repaint_line_numbers(text_lines)
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.
@@ -122,22 +111,24 @@ class AtfUndoableEditListener(UndoableEditListener):
         self.current_compound = CompoundEdit()
         self.must_compound = False
 
-    @contextmanager
-    def force_compound(self):
+    def force_start_compound(self):
         """
         Wraps list of interactions with the text area that'll cause several
         significant edit events that we want to put together in a compound
         edit.
         """
-        self.must_compound = False
+        empty_compound = CompoundEdit()
+        if not self.must_compound:
+            self.must_compound = True
+            if not self.current_compound.equals(empty_compound):
+                self.current_compound.end()
+                self.undo_manager.addEdit(self.current_compound)
+            self.current_compound = CompoundEdit()
+
+    def force_stop_compound(self):
         self.current_compound.end()
         self.undo_manager.addEdit(self.current_compound)
-        try:
-            yield
-        finally:
-            self.must_compound = False
-            self.current_compound.end()
-            self.undo_manager.addEdit(self.current_compound)
+        self.must_compound = False
 
     def undoableEditHappened(self, event):
         edit = event.getEdit()

@@ -1,0 +1,10 @@
+The code for the Text Component Line Number used by Nammu has been published
+online in the Java Tips Weblog on 23 May 2009.
+
+The authors of the Java Tips Weblog's content, including the Text Component
+Line Number used by Nammu, assume no responsibility for the
+code. You are free to use and/or modify and/or distribute any or all code
+posted on the Java Tips Weblog without restriction. A credit in the code
+comments would be nice, but not in any way mandatory.
+
+https://tips4java.wordpress.com/about/
