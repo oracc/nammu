@@ -1,3 +1,11 @@
+/**
+* This code was made available online by the Java Tips Weblog team
+* (https://tips4java.wordpress.com/about/) on 23 May 20019 on this URL:
+* https://tips4java.wordpress.com/2009/05/23/text-component-line-number/
+*
+* More information about licensing in the accompanying license.txt file.
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
