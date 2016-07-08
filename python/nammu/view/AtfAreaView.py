@@ -27,7 +27,6 @@ from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener
 from contextlib import contextmanager
 from .AtfEditArea import AtfEditArea
-from .LineNumbersArea import LineNumbersArea
 
 
 class AtfAreaView(JPanel):
@@ -59,20 +58,15 @@ class AtfAreaView(JPanel):
         self.edit_area.getDocument().addUndoableEditListener(
                                                         self.edit_listener)
 
-        # Create panel that'll contain the ScrollPane and the line numbers
-        container = JPanel(BorderLayout())
-        container.add(self.edit_area, BorderLayout.CENTER)
-        container.add(self.line_numbers_area, BorderLayout.WEST)
+        # Sort out layout by synch-ing line numbers and text area and putting
+        # only the text area in a scroll pane as indicated in the
+        # TextLineNumber tutorial.
+        self.edit_area.setPreferredSize(Dimension(1, 500))
+        container = JScrollPane(self.edit_area)
+        container.setRowHeaderView(self.line_numbers_area)
+        self.add(container, BorderLayout.CENTER)
 
-        # Will need scrolling controls that scroll line numbers and text lines
-        # simultaneously
-        scrollingText = JScrollPane(container)
-        scrollingText.setPreferredSize(Dimension(1, 500))
-        scrollingText.getVerticalScrollBar().setUnitIncrement(16)
-        # Add to parent panel
-        self.add(scrollingText, BorderLayout.CENTER)
-
-        # Ket listener that triggers syntax highlighting, etc. upon key release
+        # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
 
 
@@ -92,11 +86,6 @@ class AtfAreaKeyListener(KeyListener):
         if ((not ke.isActionKey()) and
                 (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
             self.controller.syntax_highlight()
-            # Check length hasn't changed, otherwise repaint line numbers
-            number_lines = self.controller.line_numbers_area.text.count('\n')
-            text_lines = self.controller.edit_area.text.count('\n')
-            if number_lines - 1 != text_lines:
-                self.controller.repaint_line_numbers(text_lines)
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.

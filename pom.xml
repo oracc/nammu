@@ -53,26 +53,26 @@
 
 			<!-- Make sure we delete all class files, not only those in the
 			     target folder. -->
-		    <plugin>
-			    <artifactId>maven-clean-plugin</artifactId>
-			    <version>3.0.0</version>
-			    <configuration>
-			      <filesets>
+		  <plugin>
+			  <artifactId>maven-clean-plugin</artifactId>
+		    <version>3.0.0</version>
+		    <configuration>
+			    <filesets>
 					  <fileset>
 				          <directory>./python</directory>
 				          <includes>
 						      <include>**/*py.class</include>
 				          </includes>
 					  </fileset>
-			      </filesets>
-			    </configuration>
-		    </plugin>
+			    </filesets>
+			  </configuration>
+		  </plugin>
 
 			<!-- Make sure resources like toolbar icons are copied to final
-			jar -->
-			<plugin>
+            jar -->
+  		<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.7</version>
+				<version>3.0.1</version>
 				<executions>
 					<execution>
 						<id>copy-resources</id>
@@ -85,6 +85,22 @@
 							<resources>
 								<resource>
 									<directory>${basedir}/resources</directory>
+									<filtering>false</filtering>
+								</resource>
+		 					</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-java-class</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/Lib</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/resources/lib</directory>
 									<filtering>false</filtering>
 								</resource>
 							</resources>

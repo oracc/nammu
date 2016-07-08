@@ -23,6 +23,7 @@ from ..view.AtfAreaView import AtfAreaView
 from ..view.LineNumbersArea import LineNumbersArea
 from ..view.AtfEditArea import AtfEditArea
 from ..view.SyntaxHighlighter import SyntaxHighlighter
+import TextLineNumber
 
 
 class AtfAreaController(object):
@@ -33,7 +34,7 @@ class AtfAreaController(object):
         # Create text edition area
         self.edit_area = AtfEditArea(self)
         # Create text panel to display the line numbers
-        self.line_numbers_area = LineNumbersArea()
+        self.line_numbers_area = TextLineNumber(self.edit_area)
         # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
         # Will also need delegating to parent presenter
@@ -44,7 +45,6 @@ class AtfAreaController(object):
         self.validation_errors = {}
         # Needed by syntax highlighter
         self.edit_area_styledoc = self.edit_area.getStyledDocument()
-        self.line_numbers_styledoc = self.line_numbers_area.getStyledDocument()
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
 
@@ -75,8 +75,6 @@ class AtfAreaController(object):
         self.setAtfAreaText("")
         # When opening a new file we should discard the previous edits
         self.view.undo_manager.discardAllEdits()
-        # Reload line numbers text panel
-        self.repaint_line_numbers(0)
         # Clear tooltips
         self.clearToolTips()
         # Clear validation errors
@@ -88,15 +86,6 @@ class AtfAreaController(object):
         file has been re-validated or another file has been opened.
         '''
         self.view.edit_area.setToolTipText(None)
-
-    def update_line_numbers(self):
-        '''
-        Update line numbers area when text length changes.
-        '''
-        # Get how many lines are in the file
-        n_lines = self.getAtfAreaText().count('\n')
-        # Reload line numbers text panel
-        self.repaint_line_numbers(n_lines)
 
     def set_validation_errors(self, validation_errors):
         '''
@@ -121,7 +110,6 @@ class AtfAreaController(object):
             pass
         else:
             self.syntax_highlight()
-            self.update_line_numbers()
 
     def redo(self):
         try:
@@ -132,7 +120,6 @@ class AtfAreaController(object):
             pass
         else:
             self.syntax_highlight()
-            self.update_line_numbers()
 
     def __getattr__(self, name):
         '''
@@ -140,18 +127,6 @@ class AtfAreaController(object):
         '''
         if name in ('copy', 'paste', 'cut'):
             return getattr(self.view.edit_area, name)
-
-    def repaint_line_numbers(self, n_lines):
-        '''
-        Draws line numbers in corresponding panel.
-        '''
-        # Create line numbers
-        numbers = ""
-        for line in range(n_lines + 1):
-            numbers += str(line + 1) + ": \n"
-
-        # Print in line numbers' area
-        self.line_numbers_area.setText(numbers)
 
     def syntax_highlight(self):
         '''
