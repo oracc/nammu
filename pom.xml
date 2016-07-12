@@ -51,6 +51,26 @@
 
 		<plugins>
 
+			<plugin>
+			  <groupId>sh.tak.appbundler</groupId>
+			  <artifactId>appbundle-maven-plugin</artifactId>
+			  <version>1.1.0</version>
+			  <configuration>
+			    <mainClass>uk.ac.ucl.rc.development.oracc.nammu.App</mainClass>
+					<jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk</jrePath>
+					<generateDiskImageFile>true</generateDiskImageFile>
+					<iconFile>${basedir}/resources/resources/images/nammu_icon.ics</iconFile>
+			  </configuration>
+			  <executions>
+			    <execution>
+			      <phase>package</phase>
+			      <goals>
+			        <goal>bundle</goal>
+			      </goals>
+			    </execution>
+			  </executions>
+			</plugin>
+
 			<!-- Make sure we delete all class files, not only those in the
 			     target folder. -->
 		    <plugin>
