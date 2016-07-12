@@ -113,7 +113,7 @@ Here's a list of known bugs:
 * Nammu is slow when files are large due to syntax highlighting on every key
 stroke.
 * A full list of issues can be found
-[here](https://github.com/oracc/nammu/issues). 
+[here](https://github.com/oracc/nammu/issues).
 
 Here's a list of new features being developed:
 * Line wrapping
@@ -121,7 +121,7 @@ Here's a list of new features being developed:
 * Search/replace
 * Split view
 
-If you have any other suggestions or comments on this, please let us know [here]([here](https://github.com/oracc/nammu/issues/new).
+If you have any other suggestions or comments on this, please let us know [here](https://github.com/oracc/nammu/issues/new).
 
 
 ## Nammu's configuration for advanced users:
