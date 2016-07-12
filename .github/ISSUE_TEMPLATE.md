@@ -1,5 +1,5 @@
 To help us understand and resolve your issue please check that you have provided
-the information below:
+as much of the information below as possible:
 
 * Nammu's version, which you can find in the filename (e.g 0.3.1 for
   nammu-0.3.1.jar)
