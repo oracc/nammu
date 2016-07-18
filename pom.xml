@@ -56,7 +56,7 @@
 			  <artifactId>appbundle-maven-plugin</artifactId>
 			  <version>1.1.0</version>
 			  <configuration>
-			    <mainClass>uk.ac.ucl.rc.development.oracc.nammu.App</mainClass>
+			    <mainClass>uk.ac.ucl.rc.development.oracc.nammu.Nammu</mainClass>
 					<jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk</jrePath>
 					<generateDiskImageFile>true</generateDiskImageFile>
 					<iconFile>${basedir}/resources/resources/images/nammu_icon.ics</iconFile>
@@ -157,7 +157,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>uk.ac.ucl.rc.development.oracc.nammu.App</mainClass>
+							<mainClass>uk.ac.ucl.rc.development.oracc.nammu.Nammu</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
