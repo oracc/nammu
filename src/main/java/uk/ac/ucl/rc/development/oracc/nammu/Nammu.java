@@ -33,7 +33,7 @@ import org.python.util.PythonInterpreter;
  * It calls Python's entry point nammu.main.main()
  *
  */
-public class App {
+public class Nammu {
 
     public static void main(final String[] args) throws PyException {
         PySystemState systemState = Py.getSystemState();

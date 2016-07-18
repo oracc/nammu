@@ -137,7 +137,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>uk.ac.ucl.rc.development.oracc.nammu.App</mainClass>
+							<mainClass>uk.ac.ucl.rc.development.oracc.nammu.Nammu</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
