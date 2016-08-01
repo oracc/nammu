@@ -97,7 +97,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/target/Lib</outputDirectory>
+							<outputDirectory>${basedir}/target/classes/Lib</outputDirectory>
 							<resources>
 								<resource>
 									<directory>${basedir}/resources/lib</directory>
