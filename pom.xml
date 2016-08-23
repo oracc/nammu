@@ -135,7 +135,7 @@
                     <libraries>
                         <param>pyyaml</param>
 						<param>requests</param>
-						<param>pytest</param>
+						<param>pytest&lt;3.0</param>
 						<param>mako</param>
 						<param>ply</param>
 						<param>https://github.com/ucl/pyoracc/archive/master.tar.gz</param>
