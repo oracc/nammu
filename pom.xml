@@ -155,6 +155,9 @@
 						<manifest>
 							<mainClass>uk.ac.ucl.rc.development.oracc.nammu.Nammu</mainClass>
 						</manifest>
+						<manifestEntries>
+	            <SplashScreen-Image>resources/images/oracc.gif</SplashScreen-Image>
+	          </manifestEntries>
 					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
