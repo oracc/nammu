@@ -35,10 +35,10 @@ import org.python.util.PythonInterpreter;
  * It calls Py.test to run all the python tests in Nammu.
  *
  */
-public class AppTest {
+public class NammuTest {
 
     @Test
-    public void testApp() throws PyException {
+    public void testNammu() throws PyException {
       PySystemState systemState = Py.getSystemState();
       systemState.path.append(new PyString("target/jython-plugins-tmp/build/pytest"));
       systemState.path.append(new PyString("target/jython-plugins-tmp/build/py"));
