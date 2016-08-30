@@ -135,7 +135,7 @@
                     <libraries>
                         <param>pyyaml</param>
 						<param>requests</param>
-						<param>pytest</param>
+						<param>pytest&lt;3.0</param>
 						<param>mako</param>
 						<param>ply</param>
 						<param>https://github.com/ucl/pyoracc/archive/master.tar.gz</param>
@@ -153,8 +153,11 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>uk.ac.ucl.rc.development.oracc.nammu.App</mainClass>
+							<mainClass>uk.ac.ucl.rc.development.oracc.nammu.Nammu</mainClass>
 						</manifest>
+						<manifestEntries>
+	            <SplashScreen-Image>resources/images/oracc.gif</SplashScreen-Image>
+	          </manifestEntries>
 					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
