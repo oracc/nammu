@@ -387,9 +387,12 @@ class NammuController(object):
         atf_basename = os.path.basename(self.currentFilename)
         nammu_text = self.atfAreaController.getAtfAreaText()
 
+        # Remove spaces from filename which make the server confused
+        atf_basename = atf_basename.replace(' ', '')
+
         # Send request and check for returned process ID
         client.create_request(command=command,
-                              keys=[project, '00atf/'+atf_basename],
+                              keys=[project, '00atf/' + atf_basename],
                               atf_basename=atf_basename,
                               atf_text=nammu_text.encode('utf-8'))
 
