@@ -51,7 +51,7 @@ class AtfAreaView(JPanel):
         self.edit_area = self.controller.edit_area
         self.uneditable_area = self.controller.uneditable_area
         self.line_numbers_area = self.controller.line_numbers_area
-        self.uneditable_line_numbers_area = self.controller.uneditable_line_numbers_area
+        self.uneditable_line_numbers = self.controller.uneditable_line_numbers
 
         # Set undo/redo manager to edit area
         self.undo_manager = UndoManager()
@@ -100,7 +100,7 @@ class AtfAreaView(JPanel):
             left = JScrollPane(self.edit_area)
             left.setRowHeaderView(self.line_numbers_area)
             right = JScrollPane(self.uneditable_area)
-            right.setRowHeaderView(self.uneditable_line_numbers_area)
+            right.setRowHeaderView(self.uneditable_line_numbers)
             self.container = JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                         left,
                                         right)

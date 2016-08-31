@@ -79,7 +79,8 @@ class MenuView(JMenuBar):
                                                      "displayModelView"]
         menuItems["Window"]["View/Hide Console"] = [KeyEvent.VK_B, "console"]
         menuItems["Window"]["View/Hide Toolbar"] = [KeyEvent.VK_T, "toolbar"]
-        menuItems["Window"]["View/Hide Split Editor"] = [KeyEvent.VK_I, "splitEditor"]
+        menuItems["Window"]["View/Hide Split Editor"] = [KeyEvent.VK_MINUS,
+                                                         "splitEditor"]
         menuItems["Window"]["Unicode Keyboard"] = [KeyEvent.VK_K, "unicode"]
 
         menuItems["Help"] = {}

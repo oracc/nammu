@@ -36,7 +36,7 @@ class AtfAreaController(object):
         self.uneditable_area = AtfEditArea(self)
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
-        self.uneditable_line_numbers_area = TextLineNumber(self.edit_area)
+        self.uneditable_line_numbers = TextLineNumber(self.uneditable_area)
         # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
         # Will also need delegating to parent presenter
