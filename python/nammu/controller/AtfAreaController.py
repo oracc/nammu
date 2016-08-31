@@ -47,6 +47,9 @@ class AtfAreaController(object):
         self.validation_errors = {}
         # Needed by syntax highlighter
         self.edit_area_styledoc = self.edit_area.getStyledDocument()
+        # Synch content of split editor panes
+        self.uneditable_area.setStyledDocument(
+                                            self.edit_area.getStyledDocument())
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
 
