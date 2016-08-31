@@ -49,8 +49,11 @@ class AtfAreaView(JPanel):
 
         # Short hand for edit area and line numbers area
         self.edit_area = self.controller.edit_area
-        self.uneditable_area = self.controller.uneditable_area
         self.line_numbers_area = self.controller.line_numbers_area
+
+        # Create uneditable counterpart for split view
+        self.uneditable_area = self.controller.uneditable_area
+        self.uneditable_area.setEditable(False)
         self.uneditable_line_numbers = self.controller.uneditable_line_numbers
 
         # Set undo/redo manager to edit area
