@@ -604,6 +604,12 @@ class NammuController(object):
         '''
         self.logger.debug("Unicode...")
 
+    def splitEditor(self, event=None):
+        '''
+        Show/hide split editor.
+        '''
+        self.logger.debug("Split Editor...")
+
     def console(self, event=None):
         '''
         Create bool for console, change value when clicked.

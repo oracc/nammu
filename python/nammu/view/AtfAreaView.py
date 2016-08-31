@@ -20,7 +20,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import re
 from java.awt import BorderLayout, Dimension, Color
 from java.awt.event import KeyListener
-from javax.swing import JScrollPane, JPanel
+from javax.swing import JScrollPane, JPanel, JSplitPane
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
 from javax.swing.undo import UndoManager, CompoundEdit
@@ -49,7 +49,9 @@ class AtfAreaView(JPanel):
 
         # Short hand for edit area and line numbers area
         self.edit_area = self.controller.edit_area
+        self.uneditable_area = self.controller.uneditable_area
         self.line_numbers_area = self.controller.line_numbers_area
+        self.uneditable_line_numbers_area = self.controller.uneditable_line_numbers_area
 
         # Set undo/redo manager to edit area
         self.undo_manager = UndoManager()
@@ -62,8 +64,16 @@ class AtfAreaView(JPanel):
         # only the text area in a scroll pane as indicated in the
         # TextLineNumber tutorial.
         self.edit_area.setPreferredSize(Dimension(1, 500))
-        container = JScrollPane(self.edit_area)
-        container.setRowHeaderView(self.line_numbers_area)
+        subcontainer_left = JScrollPane(self.edit_area)
+        subcontainer_left.setRowHeaderView(self.line_numbers_area)
+        subcontainer_right = JScrollPane(self.uneditable_area)
+        subcontainer_right.setRowHeaderView(self.uneditable_line_numbers_area)
+
+        # Put stuff on a split pane
+        container = JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                               subcontainer_left,
+                               subcontainer_right)
+        container.setDividerSize(5)
         self.add(container, BorderLayout.CENTER)
 
         # Key listener that triggers syntax highlighting, etc. upon key release
