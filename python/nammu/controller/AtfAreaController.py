@@ -135,3 +135,9 @@ class AtfAreaController(object):
         Short hand for syntax highlighting.
         '''
         self.syntax_highlighter.syntax_highlight()
+
+    def splitEditor(self):
+        '''
+        Toggles split editor view.
+        '''
+        self.view.toggle_split()

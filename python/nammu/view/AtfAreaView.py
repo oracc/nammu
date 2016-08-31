@@ -64,20 +64,51 @@ class AtfAreaView(JPanel):
         # only the text area in a scroll pane as indicated in the
         # TextLineNumber tutorial.
         self.edit_area.setPreferredSize(Dimension(1, 500))
-        subcontainer_left = JScrollPane(self.edit_area)
-        subcontainer_left.setRowHeaderView(self.line_numbers_area)
-        subcontainer_right = JScrollPane(self.uneditable_area)
-        subcontainer_right.setRowHeaderView(self.uneditable_line_numbers_area)
-
-        # Put stuff on a split pane
-        container = JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                               subcontainer_left,
-                               subcontainer_right)
-        container.setDividerSize(5)
-        self.add(container, BorderLayout.CENTER)
+        self.container = JScrollPane(self.edit_area)
+        self.container.setRowHeaderView(self.line_numbers_area)
+        self.add(self.container, BorderLayout.CENTER)
 
         # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
+
+    def toggle_split(self):
+        '''
+        Clear ATF edit area and repaint chosen layout (splitscreen/scrollpane).
+        '''
+        # Remove all existent components in parent JPanel
+        self.removeAll()
+        # Check what editor view to toggle
+        self.setup_edit_area()
+        # Revalitate is needed in order to repaint the components
+        self.revalidate()
+        self.repaint()
+
+    def setup_edit_area(self):
+        '''
+        Check if the ATF text area is being displayed in a split editor.
+        If so, resets to normal JScrollPane. If not, splits the screen.
+        '''
+        if isinstance(self.container, JSplitPane):
+            # If Nammu is already displaying a split pane, reset to original
+            # setup
+            self.container = JScrollPane(self.edit_area)
+            self.container.setRowHeaderView(self.line_numbers_area)
+            self.container.setVisible(True)
+            self.add(self.container, BorderLayout.CENTER)
+        else:
+            # If there is not a split pane, create both panels and setup view
+            left = JScrollPane(self.edit_area)
+            left.setRowHeaderView(self.line_numbers_area)
+            right = JScrollPane(self.uneditable_area)
+            right.setRowHeaderView(self.uneditable_line_numbers_area)
+            self.container = JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                                        left,
+                                        right)
+            self.container.setDividerSize(5)
+            self.container.setVisible(True)
+            self.container.setDividerLocation(0.5)
+            self.container.setResizeWeight(0.5)
+            self.add(self.container, BorderLayout.CENTER)
 
 
 class AtfAreaKeyListener(KeyListener):

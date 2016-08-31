@@ -609,6 +609,7 @@ class NammuController(object):
         Show/hide split editor.
         '''
         self.logger.debug("Split Editor...")
+        self.atfAreaController.splitEditor()
 
     def console(self, event=None):
         '''
