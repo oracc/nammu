@@ -20,6 +20,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import zipfile
 import shutil
+import yaml
 from java.lang import ClassLoader, System
 from java.io import InputStreamReader, BufferedReader
 from java.awt import Font
@@ -131,10 +132,6 @@ def get_yaml_config(yaml_filename):
         update_yaml_config(path_to_jar, yaml_path, path_to_config)
 
     # Load YAML config
-    # This is a temporary hack to work around the mvn test stage not finding
-    # yaml
-    import yaml
-
     return yaml.load(open(path_to_config, 'r'))
 
 
@@ -143,10 +140,6 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config):
     Load local config and jar config. Compare versions, if they differ,
     update local version with newer one.
     '''
-    # This is a temporary hack to work around the mvn test stage not finding
-    # yaml
-    import yaml
-
     # Load JAR config, or development version if running from console and not
     # from JAR
     try:
@@ -178,10 +171,6 @@ def save_yaml_config(config):
     '''
     # Get config path
     path_to_config = get_log_path('settings.yaml')
-
-    # This is a temporary hack to work around the mvn test stage not finding
-    # yaml
-    import yaml
 
     # Save given config in yaml file
     with open(path_to_config, 'w') as outfile:
