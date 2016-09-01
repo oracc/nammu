@@ -74,19 +74,19 @@ class AtfAreaView(JPanel):
         # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
 
-    def toggle_split(self):
+    def toggle_split(self, split_orientation=None):
         '''
         Clear ATF edit area and repaint chosen layout (splitscreen/scrollpane).
         '''
         # Remove all existent components in parent JPanel
         self.removeAll()
         # Check what editor view to toggle
-        self.setup_edit_area()
+        self.setup_edit_area(split_orientation)
         # Revalitate is needed in order to repaint the components
         self.revalidate()
         self.repaint()
 
-    def setup_edit_area(self):
+    def setup_edit_area(self, split_orientation=None):
         '''
         Check if the ATF text area is being displayed in a split editor.
         If so, resets to normal JScrollPane. If not, splits the screen.
@@ -100,13 +100,13 @@ class AtfAreaView(JPanel):
             self.add(self.container, BorderLayout.CENTER)
         else:
             # If there is not a split pane, create both panels and setup view
-            left = JScrollPane(self.edit_area)
-            left.setRowHeaderView(self.line_numbers_area)
-            right = JScrollPane(self.uneditable_area)
-            right.setRowHeaderView(self.uneditable_line_numbers)
-            self.container = JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                        left,
-                                        right)
+            main_editor = JScrollPane(self.edit_area)
+            main_editor.setRowHeaderView(self.line_numbers_area)
+            secondary_editor = JScrollPane(self.uneditable_area)
+            secondary_editor.setRowHeaderView(self.uneditable_line_numbers)
+            self.container = JSplitPane(split_orientation,
+                                        main_editor,
+                                        secondary_editor)
             self.container.setDividerSize(5)
             self.container.setVisible(True)
             self.container.setDividerLocation(0.5)

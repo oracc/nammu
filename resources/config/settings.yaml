@@ -77,4 +77,5 @@ keystrokes:
     validate: VK_D
     lemmatise: VK_L
     showHelp: VK_H
-    splitEditor: VK_MINUS
+    splitEditorH: VK_PERIOD
+    splitEditorV: VK_COMMA
