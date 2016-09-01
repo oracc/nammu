@@ -51,10 +51,9 @@ class AtfAreaView(JPanel):
         self.edit_area = self.controller.edit_area
         self.line_numbers_area = self.controller.line_numbers_area
 
-        # Create uneditable counterpart for split view
-        self.uneditable_area = self.controller.uneditable_area
-        self.uneditable_area.setEditable(False)
-        self.uneditable_line_numbers = self.controller.uneditable_line_numbers
+        # Create secondary text area for split view
+        self.secondary_area = self.controller.secondary_area
+        self.secondary_line_numbers = self.controller.secondary_line_numbers
 
         # Set undo/redo manager to edit area
         self.undo_manager = UndoManager()
@@ -102,8 +101,8 @@ class AtfAreaView(JPanel):
             # If there is not a split pane, create both panels and setup view
             main_editor = JScrollPane(self.edit_area)
             main_editor.setRowHeaderView(self.line_numbers_area)
-            secondary_editor = JScrollPane(self.uneditable_area)
-            secondary_editor.setRowHeaderView(self.uneditable_line_numbers)
+            secondary_editor = JScrollPane(self.secondary_area)
+            secondary_editor.setRowHeaderView(self.secondary_line_numbers)
             self.container = JSplitPane(split_orientation,
                                         main_editor,
                                         secondary_editor)
