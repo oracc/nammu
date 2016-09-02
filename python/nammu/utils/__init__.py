@@ -20,6 +20,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import zipfile
 import shutil
+import collections
 from java.lang import ClassLoader, System
 from java.io import InputStreamReader, BufferedReader
 from java.awt import Font
@@ -158,17 +159,26 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config):
 
     # Load local config
     local_config = yaml.load(open(path_to_config, 'r'))
-
     # Load version numbers
     jar_version = jar_config['version']
+    local_version = local_config['version']
 
-    if 'version' in local_config and local_config['version'] == jar_version:
+    print local_config['version']
+    print jar_version 
+
+    if 'version' in local_config and local_version == jar_version:
         # Nothing to do, local config is up to date
         return
     else:
-        # Different version of version key doesn't exist in config, merge
-        # dicts and replace locally
-        jar_config.update(local_config)
+        # Different version of version key doesn't exist in config, 
+        # merge dicts recursively and replace locally
+        for key in jar_config.keys():
+            if isinstance(jar_config[key], collections.Mapping):
+                jar_config[key].update(local_config[key])
+            else:
+                jar_config[key] = local_config[key]
+        # Leave jar config version as latest
+        jar_config['version'] = jar_version
         save_yaml_config(jar_config)
 
 
