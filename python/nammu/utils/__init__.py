@@ -163,9 +163,6 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config):
     jar_version = jar_config['version']
     local_version = local_config['version']
 
-    print local_config['version']
-    print jar_version
-
     if 'version' in local_config and local_version == jar_version:
         # Nothing to do, local config is up to date
         return
