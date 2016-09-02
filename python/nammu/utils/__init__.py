@@ -164,13 +164,13 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config):
     local_version = local_config['version']
 
     print local_config['version']
-    print jar_version 
+    print jar_version
 
     if 'version' in local_config and local_version == jar_version:
         # Nothing to do, local config is up to date
         return
     else:
-        # Different version of version key doesn't exist in config, 
+        # Different version of version key doesn't exist in config,
         # merge dicts recursively and replace locally
         for key in jar_config.keys():
             if isinstance(jar_config[key], collections.Mapping):
