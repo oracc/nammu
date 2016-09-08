@@ -1,5 +1,5 @@
 ---
-version: 0.1
+version: 0.2
 
 languages:
     Early Akkadian: akk-x-earakk
@@ -77,3 +77,5 @@ keystrokes:
     validate: VK_D
     lemmatise: VK_L
     showHelp: VK_H
+    splitEditorH: VK_PERIOD
+    splitEditorV: VK_COMMA

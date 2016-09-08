@@ -35,7 +35,7 @@ from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
 from java.net import URI
-from javax.swing import JFileChooser, JOptionPane, ToolTipManager
+from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
 from pyoracc.atf.atffile import AtfFile
 from requests.exceptions import RequestException
@@ -603,6 +603,20 @@ class NammuController(object):
         Create bool for unicode, change value when clicked.
         '''
         self.logger.debug("Unicode...")
+
+    def splitEditorV(self, event=None):
+        '''
+        Show/hide vertical split editor.
+        '''
+        self.logger.debug("Split Editor Vertically...")
+        self.atfAreaController.splitEditor(JSplitPane.VERTICAL_SPLIT)
+
+    def splitEditorH(self, event=None):
+        '''
+        Show/hide horizontal split editor.
+        '''
+        self.logger.debug("Split Editor Horizontally...")
+        self.atfAreaController.splitEditor(JSplitPane.HORIZONTAL_SPLIT)
 
     def console(self, event=None):
         '''

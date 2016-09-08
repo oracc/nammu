@@ -33,8 +33,10 @@ class AtfAreaController(object):
     def __init__(self, mainControler):
         # Create text edition area
         self.edit_area = AtfEditArea(self)
+        self.secondary_area = AtfEditArea(self)
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
+        self.secondary_line_numbers = TextLineNumber(self.secondary_area)
         # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
         # Will also need delegating to parent presenter
@@ -45,6 +47,9 @@ class AtfAreaController(object):
         self.validation_errors = {}
         # Needed by syntax highlighter
         self.edit_area_styledoc = self.edit_area.getStyledDocument()
+        # Synch content of split editor panes
+        self.secondary_area.setStyledDocument(
+                                            self.edit_area.getStyledDocument())
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
 
@@ -133,3 +138,9 @@ class AtfAreaController(object):
         Short hand for syntax highlighting.
         '''
         self.syntax_highlighter.syntax_highlight()
+
+    def splitEditor(self, split_orientation):
+        '''
+        Toggles split editor view.
+        '''
+        self.view.toggle_split(split_orientation)

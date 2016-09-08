@@ -20,7 +20,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import re
 from java.awt import BorderLayout, Dimension, Color
 from java.awt.event import KeyListener
-from javax.swing import JScrollPane, JPanel
+from javax.swing import JScrollPane, JPanel, JSplitPane
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
 from javax.swing.undo import UndoManager, CompoundEdit
@@ -51,6 +51,10 @@ class AtfAreaView(JPanel):
         self.edit_area = self.controller.edit_area
         self.line_numbers_area = self.controller.line_numbers_area
 
+        # Create secondary text area for split view
+        self.secondary_area = self.controller.secondary_area
+        self.secondary_line_numbers = self.controller.secondary_line_numbers
+
         # Set undo/redo manager to edit area
         self.undo_manager = UndoManager()
         self.undo_manager.limit = 3000
@@ -62,12 +66,51 @@ class AtfAreaView(JPanel):
         # only the text area in a scroll pane as indicated in the
         # TextLineNumber tutorial.
         self.edit_area.setPreferredSize(Dimension(1, 500))
-        container = JScrollPane(self.edit_area)
-        container.setRowHeaderView(self.line_numbers_area)
-        self.add(container, BorderLayout.CENTER)
+        self.container = JScrollPane(self.edit_area)
+        self.container.setRowHeaderView(self.line_numbers_area)
+        self.add(self.container, BorderLayout.CENTER)
 
         # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
+
+    def toggle_split(self, split_orientation=None):
+        '''
+        Clear ATF edit area and repaint chosen layout (splitscreen/scrollpane).
+        '''
+        # Remove all existent components in parent JPanel
+        self.removeAll()
+        # Check what editor view to toggle
+        self.setup_edit_area(split_orientation)
+        # Revalitate is needed in order to repaint the components
+        self.revalidate()
+        self.repaint()
+
+    def setup_edit_area(self, split_orientation=None):
+        '''
+        Check if the ATF text area is being displayed in a split editor.
+        If so, resets to normal JScrollPane. If not, splits the screen.
+        '''
+        if isinstance(self.container, JSplitPane):
+            # If Nammu is already displaying a split pane, reset to original
+            # setup
+            self.container = JScrollPane(self.edit_area)
+            self.container.setRowHeaderView(self.line_numbers_area)
+            self.container.setVisible(True)
+            self.add(self.container, BorderLayout.CENTER)
+        else:
+            # If there is not a split pane, create both panels and setup view
+            main_editor = JScrollPane(self.edit_area)
+            main_editor.setRowHeaderView(self.line_numbers_area)
+            secondary_editor = JScrollPane(self.secondary_area)
+            secondary_editor.setRowHeaderView(self.secondary_line_numbers)
+            self.container = JSplitPane(split_orientation,
+                                        main_editor,
+                                        secondary_editor)
+            self.container.setDividerSize(5)
+            self.container.setVisible(True)
+            self.container.setDividerLocation(0.5)
+            self.container.setResizeWeight(0.5)
+            self.add(self.container, BorderLayout.CENTER)
 
 
 class AtfAreaKeyListener(KeyListener):
