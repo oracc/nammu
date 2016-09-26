@@ -1,0 +1,81 @@
+---
+version: 0.2
+
+languages:
+    Early Akkadian: akk-x-earakk
+    Old Akkadian: akk-x-oldakk
+    Ur III Akkadian: ua
+    Old Assyrian: akk-x-oldass
+    Old Babylonian: akk-x-oldbab
+    Old Babylonian peripheral: akk-x-obperi
+    Middle Assyrian: akk-x-midass
+    Middle Babylonian: akk-x-midbab
+    Middle Babylonian peripheral: akk-x-mbperi
+    Neo-Assyrian: akk-x-neoass
+    Neo-Babylonian: akk-x-neobab
+    Late Babylonian: akk-x-ltebab
+    Standard Babylonian: akk-x-stdbab
+    Conventional Akkadian: akk-x-conakk
+    Hittite: hit
+    Sumerian: sux or sux-x-emegir
+    Emesal: sux-x-emesal
+    Syllabic: sux-x-syllabic
+    Udgalnun: sux-x-udgalnun
+
+projects:
+    default:
+        - cams/gkab
+    cams:
+        - gkab
+    cmawro:
+    dcclt:
+        - ebla
+        - nineveh
+        - obale
+    etcsri:
+    rimanum:
+    rinap:
+        - rinap1
+        - rinap3
+        - rinap4
+        - senn2
+        - sources
+    saao:
+        - saa01
+        - saa02
+        - saa03
+        - saa04
+        - saa05
+        - saa06
+        - saa07
+        - saa08
+        - saa09
+        - saa10
+        - saa11
+        - saa12
+        - saa13
+        - saa14
+        - saa15
+        - saa16
+        - saa17
+        - saa18
+        - saa19
+
+protocols:
+    - math
+    - legacy
+    - lexical
+    - mylines
+
+keystrokes:
+    undo: VK_Z
+    redo: VK_Y
+    saveFile: VK_S
+    newFile: VK_N
+    openFile: VK_O
+    closeFile: VK_X
+    validate: VK_D
+    lemmatise: VK_L
+    showHelp: VK_H
+    splitEditorH: VK_PERIOD
+    splitEditorV: VK_COMMA

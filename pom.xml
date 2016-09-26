@@ -132,8 +132,8 @@
 					</execution>
 				</executions>
 				<configuration>
-                    <libraries>
-                        <param>pyyaml</param>
+          <libraries>
+            <param>pyyaml</param>
 						<param>requests</param>
 						<param>pytest&lt;3.0</param>
 						<param>mako</param>

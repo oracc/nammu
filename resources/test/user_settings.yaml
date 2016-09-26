@@ -1,0 +1,23 @@
+keystrokes: {
+              closeFile: VK_X, lemmatise: VK_L, newFile: VK_N, openFile: VK_O, redo: VK_Y,
+              saveFile: VK_S, showHelp: VK_H,
+              undo: VK_Z, validate: VK_D
+            }
+languages: {Conventional Akkadian: akk-x-conakk, Early Akkadian: akk-x-earakk, Emesal: sux-x-emesal,
+  Hittite: hit, Late Babylonian: akk-x-ltebab, Middle Assyrian: akk-x-midass, Middle Babylonian: akk-x-midbab,
+  Middle Babylonian peripheral: akk-x-mbperi, Neo-Assyrian: akk-x-neoass, Neo-Babylonian: akk-x-neobab,
+  Old Akkadian: akk-x-oldakk, Old Assyrian: akk-x-oldass, Old Babylonian: akk-x-oldbab,
+  Old Babylonian peripheral: akk-x-obperi, Standard Babylonian: akk-x-stdbab, Sumerian: sux
+    or sux-x-emegir, Syllabic: sux-x-syllabic, Udgalnun: sux-x-udgalnun, Ur III Akkadian: ua}
+projects:
+  cams: [gkab]
+  cmawro: null
+  dcclt: [ebla, nineveh, obale]
+  default: [cams/misc]
+  etcsri: null
+  rimanum: null
+  rinap: [rinap1, rinap3, rinap4, senn2, sources]
+  saao: [saa01, saa02, saa03, saa04, saa05, saa06, saa07, saa08, saa09, saa10, saa11,
+    saa12, saa13, saa14, saa15, saa16, saa17, saa18, saa19]
+protocols: [math, legacy, lexical, mylines]
+version: 0.1

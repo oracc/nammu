@@ -145,7 +145,8 @@ def compare_version_tuples(version1, version2):
     return cmp(normalize(version1), normalize(version2))
 
 
-def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False):
+def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
+                       test_mode=False):
     '''
     Load local config and jar config. Compare versions. If they differ,
     it will scan the key-value pairs, and add new key-values not present
@@ -200,7 +201,10 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False):
             print("Updating v. no. in local config: {0} --> {1}".format(
                 local_config['version'], jar_config['version']))
         d['version'] = jar_config['version']
-        save_yaml_config(d)
+        if test_mode:
+            return d
+        else:
+            save_yaml_config(d)
     else:
         return
 
