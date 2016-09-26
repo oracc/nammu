@@ -136,13 +136,22 @@ def get_yaml_config(yaml_filename):
     return yaml.load(open(path_to_config, 'r'))
 
 
-def update_yaml_config(path_to_jar, yaml_path, path_to_config):
+def compare_version_tuples(version1, version2):
+    """Examine two version tuples. Return 0 if unequal, 1 if equal.
+    http://stackoverflow.com/questions/1714027/version-number-comparison
+    """
+    def normalize(v):
+        return [int(x) for x in re.sub(r'(\.0+)*$', '', v).split(".")]
+    return cmp(normalize(version1), normalize(version2))
+
+
+def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False):
     '''
-    Load local config and jar config. Compare versions, if they differ,
-    update local version with newer one.
+    Load local config and jar config. Compare versions. If they differ,
+    it will scan the key-value pairs, and add new key-values not present
+    in the local config. If the same keys are present in the local and jar,
+    the local values will be maintained.
     '''
-    # Load JAR config, or development version if running from console and not
-    # from JAR
     try:
         jar_contents = zipfile.ZipFile(path_to_jar, 'r')
     except zipfile.BadZipfile:
@@ -150,26 +159,50 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config):
     else:
         jar_config = yaml.load(jar_contents.open(yaml_path))
 
-    # Load local config
     local_config = yaml.load(open(path_to_config, 'r'))
-    # Load version numbers
-    jar_version = jar_config['version']
-    local_version = local_config['version']
-
-    if 'version' in local_config and local_version == jar_version:
-        # Nothing to do, local config is up to date
-        return
+    jar_version = str(jar_config['version'])
+    local_version = str(local_config['version'])
+    diffrent_versions = compare_version_tuples(jar_version, local_version)
+    if diffrent_versions:
+        d = {}
+        if verbose:
+            print("Comparing install and local settings files...")
+        for key in jar_config:
+            if(isinstance(jar_config[key], dict)):  # Nested dics within a key
+                tmp = {}  # for the nested dics
+                for sub_key in jar_config[key]:
+                    if verbose:
+                        print("\n{0}: {1}: {2}".format(
+                            key, sub_key, jar_config[key][sub_key]))
+                        print("    Present in local config? {0}".format(
+                                sub_key in local_config[key]))
+                    if sub_key in local_config[key]:
+                        if verbose:
+                            print("    Using local values.")
+                        tmp[sub_key] = local_config[key][sub_key]
+                    else:
+                        if verbose:
+                            print("    Using jar values.")
+                        tmp[sub_key] = jar_config[key][sub_key]
+                d[key] = tmp
+            else:  # One level deep dictionary
+                if key in local_config:
+                    if verbose:
+                        print("{0}: {1}".format(key, jar_config[key]))
+                        print("    Using local values.")
+                    d[key] = local_config[key]
+                else:
+                    if verbose:
+                        print("{0}: {1}".format(key, jar_config[key]))
+                        print("    Using jar values.")
+                    d[key] = jar_config[key]
+        if verbose:
+            print("Updating v. no. in local config: {0} --> {1}".format(
+                local_config['version'], jar_config['version']))
+        d['version'] = jar_config['version']
+        save_yaml_config(d)
     else:
-        # Different version of version key doesn't exist in config,
-        # merge dicts recursively and replace locally
-        for key in jar_config.keys():
-            if isinstance(jar_config[key], collections.Mapping):
-                jar_config[key].update(local_config[key])
-            else:
-                jar_config[key] = local_config[key]
-        # Leave jar config version as latest
-        jar_config['version'] = jar_version
-        save_yaml_config(jar_config)
+        return
 
 
 def save_yaml_config(config):
