@@ -22,6 +22,8 @@ import zipfile
 import shutil
 import collections
 import yaml
+import logging
+import re
 from java.lang import ClassLoader, System
 from java.io import InputStreamReader, BufferedReader
 from java.awt import Font
@@ -153,6 +155,8 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
     in the local config. If the same keys are present in the local and jar,
     the local values will be maintained.
     '''
+    logger = logging.getLogger("NammuController")
+
     try:
         jar_contents = zipfile.ZipFile(path_to_jar, 'r')
     except zipfile.BadZipfile:
@@ -166,43 +170,36 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
     diffrent_versions = compare_version_tuples(jar_version, local_version)
     if diffrent_versions:
         d = {}
-        if verbose:
-            print("Comparing install and local settings files...")
+        logger.debug("Comparing install and local settings files...")
         for key in jar_config:
             if(isinstance(jar_config[key], dict)):  # Nested dics within a key
                 tmp = {}  # for the nested dics
                 for sub_key in jar_config[key]:
-                    if verbose:
-                        print("\n{0}: {1}: {2}".format(
-                            key, sub_key, jar_config[key][sub_key]))
-                        print("    Present in local config? {0}".format(
-                                sub_key in local_config[key]))
+                    logger.debug("{0}: {1}: {2}".format(
+                                 key, sub_key, jar_config[key][sub_key]))
+                    logger.debug("Present in local config? {0}".format(
+                                 sub_key in local_config[key]))
                     if sub_key in local_config[key]:
-                        if verbose:
-                            print("    Using local values.")
+                        logger.debug("Using local values.")
                         tmp[sub_key] = local_config[key][sub_key]
                     else:
-                        if verbose:
-                            print("    Using jar values.")
+                        logger.debug("Using jar values.")
                         tmp[sub_key] = jar_config[key][sub_key]
                 d[key] = tmp
             else:  # One level deep dictionary
                 if key in local_config:
-                    if verbose:
-                        print("{0}: {1}".format(key, jar_config[key]))
-                        print("    Using local values.")
+                    logger.debug("{0}: {1}".format(key, jar_config[key]))
+                    logger.debug("Using local values.")
                     d[key] = local_config[key]
                 else:
-                    if verbose:
-                        print("{0}: {1}".format(key, jar_config[key]))
-                        print("    Using jar values.")
+                    logger.debug("{0}: {1}".format(key, jar_config[key]))
+                    logger.debug("Using jar values.")
                     d[key] = jar_config[key]
-        if verbose:
-            print("Updating v. no. in local config: {0} --> {1}".format(
-                local_config['version'], jar_config['version']))
+        logger.debug("Updating v. no. in local config: {0} --> {1}".format(
+                     local_config['version'], jar_config['version']))
         d['version'] = jar_config['version']
-        if test_mode:
-            return d
+        if test_mode:  # This is for running tests, a dic is returned to check
+            return d  # keys are correct.
         else:
             save_yaml_config(d)
     else:
