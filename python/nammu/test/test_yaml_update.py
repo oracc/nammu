@@ -19,7 +19,8 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
 import os
-#from ..utils import update_yaml_config
+# from ..utils import update_yaml_config
+
 
 @pytest.mark.skip(reason=("pyyaml is not working in the tests yet"))
 def test_update_yaml_config():
@@ -27,10 +28,10 @@ def test_update_yaml_config():
     Ensure that upon updating yaml settings files from jar, a users
     default project settings are not overwritten.
     """
-    d = update_yaml_config(path_to_jar="resources/test/jar_settings.yaml",
-                         yaml_path="resources/test/user_settings.yaml",
-                         path_to_config="resources/test/user_settings.yaml",
-                         test_mode=True)
-
-    #assert goal_setting == jar_config
+    pth = "resources/test/"
+    d = update_yaml_config(path_to_jar=pth+"jar_settings.yaml",
+                           yaml_path=pth+"user_settings.yaml",
+                           path_to_config=pth+"user_settings.yaml",
+                           test_mode=True)
+    # assert goal_setting == jar_config
     # make sure the user (project) setting is not overwritten....
