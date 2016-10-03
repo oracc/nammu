@@ -72,6 +72,8 @@ class AtfAreaView(JPanel):
 
         # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
+        # Also needed in secondary area:
+        self.secondary_area.addKeyListener(AtfAreaKeyListener(self.controller))
 
     def toggle_split(self, split_orientation=None):
         '''
