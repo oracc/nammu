@@ -20,6 +20,10 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import zipfile
 import shutil
+import collections
+import yaml
+import logging
+import re
 from java.lang import ClassLoader, System
 from java.io import InputStreamReader, BufferedReader
 from java.awt import Font
@@ -131,24 +135,28 @@ def get_yaml_config(yaml_filename):
         update_yaml_config(path_to_jar, yaml_path, path_to_config)
 
     # Load YAML config
-    # This is a temporary hack to work around the mvn test stage not finding
-    # yaml
-    import yaml
-
     return yaml.load(open(path_to_config, 'r'))
 
 
-def update_yaml_config(path_to_jar, yaml_path, path_to_config):
-    '''
-    Load local config and jar config. Compare versions, if they differ,
-    update local version with newer one.
-    '''
-    # This is a temporary hack to work around the mvn test stage not finding
-    # yaml
-    import yaml
+def compare_version_tuples(version1, version2):
+    """Examine two version tuples. Return 0 if unequal, 1 if equal.
+    http://stackoverflow.com/questions/1714027/version-number-comparison
+    """
+    def normalize(v):
+        return [int(x) for x in re.sub(r'(\.0+)*$', '', v).split(".")]
+    return cmp(normalize(version1), normalize(version2))
 
-    # Load JAR config, or development version if running from console and not
-    # from JAR
+
+def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
+                       test_mode=False):
+    '''
+    Load local config and jar config. Compare versions. If they differ,
+    it will scan the key-value pairs, and add new key-values not present
+    in the local config. If the same keys are present in the local and jar,
+    the local values will be maintained.
+    '''
+    logger = logging.getLogger("NammuController")
+
     try:
         jar_contents = zipfile.ZipFile(path_to_jar, 'r')
     except zipfile.BadZipfile:
@@ -156,20 +164,47 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config):
     else:
         jar_config = yaml.load(jar_contents.open(yaml_path))
 
-    # Load local config
     local_config = yaml.load(open(path_to_config, 'r'))
+    jar_version = str(jar_config['version'])
+    local_version = str(local_config['version'])
+    diffrent_versions = compare_version_tuples(jar_version, local_version)
+    if diffrent_versions:
+        d = {}
+        logger.debug("Comparing install and local settings files...")
+        for key in jar_config:
+            if(isinstance(jar_config[key], dict)):  # Nested dics within a key
+                tmp = {}  # for the nested dics
+                for sub_key in jar_config[key]:
 
-    # Load version numbers
-    jar_version = jar_config['version']
-
-    if 'version' in local_config and local_config['version'] == jar_version:
-        # Nothing to do, local config is up to date
-        return
+                    if sub_key in local_config[key]:
+                        logger.debug("%s: %s: %s --> Using local values.",
+                                     key, sub_key, jar_config[key][sub_key])
+                        tmp[sub_key] = local_config[key][sub_key]
+                    else:
+                        logger.debug("%s: %s: %s --> Using jar values.",
+                                     key, sub_key, jar_config[key][sub_key])
+                        tmp[sub_key] = jar_config[key][sub_key]
+                d[key] = tmp
+            else:  # One level deep dictionary
+                if key in local_config:
+                    logger.debug("%s: %s --> Using local values.",
+                                 key,
+                                 jar_config[key])
+                    d[key] = local_config[key]
+                else:
+                    logger.debug("%s: %s --> Using jar values.",
+                                 key,
+                                 jar_config[key])
+                    d[key] = jar_config[key]
+        logger.debug("Updating version number in local config: %s --> %s",
+                     local_config['version'], jar_config['version'])
+        d['version'] = jar_config['version']
+        if test_mode:  # This is for running tests, a dic is returned to check
+            return d  # keys are correct.
+        else:
+            save_yaml_config(d)
     else:
-        # Different version of version key doesn't exist in config, merge
-        # dicts and replace locally
-        jar_config.update(local_config)
-        save_yaml_config(jar_config)
+        return
 
 
 def save_yaml_config(config):
@@ -178,10 +213,6 @@ def save_yaml_config(config):
     '''
     # Get config path
     path_to_config = get_log_path('settings.yaml')
-
-    # This is a temporary hack to work around the mvn test stage not finding
-    # yaml
-    import yaml
 
     # Save given config in yaml file
     with open(path_to_config, 'w') as outfile:

@@ -35,7 +35,7 @@ from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
 from java.net import URI
-from javax.swing import JFileChooser, JOptionPane, ToolTipManager
+from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
 from pyoracc.atf.atffile import AtfFile
 from requests.exceptions import RequestException
@@ -387,9 +387,12 @@ class NammuController(object):
         atf_basename = os.path.basename(self.currentFilename)
         nammu_text = self.atfAreaController.getAtfAreaText()
 
+        # Remove spaces from filename which make the server confused
+        atf_basename = atf_basename.replace(' ', '')
+
         # Send request and check for returned process ID
         client.create_request(command=command,
-                              keys=[project, '00atf/'+atf_basename],
+                              keys=[project, '00atf/' + atf_basename],
                               atf_basename=atf_basename,
                               atf_text=nammu_text.encode('utf-8'))
 
@@ -600,6 +603,20 @@ class NammuController(object):
         Create bool for unicode, change value when clicked.
         '''
         self.logger.debug("Unicode...")
+
+    def splitEditorV(self, event=None):
+        '''
+        Show/hide vertical split editor.
+        '''
+        self.logger.debug("Split Editor Vertically...")
+        self.atfAreaController.splitEditor(JSplitPane.VERTICAL_SPLIT)
+
+    def splitEditorH(self, event=None):
+        '''
+        Show/hide horizontal split editor.
+        '''
+        self.logger.debug("Split Editor Horizontally...")
+        self.atfAreaController.splitEditor(JSplitPane.HORIZONTAL_SPLIT)
 
     def console(self, event=None):
         '''
