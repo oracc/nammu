@@ -708,3 +708,12 @@ class NammuController(object):
             desktop = Desktop.getDesktop()
         if desktop and desktop.isSupported(Desktop.Action.BROWSE):
             desktop.browse(uri)
+
+    def find(self, event=None):
+        '''
+        Find/Replace funcitonality:
+        * Displays find/replace window with options
+        * Highlights matches
+        * Replaces matches on text
+        '''
+        self.logger.debug("Finding and replacing.")
