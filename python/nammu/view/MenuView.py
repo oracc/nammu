@@ -67,6 +67,7 @@ class MenuView(JMenuBar):
         menuItems["Edit"]["Copy"] = [KeyEvent.VK_C, "copy"]
         menuItems["Edit"]["Cut"] = [KeyEvent.VK_X, "cut"]
         menuItems["Edit"]["Paste"] = [KeyEvent.VK_V, "paste"]
+        menuItems["Edit"]["Find/Replace"] = [KeyEvent.VK_G, "find"]
 
         menuItems["ATF"] = {}
         menuItems["ATF"] = collections.OrderedDict()
@@ -97,7 +98,7 @@ class MenuView(JMenuBar):
 
         # Menu Items after which there is a menu separator
         separators = {"File": ["Close", "Print"],
-                      "Edit": ["Redo"],
+                      "Edit": ["Redo", "Paste"],
                       "ATF": [],
                       "Window": ["Display Model View"],
                       "Help": ["Settings", "Help"]}
