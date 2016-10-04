@@ -31,6 +31,7 @@ from MenuController import MenuController
 from ModelController import ModelController
 from ToolbarController import ToolbarController
 from NewAtfController import NewAtfController
+from FindController import FindController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
@@ -716,4 +717,4 @@ class NammuController(object):
         * Highlights matches
         * Replaces matches on text
         '''
-        self.logger.debug("Finding and replacing.")
+        find_controller = FindController(self)
