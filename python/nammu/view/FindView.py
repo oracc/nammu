@@ -53,12 +53,14 @@ class FindView(JDialog):
         # Create all necessary panels
         find_panel = self.build_find_row()
         replace_panel = self.build_replace_row()
+        buttons_panel = self.build_buttons_row()
         # replace_panel = self.build_find_panel()
 
         # Add panels to main JFrame
-        # self.add(find_panel)
-        # self.add(replace_panel)
-        self.add(self.build_find_replace_rows())
+        self.add(find_panel)
+        self.add(replace_panel)
+        self.add(buttons_panel)
+        # self.add(self.build_find_replace_rows())
 
     def build_find_replace_rows(self):
         labels = ("Find: ", "Replace: ")
@@ -66,12 +68,12 @@ class FindView(JDialog):
         # Create and populate the panel.
         panel = JPanel()
         for label in labels:
-            row_panel = JPanel(BorderLayout())
+            row_panel = JPanel(FlowLayout())
             label = JLabel(label, JLabel.TRAILING)
-            row_panel.add(label, BorderLayout.WEST)
+            row_panel.add(label, FlowLayout.LEFT)
             textfield = JTextField(20)
             label.setLabelFor(textfield)
-            row_panel.add(textfield, BorderLayout.CENTER)
+            row_panel.add(textfield, FlowLayout.RIGHT)
             panel.add(row_panel)
 
         return panel
@@ -80,93 +82,108 @@ class FindView(JDialog):
         '''
         Builds the find row.
         '''
-        # Build own panel with SpringLayout.
-        panel = JPanel()
-        layout = SpringLayout()
-        panel.setLayout(layout)
-        # Create necessary components and add them to panel.
-        label = JLabel("Find: ")
-        self.field = JTextField(20)
+        panel = JPanel(FlowLayout())
+        label = JLabel("Find:     ")
         panel.add(label)
-        panel.add(self.field)
-        # Set up constraints to tell panel how to position components.
-        layout.putConstraint(SpringLayout.WEST,
-                             label,
-                             10,
-                             SpringLayout.WEST,
-                             panel)
-        layout.putConstraint(SpringLayout.NORTH,
-                             label,
-                             10,
-                             SpringLayout.NORTH,
-                             panel)
-        layout.putConstraint(SpringLayout.EAST,
-                             self.field,
-                             10,
-                             SpringLayout.EAST,
-                             panel)
-        layout.putConstraint(SpringLayout.NORTH,
-                             self.field,
-                             8,
-                             SpringLayout.NORTH,
-                             panel)
-        layout.putConstraint(SpringLayout.EAST,
-                             panel,
-                             400,
-                             SpringLayout.WEST,
-                             label)
-        layout.putConstraint(SpringLayout.SOUTH,
-                             panel,
-                             5,
-                             SpringLayout.SOUTH,
-                             self.field)
-        # Add this to NewAtf JFrame
+        textfield = JTextField(20)
+        label.setLabelFor(textfield)
+        panel.add(textfield)
         return panel
 
     def build_replace_row(self):
         '''
         Builds the replace row.
         '''
-        # Build own panel with SpringLayout.
+        panel = JPanel(FlowLayout())
+        label = JLabel("Replace: ")
+        panel.add(label)
+        textfield = JTextField(20)
+        label.setLabelFor(textfield)
+        panel.add(textfield)
+        return panel
+
+    def build_buttons_row(self):
+        '''
+        Builds the buttons row.
+        '''
         panel = JPanel()
         layout = SpringLayout()
         panel.setLayout(layout)
         # Create necessary components and add them to panel.
-        label = JLabel("Replace: ")
-        self.field = JTextField(20)
-        panel.add(label)
-        panel.add(self.field)
+        find_next_button = JButton('Find Next',
+                                actionPerformed=self.find_next)
+        replace_one_button = JButton('Replace',
+                                actionPerformed=self.find_next)
+        replace_all_button = JButton('Replace All', actionPerformed=self.replace_all)
+        done_button = JButton('Done', actionPerformed=self.done)
+        panel.add(find_next_button)
+        panel.add(replace_one_button)
+        panel.add(replace_all_button)
+        panel.add(done_button)
+
         # Set up constraints to tell panel how to position components.
         layout.putConstraint(SpringLayout.WEST,
-                             label,
-                             10,
+                             find_next_button,
+                             15,
                              SpringLayout.WEST,
                              panel)
         layout.putConstraint(SpringLayout.NORTH,
-                             label,
-                             10,
+                             find_next_button,
+                             15,
                              SpringLayout.NORTH,
                              panel)
-        layout.putConstraint(SpringLayout.EAST,
-                             self.field,
-                             10,
+        layout.putConstraint(SpringLayout.WEST,
+                             replace_one_button,
+                             5,
                              SpringLayout.EAST,
-                             panel)
+                             find_next_button)
         layout.putConstraint(SpringLayout.NORTH,
-                             self.field,
-                             8,
+                             replace_one_button,
+                             15,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             replace_all_button,
+                             5,
+                             SpringLayout.EAST,
+                             replace_one_button)
+        layout.putConstraint(SpringLayout.NORTH,
+                             replace_all_button,
+                             15,
+                             SpringLayout.NORTH,
+                             panel)
+        layout.putConstraint(SpringLayout.WEST,
+                             done_button,
+                             5,
+                             SpringLayout.EAST,
+                             replace_all_button)
+        layout.putConstraint(SpringLayout.NORTH,
+                             done_button,
+                             15,
                              SpringLayout.NORTH,
                              panel)
         layout.putConstraint(SpringLayout.EAST,
                              panel,
-                             400,
-                             SpringLayout.WEST,
-                             label)
+                             15,
+                             SpringLayout.EAST,
+                             done_button)
         layout.putConstraint(SpringLayout.SOUTH,
                              panel,
-                             5,
+                             10,
                              SpringLayout.SOUTH,
-                             self.field)
-
+                             done_button)
         # Add this to NewAtf JFrame
         return panel
+
+
+    def find_next(self, event):
+        print "Find Next"
+
+    def replace_one(self, event):
+        print "Replace one"
+
+    def replace_all(self, event):
+        print "Replace all"
+
+    def done(self, event):
+        print "Done"
