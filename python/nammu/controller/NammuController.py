@@ -720,7 +720,12 @@ class NammuController(object):
         '''
         find_controller = FindController(self)
 
-    def replace_all(self, old_text, new_text, regex=False, ignore_case=False):
+    def replace_all(self,
+                    old_text,
+                    new_text,
+                    ignore_case=False,
+                    regex=False,
+                    selection=False):
         '''
         Change all matches in the text with new given text.
         '''

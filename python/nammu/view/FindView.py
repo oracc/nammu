@@ -20,6 +20,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon, JDialog
 from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
+from javax.swing import JCheckBox
 from java.awt import Dimension, Dialog, BorderLayout, FlowLayout
 from ..utils import find_image_resource
 
@@ -53,12 +54,14 @@ class FindView(JDialog):
         # Create all necessary panels
         find_panel = self.build_find_row()
         replace_panel = self.build_replace_row()
+        options_panel = self.build_options_row()
         buttons_panel = self.build_buttons_row()
         # replace_panel = self.build_find_panel()
 
         # Add panels to main JFrame
         self.add(find_panel)
         self.add(replace_panel)
+        self.add(options_panel)
         self.add(buttons_panel)
         # self.add(self.build_find_replace_rows())
 
@@ -100,6 +103,19 @@ class FindView(JDialog):
         self.replace_field = JTextField(20)
         label.setLabelFor(self.replace_field)
         panel.add(self.replace_field)
+        return panel
+
+    def build_options_row(self):
+        '''
+        Builds the panel with ignore case, regex, etc. options.
+        '''
+        panel = JPanel(FlowLayout())
+        self.ignore_case_box = JCheckBox('Ignore Case')
+        self.regex_box = JCheckBox('Regular Expresion')
+        self.selection_box = JCheckBox('Selection only')
+        panel.add(self.ignore_case_box)
+        panel.add(self.regex_box)
+        panel.add(self.selection_box)
         return panel
 
     def build_buttons_row(self):
@@ -184,7 +200,10 @@ class FindView(JDialog):
 
     def replace_all(self, event):
         self.controller.replace_all(self.find_field.getText(),
-                                    self.replace_field.getText())
+                                    self.replace_field.getText(),
+                                    self.ignore_case_box.isSelected(),
+                                    self.regex_box.isSelected(),
+                                    self.selection_box.isSelected())
 
     def done(self, event):
         self.dispose()
