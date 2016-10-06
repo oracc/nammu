@@ -85,9 +85,9 @@ class FindView(JDialog):
         panel = JPanel(FlowLayout())
         label = JLabel("Find:     ")
         panel.add(label)
-        textfield = JTextField(20)
-        label.setLabelFor(textfield)
-        panel.add(textfield)
+        self.find_field = JTextField(20)
+        label.setLabelFor(self.find_field)
+        panel.add(self.find_field)
         return panel
 
     def build_replace_row(self):
@@ -97,9 +97,9 @@ class FindView(JDialog):
         panel = JPanel(FlowLayout())
         label = JLabel("Replace: ")
         panel.add(label)
-        textfield = JTextField(20)
-        label.setLabelFor(textfield)
-        panel.add(textfield)
+        self.replace_field = JTextField(20)
+        label.setLabelFor(self.replace_field)
+        panel.add(self.replace_field)
         return panel
 
     def build_buttons_row(self):
@@ -183,7 +183,8 @@ class FindView(JDialog):
         print "Replace one"
 
     def replace_all(self, event):
-        print "Replace all"
+        self.controller.replace_all(self.find_field.getText(),
+                                    self.replace_field.getText())
 
     def done(self, event):
-        print "Done"
+        self.dispose()

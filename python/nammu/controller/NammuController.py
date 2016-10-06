@@ -24,6 +24,7 @@ import logging.config
 from logging.handlers import RotatingFileHandler
 import os
 import urllib
+import re
 
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
@@ -718,3 +719,21 @@ class NammuController(object):
         * Replaces matches on text
         '''
         find_controller = FindController(self)
+
+    def replace_all(self, old_text, new_text, regex=False, ignore_case=False):
+        '''
+        Change all matches in the text with new given text.
+        '''
+        if self.currentFilename:
+            atf_text = self.atfAreaController.getAtfAreaText()
+            if not regex and not ignore_case:
+                atf_text = atf_text.replace(old_text, new_text)
+            elif ignore_case:
+                pattern = re.compile(old_text, re.IGNORECASE)
+                pattern.sub(old_text, new_text, atf_text)
+            else:
+                re.sub(old_text, new_text, atf_text)
+            self.atfAreaController.setAtfAreaText(atf_text)
+        else:
+            self.logger.info('Please open a file before attempting to ' +
+                             'find/replace.')

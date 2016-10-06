@@ -25,3 +25,6 @@ class FindController(object):
         self.controller = maincontroller
         self.view = FindView(self)
         self.view.display()
+
+    def replace_all(self, old_text, new_text):
+        self.controller.replace_all(old_text, new_text)
