@@ -17,12 +17,12 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-
 import logging
 from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon, JDialog
 from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
 from java.awt import Dimension, Dialog, BorderLayout, FlowLayout
 from ..utils import find_image_resource
+
 
 class FindView(JDialog):
     '''
@@ -111,10 +111,11 @@ class FindView(JDialog):
         panel.setLayout(layout)
         # Create necessary components and add them to panel.
         find_next_button = JButton('Find Next',
-                                actionPerformed=self.find_next)
+                                   actionPerformed=self.find_next)
         replace_one_button = JButton('Replace',
-                                actionPerformed=self.find_next)
-        replace_all_button = JButton('Replace All', actionPerformed=self.replace_all)
+                                     actionPerformed=self.find_next)
+        replace_all_button = JButton('Replace All',
+                                     actionPerformed=self.replace_all)
         done_button = JButton('Done', actionPerformed=self.done)
         panel.add(find_next_button)
         panel.add(replace_one_button)
@@ -174,7 +175,6 @@ class FindView(JDialog):
                              done_button)
         # Add this to NewAtf JFrame
         return panel
-
 
     def find_next(self, event):
         print "Find Next"
