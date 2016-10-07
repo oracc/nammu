@@ -24,6 +24,7 @@ from ..view.FindView import FindView
 class FindController(object):
     def __init__(self, maincontroller):
         self.controller = maincontroller
+        self.atfAreaController = self.controller.atfAreaController
         self.view = FindView(self)
         self.view.display()
 
@@ -32,22 +33,22 @@ class FindController(object):
         Change all matches in the text with new given text.
         '''
         # Check wether there is some text in the text area.
-        current = self.controller.atfAreaController.getAtfAreaText()
+        current = self.atfAreaController.getAtfAreaText()
         if current:
             # If user chooses to replace on selection, check if any text is
             # selected and if so, work only on that selection.
             if selection:
-                selected = self.controller.atfAreaController.getSelectedText()
+                selected = self.atfAreaController.getSelectedText()
                 if selected:
                     replaced = self._replace_all_in_text(selected, old_text,
                                                          new_text, ignore_case,
                                                          regex)
-                    self.controller.atfAreaController.replaceSelection(replaced)
+                    self.atfAreaController.replaceSelection(replaced)
             else:
                 replaced = self._replace_all_in_text(current, old_text,
                                                      new_text, ignore_case,
                                                      regex)
-                self.controller.atfAreaController.setAtfAreaText(replaced)
+                self.atfAreaController.setAtfAreaText(replaced)
 
     def _replace_all_in_text(self, atf_text, old_text, new_text, ignore_case,
                              regex):
@@ -69,7 +70,7 @@ class FindController(object):
         Returns a list with the begining position of all matches of a given
         text in the ATF area.
         '''
-        text = self.controller.atfAreaController.getAtfAreaText()
+        text = self.atfAreaController.getAtfAreaText()
         matches = []
         if not regex:
             expr = re.escape(expr)
