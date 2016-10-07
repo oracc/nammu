@@ -732,9 +732,7 @@ class NammuController(object):
         if self.atfAreaController.getAtfAreaText():
             atf_text = self.atfAreaController.getAtfAreaText()
             if selection:
-                print("There's a selection")
-                selected_text = self.atfAreaController.getSelectedText()
-                self.logger.info('This is selected %', selected_text)
+                atf_text = self.atfAreaController.getSelectedText()
             if not regex and not ignore_case:
                 atf_text = atf_text.replace(old_text, new_text)
             elif ignore_case:
@@ -742,7 +740,10 @@ class NammuController(object):
                 atf_text = pattern.sub(new_text, atf_text)
             else:
                 atf_text = re.sub(old_text, new_text, atf_text)
-            self.atfAreaController.setAtfAreaText(atf_text)
+            if selection:
+                self.atfAreaController.replaceSelection(atf_text)
+            else:
+                self.atfAreaController.setAtfAreaText(atf_text)
         else:
             self.logger.info('Please open a file or insert some text before ' +
                              'attempting to find/replace.')

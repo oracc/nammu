@@ -144,3 +144,15 @@ class AtfAreaController(object):
         Toggles split editor view.
         '''
         self.view.toggle_split(split_orientation)
+
+    def getSelectedText(self):
+        '''
+        Returns user selected text.
+        '''
+        return self.edit_area.getSelectedText()
+
+    def replaceSelection(self, text):
+        '''
+        Replace user selected text with give text.
+        '''
+        self.edit_area.replaceSelection(text)
