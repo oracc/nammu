@@ -720,30 +720,46 @@ class NammuController(object):
         '''
         find_controller = FindController(self)
 
-    def replace_all(self,
-                    old_text,
-                    new_text,
-                    ignore_case,
-                    regex,
-                    selection):
+    def replace_all(self, old_text, new_text, ignore_case, regex, selection):
         '''
         Change all matches in the text with new given text.
         '''
-        if self.atfAreaController.getAtfAreaText():
-            atf_text = self.atfAreaController.getAtfAreaText()
+        # Check wether there is some text in the text area.
+        current = self.atfAreaController.getAtfAreaText()
+        if current:
+            # If user chooses to replace on selection, check if any text is
+            # selected and if so, work only on that selection.
             if selection:
-                atf_text = self.atfAreaController.getSelectedText()
-            if not regex and not ignore_case:
-                atf_text = atf_text.replace(old_text, new_text)
-            elif ignore_case:
-                pattern = re.compile(old_text, re.IGNORECASE)
-                atf_text = pattern.sub(new_text, atf_text)
+                selected = self.atfAreaController.getSelectedText()
+                if selected:
+                    replaced = self.replace_all_in_text(selected,
+                                                        old_text,
+                                                        new_text,
+                                                        ignore_case,
+                                                        regex)
+                    self.atfAreaController.replaceSelection(replaced)
             else:
-                atf_text = re.sub(old_text, new_text, atf_text)
-            if selection:
-                self.atfAreaController.replaceSelection(atf_text)
-            else:
-                self.atfAreaController.setAtfAreaText(atf_text)
+                replaced = self.replace_all_in_text(current,
+                                                    old_text,
+                                                    new_text,
+                                                    ignore_case,
+                                                    regex)
+                self.atfAreaController.setAtfAreaText(replaced)
         else:
             self.logger.info('Please open a file or insert some text before ' +
                              'attempting to find/replace.')
+
+    def replace_all_in_text(self, atf_text, old_text, new_text, ignore_case,
+                            regex):
+        '''
+        Checks all flags and returns a text after replacing old_text with
+        new_text.
+        '''
+        if not regex and not ignore_case:
+            text = atf_text.replace(old_text, new_text)
+        elif ignore_case:
+            pattern = re.compile(old_text, re.IGNORECASE)
+            text = pattern.sub(new_text, atf_text)
+        else:
+            text = re.sub(old_text, new_text, atf_text)
+        return text
