@@ -193,7 +193,10 @@ class FindView(JDialog):
         return panel
 
     def find_next(self, event):
-        print "Find Next"
+        self.controller.find_next(self.find_field.getText(),
+                                  self.ignore_case_box.isSelected(),
+                                  self.regex_box.isSelected(),
+                                  self.selection_box.isSelected())
 
     def replace_one(self, event):
         print "Replace one"
