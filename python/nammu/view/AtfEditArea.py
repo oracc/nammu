@@ -72,8 +72,8 @@ class AtfEditArea(JTextPane):
 
     def replaceSelection(self, text):
         '''
-        Override JTextPane's setText to call syntax highlighting so that it
-        still works when you set text from elsewhere in the code.
+        Override JTextPane's replaceSelection to call syntax highlighting
+        after replacing some text.
         '''
         super(AtfEditArea, self).replaceSelection(text)
         self.controller.syntax_highlight()

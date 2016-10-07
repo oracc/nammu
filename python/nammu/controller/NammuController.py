@@ -732,17 +732,13 @@ class NammuController(object):
             if selection:
                 selected = self.atfAreaController.getSelectedText()
                 if selected:
-                    replaced = self._replace_all_in_text(selected,
-                                                         old_text,
-                                                         new_text,
-                                                         ignore_case,
+                    replaced = self._replace_all_in_text(selected, old_text,
+                                                         new_text, ignore_case,
                                                          regex)
                     self.atfAreaController.replaceSelection(replaced)
             else:
-                replaced = self._replace_all_in_text(current,
-                                                     old_text,
-                                                     new_text,
-                                                     ignore_case,
+                replaced = self._replace_all_in_text(current, old_text,
+                                                     new_text, ignore_case,
                                                      regex)
                 self.atfAreaController.setAtfAreaText(replaced)
         else:

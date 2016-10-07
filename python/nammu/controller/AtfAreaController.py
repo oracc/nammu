@@ -153,6 +153,6 @@ class AtfAreaController(object):
 
     def replaceSelection(self, text):
         '''
-        Replace user selected text with give text.
+        Replace user selected text with given text.
         '''
         self.edit_area.replaceSelection(text)

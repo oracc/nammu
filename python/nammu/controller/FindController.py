@@ -26,14 +26,6 @@ class FindController(object):
         self.view = FindView(self)
         self.view.display()
 
-    def replace_all(self,
-                    old_text,
-                    new_text,
-                    ignore_case,
-                    regex,
-                    selection):
-        self.controller.replace_all(old_text,
-                                    new_text,
-                                    ignore_case,
-                                    regex,
+    def replace_all(self, old_text, new_text, ignore_case, regex, selection):
+        self.controller.replace_all(old_text, new_text, ignore_case, regex,
                                     selection)
