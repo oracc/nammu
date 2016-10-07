@@ -31,7 +31,7 @@ class FindView(JDialog):
     '''
     def __init__(self, controller):
         self.logger = logging.getLogger("NammuController")
-        self.modalityType = Dialog.ModalityType.APPLICATION_MODAL
+        self.setAlwaysOnTop(True)
         self.controller = controller
         self.pane = self.getContentPane()
 
