@@ -723,22 +723,26 @@ class NammuController(object):
     def replace_all(self,
                     old_text,
                     new_text,
-                    ignore_case=False,
-                    regex=False,
-                    selection=False):
+                    ignore_case,
+                    regex,
+                    selection):
         '''
         Change all matches in the text with new given text.
         '''
-        if self.currentFilename:
+        if self.atfAreaController.getAtfAreaText():
             atf_text = self.atfAreaController.getAtfAreaText()
+            if selection:
+                print("There's a selection")
+                selected_text = self.atfAreaController.getSelectedText()
+                self.logger.info('This is selected %', selected_text)
             if not regex and not ignore_case:
                 atf_text = atf_text.replace(old_text, new_text)
             elif ignore_case:
                 pattern = re.compile(old_text, re.IGNORECASE)
-                pattern.sub(old_text, new_text, atf_text)
+                atf_text = pattern.sub(new_text, atf_text)
             else:
-                re.sub(old_text, new_text, atf_text)
+                atf_text = re.sub(old_text, new_text, atf_text)
             self.atfAreaController.setAtfAreaText(atf_text)
         else:
-            self.logger.info('Please open a file before attempting to ' +
-                             'find/replace.')
+            self.logger.info('Please open a file or insert some text before ' +
+                             'attempting to find/replace.')
