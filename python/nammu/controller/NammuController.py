@@ -732,25 +732,25 @@ class NammuController(object):
             if selection:
                 selected = self.atfAreaController.getSelectedText()
                 if selected:
-                    replaced = self.replace_all_in_text(selected,
-                                                        old_text,
-                                                        new_text,
-                                                        ignore_case,
-                                                        regex)
+                    replaced = self._replace_all_in_text(selected,
+                                                         old_text,
+                                                         new_text,
+                                                         ignore_case,
+                                                         regex)
                     self.atfAreaController.replaceSelection(replaced)
             else:
-                replaced = self.replace_all_in_text(current,
-                                                    old_text,
-                                                    new_text,
-                                                    ignore_case,
-                                                    regex)
+                replaced = self._replace_all_in_text(current,
+                                                     old_text,
+                                                     new_text,
+                                                     ignore_case,
+                                                     regex)
                 self.atfAreaController.setAtfAreaText(replaced)
         else:
             self.logger.info('Please open a file or insert some text before ' +
                              'attempting to find/replace.')
 
-    def replace_all_in_text(self, atf_text, old_text, new_text, ignore_case,
-                            regex):
+    def _replace_all_in_text(self, atf_text, old_text, new_text, ignore_case,
+                             regex):
         '''
         Checks all flags and returns a text after replacing old_text with
         new_text.
