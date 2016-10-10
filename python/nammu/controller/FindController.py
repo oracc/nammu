@@ -27,6 +27,7 @@ class FindController(object):
         self.atfAreaController = self.controller.atfAreaController
         self.view = FindView(self)
         self.view.display()
+        self.ongoing_find_next = False
 
     def replace_all(self, old_text, new_text, ignore_case, regex, selection):
         '''
@@ -50,6 +51,26 @@ class FindController(object):
                                                      regex)
                 self.atfAreaController.setAtfAreaText(replaced)
 
+    def find_next(self, text, ignore_case, regex, selection):
+        '''
+        Highlight all matches and place cared/focus on next one.
+        '''
+        # Check wether there is some text in the text area.
+        atf_text = self.atfAreaController.getAtfAreaText()
+        if atf_text:
+            # If user chooses to find on selection, check if any text is
+            # selected and if so, work only on that selection.
+            if selection:
+                atf_text = self.atfAreaController.getSelectedText()
+
+            matches = self._find_matches(atf_text, text, ignore_case, regex)
+            print(matches)
+            # Highlight all matches
+
+            # Move focus to first match found
+
+
+
     def _replace_all_in_text(self, atf_text, old_text, new_text, ignore_case,
                              regex):
         '''
@@ -65,12 +86,11 @@ class FindController(object):
             text = re.sub(old_text, new_text, atf_text)
         return text
 
-    def _find_matches(self, expr, regex, ignore_case):
+    def _find_matches(self, text, expr, ignore_case, regex):
         '''
         Returns a list with the begining position of all matches of a given
         text in the ATF area.
         '''
-        text = self.atfAreaController.getAtfAreaText()
         matches = []
         if not regex:
             expr = re.escape(expr)

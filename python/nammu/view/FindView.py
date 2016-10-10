@@ -129,7 +129,7 @@ class FindView(JDialog):
         find_next_button = JButton('Find Next',
                                    actionPerformed=self.find_next)
         replace_one_button = JButton('Replace',
-                                     actionPerformed=self.find_next)
+                                     actionPerformed=self.replace_one)
         replace_all_button = JButton('Replace All',
                                      actionPerformed=self.replace_all)
         done_button = JButton('Done', actionPerformed=self.done)
