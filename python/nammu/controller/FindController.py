@@ -69,8 +69,6 @@ class FindController(object):
 
             # Move focus to first match found
 
-
-
     def _replace_all_in_text(self, atf_text, old_text, new_text, ignore_case,
                              regex):
         '''
