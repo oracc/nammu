@@ -57,13 +57,16 @@ class FindController(object):
         '''
         # Check wether there is some text in the text area.
         atf_text = self.atfAreaController.getAtfAreaText()
+        offset = 0
         if atf_text:
             # If user chooses to find on selection, check if any text is
             # selected and if so, work only on that selection.
             if selection:
                 atf_text = self.atfAreaController.getSelectedText()
+                offset = self.atfAreaController.getSelectionStart()
 
-            matches = self._find_matches(atf_text, text, ignore_case, regex)
+            matches = self._find_matches(atf_text, text, ignore_case, regex,
+                                         offset)
             print(matches)
             # Highlight all matches
 
@@ -84,7 +87,7 @@ class FindController(object):
             text = re.sub(old_text, new_text, atf_text)
         return text
 
-    def _find_matches(self, text, expr, ignore_case, regex):
+    def _find_matches(self, text, expr, ignore_case, regex, offset):
         '''
         Returns a list with the begining position of all matches of a given
         text in the ATF area.
@@ -97,5 +100,6 @@ class FindController(object):
         else:
             pattern = re.compile(expr)
         for match in pattern.finditer(text):
-            matches.append(match.start())
+            # Add offset in case of user has selected text
+            matches.append(match.start() + offset)
         return matches

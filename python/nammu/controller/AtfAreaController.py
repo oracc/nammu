@@ -151,6 +151,12 @@ class AtfAreaController(object):
         '''
         return self.edit_area.getSelectedText()
 
+    def getSelectionStart(self):
+        '''
+        Returns position at which user selection starts.
+        '''
+        return self.edit_area.getSelectionStart()
+
     def replaceSelection(self, text):
         '''
         Replace user selected text with given text.
