@@ -81,21 +81,22 @@ class FindController(object):
         if reset:
             self.matches = self._find_all_matches()
             # TODO: Highlight all matches
+            self.controller.atfAreaController.highlight_matches(self.matches)
             # TODO: Move focus to first match found
-            #self.view.focus_next_match(self._next_match())
+            # self.view.focus_next_match(self._next_match())
             print(self.matches.next().start() + self.offset)
         else:
             # Highlight is already done and matches found, just move cursor
             # to next match
             try:
-                #self.view.focus_next_match(self._next_match())
+                # self.view.focus_next_match(self._next_match())
                 print(self.matches.next().start() + self.offset)
             except StopIteration:
                 # TODO: If we've reached the last element of the matches list,
                 # display message to user. For now just restart to begining of
                 # list.
                 self.matches = self._find_all_matches()
-                #self.view.focus_next_match(self._next_match())
+                # self.view.focus_next_match(self._next_match())
                 print(self.matches.next().start() + self.offset)
 
     def _find_all_matches(self):
