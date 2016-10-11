@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Copyright 2015, 2016 University College London.
 
@@ -22,7 +23,6 @@ from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon, JDialog
 from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
 from javax.swing import JCheckBox
 from java.awt import Dimension, Dialog, BorderLayout, FlowLayout
-from ..utils import find_image_resource
 
 
 class FindView(JDialog):
@@ -209,4 +209,9 @@ class FindView(JDialog):
                                     self.selection_box.isSelected())
 
     def done(self, event):
+        '''
+        Reset list of matches and close window.
+        '''
+        self.controller.matches = None
+        self.controller.text = None
         self.dispose()
