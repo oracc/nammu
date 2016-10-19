@@ -139,6 +139,9 @@ class AtfAreaController(object):
         '''
         self.syntax_highlighter.syntax_highlight()
 
+    def highlight_matches(self, matches):
+        self.syntax_highlighter.highlight_matches(matches)
+
     def splitEditor(self, split_orientation):
         '''
         Toggles split editor view.

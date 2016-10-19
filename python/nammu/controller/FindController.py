@@ -80,11 +80,13 @@ class FindController(object):
             reset = True
         if reset:
             self.matches = self._find_all_matches()
-            # TODO: Highlight all matches
+            # print(self.matches.next().start() + self.offset)
+            # Highlight all matches
+            # self.controller.atfAreaController.highlight_matches(
+                                                            # list(self.matches),
+                                                            # len(self.expr))
             self.controller.atfAreaController.highlight_matches(self.matches)
             # TODO: Move focus to first match found
-            # self.view.focus_next_match(self._next_match())
-            print(self.matches.next().start() + self.offset)
         else:
             # Highlight is already done and matches found, just move cursor
             # to next match
@@ -139,6 +141,8 @@ class FindController(object):
         matches = []
         if not self.regex:
             expr = re.escape(self.expr)
+        else:
+            expr = self.expr
         if self.ignore_case:
             pattern = re.compile(expr, re.IGNORECASE)
         else:
