@@ -83,8 +83,8 @@ class FindController(object):
             # print(self.matches.next().start() + self.offset)
             # Highlight all matches
             # self.controller.atfAreaController.highlight_matches(
-                                                            # list(self.matches),
-                                                            # len(self.expr))
+            # list(self.matches),
+            # len(self.expr))
             self.controller.atfAreaController.highlight_matches(self.matches)
             # TODO: Move focus to first match found
         else:
