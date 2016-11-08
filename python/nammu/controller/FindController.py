@@ -62,7 +62,7 @@ class FindController(object):
 
     def find_next(self, expr, ignore_case, regex, selection):
         '''
-        Highlight all matches and place cared/focus on next one.
+        Highlight all matches and place caret/focus on next one.
         '''
         # Check if this is the first time find is used for this given text
         reset = False
@@ -85,7 +85,8 @@ class FindController(object):
             # self.controller.atfAreaController.highlight_matches(
             # list(self.matches),
             # len(self.expr))
-            self.controller.atfAreaController.highlight_matches(self.matches)
+            self.controller.atfAreaController.highlight_matches(self.matches,
+                                                                self.offset)
             # TODO: Move focus to first match found
         else:
             # Highlight is already done and matches found, just move cursor

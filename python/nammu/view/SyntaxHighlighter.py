@@ -211,11 +211,16 @@ class SyntaxHighlighter:
                                                      attribs,
                                                      True)
 
-    def highlight_matches(self, matches):
+    def highlight_matches(self, matches, offset=0):
+        '''
+        Highlight text and apply highligh background for matches, taking
+        the offset into account in case we are only searching on a selection.
+        '''
         self.syntax_highlight()
         for match in matches:
-            color = 'black'
-            self.styledoc.setCharacterAttributes(match.start(),
-                                                 match.end() - match.start(),
-                                                 self.match_attribs[color],
+            start = match.start() + offset
+            length = match.end() - match.start()
+            self.styledoc.setCharacterAttributes(start,
+                                                 length,
+                                                 self.match_attribs['black'],
                                                  True)
