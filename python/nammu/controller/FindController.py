@@ -81,26 +81,40 @@ class FindController(object):
         if reset:
             self.matches = self._find_all_matches()
             # print(self.matches.next().start() + self.offset)
-            # Highlight all matches
-            # self.controller.atfAreaController.highlight_matches(
-            # list(self.matches),
-            # len(self.expr))
+            # Highlight all matches, taking selection offset into account
             self.controller.atfAreaController.highlight_matches(self.matches,
                                                                 self.offset)
-            # TODO: Move focus to first match found
-        else:
-            # Highlight is already done and matches found, just move cursor
-            # to next match
+            # Move focus to first match found
+            # Requires recreating the iterator, though, because it was
+            # consumed in the highlighting...
+            self.matches = self._find_all_matches()
             try:
-                # self.view.focus_next_match(self._next_match())
-                print(self.matches.next().start() + self.offset)
+                self.controller.atfAreaController.setCaretPosition(
+                                    self.matches.next().start() + self.offset
+                                    )
             except StopIteration:
                 # TODO: If we've reached the last element of the matches list,
                 # display message to user. For now just restart to begining of
                 # list.
                 self.matches = self._find_all_matches()
-                # self.view.focus_next_match(self._next_match())
-                print(self.matches.next().start() + self.offset)
+                self.controller.atfAreaController.setCaretPosition(
+                                    self.matches.next().start() + self.offset
+                                    )
+        else:
+            # Highlight is already done and matches found, just move cursor
+            # to next match
+            try:
+                self.controller.atfAreaController.setCaretPosition(
+                                    self.matches.next().start() + self.offset
+                                    )
+            except StopIteration:
+                # TODO: If we've reached the last element of the matches list,
+                # display message to user. For now just restart to begining of
+                # list.
+                self.matches = self._find_all_matches()
+                self.controller.atfAreaController.setCaretPosition(
+                                        self.matches.next().start() + self.offset
+                                        )
 
     def _find_all_matches(self):
         '''

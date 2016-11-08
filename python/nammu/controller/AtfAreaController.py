@@ -165,3 +165,9 @@ class AtfAreaController(object):
         Replace user selected text with given text.
         '''
         self.edit_area.replaceSelection(text)
+
+    def setCaretPosition(self, pos):
+        '''
+        Place caret in given position.
+        '''
+        self.edit_area.setCaretPosition(pos)
