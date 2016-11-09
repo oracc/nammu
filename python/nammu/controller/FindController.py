@@ -19,6 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 from ..view.FindView import FindView
+from javax.swing.text import BadLocationException
 
 
 class FindController(object):
@@ -109,7 +110,43 @@ class FindController(object):
             # TODO: Display window say no matches found
             pass
 
-    def _find_all_matches(self, offset=0):
+    def replace_one(self, old_text, new_text, ignore_case, regex, selection):
+        '''
+        Replace one match and reset the matches in the iterator since
+        all the positions will be dependent on the shift caused by the replace.
+        Best for now is to find all matches with an offset up to the replaced
+        word.
+        '''
+        # Get current caret position, which will be pointing to the beginning
+        # of the word that needs changing.
+        caret_position = self.atfAreaController.edit_area.getCaretPosition()
+        old_length = len(old_text)
+        new_length = len(new_text)
+        doc = self.atfAreaController.edit_area_styledoc
+        try:
+            doc.remove(caret_position, old_length)
+            doc.insertString(caret_position, new_text, None)
+            # Move caret to next match and highlight matches
+            # self.offset = caret_position
+        except BadLocationException:
+            # We've reached end of text
+            # self.offset = 0
+            # If length is equal, no need to find all again.
+            if old_length != new_length:
+                # TODO: find all again, treat as selection starting on
+                # caret_position + len(old_text)
+                self.matches = self._find_all_matches()
+        # If length is equal, no need to find all again.
+        if old_length != new_length:
+            # TODO: find all again, treat as selection starting on
+            # caret_position + len(old_text)
+            self.offset = caret_position
+            self.matches = self._find_all_matches()
+        # In any case, try to find next
+        self.find_next(old_text, ignore_case, regex, selection)
+
+
+    def _find_all_matches(self):
         '''
         Helper method that finds all matches depending on user options.
         '''
