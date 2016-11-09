@@ -145,7 +145,6 @@ class FindController(object):
         # In any case, try to find next
         self.find_next(old_text, ignore_case, regex, selection)
 
-
     def _find_all_matches(self):
         '''
         Helper method that finds all matches depending on user options.

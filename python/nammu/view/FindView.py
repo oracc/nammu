@@ -204,7 +204,7 @@ class FindView(JDialog):
                                     self.ignore_case_box.isSelected(),
                                     self.regex_box.isSelected(),
                                     self.selection_box.isSelected())
-                                    
+
     def replace_all(self, event):
         self.controller.replace_all(self.find_field.getText(),
                                     self.replace_field.getText(),
