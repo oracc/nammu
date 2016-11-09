@@ -33,6 +33,7 @@ class FindController(object):
         self.ignore_case = False
         self.regex = False
         self.selection = False
+        self.selected_text = None
 
     def replace_all(self, old_text, new_text, ignore_case, regex, selection):
         '''
@@ -65,59 +66,79 @@ class FindController(object):
         Highlight all matches and place caret/focus on next one.
         '''
         # Check if this is the first time find is used for this given text
-        reset = False
+        self.reset = False
         if self.ignore_case != ignore_case:
             self.ignore_case = ignore_case
-            reset = True
+            self.reset = True
         if self.regex != regex:
             self.regex = regex
-            reset = True
+            self.reset = True
         if self.selection != selection:
             self.selection = selection
-            reset = True
+            self.reset = True
         if self.expr != expr:
             self.expr = expr
-            reset = True
-        if reset:
+            self.reset = True
+        if self.reset:
+            # TODO:Forget about previous text selections?
+            # self.selected_text = None
             self.matches = self._find_all_matches()
-            # print(self.matches.next().start() + self.offset)
-            # Highlight all matches, taking selection offset into account
-            self.controller.atfAreaController.highlight_matches(self.matches,
+            if self.matches:
+                # Highlight all matches, taking selection offset into account
+                self.controller.atfAreaController.highlight_matches(
+                                                                self.matches,
                                                                 self.offset)
-            # Move focus to first match found
-            # Requires recreating the iterator, though, because it was
-            # consumed in the highlighting...
-            self.matches = self._find_all_matches()
-
+                # Move focus to first match found
+                # Requires recreating the iterator, though, because it was
+                # consumed in the highlighting...
+                self.matches = self._find_all_matches()
         try:
-            self.controller.atfAreaController.setCaretPosition(
-                                self.matches.next().start() + self.offset
-                                )
+            position = self.matches.next().start() + self.offset
+            self.controller.atfAreaController.setCaretPosition(position)
         except StopIteration:
             # TODO: If we've reached the last element of the matches list,
             # display message to user. For now just restart to begining of
             # list.
             self.matches = self._find_all_matches()
-            self.controller.atfAreaController.setCaretPosition(
-                                self.matches.next().start() + self.offset
-                                )
+            try:
+                position = self.matches.next().start() + self.offset
+                self.controller.atfAreaController.setCaretPosition(position)
+            except StopIteration:
+                self.matches = self._find_all_matches()
+        except AttributeError:
+            # TODO: Display window say no matches found
+            pass
 
-    def _find_all_matches(self):
+    def _find_all_matches(self, offset=0):
         '''
         Helper method that finds all matches depending on user options.
         '''
         # Check wether there is some text in the text area.
         atf_text = self.atfAreaController.getAtfAreaText()
-        self.offset = 0
         if atf_text:
             # If user chooses to find on selection, check if any text is
             # selected and if so, work only on that selection.
+            # Note selection will be disabled when caret is moved, so once
+            # we reach the end of the selection, the next time getSelectedText
+            # will return None. We need to make the selection persistent until
+            # next reset.
             if self.selection:
                 atf_text = self.atfAreaController.getSelectedText()
-                self.offset = self.atfAreaController.getSelectionStart()
-
-            matches = self._find_matches(atf_text)
-            return matches
+                if atf_text:
+                    self.selected_text = atf_text
+                    self.offset = self.atfAreaController.getSelectionStart()
+                elif self.selected_text:
+                    atf_text = self.selected_text
+                else:
+                    self.selected_text = None
+                    self.offset = 0
+            else:
+                self.offset = 0
+                self.selected_text = None
+            if atf_text:
+                return self._find_matches(atf_text)
+            else:
+                return None
 
     def _replace_all_in_text(self, atf_text, old_text, new_text, ignore_case,
                              regex):
