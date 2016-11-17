@@ -25,6 +25,7 @@ from javax.swing.text import BadLocationException
 class FindController(object):
     def __init__(self, maincontroller):
         self.controller = maincontroller
+        self.config = self.controller.config
         self.atfAreaController = self.controller.atfAreaController
         self.view = FindView(self)
         self.view.display()

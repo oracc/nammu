@@ -1,5 +1,5 @@
 ---
-version: 0.3
+version: 0.4
 
 languages:
     Early Akkadian: akk-x-earakk
@@ -80,5 +80,10 @@ keystrokes:
     splitEditorH: VK_PERIOD
     splitEditorV: VK_COMMA
     find: VK_F
+
+find_keystrokes:
+    find_next: VK_G
+    replace_one: VK_R
+    replace_all: VK_A
 
 working_dir: None

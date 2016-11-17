@@ -21,8 +21,9 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon, JDialog
 from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
-from javax.swing import JCheckBox
-from java.awt import Dimension, Dialog, BorderLayout, FlowLayout
+from javax.swing import JCheckBox, KeyStroke, AbstractAction, JComponent
+from java.awt import Dimension, Dialog, BorderLayout, FlowLayout, Toolkit
+from java.awt.event import KeyEvent
 
 
 class FindView(JDialog):
@@ -34,6 +35,24 @@ class FindView(JDialog):
         self.setAlwaysOnTop(True)
         self.controller = controller
         self.pane = self.getContentPane()
+
+        # Get key bindings configuration from settings
+        key_strokes = self.controller.config['find_keystrokes']
+
+        # Configure key bindings for undo/redo
+        # First decide when key bindings can be triggered:
+        condition = JComponent.WHEN_IN_FOCUSED_WINDOW
+
+        # InputMap maps key strokes to actions in string format (e.g. 'undo')
+        # ActionMap maps string actions (e.g. 'undo') with a custom
+        # AbstractAction subclass.
+        pane = self.getContentPane()
+        for action, key in key_strokes.iteritems():
+            key_stroke = KeyStroke.getKeyStroke(
+                        getattr(KeyEvent, key),
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
+            pane.getInputMap(condition).put(key_stroke, action)
+            pane.getActionMap().put(action, KeyStrokeAction(self, action))
 
     def display(self):
         '''
@@ -192,20 +211,20 @@ class FindView(JDialog):
         # Add this to NewAtf JFrame
         return panel
 
-    def find_next(self, event):
+    def find_next(self, event=None):
         self.controller.find_next(self.find_field.getText(),
                                   self.ignore_case_box.isSelected(),
                                   self.regex_box.isSelected(),
                                   self.selection_box.isSelected())
 
-    def replace_one(self, event):
+    def replace_one(self, event=None):
         self.controller.replace_one(self.find_field.getText(),
                                     self.replace_field.getText(),
                                     self.ignore_case_box.isSelected(),
                                     self.regex_box.isSelected(),
                                     self.selection_box.isSelected())
 
-    def replace_all(self, event):
+    def replace_all(self, event=None):
         self.controller.replace_all(self.find_field.getText(),
                                     self.replace_field.getText(),
                                     self.ignore_case_box.isSelected(),
@@ -219,3 +238,19 @@ class FindView(JDialog):
         self.controller.matches = None
         self.controller.text = None
         self.dispose()
+
+
+class KeyStrokeAction(AbstractAction):
+    '''
+    Needed to be assigned to key strokes via JComponent's ActionMap.
+    '''
+    def __init__(self, component, action):
+        self.component = component
+        self.action = action
+
+    def actionPerformed(self, event):
+        '''
+        Overrides AbstractAction's actionPerform to executed the given action
+        in the component's controller.
+        '''
+        getattr(self.component, self.action)()
