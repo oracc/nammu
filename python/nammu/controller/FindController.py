@@ -35,6 +35,8 @@ class FindController(object):
         self.regex = False
         self.selection = False
         self.selected_text = None
+        self.doc = self.atfAreaController.edit_area_styledoc
+        self.position = None
 
     def replace_all(self, old_text, new_text, ignore_case, regex, selection):
         '''
@@ -94,21 +96,24 @@ class FindController(object):
                 # consumed in the highlighting...
                 self.matches = self._find_all_matches()
         try:
-            position = self.matches.next().start() + self.offset
-            self.controller.atfAreaController.setCaretPosition(position)
+            self.position = self.matches.next().start() + self.offset
+            self.controller.atfAreaController.setCaretPosition(self.position)
         except StopIteration:
+            self.position = None
             # TODO: If we've reached the last element of the matches list,
             # display message to user. For now just restart to begining of
             # list.
             self.matches = self._find_all_matches()
             try:
-                position = self.matches.next().start() + self.offset
-                self.controller.atfAreaController.setCaretPosition(position)
+                self.position = self.matches.next().start() + self.offset
+                self.controller.atfAreaController.setCaretPosition(
+                                                                self.position)
             except StopIteration:
+                self.position = None
                 self.matches = self._find_all_matches()
         except AttributeError:
             # TODO: Display window say no matches found
-            pass
+            self.position = None
 
     def replace_one(self, old_text, new_text, ignore_case, regex, selection):
         '''
@@ -117,33 +122,30 @@ class FindController(object):
         Best for now is to find all matches with an offset up to the replaced
         word.
         '''
-        # Get current caret position, which will be pointing to the beginning
-        # of the word that needs changing.
-        caret_position = self.atfAreaController.edit_area.getCaretPosition()
-        old_length = len(old_text)
-        new_length = len(new_text)
-        doc = self.atfAreaController.edit_area_styledoc
-        try:
-            doc.remove(caret_position, old_length)
-            doc.insertString(caret_position, new_text, None)
-            # Move caret to next match and highlight matches
-            # self.offset = caret_position
-        except BadLocationException:
-            # We've reached end of text
-            # self.offset = 0
+        if self.position is not None:
+            # Get current caret position, which will be pointing to the
+            # beginning of the word that needs changing.
+            caret_pos = self.atfAreaController.edit_area.getCaretPosition()
+            old_length = len(old_text)
+            new_length = len(new_text)
+            try:
+                self.doc.remove(caret_pos, old_length)
+                self.doc.insertString(caret_pos, new_text, None)
+                # Move caret to next match and highlight matches
+                # self.offset = caret_pos
+            except BadLocationException:
+                # We've reached end of text
+                # If length is equal, no need to find all again.
+                self.matches = self._find_all_matches()
             # If length is equal, no need to find all again.
             if old_length != new_length:
-                # TODO: find all again, treat as selection starting on
-                # caret_position + len(old_text)
+                self.offset = caret_pos
                 self.matches = self._find_all_matches()
-        # If length is equal, no need to find all again.
-        if old_length != new_length:
-            # TODO: find all again, treat as selection starting on
-            # caret_position + len(old_text)
-            self.offset = caret_position
-            self.matches = self._find_all_matches()
-        # In any case, try to find next
-        self.find_next(old_text, ignore_case, regex, selection)
+            # In any case, try to find next
+            self.find_next(old_text, ignore_case, regex, selection)
+        else:
+            # TODO: Show window saying no more matches found
+            pass
 
     def _find_all_matches(self):
         '''
