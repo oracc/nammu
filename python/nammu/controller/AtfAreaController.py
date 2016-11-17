@@ -139,8 +139,35 @@ class AtfAreaController(object):
         '''
         self.syntax_highlighter.syntax_highlight()
 
+    def highlight_matches(self, matches, offset):
+        self.syntax_highlighter.highlight_matches(matches, offset)
+
     def splitEditor(self, split_orientation):
         '''
         Toggles split editor view.
         '''
         self.view.toggle_split(split_orientation)
+
+    def getSelectedText(self):
+        '''
+        Returns user selected text.
+        '''
+        return self.edit_area.getSelectedText()
+
+    def getSelectionStart(self):
+        '''
+        Returns position at which user selection starts.
+        '''
+        return self.edit_area.getSelectionStart()
+
+    def replaceSelection(self, text):
+        '''
+        Replace user selected text with given text.
+        '''
+        self.edit_area.replaceSelection(text)
+
+    def setCaretPosition(self, pos):
+        '''
+        Place caret in given position.
+        '''
+        self.edit_area.setCaretPosition(pos)

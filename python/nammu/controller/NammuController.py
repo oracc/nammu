@@ -24,6 +24,7 @@ import logging.config
 from logging.handlers import RotatingFileHandler
 import os
 import urllib
+import re
 
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
@@ -31,6 +32,7 @@ from MenuController import MenuController
 from ModelController import ModelController
 from ToolbarController import ToolbarController
 from NewAtfController import NewAtfController
+from FindController import FindController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
@@ -708,3 +710,12 @@ class NammuController(object):
             desktop = Desktop.getDesktop()
         if desktop and desktop.isSupported(Desktop.Action.BROWSE):
             desktop.browse(uri)
+
+    def find(self, event=None):
+        '''
+        Find/Replace funcitonality:
+        * Displays find/replace window with options
+        * Highlights matches
+        * Replaces matches on text
+        '''
+        find_controller = FindController(self)

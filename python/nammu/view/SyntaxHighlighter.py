@@ -38,7 +38,7 @@ class SyntaxHighlighter:
         '''
         Initialize colours, listeners and tokens to be syntax highlighted.
         '''
-        def get_attribs(color, error=False):
+        def get_attribs(color, error=False, match=False):
             '''
             Closure to make the generation of font styling cleaner.
             Note closures need to be defined before being invoked.
@@ -54,6 +54,9 @@ class SyntaxHighlighter:
             # White if no error, otherwise it'll keep on being yellow forever
             if error:
                 StyleConstants.setBackground(attribs, Color.yellow)
+            elif match:
+                # TODO: Change to another background colour Eleanor likes
+                StyleConstants.setBackground(attribs, Color.yellow)
             else:
                 StyleConstants.setBackground(attribs, Color.white)
             return attribs
@@ -62,9 +65,11 @@ class SyntaxHighlighter:
         # one with yellow background for errors and another with default bg.
         self.attribs = {}
         self.error_attribs = {}
+        self.match_attribs = {}
         for color in self.colorlut:
             self.attribs[color] = get_attribs(color)
-            self.error_attribs[color] = get_attribs(color, True)
+            self.error_attribs[color] = get_attribs(color, error=True)
+            self.match_attribs[color] = get_attribs(color, match=True)
 
     def setup_syntax_highlight_colours(self):
         '''
@@ -138,6 +143,8 @@ class SyntaxHighlighter:
     def syntax_highlight(self):
         '''
         Implements syntax highlighting based on pyoracc.
+        If there are validation errors, highlight lines with errors.
+        If user is doing find/replace, highlight matches.
         '''
         # Get text from styledoc
         area_length = self.styledoc.getLength()
@@ -203,3 +210,17 @@ class SyntaxHighlighter:
                                                      mylength,
                                                      attribs,
                                                      True)
+
+    def highlight_matches(self, matches, offset=0):
+        '''
+        Highlight text and apply highligh background for matches, taking
+        the offset into account in case we are only searching on a selection.
+        '''
+        self.syntax_highlight()
+        for match in matches:
+            start = match.start() + offset
+            length = match.end() - match.start()
+            self.styledoc.setCharacterAttributes(start,
+                                                 length,
+                                                 self.match_attribs['black'],
+                                                 True)

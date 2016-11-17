@@ -1,5 +1,5 @@
 ---
-version: 0.2
+version: 0.3
 
 languages:
     Early Akkadian: akk-x-earakk
@@ -79,3 +79,6 @@ keystrokes:
     showHelp: VK_H
     splitEditorH: VK_PERIOD
     splitEditorV: VK_COMMA
+    find: VK_F
+
+working_dir: None
