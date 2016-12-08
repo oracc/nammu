@@ -181,11 +181,15 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
                     for sub_key in jar_config[key]:
                         if sub_key in local_config[key]:
                             logger.debug("%s: %s: %s --> Using local values.",
-                                         key, sub_key, jar_config[key][sub_key])
+                                         key,
+                                         sub_key,
+                                         jar_config[key][sub_key])
                             tmp[sub_key] = local_config[key][sub_key]
                         else:
                             logger.debug("%s: %s: %s --> Using jar values.",
-                                         key, sub_key, jar_config[key][sub_key])
+                                         key,
+                                         sub_key,
+                                         jar_config[key][sub_key])
                             tmp[sub_key] = jar_config[key][sub_key]
                     d[key] = tmp
                 else:
