@@ -130,7 +130,7 @@ class FindView(JDialog):
         '''
         panel = JPanel(FlowLayout())
         self.ignore_case_box = JCheckBox('Ignore Case')
-        self.regex_box = JCheckBox('Regular Expresion')
+        self.regex_box = JCheckBox('Regular Expression')
         self.selection_box = JCheckBox('Selection only')
         panel.add(self.ignore_case_box)
         panel.add(self.regex_box)
