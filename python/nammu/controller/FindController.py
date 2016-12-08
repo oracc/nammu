@@ -97,8 +97,12 @@ class FindController(object):
                 # consumed in the highlighting...
                 self.matches = self._find_all_matches()
         try:
-            self.position = self.matches.next().start() + self.offset
+            current_match = self.matches.next()
+            self.position = current_match.start() + self.offset
+            self.length = current_match.end() - current_match.start()
             self.controller.atfAreaController.setCaretPosition(self.position)
+            self.controller.atfAreaController.highlight_match(self.position,
+                                                              self.length)
         except StopIteration:
             self.position = None
             # TODO: If we've reached the last element of the matches list,
@@ -106,9 +110,14 @@ class FindController(object):
             # list.
             self.matches = self._find_all_matches()
             try:
-                self.position = self.matches.next().start() + self.offset
+                current_match = self.matches.next()
+                self.position = current_match.start() + self.offset
+                self.length = current_match.end() - current_match.start()
                 self.controller.atfAreaController.setCaretPosition(
                                                                 self.position)
+                self.controller.atfAreaController.highlight_match(
+                                                                self.position,
+                                                                self.length)
             except StopIteration:
                 self.position = None
                 self.matches = self._find_all_matches()
