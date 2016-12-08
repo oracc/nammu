@@ -724,7 +724,8 @@ class NammuController(object):
         '''
         Turns syntax highlight on or off.
         '''
-        self.atfAreaController.syntax_highlighter.syntax_highlight_on = not self.atfAreaController.syntax_highlighter.syntax_highlight_on
+        self.atfAreaController.syntax_highlighter.syntax_highlight_on = \
+            not self.atfAreaController.syntax_highlighter.syntax_highlight_on
         if not self.atfAreaController.syntax_highlighter.syntax_highlight_on:
             self.atfAreaController.syntax_highlighter.syntax_highlight_off()
         else:

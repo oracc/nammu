@@ -147,6 +147,7 @@ class SyntaxHighlighter:
         If there are validation errors, highlight lines with errors.
         If user is doing find/replace, highlight matches.
         '''
+        error_lines = self.controller.validation_errors.keys()
         if self.syntax_highlight_on:
             # Get text from styledoc
             area_length = self.styledoc.getLength()
@@ -167,7 +168,7 @@ class SyntaxHighlighter:
             # Keep background style from validation errors
             line_num = 1
             for line in splittext:
-                if str(line_num) in self.controller.validation_errors.keys():
+                if str(line_num) in error_lines:
                     attribs = self.error_attribs[defaultcolor]
                 else:
                     attribs = self.attribs[defaultcolor]
@@ -205,7 +206,7 @@ class SyntaxHighlighter:
                         mylength = len(splittext[tok.lineno-1])
                     else:
                         mylength = len(tok.value)
-                    if str(tok.lineno) in self.controller.validation_errors.keys():
+                    if str(tok.lineno) in error_lines:
                         attribs = self.error_attribs[color]
                     else:
                         attribs = self.attribs[color]
