@@ -138,10 +138,11 @@ def get_yaml_config(yaml_filename):
     return yaml.load(open(path_to_config, 'r'))
 
 
-def compare_version_tuples(version1, version2):
-    """Examine two version tuples. Return 0 if unequal, 1 if equal.
+def different_versions(version1, version2):
+    '''
+    Examine two version tuples. Return 0 if unequal, 1 if equal.
     http://stackoverflow.com/questions/1714027/version-number-comparison
-    """
+    '''
     def normalize(v):
         return [int(x) for x in re.sub(r'(\.0+)*$', '', v).split(".")]
     return cmp(normalize(version1), normalize(version2))
@@ -154,6 +155,8 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
     it will scan the key-value pairs, and add new key-values not present
     in the local config. If the same keys are present in the local and jar,
     the local values will be maintained.
+    It also needs to compare what's in the jar and add new dictionaries to the
+    local jar.
     '''
     logger = logging.getLogger("NammuController")
 
@@ -167,24 +170,31 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
     local_config = yaml.load(open(path_to_config, 'r'))
     jar_version = str(jar_config['version'])
     local_version = str(local_config['version'])
-    diffrent_versions = compare_version_tuples(jar_version, local_version)
-    if diffrent_versions:
+
+    if different_versions(jar_version, local_version):
         d = {}
         logger.debug("Comparing install and local settings files...")
         for key in jar_config:
             if(isinstance(jar_config[key], dict)):  # Nested dics within a key
-                tmp = {}  # for the nested dics
-                for sub_key in jar_config[key]:
-
-                    if sub_key in local_config[key]:
-                        logger.debug("%s: %s: %s --> Using local values.",
-                                     key, sub_key, jar_config[key][sub_key])
-                        tmp[sub_key] = local_config[key][sub_key]
-                    else:
-                        logger.debug("%s: %s: %s --> Using jar values.",
-                                     key, sub_key, jar_config[key][sub_key])
-                        tmp[sub_key] = jar_config[key][sub_key]
-                d[key] = tmp
+                if key in local_config:
+                    tmp = {}  # for the nested dics
+                    for sub_key in jar_config[key]:
+                        if sub_key in local_config[key]:
+                            logger.debug("%s: %s: %s --> Using local values.",
+                                         key,
+                                         sub_key,
+                                         jar_config[key][sub_key])
+                            tmp[sub_key] = local_config[key][sub_key]
+                        else:
+                            logger.debug("%s: %s: %s --> Using jar values.",
+                                         key,
+                                         sub_key,
+                                         jar_config[key][sub_key])
+                            tmp[sub_key] = jar_config[key][sub_key]
+                    d[key] = tmp
+                else:
+                    logger.debug("%s doesnt exist locally, creating...", key)
+                    d[key] = jar_config[key]
             else:  # One level deep dictionary
                 if key in local_config:
                     logger.debug("%s: %s --> Using local values.",

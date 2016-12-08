@@ -33,6 +33,7 @@ class SyntaxHighlighter:
         self.setup_attribs()
         self.styledoc = controller.edit_area_styledoc
         self.lexer = AtfLexer(skipinvalid=True).lexer
+        self.syntax_highlight_on = True
 
     def setup_attribs(self):
         '''
@@ -146,6 +147,79 @@ class SyntaxHighlighter:
         If there are validation errors, highlight lines with errors.
         If user is doing find/replace, highlight matches.
         '''
+        error_lines = self.controller.validation_errors.keys()
+        if self.syntax_highlight_on:
+            # Get text from styledoc
+            area_length = self.styledoc.getLength()
+            text = self.styledoc.getText(0, area_length)
+
+            # Reset lexer and parse text
+            self.lexer.input(text)
+            self.lexer.lineno = 1
+            while self.lexer.current_state() != 'INITIAL':
+                self.lexer.pop_state()
+
+            # Reset all styling
+            defaultcolor = self.tokencolorlu['default'][0]
+
+            # Break test into separate lines
+            splittext = text.split('\n')
+
+            # Keep background style from validation errors
+            line_num = 1
+            for line in splittext:
+                if str(line_num) in error_lines:
+                    attribs = self.error_attribs[defaultcolor]
+                else:
+                    attribs = self.attribs[defaultcolor]
+                textiter = re.finditer(r"\n", text)
+                if line_num != 1:
+                    pos = [m.start() for m in textiter][line_num - 2:line_num]
+                else:
+                    pos = [0, len(line)]
+                line_num += 1
+                self.styledoc.setCharacterAttributes(pos[0],
+                                                     len(line) + 1,
+                                                     attribs,
+                                                     True)
+
+        # Go through each token in the text, check which type it is to assign
+        # a colour to it, check which position it is to set up default or
+        # error background, etc.
+        if self.syntax_highlight_on:
+            for tok in self.lexer:
+                if tok.type in self.tokencolorlu:
+                    if type(self.tokencolorlu[tok.type]) is dict:
+                        # the token should be styled differently depending
+                        # on state
+                        try:
+                            state = self.lexer.current_state()
+                            color = self.tokencolorlu[tok.type][state][0]
+                            styleline = self.tokencolorlu[tok.type][state][1]
+                        except KeyError:
+                            color = self.tokencolorlu['default'][0]
+                            styleline = self.tokencolorlu['default'][1]
+                    else:
+                        color = self.tokencolorlu[tok.type][0]
+                        styleline = self.tokencolorlu[tok.type][1]
+                    if styleline:
+                        mylength = len(splittext[tok.lineno-1])
+                    else:
+                        mylength = len(tok.value)
+                    if str(tok.lineno) in error_lines:
+                        attribs = self.error_attribs[color]
+                    else:
+                        attribs = self.attribs[color]
+                    self.styledoc.setCharacterAttributes(tok.lexpos,
+                                                         mylength,
+                                                         attribs,
+                                                         True)
+
+    def syntax_highlight_off(self):
+        '''
+        Remove coloring.
+        TODO: Make this properly!
+        '''
         # Get text from styledoc
         area_length = self.styledoc.getLength()
         text = self.styledoc.getText(0, area_length)
@@ -180,37 +254,6 @@ class SyntaxHighlighter:
                                                  attribs,
                                                  True)
 
-        # Go through each token in the text, check which type it is to assign
-        # a colour to it, check which position it is to set up default or
-        # error background, etc.
-        for tok in self.lexer:
-            if tok.type in self.tokencolorlu:
-                if type(self.tokencolorlu[tok.type]) is dict:
-                    # the token should be styled differently depending
-                    # on state
-                    try:
-                        state = self.lexer.current_state()
-                        color = self.tokencolorlu[tok.type][state][0]
-                        styleline = self.tokencolorlu[tok.type][state][1]
-                    except KeyError:
-                        color = self.tokencolorlu['default'][0]
-                        styleline = self.tokencolorlu['default'][1]
-                else:
-                    color = self.tokencolorlu[tok.type][0]
-                    styleline = self.tokencolorlu[tok.type][1]
-                if styleline:
-                    mylength = len(splittext[tok.lineno-1])
-                else:
-                    mylength = len(tok.value)
-                if str(tok.lineno) in self.controller.validation_errors.keys():
-                    attribs = self.error_attribs[color]
-                else:
-                    attribs = self.attribs[color]
-                self.styledoc.setCharacterAttributes(tok.lexpos,
-                                                     mylength,
-                                                     attribs,
-                                                     True)
-
     def highlight_matches(self, matches, offset=0):
         '''
         Highlight text and apply highligh background for matches, taking
@@ -224,3 +267,15 @@ class SyntaxHighlighter:
                                                  length,
                                                  self.match_attribs['black'],
                                                  True)
+
+    def highlight_match(self, position, length):
+        '''
+        Highlight current match.
+        '''
+        self.syntax_highlight()
+        attribs = self.match_attribs['black']
+        StyleConstants.setBackground(attribs, Color.red)
+        self.styledoc.setCharacterAttributes(position,
+                                             length,
+                                             attribs,
+                                             True)
