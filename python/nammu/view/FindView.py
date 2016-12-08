@@ -237,6 +237,7 @@ class FindView(JDialog):
         '''
         self.controller.matches = None
         self.controller.text = None
+        self.controller.controller.find_controller = None
         self.dispose()
 
 

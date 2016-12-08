@@ -80,6 +80,7 @@ keystrokes:
     splitEditorH: VK_PERIOD
     splitEditorV: VK_COMMA
     find: VK_F
+    syntax_highlight_switch: VK_T
 
 find_keystrokes:
     find_next: VK_G
