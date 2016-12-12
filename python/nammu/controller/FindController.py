@@ -122,65 +122,61 @@ class FindController(object):
                                                             self.matches,
                                                             self.offset,
                                                             self.current_match)
-
-
-
-
-        #
-        #
-        #     else:
-        #
-        #         # Highlight current match and correct previous one
-        #         self.controller.atfAreaController.highlight_match(
-        #                                                 self.current_match,
-        #                                                 self.previous_match)
-        #         # Keep track of previous match for highlighting purposes
-        #         self.previous_match = self.current_match
-        #         # # Highlight all matches, taking selection offset into account
-        #         # # Also pass the current match to colour it differently
-        #         # self.controller.atfAreaController.highlight_matches(
-        #         #                                             self.matches,
-        #         #                                             self.offset,
-        #         #                                             self.current_match)
-        # else:
-        #
-        # try:
-        #     # Advance current match to next, if there is a next match
-        #     self.current_match
-        #     self.position = self.current_match.start() + self.offset
-        #     self.length = self.current_match.end() - self.current_match.start()
-        #     self.controller.atfAreaController.setCaretPosition(self.position)
-        #     self.controller.atfAreaController.highlight_matches(self.matches,
-        #                                                         self.offset,
-        #                                                         self.position)
-        # except StopIteration:
-        #     self.position = None
-        #     # TODO: If we've reached the last element of the matches list,
-        #     # display message to user. For now just restart to begining of
-        #     # list.
-        #     self.matches = self._find_all_matches()
-        #     self.current_match = None
-        #     self.previous_match = None
-        #     try:
-        #         self.previous_match = self.current_match
-        #         self.current_match = self.matches.next()
-        #         self.position = self.current_match.start() + self.offset
-        #         self.length = \
-        #                 self.current_match.end() - self.current_match.start()
-        #         self.controller.atfAreaController.setCaretPosition(
-        #                                                         self.position)
-        #         self.controller.atfAreaController.highlight_matches(
-        #                                                     self.matches,
-        #                                                     self.offset,
-        #                                                     self.position)
-        #     except StopIteration:
-        #         self.current_match = None
-        #         self.previous_match = None
-        #         self.position = None
-        #         self.matches = self._find_all_matches()
-        # except AttributeError:
-        #     # TODO: Display window say no matches found
-        #     self.position = None
+    #
+    #
+    #     else:
+    #
+    #         # Highlight current match and correct previous one
+    #         self.controller.atfAreaController.highlight_match(
+    #                                                 self.current_match,
+    #                                                 self.previous_match)
+    #         # Keep track of previous match for highlighting purposes
+    #         self.previous_match = self.current_match
+    #         # # Highlight all matches, taking selection offset into account
+    #         # # Also pass the current match to colour it differently
+    #         # self.controller.atfAreaController.highlight_matches(
+    #         #                                             self.matches,
+    #         #                                             self.offset,
+    #         #                                             self.current_match)
+    # else:
+    #
+    # try:
+    #     # Advance current match to next, if there is a next match
+    #     self.current_match
+    #     self.position = self.current_match.start() + self.offset
+    #     self.length = self.current_match.end() - self.current_match.start()
+    #     self.controller.atfAreaController.setCaretPosition(self.position)
+    #     self.controller.atfAreaController.highlight_matches(self.matches,
+    #                                                         self.offset,
+    #                                                         self.position)
+    # except StopIteration:
+    #     self.position = None
+    #     # TODO: If we've reached the last element of the matches list,
+    #     # display message to user. For now just restart to begining of
+    #     # list.
+    #     self.matches = self._find_all_matches()
+    #     self.current_match = None
+    #     self.previous_match = None
+    #     try:
+    #         self.previous_match = self.current_match
+    #         self.current_match = self.matches.next()
+    #         self.position = self.current_match.start() + self.offset
+    #         self.length = \
+    #                 self.current_match.end() - self.current_match.start()
+    #         self.controller.atfAreaController.setCaretPosition(
+    #                                                         self.position)
+    #         self.controller.atfAreaController.highlight_matches(
+    #                                                     self.matches,
+    #                                                     self.offset,
+    #                                                     self.position)
+    #     except StopIteration:
+    #         self.current_match = None
+    #         self.previous_match = None
+    #         self.position = None
+    #         self.matches = self._find_all_matches()
+    # except AttributeError:
+    #     # TODO: Display window say no matches found
+    #     self.position = None
 
     def replace_one(self, old_text, new_text, ignore_case, regex, selection):
         '''
