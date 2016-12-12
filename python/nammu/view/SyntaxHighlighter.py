@@ -254,17 +254,6 @@ class SyntaxHighlighter:
                                                  attribs,
                                                  True)
 
-    def highlight_matches(self, matches, offset=0):
-
-        self.syntax_highlight()
-        for match in matches:
-            start = match.start() + offset
-            length = match.end() - match.start()
-            self.styledoc.setCharacterAttributes(start,
-                                                 length,
-                                                 self.match_attribs['black'],
-                                                 True)
-
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
         Highlight text and apply highlight background for matches, taking
