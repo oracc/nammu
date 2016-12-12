@@ -267,7 +267,7 @@ class SyntaxHighlighter:
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
-        Highlight text and apply highligh background for matches, taking
+        Highlight text and apply highlight background for matches, taking
         the offset into account in case we are only searching on a selection.
         '''
         self.syntax_highlight()
@@ -277,40 +277,17 @@ class SyntaxHighlighter:
             # Check if this match is the current match in the find next
             # iteration
             if match == current_match:
-                print("current match!")
-                attribs = self.match_attribs['black']
-                StyleConstants.setBackground(attribs, Color.yellow)
-                self.styledoc.setCharacterAttributes(start,
-                                                     length,
-                                                     attribs,
-                                                     True)
+                self._highlight_match(start, length, Color.cyan)
             else:
-                attribs = self.match_attribs['black']
-                StyleConstants.setBackground(attribs, Color.lightGray)
-                self.styledoc.setCharacterAttributes(start,
-                                                     length,
-                                                     attribs,
-                                                     True)
+                self._highlight_match(start, length, Color.lightGray)
 
-    def highlight_match(self, match, previous_match=None):
+    def _highlight_match(self, position, length, color):
         '''
-        Highlights current match and restores colouring in previous one, if
-        given.
-        TODO: this is not going to work when the previous match is replaced
-        with some other text!!
+        Changes attributes in text area to show highlighting.
         '''
-        length = match.end() - match.start()
         attribs = self.match_attribs['black']
-        StyleConstants.setBackground(attribs, Color.cyan)
-        self.styledoc.setCharacterAttributes(match.start(),
+        StyleConstants.setBackground(attribs, color)
+        self.styledoc.setCharacterAttributes(position,
                                              length,
                                              attribs,
                                              True)
-        if previous_match:
-            length = previous_match.end() - previous_match.start()
-            attribs = self.match_attribs['black']
-            StyleConstants.setBackground(attribs, Color.lightGray)
-            self.styledoc.setCharacterAttributes(previous_match.start(),
-                                                 length,
-                                                 attribs,
-                                                 True)
