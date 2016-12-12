@@ -255,10 +255,7 @@ class SyntaxHighlighter:
                                                  True)
 
     def highlight_matches(self, matches, offset=0):
-        '''
-        Highlight text and apply highligh background for matches, taking
-        the offset into account in case we are only searching on a selection.
-        '''
+
         self.syntax_highlight()
         for match in matches:
             start = match.start() + offset
@@ -268,14 +265,52 @@ class SyntaxHighlighter:
                                                  self.match_attribs['black'],
                                                  True)
 
-    def highlight_match(self, position, length):
+    def highlight_matches(self, matches, offset=0, current_match=None):
         '''
-        Highlight current match.
+        Highlight text and apply highligh background for matches, taking
+        the offset into account in case we are only searching on a selection.
         '''
         self.syntax_highlight()
+        for match in matches:
+            start = match.start() + offset
+            length = match.end() - match.start()
+            # Check if this match is the current match in the find next
+            # iteration
+            if match == current_match:
+                print("current match!")
+                attribs = self.match_attribs['black']
+                StyleConstants.setBackground(attribs, Color.yellow)
+                self.styledoc.setCharacterAttributes(start,
+                                                     length,
+                                                     attribs,
+                                                     True)
+            else:
+                attribs = self.match_attribs['black']
+                StyleConstants.setBackground(attribs, Color.lightGray)
+                self.styledoc.setCharacterAttributes(start,
+                                                     length,
+                                                     attribs,
+                                                     True)
+
+    def highlight_match(self, match, previous_match=None):
+        '''
+        Highlights current match and restores colouring in previous one, if
+        given.
+        TODO: this is not going to work when the previous match is replaced
+        with some other text!!
+        '''
+        length = match.end() - match.start()
         attribs = self.match_attribs['black']
-        StyleConstants.setBackground(attribs, Color.red)
-        self.styledoc.setCharacterAttributes(position,
+        StyleConstants.setBackground(attribs, Color.cyan)
+        self.styledoc.setCharacterAttributes(match.start(),
                                              length,
                                              attribs,
                                              True)
+        if previous_match:
+            length = previous_match.end() - previous_match.start()
+            attribs = self.match_attribs['black']
+            StyleConstants.setBackground(attribs, Color.lightGray)
+            self.styledoc.setCharacterAttributes(previous_match.start(),
+                                                 length,
+                                                 attribs,
+                                                 True)

@@ -38,6 +38,9 @@ class FindController(object):
         self.selected_text = None
         self.doc = self.atfAreaController.edit_area_styledoc
         self.position = None
+        # This is needed to keep track of which was the previous match in the
+        # iterator.
+        self.current_match = None
 
     def replace_all(self, old_text, new_text, ignore_case, regex, selection):
         '''
@@ -88,42 +91,96 @@ class FindController(object):
             # self.selected_text = None
             self.matches = self._find_all_matches()
             if self.matches:
-                # Highlight all matches, taking selection offset into account
+                # Highlight matches
                 self.controller.atfAreaController.highlight_matches(
                                                                 self.matches,
                                                                 self.offset)
-                # Move focus to first match found
-                # Requires recreating the iterator, though, because it was
-                # consumed in the highlighting...
-                self.matches = self._find_all_matches()
+                self.count = 0
+            else:
+                # TODO: Pop up - No matches
+                pass
+        else:
+            self.count += 1
         try:
-            current_match = self.matches.next()
-            self.position = current_match.start() + self.offset
-            self.length = current_match.end() - current_match.start()
-            self.controller.atfAreaController.setCaretPosition(self.position)
-            self.controller.atfAreaController.highlight_match(self.position,
-                                                              self.length)
-        except StopIteration:
-            self.position = None
-            # TODO: If we've reached the last element of the matches list,
-            # display message to user. For now just restart to begining of
-            # list.
-            self.matches = self._find_all_matches()
-            try:
-                current_match = self.matches.next()
-                self.position = current_match.start() + self.offset
-                self.length = current_match.end() - current_match.start()
-                self.controller.atfAreaController.setCaretPosition(
-                                                                self.position)
-                self.controller.atfAreaController.highlight_match(
-                                                                self.position,
-                                                                self.length)
-            except StopIteration:
-                self.position = None
-                self.matches = self._find_all_matches()
-        except AttributeError:
-            # TODO: Display window say no matches found
-            self.position = None
+            # Save current match
+            self.current_match = self.matches[self.count]
+            # try:
+            #     self.previous_match = self.matches[self.count-1]
+            # except IndexError:
+            #     self.previous_match = None
+        except IndexError:
+            # No more matches, restart search
+            # TODO: notify user with pop up?
+            self.count = self.current_match = self.previous_match = None
+        else:
+            # Move focus to current match
+            self.controller.atfAreaController.setCaretPosition(
+                                                self.current_match.start())
+            # Highlight matches, taking current match into account for
+            # different colouring
+            self.controller.atfAreaController.highlight_matches(
+                                                            self.matches,
+                                                            self.offset,
+                                                            self.current_match)
+
+
+
+
+        #
+        #
+        #     else:
+        #
+        #         # Highlight current match and correct previous one
+        #         self.controller.atfAreaController.highlight_match(
+        #                                                 self.current_match,
+        #                                                 self.previous_match)
+        #         # Keep track of previous match for highlighting purposes
+        #         self.previous_match = self.current_match
+        #         # # Highlight all matches, taking selection offset into account
+        #         # # Also pass the current match to colour it differently
+        #         # self.controller.atfAreaController.highlight_matches(
+        #         #                                             self.matches,
+        #         #                                             self.offset,
+        #         #                                             self.current_match)
+        # else:
+        #
+        # try:
+        #     # Advance current match to next, if there is a next match
+        #     self.current_match
+        #     self.position = self.current_match.start() + self.offset
+        #     self.length = self.current_match.end() - self.current_match.start()
+        #     self.controller.atfAreaController.setCaretPosition(self.position)
+        #     self.controller.atfAreaController.highlight_matches(self.matches,
+        #                                                         self.offset,
+        #                                                         self.position)
+        # except StopIteration:
+        #     self.position = None
+        #     # TODO: If we've reached the last element of the matches list,
+        #     # display message to user. For now just restart to begining of
+        #     # list.
+        #     self.matches = self._find_all_matches()
+        #     self.current_match = None
+        #     self.previous_match = None
+        #     try:
+        #         self.previous_match = self.current_match
+        #         self.current_match = self.matches.next()
+        #         self.position = self.current_match.start() + self.offset
+        #         self.length = \
+        #                 self.current_match.end() - self.current_match.start()
+        #         self.controller.atfAreaController.setCaretPosition(
+        #                                                         self.position)
+        #         self.controller.atfAreaController.highlight_matches(
+        #                                                     self.matches,
+        #                                                     self.offset,
+        #                                                     self.position)
+        #     except StopIteration:
+        #         self.current_match = None
+        #         self.previous_match = None
+        #         self.position = None
+        #         self.matches = self._find_all_matches()
+        # except AttributeError:
+        #     # TODO: Display window say no matches found
+        #     self.position = None
 
     def replace_one(self, old_text, new_text, ignore_case, regex, selection):
         '''
@@ -208,7 +265,6 @@ class FindController(object):
         Returns a list with the begining position of all matches of a given
         text in the ATF area.
         '''
-        matches = []
         if not self.regex:
             expr = re.escape(self.expr)
         else:
@@ -217,4 +273,9 @@ class FindController(object):
             pattern = re.compile(expr, re.IGNORECASE)
         else:
             pattern = re.compile(expr)
-        return pattern.finditer(text)
+        # Save matches on a list because iterators are making re-painting
+        # matches a nightmare. Also useful for future find backwards.
+        matches = []
+        for match in pattern.finditer(text):
+            matches.append(match)
+        return matches

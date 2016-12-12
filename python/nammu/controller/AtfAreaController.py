@@ -139,11 +139,13 @@ class AtfAreaController(object):
         '''
         self.syntax_highlighter.syntax_highlight()
 
-    def highlight_matches(self, matches, offset):
-        self.syntax_highlighter.highlight_matches(matches, offset)
+    def highlight_matches(self, matches, offset, current_match=None):
+        self.syntax_highlighter.highlight_matches(matches,
+                                                  offset,
+                                                  current_match)
 
-    def highlight_match(self, position, length):
-        self.syntax_highlighter.highlight_match(position, length)
+    def highlight_match(self, match, previous_match):
+        self.syntax_highlighter.highlight_match(match, previous_match)
 
     def splitEditor(self, split_orientation):
         '''
