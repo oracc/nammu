@@ -68,12 +68,12 @@ class FindController(object):
                                                      regex)
                 self.atfAreaController.setAtfAreaText(replaced)
 
-    def find_next(self, expr, ignore_case, regex, selection):
+    def find_next(self, expr, ignore_case, regex, selection, reset=False):
         '''
         Highlight all matches and place caret/focus on next one.
         '''
         # Check if this is the first time find is used for this given text
-        self.reset = False
+        self.reset = reset
         if self.ignore_case != ignore_case:
             self.ignore_case = ignore_case
             self.reset = True
@@ -104,14 +104,11 @@ class FindController(object):
         try:
             # Save current match
             self.current_match = self.matches[self.count]
-            # try:
-            #     self.previous_match = self.matches[self.count-1]
-            # except IndexError:
-            #     self.previous_match = None
         except IndexError:
             # No more matches, restart search
             # TODO: notify user with pop up?
             self.count = self.current_match = self.previous_match = None
+            self.find_next(expr, ignore_case, regex, selection, True)
         else:
             # Move focus to current match
             self.controller.atfAreaController.setCaretPosition(
