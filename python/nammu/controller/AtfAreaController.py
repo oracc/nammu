@@ -18,6 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from javax.swing.undo import CannotUndoException, CannotRedoException
+from java.awt import Color
 
 from ..view.AtfAreaView import AtfAreaView
 from ..view.LineNumbersArea import LineNumbersArea
@@ -173,3 +174,11 @@ class AtfAreaController(object):
         Place caret in given position.
         '''
         self.edit_area.setCaretPosition(pos)
+
+    def restore_highlight(self):
+        '''
+        Turn off syntax highlight of matches.
+        '''
+        self.syntax_highlighter._highlight_match(0,
+                                                len(self.getAtfAreaText()),
+                                                Color.white)
