@@ -181,3 +181,4 @@ class AtfAreaController(object):
         '''
         length = len(self.getAtfAreaText())
         self.syntax_highlighter._highlight_match(0, length, Color.white)
+        self.syntax_highlighter.syntax_highlight()
