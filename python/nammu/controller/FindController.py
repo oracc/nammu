@@ -102,7 +102,8 @@ class FindController(object):
                 self.count = None
                 self.controller.atfAreaController.restore_highlight()
         else:
-            if self.count:
+            # self.count could be 0!
+            if self.count is not None:
                 self.count += 1
         try:
             # Save current match
