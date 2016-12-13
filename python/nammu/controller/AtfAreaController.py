@@ -179,6 +179,5 @@ class AtfAreaController(object):
         '''
         Turn off syntax highlight of matches.
         '''
-        self.syntax_highlighter._highlight_match(0,
-                                                len(self.getAtfAreaText()),
-                                                Color.white)
+        length = len(self.getAtfAreaText())
+        self.syntax_highlighter._highlight_match(0, length, Color.white)
