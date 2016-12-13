@@ -103,6 +103,9 @@ class NammuController(object):
         ToolTipManager.sharedInstance().setInitialDelay(0)
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE)
 
+        # Find windows shouldn't coexist
+        self.finding = False
+
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
     # require interaction of several subcontrollers who have no visibility.
@@ -713,12 +716,16 @@ class NammuController(object):
 
     def find(self, event=None):
         '''
-        Find/Replace funcitonality:
+        Find/Replace functionality:
         * Displays find/replace window with options
         * Highlights matches
         * Replaces matches on text
         '''
-        find_controller = FindController(self)
+        if self.find_controller:
+            if not self.find_controller.view.isShowing():
+                self.find_controller = FindController(self)
+        else:
+            self.find_controller = FindController(self)
 
     def syntax_highlight_switch(self, event=None):
         '''
