@@ -102,7 +102,8 @@ class FindController(object):
                 self.count = None
                 self.controller.atfAreaController.restore_highlight()
         else:
-            self.count += 1
+            if self.count:
+                self.count += 1
         try:
             # Save current match
             self.current_match = self.matches[self.count]
@@ -134,7 +135,7 @@ class FindController(object):
         Best for now is to find all matches with an offset up to the replaced
         word.
         '''
-        if self.position is not None:
+        if self.current_match:
             # Get current caret position, which will be pointing to the
             # beginning of the word that needs changing.
             caret_pos = self.atfAreaController.edit_area.getCaretPosition()
