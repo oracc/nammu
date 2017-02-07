@@ -24,6 +24,7 @@ import logging.config
 from logging.handlers import RotatingFileHandler
 import os
 import urllib
+import re
 
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
@@ -31,6 +32,7 @@ from MenuController import MenuController
 from ModelController import ModelController
 from ToolbarController import ToolbarController
 from NewAtfController import NewAtfController
+from FindController import FindController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
@@ -100,6 +102,9 @@ class NammuController(object):
         # to vanish until mouse moves away
         ToolTipManager.sharedInstance().setInitialDelay(0)
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE)
+
+        # Find windows shouldn't coexist
+        self.finding = False
 
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
@@ -708,3 +713,27 @@ class NammuController(object):
             desktop = Desktop.getDesktop()
         if desktop and desktop.isSupported(Desktop.Action.BROWSE):
             desktop.browse(uri)
+
+    def find(self, event=None):
+        '''
+        Find/Replace functionality:
+        * Displays find/replace window with options
+        * Highlights matches
+        * Replaces matches on text
+        '''
+        if self.find_controller:
+            if not self.find_controller.view.isShowing():
+                self.find_controller = FindController(self)
+        else:
+            self.find_controller = FindController(self)
+
+    def syntax_highlight_switch(self, event=None):
+        '''
+        Turns syntax highlight on or off.
+        '''
+        self.atfAreaController.syntax_highlighter.syntax_highlight_on = \
+            not self.atfAreaController.syntax_highlighter.syntax_highlight_on
+        if not self.atfAreaController.syntax_highlighter.syntax_highlight_on:
+            self.atfAreaController.syntax_highlighter.syntax_highlight_off()
+        else:
+            self.atfAreaController.syntax_highlight()

@@ -18,6 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from javax.swing.undo import CannotUndoException, CannotRedoException
+from java.awt import Color
 
 from ..view.AtfAreaView import AtfAreaView
 from ..view.LineNumbersArea import LineNumbersArea
@@ -139,8 +140,45 @@ class AtfAreaController(object):
         '''
         self.syntax_highlighter.syntax_highlight()
 
+    def highlight_matches(self, matches, offset, current_match=None):
+        self.syntax_highlighter.highlight_matches(matches,
+                                                  offset,
+                                                  current_match)
+
     def splitEditor(self, split_orientation):
         '''
         Toggles split editor view.
         '''
         self.view.toggle_split(split_orientation)
+
+    def getSelectedText(self):
+        '''
+        Returns user selected text.
+        '''
+        return self.edit_area.getSelectedText()
+
+    def getSelectionStart(self):
+        '''
+        Returns position at which user selection starts.
+        '''
+        return self.edit_area.getSelectionStart()
+
+    def replaceSelection(self, text):
+        '''
+        Replace user selected text with given text.
+        '''
+        self.edit_area.replaceSelection(text)
+
+    def setCaretPosition(self, pos):
+        '''
+        Place caret in given position.
+        '''
+        self.edit_area.setCaretPosition(pos)
+
+    def restore_highlight(self):
+        '''
+        Turn off syntax highlight of matches.
+        '''
+        length = len(self.getAtfAreaText())
+        self.syntax_highlighter._highlight_match(0, length, Color.white)
+        self.syntax_highlighter.syntax_highlight()

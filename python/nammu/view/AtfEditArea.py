@@ -36,10 +36,10 @@ class AtfEditArea(JTextPane):
         self.addMouseListener(listener)
 
     def getToolTipText(self, event=None):
-        """
+        '''
         Overrides getToolTipText so that tooltips are only displayed when a
         line contains a validation error.
-        """
+        '''
         if event:
             position = self.viewToModel(event.getPoint())
             line_num = str(self.get_line_num(position))
@@ -56,9 +56,9 @@ class AtfEditArea(JTextPane):
                     return err_msg.decode('utf-8')
 
     def get_line_num(self, position):
-        """
+        '''
         Returns line number given mouse position in text area.
-        """
+        '''
         text = self.text[0:position]
         return text.count('\n') + 1
 
@@ -68,6 +68,14 @@ class AtfEditArea(JTextPane):
         still works when you set text from elsewhere in the code.
         '''
         super(AtfEditArea, self).setText(text)
+        self.controller.syntax_highlight()
+
+    def replaceSelection(self, text):
+        '''
+        Override JTextPane's replaceSelection to call syntax highlighting
+        after replacing some text.
+        '''
+        super(AtfEditArea, self).replaceSelection(text)
         self.controller.syntax_highlight()
 
     def cut(self):
@@ -96,9 +104,9 @@ class AtfEditArea(JTextPane):
 
 
 class CustomMouseListener(MouseAdapter):
-    """
+    '''
     Consumes mouse events.
-    """
+    '''
     def __init__(self, panel):
         self.panel = panel
 

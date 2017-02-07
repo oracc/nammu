@@ -1,5 +1,5 @@
 ---
-version: 0.2
+version: 0.6
 
 languages:
     Early Akkadian: akk-x-earakk
@@ -73,9 +73,18 @@ keystrokes:
     saveFile: VK_S
     newFile: VK_N
     openFile: VK_O
-    closeFile: VK_X
+    closeFile: VK_W
     validate: VK_D
     lemmatise: VK_L
     showHelp: VK_H
     splitEditorH: VK_PERIOD
-    splitEditorV: VK_COMMA
+    splitEditorV: VK_SEMICOLON
+    find: VK_F
+    syntax_highlight_switch: VK_T
+
+find_keystrokes:
+    find_next: VK_G
+    replace_one: VK_R
+    replace_all: VK_A
+
+working_dir: None

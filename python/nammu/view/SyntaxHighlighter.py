@@ -33,12 +33,13 @@ class SyntaxHighlighter:
         self.setup_attribs()
         self.styledoc = controller.edit_area_styledoc
         self.lexer = AtfLexer(skipinvalid=True).lexer
+        self.syntax_highlight_on = True
 
     def setup_attribs(self):
         '''
         Initialize colours, listeners and tokens to be syntax highlighted.
         '''
-        def get_attribs(color, error=False):
+        def get_attribs(color, error=False, match=False):
             '''
             Closure to make the generation of font styling cleaner.
             Note closures need to be defined before being invoked.
@@ -54,6 +55,9 @@ class SyntaxHighlighter:
             # White if no error, otherwise it'll keep on being yellow forever
             if error:
                 StyleConstants.setBackground(attribs, Color.yellow)
+            elif match:
+                # TODO: Change to another background colour Eleanor likes
+                StyleConstants.setBackground(attribs, Color.yellow)
             else:
                 StyleConstants.setBackground(attribs, Color.white)
             return attribs
@@ -62,9 +66,11 @@ class SyntaxHighlighter:
         # one with yellow background for errors and another with default bg.
         self.attribs = {}
         self.error_attribs = {}
+        self.match_attribs = {}
         for color in self.colorlut:
             self.attribs[color] = get_attribs(color)
-            self.error_attribs[color] = get_attribs(color, True)
+            self.error_attribs[color] = get_attribs(color, error=True)
+            self.match_attribs[color] = get_attribs(color, match=True)
 
     def setup_syntax_highlight_colours(self):
         '''
@@ -138,6 +144,81 @@ class SyntaxHighlighter:
     def syntax_highlight(self):
         '''
         Implements syntax highlighting based on pyoracc.
+        If there are validation errors, highlight lines with errors.
+        If user is doing find/replace, highlight matches.
+        '''
+        error_lines = self.controller.validation_errors.keys()
+        if self.syntax_highlight_on:
+            # Get text from styledoc
+            area_length = self.styledoc.getLength()
+            text = self.styledoc.getText(0, area_length)
+
+            # Reset lexer and parse text
+            self.lexer.input(text)
+            self.lexer.lineno = 1
+            while self.lexer.current_state() != 'INITIAL':
+                self.lexer.pop_state()
+
+            # Reset all styling
+            defaultcolor = self.tokencolorlu['default'][0]
+
+            # Break test into separate lines
+            splittext = text.split('\n')
+
+            # Keep background style from validation errors
+            line_num = 1
+            for line in splittext:
+                if str(line_num) in error_lines:
+                    attribs = self.error_attribs[defaultcolor]
+                else:
+                    attribs = self.attribs[defaultcolor]
+                textiter = re.finditer(r"\n", text)
+                if line_num != 1:
+                    pos = [m.start() for m in textiter][line_num - 2:line_num]
+                else:
+                    pos = [0, len(line)]
+                line_num += 1
+                self.styledoc.setCharacterAttributes(pos[0],
+                                                     len(line) + 1,
+                                                     attribs,
+                                                     True)
+
+        # Go through each token in the text, check which type it is to assign
+        # a colour to it, check which position it is to set up default or
+        # error background, etc.
+        if self.syntax_highlight_on:
+            for tok in self.lexer:
+                if tok.type in self.tokencolorlu:
+                    if type(self.tokencolorlu[tok.type]) is dict:
+                        # the token should be styled differently depending
+                        # on state
+                        try:
+                            state = self.lexer.current_state()
+                            color = self.tokencolorlu[tok.type][state][0]
+                            styleline = self.tokencolorlu[tok.type][state][1]
+                        except KeyError:
+                            color = self.tokencolorlu['default'][0]
+                            styleline = self.tokencolorlu['default'][1]
+                    else:
+                        color = self.tokencolorlu[tok.type][0]
+                        styleline = self.tokencolorlu[tok.type][1]
+                    if styleline:
+                        mylength = len(splittext[tok.lineno-1])
+                    else:
+                        mylength = len(tok.value)
+                    if str(tok.lineno) in error_lines:
+                        attribs = self.error_attribs[color]
+                    else:
+                        attribs = self.attribs[color]
+                    self.styledoc.setCharacterAttributes(tok.lexpos,
+                                                         mylength,
+                                                         attribs,
+                                                         True)
+
+    def syntax_highlight_off(self):
+        '''
+        Remove coloring.
+        TODO: Make this properly!
         '''
         # Get text from styledoc
         area_length = self.styledoc.getLength()
@@ -173,33 +254,29 @@ class SyntaxHighlighter:
                                                  attribs,
                                                  True)
 
-        # Go through each token in the text, check which type it is to assign
-        # a colour to it, check which position it is to set up default or
-        # error background, etc.
-        for tok in self.lexer:
-            if tok.type in self.tokencolorlu:
-                if type(self.tokencolorlu[tok.type]) is dict:
-                    # the token should be styled differently depending
-                    # on state
-                    try:
-                        state = self.lexer.current_state()
-                        color = self.tokencolorlu[tok.type][state][0]
-                        styleline = self.tokencolorlu[tok.type][state][1]
-                    except KeyError:
-                        color = self.tokencolorlu['default'][0]
-                        styleline = self.tokencolorlu['default'][1]
-                else:
-                    color = self.tokencolorlu[tok.type][0]
-                    styleline = self.tokencolorlu[tok.type][1]
-                if styleline:
-                    mylength = len(splittext[tok.lineno-1])
-                else:
-                    mylength = len(tok.value)
-                if str(tok.lineno) in self.controller.validation_errors.keys():
-                    attribs = self.error_attribs[color]
-                else:
-                    attribs = self.attribs[color]
-                self.styledoc.setCharacterAttributes(tok.lexpos,
-                                                     mylength,
-                                                     attribs,
-                                                     True)
+    def highlight_matches(self, matches, offset=0, current_match=None):
+        '''
+        Highlight text and apply highlight background for matches, taking
+        the offset into account in case we are only searching on a selection.
+        '''
+        self.syntax_highlight()
+        for match in matches:
+            start = match.start() + offset
+            length = match.end() - match.start()
+            # Check if this match is the current match in the find next
+            # iteration
+            if match == current_match:
+                self._highlight_match(start, length, Color.cyan)
+            else:
+                self._highlight_match(start, length, Color.lightGray)
+
+    def _highlight_match(self, position, length, color):
+        '''
+        Changes attributes in text area to show highlighting.
+        '''
+        attribs = self.match_attribs['black']
+        StyleConstants.setBackground(attribs, color)
+        self.styledoc.setCharacterAttributes(position,
+                                             length,
+                                             attribs,
+                                             True)

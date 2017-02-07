@@ -5,7 +5,7 @@
 
 	<groupId>uk.ac.ucl.rc.development.oracc</groupId>
 	<artifactId>nammu</artifactId>
-	<version>0.4.1</version>
+	<version>0.5.1</version>
 	<packaging>jar</packaging>
 
 	<name>nammu</name>
@@ -133,9 +133,9 @@
 				</executions>
 				<configuration>
           <libraries>
-            <param>pyyaml</param>
-						<param>requests</param>
+						<param>requests&lt;2.12.0</param>
 						<param>pytest&lt;3.0</param>
+						<param>pyyaml</param>
 						<param>mako</param>
 						<param>ply</param>
 						<param>https://github.com/ucl/pyoracc/archive/master.tar.gz</param>
