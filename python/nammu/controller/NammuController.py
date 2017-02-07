@@ -206,6 +206,10 @@ class NammuController(object):
                 save_yaml_config(self.config)
 
     def saveAsFile(self, event=None):
+        '''
+        Forces saving as dialog to be prompted.
+        Also checks for project name, and if found, makes it default.
+        '''
         atfText = self.atfAreaController.getAtfAreaText()
         fileChooser = JFileChooser(os.getcwd())
         status = fileChooser.showSaveDialog(self.view)
