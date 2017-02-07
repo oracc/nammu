@@ -1,7 +1,7 @@
 #Nammu: Desktop GUI for ORACC
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/v0.5.4/nammu-0.5.4.jar)
+[here](https://github.com/oracc/nammu/releases/download/untagged-04a2ccb978642b3f0a2e/nammu-0.5.4.jar)
 and just double click on it to open it.
 
 ##What is ORACC?
@@ -77,7 +77,7 @@ on how to correct them.
 ## How to run Nammu
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/v0.5.4/nammu-0.5.4.jar)
+[here](https://github.com/oracc/nammu/releases/download/untagged-04a2ccb978642b3f0a2e/nammu-0.5.4.jar)
 and just double click on it to open it and use it.
 
 If you find any problem trying to open it, it might be that you don't have Java
