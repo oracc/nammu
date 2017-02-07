@@ -205,6 +205,11 @@ class NammuController(object):
                 self.config['projects']['default'] = [project]
                 save_yaml_config(self.config)
 
+
+    def saveAsFile(self, event=None):
+        pass
+
+
     def writeTextFile(self, filename, text):
         '''
         Action to execute when saving an ATF.
