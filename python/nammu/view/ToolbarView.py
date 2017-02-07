@@ -46,6 +46,7 @@ class ToolbarView(JToolBar):
         tooltips['newFile'] = 'Creates empty ATF file for edition'
         tooltips['openFile'] = 'Opens ATF file for edition'
         tooltips['saveFile'] = 'Saves current file'
+        tooltips['saveAsFile'] = 'Save As...'
         tooltips['closeFile'] = 'Closes current file'
         tooltips['printFile'] = 'Prints current file'
         tooltips['undo'] = 'Undo last action'
