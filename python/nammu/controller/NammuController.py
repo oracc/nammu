@@ -205,6 +205,36 @@ class NammuController(object):
                 self.config['projects']['default'] = [project]
                 save_yaml_config(self.config)
 
+    def saveAsFile(self, event=None):
+        '''
+        Forces saving as dialog to be prompted.
+        Also checks for project name, and if found, makes it default.
+        '''
+        atfText = self.atfAreaController.getAtfAreaText()
+        fileChooser = JFileChooser(os.getcwd())
+        status = fileChooser.showSaveDialog(self.view)
+        if status == JFileChooser.APPROVE_OPTION:
+            atfFile = fileChooser.getSelectedFile()
+            filename = atfFile.getCanonicalPath()
+            basename = atfFile.getName()
+            self.currentFilename = filename
+            self.view.setTitle(basename)
+        try:
+            self.writeTextFile(self.currentFilename, atfText)
+        except:
+            self.logger.error("There was an error trying to save %s.",
+                              self.currentFilename)
+        else:
+            self.logger.info("File %s successfully saved.",
+                             self.currentFilename)
+
+        # Find project and add to setting.yaml as default
+        project = self.get_project()
+        if project:
+            if self.config['projects']['default'] != project:
+                self.config['projects']['default'] = [project]
+                save_yaml_config(self.config)
+
     def writeTextFile(self, filename, text):
         '''
         Action to execute when saving an ATF.

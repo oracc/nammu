@@ -1,5 +1,5 @@
 ---
-version: 0.6
+version: 0.7
 
 languages:
     Early Akkadian: akk-x-earakk
@@ -71,6 +71,7 @@ keystrokes:
     undo: VK_Z
     redo: VK_Y
     saveFile: VK_S
+    saveAsFile: VK_E
     newFile: VK_N
     openFile: VK_O
     closeFile: VK_W
