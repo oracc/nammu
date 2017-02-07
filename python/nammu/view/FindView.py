@@ -107,7 +107,7 @@ class FindView(JDialog):
         panel = JPanel(FlowLayout())
         label = JLabel("Find:     ")
         panel.add(label)
-        self.find_field = JTextField(20)
+        self.find_field = JTextField(20, actionPerformed=self.find_next)
         label.setLabelFor(self.find_field)
         panel.add(self.find_field)
         return panel
@@ -119,7 +119,7 @@ class FindView(JDialog):
         panel = JPanel(FlowLayout())
         label = JLabel("Replace: ")
         panel.add(label)
-        self.replace_field = JTextField(20)
+        self.replace_field = JTextField(20, actionPerformed=self.find_next)
         label.setLabelFor(self.replace_field)
         panel.add(self.replace_field)
         return panel
@@ -238,6 +238,7 @@ class FindView(JDialog):
         self.controller.matches = None
         self.controller.text = None
         self.controller.controller.find_controller = None
+        self.controller.atfAreaController.restore_highlight()
         self.dispose()
 
 
