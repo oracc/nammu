@@ -56,6 +56,7 @@ class MenuView(JMenuBar):
         menuItems["File"]["New"] = [KeyEvent.VK_N, "newFile"]
         menuItems["File"]["Open"] = [KeyEvent.VK_O, "openFile"]
         menuItems["File"]["Save"] = [KeyEvent.VK_S, "saveFile"]
+        menuItems["File"]["Save As..."] = [KeyEvent.VK_A, "saveAsFile"]
         menuItems["File"]["Close"] = [KeyEvent.VK_W, "closeFile"]
         menuItems["File"]["Print"] = [KeyEvent.VK_P, "printFile"]
         menuItems["File"]["Quit"] = [KeyEvent.VK_Q, "quit"]
