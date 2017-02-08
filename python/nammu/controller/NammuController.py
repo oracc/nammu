@@ -241,7 +241,6 @@ class NammuController(object):
                             "Confirm replace file",
                             JOptionPane.YES_NO_OPTION)
                 if reply == JOptionPane.NO_OPTION:
-                    print("tal")
                     return
             self.currentFilename = filename
             self.view.setTitle(basename)
