@@ -244,14 +244,14 @@ class NammuController(object):
                     return
             self.currentFilename = filename
             self.view.setTitle(basename)
-        try:
-            self.writeTextFile(self.currentFilename, atfText)
-        except:
-            self.logger.error("There was an error trying to save %s.",
-                              self.currentFilename)
-        else:
-            self.logger.info("File %s successfully saved.",
-                             self.currentFilename)
+            try:
+                self.writeTextFile(self.currentFilename, atfText)
+            except:
+                self.logger.error("There was an error trying to save %s.",
+                                  self.currentFilename)
+            else:
+                self.logger.info("File %s successfully saved.",
+                                 self.currentFilename)
 
         # Find project and add to setting.yaml as default
         project = self.get_project()
