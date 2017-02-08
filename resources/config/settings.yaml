@@ -1,10 +1,10 @@
 ---
-version: 0.7
+version: 0.8
 
 languages:
     Early Akkadian: akk-x-earakk
     Old Akkadian: akk-x-oldakk
-    Ur III Akkadian: ua
+    Ur III Akkadian: akk-x-ur3akk
     Old Assyrian: akk-x-oldass
     Old Babylonian: akk-x-oldbab
     Old Babylonian peripheral: akk-x-obperi
@@ -17,7 +17,7 @@ languages:
     Standard Babylonian: akk-x-stdbab
     Conventional Akkadian: akk-x-conakk
     Hittite: hit
-    Sumerian: sux or sux-x-emegir
+    Sumerian: sux-x-emegir
     Emesal: sux-x-emesal
     Syllabic: sux-x-syllabic
     Udgalnun: sux-x-udgalnun
