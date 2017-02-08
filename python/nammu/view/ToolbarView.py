@@ -54,6 +54,7 @@ class ToolbarView(JToolBar):
         tooltips['copy'] = 'Copy text selection'
         tooltips['cut'] = 'Cut text selection'
         tooltips['paste'] = 'Paste clipboard content'
+        tooltips['syntax_highlight_switch'] = 'Switch on/off syntax_highlight'
         tooltips['validate'] = 'Check current ATF correctness'
         tooltips['lemmatise'] = 'Obtain lemmas for current ATF text'
         tooltips['displayModelView'] = 'Change to ATF data model view'
@@ -68,7 +69,8 @@ class ToolbarView(JToolBar):
             button.setToolTipText(tooltip)
             self.add(button)
             # Work out is separator is needed
-            if name in ['printFile', 'redo', 'paste', 'lemmatise', 'unicode',
+            if name in ['printFile', 'redo', 'paste',
+                        'syntax_highlight_switch', 'lemmatise', 'unicode',
                         'console', 'displayModelView', 'showAbout']:
                 self.addSeparator()
 
