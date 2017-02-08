@@ -35,6 +35,7 @@ class NewAtfView(JDialog):
         self.projects = projects
         self.languages = languages
         self.protocols = protocols
+        self.cancelled = False
         self.springLayout = SpringLayout()
         self.pane = self.getContentPane()
 
@@ -418,6 +419,7 @@ class NewAtfView(JDialog):
         return label
 
     def cancel(self, event):
+        self.cancelled = True
         self.dispose()
 
     def blank(self, event):
