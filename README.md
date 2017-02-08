@@ -1,7 +1,7 @@
 #Nammu: Desktop GUI for ORACC
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/untagged-04a2ccb978642b3f0a2e/nammu-0.5.4.jar)
+[here](https://github.com/oracc/nammu/releases/download/0.5.0/nammu-0.5.5.jar)
 and just double click on it to open it.
 
 ##What is ORACC?
@@ -36,7 +36,7 @@ of ORACC, enabling more projects to adopt it.
 Nammu is currently being developed by the
 [UCL Research Software Development Group](https://www.ucl.ac.uk/research-it-services/about/research-software-development).
 
-<img src="./doc/mockups/nammu_0.1.png" align="center" width="70%">
+<img src="./doc/mockups/nammu_0.5.png" align="center" width="70%">
 
 
 ## Validation of ATF files
@@ -77,7 +77,7 @@ on how to correct them.
 ## How to run Nammu
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/untagged-04a2ccb978642b3f0a2e/nammu-0.5.4.jar)
+[here](https://github.com/oracc/nammu/releases/download/0.5.0/nammu-0.5.5.jar)
 and just double click on it to open it and use it.
 
 If you find any problem trying to open it, it might be that you don't have Java
@@ -92,7 +92,7 @@ installable file for your operating system
 
 If you keep having trouble, you can also run it from the command line, like this:
 
-`java -jar /path/to/namu.jar`
+`java -jar /path/to/nammu.jar`
 
 This will output a clearer log message about what the problem is.
 
@@ -176,7 +176,7 @@ from previous executions:
 5. This will create Nammu's jar in the `target` folder. Then you can execute it
 like this:
  ```
- java -jar  target/original-nammu-0.5.4.jar
+ java -jar  target/original-nammu-0.5.5.jar
  ```
 
 If you find any problem or need more information, you can create an issue
