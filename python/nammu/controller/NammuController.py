@@ -122,11 +122,13 @@ class NammuController(object):
         project, and presents a template in the text area.
         '''
         if self.handleUnsaved():
-            self.currentFilename = None
-            self.view.setTitle("Nammu")
             # Open window for user to enter ATF template contents
             new_atf_controller = NewAtfController(self)
-            self.logger.debug("New file created from template.")
+            # Keep on where we were if user doesn't cancel
+            if not new_atf_controller.view.cancelled:
+                self.currentFilename = None
+                self.view.setTitle("Nammu")
+                self.logger.debug("New file created from template.")
 
     def openFile(self, event=None):
         '''
