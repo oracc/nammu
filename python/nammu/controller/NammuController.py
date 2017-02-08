@@ -191,10 +191,10 @@ class NammuController(object):
                 if os.path.isfile(filename) and \
                    filename != self.currentFilename:
                     reply = JOptionPane.showConfirmDialog(
-                                    None,
-                                    "Are you sure you want to overwrite that file?",
-                                    "Confirm replace file",
-                                    JOptionPane.YES_NO_OPTION)
+                            None,
+                            "Are you sure you want to overwrite that file?",
+                            "Confirm replace file",
+                            JOptionPane.YES_NO_OPTION)
                     if reply == JOptionPane.NO_OPTION:
                         return
                 self.currentFilename = filename
@@ -234,10 +234,10 @@ class NammuController(object):
             # currently and knowingly editing.
             if os.path.isfile(filename) and filename != self.currentFilename:
                 reply = JOptionPane.showConfirmDialog(
-                                None,
-                                "Are you sure you want to overwrite that file?",
-                                "Confirm replace file",
-                                JOptionPane.YES_NO_OPTION)
+                            None,
+                            "Are you sure you want to overwrite that file?",
+                            "Confirm replace file",
+                            JOptionPane.YES_NO_OPTION)
                 if reply == JOptionPane.NO_OPTION:
                     return
             self.currentFilename = filename
