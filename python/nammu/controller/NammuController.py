@@ -185,6 +185,18 @@ class NammuController(object):
                 atfFile = fileChooser.getSelectedFile()
                 filename = atfFile.getCanonicalPath()
                 basename = atfFile.getName()
+                # Make sure users check before lightly overwriting a file
+                # No need to ask if they choose to save on the file they are
+                # currently and knowingly editing.
+                if os.path.isfile(filename) and \
+                   filename != self.currentFilename:
+                    reply = JOptionPane.showConfirmDialog(
+                            None,
+                            "Are you sure you want to overwrite that file?",
+                            "Confirm replace file",
+                            JOptionPane.YES_NO_OPTION)
+                    if reply == JOptionPane.NO_OPTION:
+                        return
                 self.currentFilename = filename
                 self.view.setTitle(basename)
             else:
@@ -217,6 +229,17 @@ class NammuController(object):
             atfFile = fileChooser.getSelectedFile()
             filename = atfFile.getCanonicalPath()
             basename = atfFile.getName()
+            # Make sure users check before lightly overwriting a file
+            # No need to ask if they choose to save on the file they are
+            # currently and knowingly editing.
+            if os.path.isfile(filename) and filename != self.currentFilename:
+                reply = JOptionPane.showConfirmDialog(
+                            None,
+                            "Are you sure you want to overwrite that file?",
+                            "Confirm replace file",
+                            JOptionPane.YES_NO_OPTION)
+                if reply == JOptionPane.NO_OPTION:
+                    return
             self.currentFilename = filename
             self.view.setTitle(basename)
         try:
