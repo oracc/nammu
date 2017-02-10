@@ -779,25 +779,12 @@ class NammuController(object):
     def get_working_dir(self):
         '''
         Look up working dir where the current ATF file is.
-        That should be saved as last_used working_dir.
+        That should be saved as default working_dir.
         '''
-        language = None
-        lang_str = "#atf: lang"
-
-        nammu_text = self.atfAreaController.getAtfAreaText()
-
-        if lang_str in nammu_text:
-            try:
-                parsed_atf = self.parse(nammu_text)
-                language = getattr(parsed.text, 'language')
-            except:
-                # File can't be parsed but might still contain a project code
-                try:
-                    language = nammu_text.split(lang_str)[1].split()[0]
-                except IndexError:
-                    pass
-
-        return language
+        working_dir = None
+        if self.currentFilename:
+            working_dir = os.path.dirname(self.currentFilename)
+        return working_dir
 
     def setup_logger(self):
         """
