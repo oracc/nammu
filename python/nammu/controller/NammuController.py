@@ -221,7 +221,6 @@ class NammuController(object):
         # Find project and language and add to settings.yaml as default
         self.update_config()
 
-
     def update_config(self):
         '''
         Find project and language and add to settings.yaml as default.
