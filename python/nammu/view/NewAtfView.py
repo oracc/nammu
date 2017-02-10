@@ -433,7 +433,7 @@ class NewAtfView(JDialog):
                             self.left_combo.getSelectedItem().encode('utf-8'))
         if self.right_combo.getSelectedItem():
             project_line = "{}/{}".format(
-                            project_line.encode('utf-8'),
+                            project_line,
                             self.right_combo.getSelectedItem().encode('utf-8'))
         language = self.language_combo.getSelectedItem()
         language_code = self.languages[language]
