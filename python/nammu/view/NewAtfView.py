@@ -427,13 +427,14 @@ class NewAtfView(JDialog):
         self.dispose()
 
     def create_template(self, event):
-        and_line = "{} = {}".format(self.left_field.getText(),
-                                    self.right_field.getText())
+        and_line = "{} = {}".format(self.left_field.getText().encode('utf-8'),
+                                    self.right_field.getText().encode('utf-8'))
         project_line = "#project: {}".format(
-                                            self.left_combo.getSelectedItem())
+                            self.left_combo.getSelectedItem().encode('utf-8'))
         if self.right_combo.getSelectedItem():
-            project_line = "{}/{}".format(project_line,
-                                          self.right_combo.getSelectedItem())
+            project_line = "{}/{}".format(
+                            project_line,
+                            self.right_combo.getSelectedItem().encode('utf-8'))
         language = self.language_combo.getSelectedItem()
         language_code = self.languages[language]
 
