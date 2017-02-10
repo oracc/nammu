@@ -170,6 +170,10 @@ class NammuController(object):
 
             # TODO: Else, prompt user to choose again before closing
 
+            #Update settings with current file's path
+            self.update_config_element(self.get_working_dir(),
+                                       'default', 'working_dir')
+
     def readTextFile(self, filename):
         '''
         Helper function to open file for reading.
