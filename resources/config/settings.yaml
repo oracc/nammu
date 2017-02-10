@@ -1,7 +1,8 @@
 ---
-version: 0.8
+version: 0.10
 
 languages:
+    default: Sumerian
     Early Akkadian: akk-x-earakk
     Old Akkadian: akk-x-oldakk
     Ur III Akkadian: akk-x-ur3akk
@@ -88,4 +89,5 @@ find_keystrokes:
     replace_one: VK_R
     replace_all: VK_A
 
-working_dir: None
+working_dir:
+    default: None

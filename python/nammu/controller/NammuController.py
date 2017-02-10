@@ -140,8 +140,14 @@ class NammuController(object):
         4. Display file name in title bar
         '''
         if self.handleUnsaved():
+            # The path that the file chooser should default to should be:
+            # 1. Last used, if any
+            # 2. Value of config's working_dir
+            # 3. Nammu's folder
             if self.currentFilename:
                 default_path = os.path.dirname(self.currentFilename)
+            elif self.config['working_dir']['default']:
+                default_path = self.config['working_dir']['default']
             else:
                 default_path = os.getcwd()
             fileChooser = JFileChooser(default_path)
@@ -163,6 +169,10 @@ class NammuController(object):
                 self.view.setTitle(basename)
 
             # TODO: Else, prompt user to choose again before closing
+
+            # Update settings with current file's path
+            self.update_config_element(self.get_working_dir(),
+                                       'default', 'working_dir')
 
     def readTextFile(self, filename):
         '''
@@ -212,11 +222,29 @@ class NammuController(object):
             self.logger.info("File %s successfully saved.",
                              self.currentFilename)
 
-        # Find project and add to setting.yaml as default
-        project = self.get_project()
-        if project:
-            if self.config['projects']['default'] != project:
-                self.config['projects']['default'] = [project]
+        # Find project and language and add to settings.yaml as default
+        self.update_config()
+
+    def update_config(self):
+        '''
+        Find project and language and add to settings.yaml as default.
+        '''
+        self.update_config_element(self.get_project(), 'default', 'projects')
+        self.update_config_element(self.get_language(), 'default', 'languages')
+        self.update_config_element(self.get_working_dir(),
+                                   'default',
+                                   'working_dir')
+
+    def update_config_element(self, value, element, group):
+        '''
+        Update local config with given values if they are not None.
+        '''
+        self.logger.debug("Trying to update settings' %s with value %s.",
+                          element, value)
+        if value:
+            if self.config[group][element] != value:
+                self.config[group][element] = value
+                self.logger.debug("Settings updated.")
                 save_yaml_config(self.config)
 
     def saveAsFile(self, event=None):
@@ -253,12 +281,8 @@ class NammuController(object):
                 self.logger.info("File %s successfully saved.",
                                  self.currentFilename)
 
-        # Find project and add to setting.yaml as default
-        project = self.get_project()
-        if project:
-            if self.config['projects']['default'] != project:
-                self.config['projects']['default'] = [project]
-                save_yaml_config(self.config)
+        # Find project and language and add to settings.yaml as default
+        self.update_config()
 
     def writeTextFile(self, filename, text):
         '''
@@ -723,6 +747,47 @@ class NammuController(object):
                                       "'#project: xxx/xxx'.")
 
         return project
+
+    def get_language(self):
+        '''
+        Search for language protocol in text content.
+        First try to parse it and get it from the parser.
+        If that fails, try to find it with re ("#atf: lang xxxx").
+        If that fails as well, ignore.
+        '''
+        language = None
+        lang_value = None
+        lang_str = "#atf: lang"
+
+        nammu_text = self.atfAreaController.getAtfAreaText()
+
+        if lang_str in nammu_text:
+            try:
+                parsed_atf = self.parse(nammu_text)
+                lang_value = getattr(parsed.text, 'language')
+            except:
+                # File can't be parsed but might still contain a project code
+                try:
+                    lang_value = nammu_text.split(lang_str)[1].split()[0]
+                except IndexError:
+                    pass
+
+        # We need to return the dictionary key and not the value :S
+        for key, value in self.config['languages'].iteritems():
+            if value == lang_value:
+                language = key
+
+        return language
+
+    def get_working_dir(self):
+        '''
+        Look up working dir where the current ATF file is.
+        That should be saved as default working_dir.
+        '''
+        working_dir = None
+        if self.currentFilename:
+            working_dir = os.path.dirname(self.currentFilename)
+        return working_dir
 
     def setup_logger(self):
         """
