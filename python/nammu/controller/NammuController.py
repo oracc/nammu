@@ -140,8 +140,14 @@ class NammuController(object):
         4. Display file name in title bar
         '''
         if self.handleUnsaved():
+            # The path that the file chooser should default to should be:
+            # 1. Last used, if any
+            # 2. Value of config's working_dir
+            # 3. Nammu's folder
             if self.currentFilename:
                 default_path = os.path.dirname(self.currentFilename)
+            elif self.config['working_dir']['default']:
+                default_path = self.config['working_dir']['default']
             else:
                 default_path = os.getcwd()
             fileChooser = JFileChooser(default_path)
