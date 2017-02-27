@@ -19,7 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import logging
-from java.awt import GridLayout
+from java.awt import GridLayout, Component
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
 from javax.swing import JLabel
 
@@ -34,20 +34,57 @@ class EditSettingsView(JDialog):
 
     def build(self):
         '''
-        Put all panels together and form the settings window.
+        Create all tab panels and put together to form the settings window.
         '''
         self.setLayout(GridLayout(1, 1))
         tabbedPane = JTabbedPane()
         tab_titles = ["General", "Keystrokes", "Languages", "Projects"]
         for title in tab_titles:
-            tabbedPane.addTab(title, self.build_settings_pane(title))
+            panel = self.build_settings_pane(title.lower())
+            tabbedPane.addTab(title, panel)
         self.add(tabbedPane)
 
     def build_settings_pane(self, text):
         '''
-        Builds empty tab pane.
+        Call correspondent method to create panel for given tab text.
         '''
-        panel = JPanel(False)
+        panel = getattr(self, "build_{}_pane".format(text))()
+        return panel
+
+    def build_general_pane(self):
+        '''
+        Create the panel that'll go in the General tab. This should contain
+        options for choosing which server to use for validation as well as
+        default working dir.
+        '''
+        panel = JPanel()
+        return panel
+
+    def build_keystrokes_pane(self):
+        '''
+        Create the panel that'll go in the Keystrokes tab. This should contain
+        options for choosing which keystrokes are to be assigned to which
+        actions.
+        '''
+        panel = JPanel()
+        return panel
+
+    def build_languages_pane(self):
+        '''
+        Create the panel that'll go in the Languages tab. This should contain
+        options for choosing which is the list of languages that can be
+        included from the new ATF window and their abbrv.
+        '''
+        panel = JPanel()
+        return panel
+
+    def build_projects_pane(self):
+        '''
+        Create the panel that'll go in the Projects tab. This should contain
+        the list of preferred projects and a means to select which is the
+        preferred default.
+        '''
+        panel = JPanel()
         return panel
 
     def display(self):
@@ -56,7 +93,7 @@ class EditSettingsView(JDialog):
         '''
         self.build()
         self.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
-        self.setResizable(False)
+        self.setResizable(True)
         self.setTitle("Edit settings")
         self.pack()
         self.setLocationRelativeTo(None)
