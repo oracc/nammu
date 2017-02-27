@@ -17,22 +17,12 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from ..view.NewAtfView import NewAtfView
+from ..view.EditSettingsView import EditSettingsView
 
 
-class NewAtfController:
+class EditSettingsController:
     def __init__(self, maincontroller):
         self.controller = maincontroller
-        self.projects = self.controller.config['projects']
-        self.languages = self.controller.config['languages']
-        self.protocols = self.controller.config['protocols']
-        self.template = ''
-        self.view = NewAtfView(self,
-                               self.projects,
-                               self.languages,
-                               self.protocols)
+        self.config = self.controller.config
+        self.view = EditSettingsView(self, self.config)
         self.view.display()
-
-    def set_template(self):
-        self.controller.atfAreaController.setAtfAreaText(
-                                                self.template.decode('utf-8'))

@@ -33,6 +33,7 @@ from ModelController import ModelController
 from ToolbarController import ToolbarController
 from NewAtfController import NewAtfController
 from FindController import FindController
+from EditSettingsController import EditSettingsController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
@@ -648,7 +649,7 @@ class NammuController(object):
         settings form.
         TODO: Disable this button until functionality is implemented.
         '''
-        self.logger.debug("Changing settings...")
+        edit_settings_controller = EditSettingsController(self)
 
     def displayModelView(self, event=None):
         '''
