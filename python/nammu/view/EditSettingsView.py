@@ -19,9 +19,11 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import logging
+import os
 from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
 from javax.swing import JLabel, BoxLayout, JTextField, JComboBox, JButton
+from javax.swing import JFileChooser
 
 
 class EditSettingsView(JDialog):
@@ -106,9 +108,12 @@ class EditSettingsView(JDialog):
         panel = JPanel(FlowLayout())
         label = JLabel("Working directory:")
         panel.add(label)
-        self.field = JTextField(40)
+        self.field = JTextField(35)
+        self.field.setEditable(False)
         self.field.setText(self.working_dir['default'])
         panel.add(self.field)
+        button = JButton("Browse", actionPerformed=self.browse)
+        panel.add(button)
         return panel
 
     def build_buttons_panel(self):
@@ -185,3 +190,16 @@ class EditSettingsView(JDialog):
         self.controller.update_config(working_dir, server)
         # Close window
         self.dispose()
+
+    def browse(self, event=None):
+        '''
+        Open new dialog for the user to select a path as default working dir.
+        '''
+        default_path = self.field.getText()
+        if not os.path.isdir(default_path):
+            default_path = os.getcwd()
+        fileChooser = JFileChooser(default_path)
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY)
+        status = fileChooser.showDialog(self, "Choose folder")
+        if status == JFileChooser.APPROVE_OPTION:
+            self.field.setText(fileChooser.getSelectedFile().getCanonicalPath())
