@@ -202,4 +202,5 @@ class EditSettingsView(JDialog):
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY)
         status = fileChooser.showDialog(self, "Choose folder")
         if status == JFileChooser.APPROVE_OPTION:
-            self.field.setText(fileChooser.getSelectedFile().getCanonicalPath())
+            selected_dir = fileChooser.getSelectedFile().getCanonicalPath()
+            self.field.setText(selected_dir)
