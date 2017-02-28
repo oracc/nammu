@@ -145,10 +145,10 @@ class NammuController(object):
             # 1. Last used, if any
             # 2. Value of config's working_dir
             # 3. Nammu's folder
-            if self.currentFilename:
-                default_path = os.path.dirname(self.currentFilename)
-            elif self.config['working_dir']['default']:
+            if self.config['working_dir']['default']:
                 default_path = self.config['working_dir']['default']
+            elif self.currentFilename:
+                default_path = os.path.dirname(self.currentFilename)
             else:
                 default_path = os.getcwd()
             fileChooser = JFileChooser(default_path)
