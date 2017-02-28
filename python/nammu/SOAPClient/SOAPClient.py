@@ -25,6 +25,7 @@ import logging
 import logging.config
 import requests
 import urllib
+import socket
 from java.lang import System, ClassLoader
 from zipfile import ZipFile
 from logging import Formatter
@@ -57,12 +58,23 @@ class SOAPClient(object):
         Elaborate HTTP POST request and send it to ORACC's server.
         """
         url = "{}:{}".format(self.url, self.port)
-        headers = dict(self.request.get_headers())
-        body = self.request.get_body()
-        self.logger.debug("Sending request to server at %s.", url)
-        self.logger.debug("HTTP request headers sent: %s", headers)
-        self.logger.debug("HTTP request body sent: %s", body)
-        self.response = requests.post(url, data=body, headers=headers)
+        # Check if server is listening
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s.connect((self.url.split('://')[1], self.port))
+        except socket.error as e:
+            self.logger.error("Can't connect to server %s",
+                              self.url.split('//')[1])
+            s.close()
+            raise
+        else:
+            s.close()
+            headers = dict(self.request.get_headers())
+            body = self.request.get_body()
+            self.logger.debug("Sending request to server at %s.", url)
+            self.logger.debug("HTTP request headers sent: %s", headers)
+            self.logger.debug("HTTP request body sent: %s", body)
+            self.response = requests.post(url, data=body, headers=headers)
 
     def get_response_text(self):
         return self.response.text
