@@ -102,7 +102,8 @@ class EditSettingsView(JDialog):
         panel = JPanel(FlowLayout())
         label = JLabel("Working directory:")
         panel.add(label)
-        field = JTextField(20)
+        field = JTextField(40)
+        field.setText(self.working_dir['default'])
         panel.add(field)
         return panel
 
