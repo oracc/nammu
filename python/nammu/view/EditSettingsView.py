@@ -83,7 +83,7 @@ class EditSettingsView(JDialog):
                 combo.addItem("{}: {}:{}".format(server,
                                                  self.servers[server]['url'],
                                                  self.servers[server]['port']))
-        # Check default server as selected item.
+        # Make default server the selected item in combo box.
         combo.setSelectedItem(self.servers['default'])
         panel.add(combo)
         return panel
