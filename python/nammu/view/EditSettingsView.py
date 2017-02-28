@@ -19,9 +19,9 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import logging
-from java.awt import GridLayout, Component
+from java.awt import GridLayout, Component, FlowLayout, Color
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
-from javax.swing import JLabel
+from javax.swing import JLabel, BoxLayout, JTextField
 
 
 class EditSettingsView(JDialog):
@@ -58,6 +58,20 @@ class EditSettingsView(JDialog):
         default working dir.
         '''
         panel = JPanel()
+        layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+        panel.setLayout(layout)
+        dir_panel = JPanel(FlowLayout())
+        dir_label = JLabel("Working directory:")
+        dir_panel.add(dir_label)
+        dir_field = JTextField(20)
+        dir_panel.add(dir_field)
+        server_panel = JPanel(FlowLayout())
+        server_label = JLabel("Server:")
+        server_panel.add(server_label)
+        server_field = JTextField(20)
+        server_panel.add(server_field)
+        panel.add(dir_panel)
+        panel.add(server_panel)
         return panel
 
     def build_keystrokes_pane(self):
@@ -85,6 +99,7 @@ class EditSettingsView(JDialog):
         preferred default.
         '''
         panel = JPanel()
+
         return panel
 
     def display(self):
