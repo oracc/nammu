@@ -1,5 +1,5 @@
 ---
-version: 0.10
+version: 0.11
 
 languages:
     default: Sumerian
@@ -91,3 +91,13 @@ find_keystrokes:
 
 working_dir:
     default: None
+
+servers:
+    default: upenn
+    munich: 
+        url: http://oracc.ub.uni-muenchen.de
+        port: 8085 
+    upenn: 
+        url: http://oracc.museum.upenn.edu
+        port: 8085
+
