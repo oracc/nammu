@@ -200,7 +200,9 @@ class EditSettingsView(JDialog):
             default_path = os.getcwd()
         fileChooser = JFileChooser(default_path)
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY)
-        status = fileChooser.showDialog(self, "Choose folder")
+        # Fixed showDialog bug using showOpenDialog instead. The former was
+        # duplicating the last folder name in the path due to a Java bug in
+        # OSX in the implementation of JFileChooser!
+        status = fileChooser.showOpenDialog(self)
         if status == JFileChooser.APPROVE_OPTION:
-            selected_dir = fileChooser.getSelectedFile().getCanonicalPath()
-            self.field.setText(selected_dir)
+            self.field.setText(fileChooser.getSelectedFile().toString())
