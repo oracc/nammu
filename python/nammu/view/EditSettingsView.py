@@ -65,24 +65,38 @@ class EditSettingsView(JDialog):
         panel = JPanel()
         layout = BoxLayout(panel, BoxLayout.Y_AXIS)
         panel.setLayout(layout)
-        dir_panel = JPanel(FlowLayout())
-        dir_label = JLabel("Working directory:")
-        dir_panel.add(dir_label)
-        dir_field = JTextField(20)
-        dir_panel.add(dir_field)
-        server_panel = JPanel(FlowLayout())
-        server_label = JLabel("Server:")
-        server_panel.add(server_label)
-        server_combo = JComboBox()
+        panel.add(self.build_working_dir_panel())
+        panel.add(self.build_servers_panel())
+        return panel
+
+    def build_servers_panel(self):
+        '''
+        Create panel that contains a drop down with the servers to choose from.
+        '''
+        panel = JPanel(FlowLayout())
+        label = JLabel("Server:")
+        panel.add(label)
+        combo = JComboBox()
+        # Go through list of servers and add to combo box.
         for server in self.servers.keys():
             if server != "default":
-                server_combo.addItem("{}: {}:{}".format(
-                                                server,
-                                                self.servers[server]['url'],
-                                                self.servers[server]['port']))
-        server_panel.add(server_combo)
-        panel.add(dir_panel)
-        panel.add(server_panel)
+                combo.addItem("{}: {}:{}".format(server,
+                                                 self.servers[server]['url'],
+                                                 self.servers[server]['port']))
+        # Check default server as selected item.
+        combo.setSelectedItem(self.servers['default'])
+        panel.add(combo)
+        return panel
+
+    def build_working_dir_panel(self):
+        '''
+        Creates a panel to select preferred working directory.
+        '''
+        panel = JPanel(FlowLayout())
+        label = JLabel("Working directory:")
+        panel.add(label)
+        field = JTextField(20)
+        panel.add(field)
         return panel
 
     def build_keystrokes_pane(self):
