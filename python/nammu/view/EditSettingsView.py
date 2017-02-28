@@ -18,7 +18,8 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import logging, re
+import logging
+import re
 from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
 from javax.swing import JLabel, BoxLayout, JTextField, JComboBox, JButton
