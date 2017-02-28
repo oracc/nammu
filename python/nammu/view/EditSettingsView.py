@@ -106,7 +106,17 @@ class EditSettingsView(JDialog):
         panel.add(field)
         return panel
 
-    def build_keystrokes_pane(self):
+    def build_buttons_panel(self):
+        '''
+        Builds the buttons panel to save or cancel changes.
+        TODO: Reset button to reset to defaults?
+        '''
+        panel = JPanel(FlowLayout())
+        panel.add(JButton('Cancel', actionPerformed=self.cancel))
+        panel.add(JButton('Save', actionPerformed=self.save))
+        return panel
+
+    def build_keystrokes_panel(self):
         '''
         Create the panel that'll go in the Keystrokes tab. This should contain
         options for choosing which keystrokes are to be assigned to which
@@ -149,5 +159,17 @@ class EditSettingsView(JDialog):
     def display_error(self, keyword):
         '''
         Display error message when keyword is not in settings file.
+        '''
+        pass
+
+    def cancel(self, event=None):
+        '''
+        Close window and don't save changes.
+        '''
+        self.dispose()
+
+    def save(self, event=None):
+        '''
+        Save changes made by user on local settings file.
         '''
         pass
