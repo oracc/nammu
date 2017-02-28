@@ -19,7 +19,6 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import logging
-import re
 from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
 from javax.swing import JLabel, BoxLayout, JTextField, JComboBox, JButton
@@ -88,12 +87,15 @@ class EditSettingsView(JDialog):
         # Go through list of servers and add to combo box.
         for server in self.servers.keys():
             if server != "default":
-                self.combo.addItem("{}: {}:{}".format(
-                                                server,
+                combo_item = "{}: {}:{}".format(server,
                                                 self.servers[server]['url'],
-                                                self.servers[server]['port']))
+                                                self.servers[server]['port'])
+                self.combo.addItem(combo_item)
+                # If this item is the default one, set it as selected
+                if server == self.servers['default']:
+                    self.combo.setSelectedItem(combo_item)
         # Make default server the selected item in combo box.
-        self.combo.setSelectedItem(self.servers['default'])
+        self.combo.setSelectedItem(self.servers['default'].split(':'))
         panel.add(self.combo)
         return panel
 
@@ -179,7 +181,7 @@ class EditSettingsView(JDialog):
         # TODO: update keystrokes, projects list, etc.
         working_dir = self.field.getText()
         # The server format is "name: url:port". We only need "name"
-        server = re.split(self.combo.getSelectedItem(), ':')[0]
+        server = self.combo.getSelectedItem().split(':')[0]
         self.controller.update_config(working_dir, server)
         # Close window
         self.dispose()
