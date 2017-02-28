@@ -19,9 +19,9 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import logging
-from java.awt import GridLayout, Component, FlowLayout, Color
+from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
-from javax.swing import JLabel, BoxLayout, JTextField, JComboBox
+from javax.swing import JLabel, BoxLayout, JTextField, JComboBox, JButton
 
 
 class EditSettingsView(JDialog):
@@ -41,22 +41,29 @@ class EditSettingsView(JDialog):
         '''
         Create all tab panels and put together to form the settings window.
         '''
-        self.setLayout(GridLayout(1, 1))
-        tabbedPane = JTabbedPane()
+        self.setLayout(BorderLayout())
+        self.add(self.build_tabbed_panel(), BorderLayout.CENTER)
+        self.add(self.build_buttons_panel(), BorderLayout.SOUTH)
+
+    def build_tabbed_panel(self):
+        '''
+        Build panel with tabs for each of the settings editable sections.
+        '''
+        tabbed_pane = JTabbedPane()
         tab_titles = ["General", "Keystrokes", "Languages", "Projects"]
         for title in tab_titles:
-            panel = self.build_settings_pane(title.lower())
-            tabbedPane.addTab(title, panel)
-        self.add(tabbedPane)
+            panel = self.build_settings_panel(title.lower())
+            tabbed_pane.addTab(title, panel)
+        return tabbed_pane
 
-    def build_settings_pane(self, text):
+    def build_settings_panel(self, text):
         '''
         Call correspondent method to create panel for given tab text.
         '''
-        panel = getattr(self, "build_{}_pane".format(text))()
+        panel = getattr(self, "build_{}_panel".format(text))()
         return panel
 
-    def build_general_pane(self):
+    def build_general_panel(self):
         '''
         Create the panel that'll go in the General tab. This should contain
         options for choosing which server to use for validation as well as
@@ -74,7 +81,7 @@ class EditSettingsView(JDialog):
         Create panel that contains a drop down with the servers to choose from.
         '''
         panel = JPanel(FlowLayout())
-        label = JLabel("Server:")
+        label = JLabel("ORACC server location:")
         panel.add(label)
         combo = JComboBox()
         # Go through list of servers and add to combo box.
@@ -108,7 +115,7 @@ class EditSettingsView(JDialog):
         panel = JPanel()
         return panel
 
-    def build_languages_pane(self):
+    def build_languages_panel(self):
         '''
         Create the panel that'll go in the Languages tab. This should contain
         options for choosing which is the list of languages that can be
@@ -117,7 +124,7 @@ class EditSettingsView(JDialog):
         panel = JPanel()
         return panel
 
-    def build_projects_pane(self):
+    def build_projects_panel(self):
         '''
         Create the panel that'll go in the Projects tab. This should contain
         the list of preferred projects and a means to select which is the
