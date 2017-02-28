@@ -24,7 +24,7 @@ from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
 from javax.swing import JLabel, BoxLayout, JTextField, JComboBox, JButton
 from javax.swing import JFileChooser
-
+from javax.swing.border import EmptyBorder
 
 class EditSettingsView(JDialog):
     def __init__(self, controller, working_dir, servers, keystrokes,
@@ -99,6 +99,7 @@ class EditSettingsView(JDialog):
         # Make default server the selected item in combo box.
         self.combo.setSelectedItem(self.servers['default'].split(':'))
         panel.add(self.combo)
+        panel.setBorder(EmptyBorder(10, 10, 80, 10))
         return panel
 
     def build_working_dir_panel(self):
@@ -108,12 +109,13 @@ class EditSettingsView(JDialog):
         panel = JPanel(FlowLayout())
         label = JLabel("Working directory:")
         panel.add(label)
-        self.field = JTextField(35)
+        self.field = JTextField(25)
         self.field.setEditable(False)
         self.field.setText(self.working_dir['default'])
         panel.add(self.field)
         button = JButton("Browse", actionPerformed=self.browse)
         panel.add(button)
+        panel.setBorder(EmptyBorder(30, 10, 30, 10))
         return panel
 
     def build_buttons_panel(self):
