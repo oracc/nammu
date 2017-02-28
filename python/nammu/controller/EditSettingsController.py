@@ -18,11 +18,13 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from ..view.EditSettingsView import EditSettingsView
+from ..utils import save_yaml_config
 
 
 class EditSettingsController:
     def __init__(self, maincontroller):
         self.controller = maincontroller
+        self.config = self.controller.config
         self.load_config()
         self.view = EditSettingsView(self, self.working_dir, self.servers,
                                      self.keystrokes, self.languages,
@@ -38,15 +40,19 @@ class EditSettingsController:
                            'languages', 'projects']
         for keyword in config_keywords:
             try:
-                setattr(self, keyword, self.controller.config[keyword])
+                setattr(self, keyword, self.config[keyword])
             except KeyError:
                 self.controller.logger.error('%s missing on settings file.',
                                              keyword)
                 self.view.display_error(keyword)
 
-    def update_config(self, working_dir=None, servers=None, keystrokes=None,
+    def update_config(self, working_dir, server, keystrokes=None,
                       languages=None, projects=None):
         '''
         Update the settings file with the user input.
         '''
-        pass
+        # TODO: Validate new values introduced by user.
+        self.config['working_dir']['default'] = working_dir
+        self.config['servers']['default'] = server
+        self.controller.logger.debug("Settings updated.")
+        save_yaml_config(self.config)

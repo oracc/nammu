@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import logging
+import logging, re
 from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
 from javax.swing import JLabel, BoxLayout, JTextField, JComboBox, JButton
@@ -83,16 +83,17 @@ class EditSettingsView(JDialog):
         panel = JPanel(FlowLayout())
         label = JLabel("ORACC server location:")
         panel.add(label)
-        combo = JComboBox()
+        self.combo = JComboBox()
         # Go through list of servers and add to combo box.
         for server in self.servers.keys():
             if server != "default":
-                combo.addItem("{}: {}:{}".format(server,
-                                                 self.servers[server]['url'],
-                                                 self.servers[server]['port']))
+                self.combo.addItem("{}: {}:{}".format(
+                                                server,
+                                                self.servers[server]['url'],
+                                                self.servers[server]['port']))
         # Make default server the selected item in combo box.
-        combo.setSelectedItem(self.servers['default'])
-        panel.add(combo)
+        self.combo.setSelectedItem(self.servers['default'])
+        panel.add(self.combo)
         return panel
 
     def build_working_dir_panel(self):
@@ -102,9 +103,9 @@ class EditSettingsView(JDialog):
         panel = JPanel(FlowLayout())
         label = JLabel("Working directory:")
         panel.add(label)
-        field = JTextField(40)
-        field.setText(self.working_dir['default'])
-        panel.add(field)
+        self.field = JTextField(40)
+        self.field.setText(self.working_dir['default'])
+        panel.add(self.field)
         return panel
 
     def build_buttons_panel(self):
@@ -173,4 +174,11 @@ class EditSettingsView(JDialog):
         '''
         Save changes made by user on local settings file.
         '''
-        pass
+        # Update only the working_dir and the server for now
+        # TODO: update keystrokes, projects list, etc.
+        working_dir = self.field.getText()
+        # The server format is "name: url:port". We only need "name"
+        server = re.split(self.combo.getSelectedItem(), ':')[0]
+        self.controller.update_config(working_dir, server)
+        # Close window
+        self.dispose()
