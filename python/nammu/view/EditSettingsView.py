@@ -25,12 +25,17 @@ from javax.swing import JLabel, BoxLayout, JTextField
 
 
 class EditSettingsView(JDialog):
-    def __init__(self, controller, config):
+    def __init__(self, controller, working_dir, servers, keystrokes,
+                 languages, projects):
         self.logger = logging.getLogger("NammuController")
         self.setAlwaysOnTop(True)
         self.controller = controller
+        self.working_dir = working_dir
+        self.servers = servers
+        self.keystrokes = keystrokes
+        self.languages = languages
+        self.projects = projects
         self.pane = self.getContentPane()
-        self.config = config
 
     def build(self):
         '''
@@ -113,3 +118,9 @@ class EditSettingsView(JDialog):
         self.pack()
         self.setLocationRelativeTo(None)
         self.visible = 1
+
+    def display_error(self, keyword):
+        '''
+        Display error message when keyword is not in settings file.
+        '''
+        pass

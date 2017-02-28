@@ -23,6 +23,30 @@ from ..view.EditSettingsView import EditSettingsView
 class EditSettingsController:
     def __init__(self, maincontroller):
         self.controller = maincontroller
-        self.config = self.controller.config
-        self.view = EditSettingsView(self, self.config)
+        self.load_config()
+        self.view = EditSettingsView(self, self.working_dir, self.servers,
+                                     self.keystrokes, self.languages,
+                                     self.projects)
         self.view.display()
+
+    def load_config(self):
+        '''
+        The user's config file should containg all necessary information for
+        the settings editor.
+        '''
+        config_keywords = ['working_dir', 'servers', 'keystrokes',
+                           'languages', 'projects']
+        for keyword in config_keywords:
+            try:
+                setattr(self, keyword, self.controller.config[keyword])
+            except KeyError:
+                self.controller.logger.error('%s missing on settings file.',
+                                             keyword)
+                self.view.display_error(keyword)
+
+    def update_config(self, working_dir=None, servers=None, keystrokes=None,
+                      languages=None, projects=None):
+        '''
+        Update the settings file with the user input.
+        '''
+        pass
