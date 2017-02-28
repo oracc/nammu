@@ -21,7 +21,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 from java.awt import GridLayout, Component, FlowLayout, Color
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
-from javax.swing import JLabel, BoxLayout, JTextField
+from javax.swing import JLabel, BoxLayout, JTextField, JComboBox
 
 
 class EditSettingsView(JDialog):
@@ -73,8 +73,14 @@ class EditSettingsView(JDialog):
         server_panel = JPanel(FlowLayout())
         server_label = JLabel("Server:")
         server_panel.add(server_label)
-        server_field = JTextField(20)
-        server_panel.add(server_field)
+        server_combo = JComboBox()
+        for server in self.servers.keys():
+            if server != "default":
+                server_combo.addItem("{}: {}:{}".format(
+                                                    server,
+                                                    self.servers[server]['url'],
+                                                    self.servers[server]['port']))
+        server_panel.add(server_combo)
         panel.add(dir_panel)
         panel.add(server_panel)
         return panel
