@@ -486,9 +486,11 @@ class NammuController(object):
         except RequestException as re:
             self.logger.error(
                         "Error when trying to send first HTTP POST request.")
-            self.logger.exception(str(re))
+            self.logger.debug(str(re))
             return
-
+        except Exception as e:
+            self.logger.debug(str(e))
+            return
         server_id = client.get_response_id()
 
         # Wait for server to prepare response
@@ -498,11 +500,12 @@ class NammuController(object):
             self.wait_for_response(client, server_id)
         except RequestException as re:
             self.logger.error("Error when trying to send HTTP GET request.")
-            self.logger.exception(str(re))
+            self.logger.debug(str(re))
             return
         except Exception as e:
             self.logger.error("Server error.")
-            self.logger.exception(str(e))
+            self.logger.debug(str(e))
+            return
 
         # Send new request to fetch results and server logs
         # TODO: This shouldn't need a new client, but a new request inside the
@@ -568,15 +571,20 @@ class NammuController(object):
         try:
             client.send()
         except Timeout:
-            self.logger.error("ORACC server timed out after 5 seconds.")
-            raise
-        except ConnectionError:
-            self.logger.error("Can't connect to ORACC server at %s.",
+            self.logger.error('ORACC %s server timed out after 5 seconds.',
                               client.url)
-            raise
+            self.logger.error('You can try with a different server from the '
+                              'settings menu.')
+            raise Exception("ORACC server timed out after 5 seconds.")
+        except ConnectionError:
+            raise Exception("Can't connect to ORACC server at %s.",
+                              client.url)
         except HTTPError:
-            self.logger.error("ORACC server returned invalid HTTP response.")
-            raise
+            raise Exception("ORACC server returned invalid HTTP response.")
+        except ConnectTimeout:
+            self.logger.error('You can try with a different server from the '
+                              'settings menu.')
+            raise Exception('Connetion to server %s timed out.', url)
 
     def wait_for_response(self, client, server_id):
         """

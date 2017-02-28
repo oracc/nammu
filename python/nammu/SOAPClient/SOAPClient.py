@@ -29,7 +29,7 @@ import socket
 from java.lang import System, ClassLoader
 from zipfile import ZipFile
 from logging import Formatter
-from requests.exceptions import RequestException
+from requests.exceptions import RequestException, ConnectTimeout
 from HTTPRequest import HTTPRequest
 import xml.etree.ElementTree as ET
 
@@ -58,23 +58,18 @@ class SOAPClient(object):
         Elaborate HTTP POST request and send it to ORACC's server.
         """
         url = "{}:{}".format(self.url, self.port)
-        # Check if server is listening
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        headers = dict(self.request.get_headers())
+        body = self.request.get_body()
+        self.logger.debug("Sending request to server at %s.", url)
+        self.logger.debug("HTTP request headers sent: %s", headers)
+        self.logger.debug("HTTP request body sent: %s", body)
         try:
-            s.connect((self.url.split('://')[1], self.port))
-        except socket.error as e:
-            self.logger.error("Can't connect to server %s",
-                              self.url.split('//')[1])
-            s.close()
+            self.response = requests.post(url, data=body, headers=headers,
+                                          timeout=3)
+        except ConnectTimeout:
+            self.logger.error('Connetion timed out when sending POST request.')
             raise
-        else:
-            s.close()
-            headers = dict(self.request.get_headers())
-            body = self.request.get_body()
-            self.logger.debug("Sending request to server at %s.", url)
-            self.logger.debug("HTTP request headers sent: %s", headers)
-            self.logger.debug("HTTP request body sent: %s", body)
-            self.response = requests.post(url, data=body, headers=headers)
+
 
     def get_response_text(self):
         return self.response.text
