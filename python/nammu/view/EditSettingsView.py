@@ -133,6 +133,8 @@ class EditSettingsView(JDialog):
         actions.
         '''
         panel = JPanel()
+        label = JLabel("Coming soon...")
+        panel.add(label, BorderLayout.CENTER)
         return panel
 
     def build_languages_panel(self):
@@ -142,6 +144,8 @@ class EditSettingsView(JDialog):
         included from the new ATF window and their abbrv.
         '''
         panel = JPanel()
+        label = JLabel("Coming soon...")
+        panel.add(label, BorderLayout.CENTER)
         return panel
 
     def build_projects_panel(self):
@@ -151,7 +155,8 @@ class EditSettingsView(JDialog):
         preferred default.
         '''
         panel = JPanel()
-
+        label = JLabel("Coming soon...")
+        panel.add(label, BorderLayout.CENTER)
         return panel
 
     def display(self):
