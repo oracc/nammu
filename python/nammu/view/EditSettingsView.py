@@ -77,9 +77,9 @@ class EditSettingsView(JDialog):
         for server in self.servers.keys():
             if server != "default":
                 server_combo.addItem("{}: {}:{}".format(
-                                                    server,
-                                                    self.servers[server]['url'],
-                                                    self.servers[server]['port']))
+                                                server,
+                                                self.servers[server]['url'],
+                                                self.servers[server]['port']))
         server_panel.add(server_combo)
         panel.add(dir_panel)
         panel.add(server_panel)
