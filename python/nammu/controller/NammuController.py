@@ -461,10 +461,10 @@ class NammuController(object):
         '''
         # Build request.zip on the fly, pack all needed in it and send to
         # server
-        server = self.config.servers['default']
-        url = self.config.servers[server].url
-        port = self.config.servers[server].port
-        url_dir = self.config.servers[server].dir
+        server = self.config['servers']['default']
+        url = self.config['servers'][server]['url']
+        port = self.config['servers'][server]['port']
+        url_dir = self.config['servers'][server]['dir']
 
         # Create HTTP client and prepare all input arguments for request
         client = SOAPClient(url, port, url_dir, method='POST')
