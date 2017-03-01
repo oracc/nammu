@@ -21,6 +21,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 import os
 from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
+from java.awt import GridBagLayout, GridBagConstraints, Insets
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
 from javax.swing import JLabel, BoxLayout, JTextField, JComboBox, JButton
 from javax.swing import JFileChooser
@@ -71,12 +72,65 @@ class EditSettingsView(JDialog):
         options for choosing which server to use for validation as well as
         default working dir.
         '''
-        panel = JPanel()
-        layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-        panel.setLayout(layout)
-        panel.add(self.build_working_dir_panel())
-        panel.add(self.build_servers_panel())
+        panel = JPanel(GridBagLayout())
+        constraints = GridBagConstraints()
+        constraints.insets = Insets(10,10,10,10)
+
+        working_dir_label = JLabel("Working directory:")
+        constraints.weightx = 0.30
+        constraints.gridx = 0
+        constraints.gridy = 0
+        panel.add(working_dir_label, constraints)
+        self.field = JTextField()
+        self.field.setEditable(False)
+        self.field.setText(self.working_dir['default'])
+        constraints.weightx = 0.60
+        constraints.gridx = 1
+        constraints.gridy = 0
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        constraints.insets = Insets(10,10,10,5)
+        panel.add(self.field, constraints)
+        constraints.fill = 0
+        button = JButton("Browse", actionPerformed=self.browse)
+        constraints.weightx = 0.10
+        constraints.gridx = 2
+        constraints.gridy = 0
+        constraints.insets = Insets(10,0,10,10)
+        panel.add(button, constraints)
+        constraints.insets = Insets(10,10,10,10)
+
+        server_label = JLabel("ORACC server location:")
+        constraints.weightx = 0.30
+        constraints.gridx = 0
+        constraints.gridy = 1
+        panel.add(server_label, constraints)
+        self.combo = self.build_servers_combobox()
+        constraints.weightx = 0.70
+        constraints.gridx = 1
+        constraints.gridy = 1
+        constraints.gridwidth = 2
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        panel.add(self.combo, constraints)
+
+        # panel.add(self.build_working_dir_panel())
+        # panel.add(self.build_servers_panel())
         return panel
+
+    def build_servers_combobox(self):
+        combo = JComboBox()
+        # Go through list of servers and add to combo box.
+        for server in self.servers.keys():
+            if server != "default":
+                combo_item = "{}: {}:{}".format(server,
+                                                self.servers[server]['url'],
+                                                self.servers[server]['port'])
+                combo.addItem(combo_item)
+                # If this item is the default one, set it as selected
+                if server == self.servers['default']:
+                    combo.setSelectedItem(combo_item)
+        # Make default server the selected item in combo box.
+        combo.setSelectedItem(self.servers['default'].split(':'))
+        return combo
 
     def build_servers_panel(self):
         '''
