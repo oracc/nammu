@@ -27,6 +27,7 @@ from javax.swing import JLabel, BoxLayout, JTextField, JComboBox, JButton
 from javax.swing import JFileChooser
 from javax.swing.border import EmptyBorder
 
+
 class EditSettingsView(JDialog):
     def __init__(self, controller, working_dir, servers, keystrokes,
                  languages, projects):
@@ -74,7 +75,7 @@ class EditSettingsView(JDialog):
         '''
         panel = JPanel(GridBagLayout())
         constraints = GridBagConstraints()
-        constraints.insets = Insets(10,10,10,10)
+        constraints.insets = Insets(10, 10, 10, 10)
 
         working_dir_label = JLabel("Working directory:")
         constraints.weightx = 0.30
@@ -89,16 +90,16 @@ class EditSettingsView(JDialog):
         constraints.gridx = 1
         constraints.gridy = 0
         constraints.fill = GridBagConstraints.HORIZONTAL
-        constraints.insets = Insets(10,10,10,5)
+        constraints.insets = Insets(10, 10, 10, 5)
         panel.add(self.field, constraints)
         constraints.fill = 0
         button = JButton("Browse", actionPerformed=self.browse)
         constraints.weightx = 0.10
         constraints.gridx = 2
         constraints.gridy = 0
-        constraints.insets = Insets(10,0,10,10)
+        constraints.insets = Insets(10, 0, 10, 10)
         panel.add(button, constraints)
-        constraints.insets = Insets(10,10,80,10)
+        constraints.insets = Insets(10, 10, 80, 10)
 
         server_label = JLabel("ORACC server location:")
         constraints.weightx = 0.30
@@ -113,9 +114,6 @@ class EditSettingsView(JDialog):
         constraints.fill = GridBagConstraints.HORIZONTAL
         panel.add(self.combo, constraints)
 
-
-        # panel.add(self.build_working_dir_panel())
-        # panel.add(self.build_servers_panel())
         return panel
 
     def build_servers_combobox(self):

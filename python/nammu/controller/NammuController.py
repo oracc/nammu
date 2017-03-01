@@ -578,7 +578,7 @@ class NammuController(object):
             raise Exception("ORACC server timed out after 5 seconds.")
         except ConnectionError:
             raise Exception("Can't connect to ORACC server at %s.",
-                              client.url)
+                            client.url)
         except HTTPError:
             raise Exception("ORACC server returned invalid HTTP response.")
         except ConnectTimeout:

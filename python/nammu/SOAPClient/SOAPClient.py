@@ -70,7 +70,6 @@ class SOAPClient(object):
             self.logger.error('Connetion timed out when sending POST request.')
             raise
 
-
     def get_response_text(self):
         return self.response.text
 
