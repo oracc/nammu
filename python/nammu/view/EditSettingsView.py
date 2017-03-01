@@ -98,7 +98,7 @@ class EditSettingsView(JDialog):
         constraints.gridy = 0
         constraints.insets = Insets(10,0,10,10)
         panel.add(button, constraints)
-        constraints.insets = Insets(10,10,10,10)
+        constraints.insets = Insets(10,10,80,10)
 
         server_label = JLabel("ORACC server location:")
         constraints.weightx = 0.30
@@ -112,6 +112,7 @@ class EditSettingsView(JDialog):
         constraints.gridwidth = 2
         constraints.fill = GridBagConstraints.HORIZONTAL
         panel.add(self.combo, constraints)
+
 
         # panel.add(self.build_working_dir_panel())
         # panel.add(self.build_servers_panel())
