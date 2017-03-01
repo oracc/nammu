@@ -80,6 +80,7 @@ class EditSettingsView(JDialog):
         constraints.weightx = 0.30
         constraints.gridx = 0
         constraints.gridy = 0
+        constraints.anchor = GridBagConstraints.EAST
         panel.add(working_dir_label, constraints)
         self.field = JTextField()
         self.field.setEditable(False)
