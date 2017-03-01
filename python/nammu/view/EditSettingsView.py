@@ -223,7 +223,7 @@ class EditSettingsView(JDialog):
         '''
         self.build()
         self.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
-        self.setResizable(True)
+        self.setResizable(False)
         self.setTitle("Edit settings")
         self.pack()
         self.setLocationRelativeTo(None)
