@@ -36,7 +36,7 @@ of ORACC, enabling more projects to adopt it.
 Nammu is currently being developed by the
 [UCL Research Software Development Group](https://www.ucl.ac.uk/research-it-services/about/research-software-development).
 
-<img src="./doc/mockups/nammu_0.6.png" align="center" width="70%">
+<img src="./doc/mockups/nammu_0.6.png" align="center" width="90%">
 
 
 ## Validation and lemmatisation of ATF files
