@@ -133,8 +133,6 @@ class EditSettingsView(JDialog):
                 # If this item is the default one, set it as selected
                 if server == self.servers['default']:
                     combo.setSelectedItem(combo_item)
-        # Make default server the selected item in combo box.
-        combo.setSelectedItem(self.servers['default'].split(':'))
         return combo
 
     def build_buttons_panel(self):
