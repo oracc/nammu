@@ -88,7 +88,12 @@ class EditSettingsView(JDialog):
         panel.add(working_dir_label, constraints)
         self.field = JTextField()
         self.field.setEditable(False)
-        self.field.setText(self.working_dir['default'])
+        # Can't find an elegant way to default to something that would be
+        # crossplatform, and I can't leave the default field empty.
+        if self.working_dir['default'] != "None":
+            self.field.setText(self.working_dir['default'])
+        else:
+            self.field.setText(os.getcwd())
         constraints.weightx = 0.60
         constraints.gridx = 1
         constraints.gridy = 0
