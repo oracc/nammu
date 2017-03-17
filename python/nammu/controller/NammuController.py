@@ -570,21 +570,17 @@ class NammuController(object):
         """
         try:
             client.send()
-        except Timeout:
+        except (Timeout, ConnectTimeout):
             self.logger.error('ORACC %s server timed out after 5 seconds.',
                               client.url)
             self.logger.error('You can try with a different server from the '
                               'settings menu.')
-            raise Exception("ORACC server timed out after 5 seconds.")
+            raise Exception('Connetion to server %s timed out.', url)
         except ConnectionError:
             raise Exception("Can't connect to ORACC server at %s.",
                             client.url)
         except HTTPError:
             raise Exception("ORACC server returned invalid HTTP response.")
-        except ConnectTimeout:
-            self.logger.error('You can try with a different server from the '
-                              'settings menu.')
-            raise Exception('Connetion to server %s timed out.', url)
 
     def wait_for_response(self, client, server_id):
         """
