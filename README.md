@@ -1,10 +1,10 @@
-#Nammu: Desktop GUI for ORACC
+# Nammu: Desktop GUI for ORACC
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/0.5.0/nammu-0.5.5.jar)
+[here](https://github.com/oracc/nammu/releases/download/0.6/nammu-0.6.0.jar)
 and just double click on it to open it.
 
-##What is ORACC?
+## What is ORACC?
 ORACC is the [Open Richly Annotated Cuneiform Corpus](http://oracc.org).
 It provides open-access, standards-based publication platforms, research tools
 and teaching resources for Assyriology and ancient Near Eastern History,
@@ -18,7 +18,7 @@ run from University College London in collaboration with University of
 Pennsylvania (Philadelphia).
 
 
-##What is Nammu?
+## What is Nammu?
 Nammu is a desktop GUI that enables ORACC content creators to edit, check and
 upload transliterations of Sumerian texts in the form of text files in
 [ASCII Transliteration Format](http://oracc.museum.upenn.edu/doc/help/editinginatf/)
@@ -36,21 +36,23 @@ of ORACC, enabling more projects to adopt it.
 Nammu is currently being developed by the
 [UCL Research Software Development Group](https://www.ucl.ac.uk/research-it-services/about/research-software-development).
 
-<img src="./doc/mockups/nammu_0.5.png" align="center" width="70%">
+<img src="./doc/mockups/nammu_0.6.png" align="center" width="90%">
 
 
-## Validation of ATF files
+## Validation and lemmatisation of ATF files
 
 In order to validate ATF files, Nammu uses two approaches:
-* Online validation against ORACC server.
+* Online validation against ORACC server, configurable on the settings menu.
 * Offline validation using [pyORACC](https://github.com/oracc/pyoracc), the new
 ATF parser developed by UCL RSDT.
 
+Lemmatisation can only be done online with the ORACC server.
 
-#### Validation against the ORACC server
+
+#### Validation and lemmatisation against the ORACC server
 The ORACC server is hosted at University of Pennsylvania (Philadelphia) and
 maintained by [Prof. Steve Tinney](https://www.ling.upenn.edu/people/tinney).
-The ORACC server provides with SOAP web services for validation and lemmatisation
+The ORACC server provides SOAP web services for validation and lemmatisation
 of ATF files. Nammu acts as a SOAP client, requesting the server to validate
 and lemmatise ATF files, and then presents the server output in the GUI.
 
@@ -58,17 +60,17 @@ and lemmatise ATF files, and then presents the server output in the GUI.
 #### Validation with pyORACC
 Validation against the ORACC server requires the user to have Internet access.
 Since this is not always the case, the UCL RSDG is also developing
-an ATF parsing tool to provide with offline initial ATF validation.
+an ATF parsing tool to provide offline initial ATF validation.
 This tool is called pyORACC and you can find more information about it
 [here](https://github.com/oracc/pyoracc).
 
 Nammu uses pyORACC in two different ways:
 
-* Syntax highlighting: This feature allows for users to detect errors while they
+* __Syntax highlighting__: This feature allows for users to detect errors while they
 are typing the text. This type of validation helps users check for text
 correctness like spelling errors in keywords, word ordering in each line, etc.
 It won't however highlight errors in the transliterated words, lemmas or translations.
-* Offline validation (under development): Users can select to do an offline
+* __Offline validation__ (under development): Users can select to do an offline
 validation using pyORACC when they don't have Internet access. This will return
 error messages coming from pyORACC and presented in the GUI to guide the user
 on how to correct them.
@@ -77,11 +79,22 @@ on how to correct them.
 ## How to run Nammu
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/0.5.0/nammu-0.5.5.jar)
+[here](https://github.com/oracc/nammu/releases/download/0.6/nammu-0.6.0.jar)
 and just double click on it to open it and use it.
 
-If you find any problem trying to open it, it might be that you don't have Java
-installed. You can check if you do by opening a terminal and typing:
+If you find any problem trying to open it, have a look in the (Troubleshooting)[#known-problems-and-troubleshooting] section.
+
+## Getting help
+If you run into trouble, or have any questions or suggestions, you can get in
+touch with Nammu's developers by creating a new issue in this repository and
+telling us about your problem [here](https://github.com/oracc/nammu/issues/new).
+
+Please follow the guidelines to help us better understand and reproduce your
+problem.
+
+## Known problems and troubleshooting
+If you try to open Nammu and it doesn't work, it might be that you don't have
+Java installed. You can check if you do by opening a terminal and typing:
 
 `java`
 
@@ -96,32 +109,17 @@ If you keep having trouble, you can also run it from the command line, like this
 
 This will output a clearer log message about what the problem is.
 
-## Getting help
-If you run into trouble, or have any questions or suggestions, you can get in
-touch with Nammu's developers by creating a new issue in this repository and
-telling us about your problem [here](https://github.com/oracc/nammu/issues/new).
-
-Please follow the guidelines to help us better understand and reproduce your
-problem.
-
-## Known problems and features under development
-We are currently working on the next release of Nammu, which includes some new
-features as well as bug fixes.
-
-Here's a list of known bugs:
+### Known problems:
 * Nammu doesn't validate or lemmatise properly when filenames include a space.
 * Nammu is slow when files are large due to syntax highlighting on every key
-stroke.
-* A full list of issues can be found
-[here](https://github.com/oracc/nammu/issues).
+stroke. We are working on fixing this issue. As a temporary work around, it's
+possible to switch off syntax highlight by clicking on the corresponding toolbar
+button.
 
-Here's a list of new features being developed:
-* Line wrapping
-* JAR bundle and signature
-* Search/replace
-* Split view
+A full list of issues can be found [here](https://github.com/oracc/nammu/issues).
 
-If you have any other suggestions or comments on this, please let us know [here](https://github.com/oracc/nammu/issues/new).
+If you have any other suggestions, new features you'd like us to work on, or
+any other comment, please let us know by creating a new issue [here](https://github.com/oracc/nammu/issues/new).
 
 
 ## Nammu's configuration for advanced users:
@@ -134,10 +132,17 @@ by setting a new environment variable called `NAMMU_CONFIG_PATH` that points to
 the desired location where the `.nammu` folder and its contents will be stored.
 
 This folder will contain a log file with debug information output by Nammu and
-a YAML file containing some configuration on how the logging works.
+a [YAML file](https://github.com/oracc/nammu/blob/master/resources/config/logging.yaml)
+containing some configuration on how the logging works.
 
 You can see [here](https://github.com/oracc/nammu/blob/development/resources/config/logging.yaml)
 the default logging configuration.
+
+There is also [a configuration file](https://github.com/oracc/nammu/blob/master/resources/config/settings.yaml)
+for shortcuts, preferred working directory, preferred list of ORACC projects,
+etc. This will be fully editable from Nammu, but for now only working directory
+and lemmatisation server can be edited from the settings window.
+
 
 #### Notes on Nammu's software development
 
@@ -176,7 +181,7 @@ from previous executions:
 5. This will create Nammu's jar in the `target` folder. Then you can execute it
 like this:
  ```
- java -jar  target/original-nammu-0.5.5.jar
+ java -jar  target/nammu-0.6.0.jar
  ```
 
 If you find any problem or need more information, you can create an issue

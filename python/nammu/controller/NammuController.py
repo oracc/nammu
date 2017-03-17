@@ -1,5 +1,5 @@
 '''
-Copyright 2015, 2016 University College London.
+Copyright 2015 - 2017 University College London.
 
 This file is part of Nammu.
 
@@ -33,6 +33,7 @@ from ModelController import ModelController
 from ToolbarController import ToolbarController
 from NewAtfController import NewAtfController
 from FindController import FindController
+from EditSettingsController import EditSettingsController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
@@ -144,10 +145,10 @@ class NammuController(object):
             # 1. Last used, if any
             # 2. Value of config's working_dir
             # 3. Nammu's folder
-            if self.currentFilename:
-                default_path = os.path.dirname(self.currentFilename)
-            elif self.config['working_dir']['default']:
+            if self.config['working_dir']['default']:
                 default_path = self.config['working_dir']['default']
+            elif self.currentFilename:
+                default_path = os.path.dirname(self.currentFilename)
             else:
                 default_path = os.getcwd()
             fileChooser = JFileChooser(default_path)
@@ -460,10 +461,10 @@ class NammuController(object):
         '''
         # Build request.zip on the fly, pack all needed in it and send to
         # server
-        # TODO: Would be nice these are read from config file.
-        url = 'http://oracc.museum.upenn.edu'
-        port = 8085
-        url_dir = 'p'
+        server = self.config['servers']['default']
+        url = self.config['servers'][server]['url']
+        port = self.config['servers'][server]['port']
+        url_dir = self.config['servers'][server]['dir']
 
         # Create HTTP client and prepare all input arguments for request
         client = SOAPClient(url, port, url_dir, method='POST')
@@ -485,9 +486,11 @@ class NammuController(object):
         except RequestException as re:
             self.logger.error(
                         "Error when trying to send first HTTP POST request.")
-            self.logger.exception(str(re))
+            self.logger.debug(str(re))
             return
-
+        except Exception as e:
+            self.logger.debug(str(e))
+            return
         server_id = client.get_response_id()
 
         # Wait for server to prepare response
@@ -497,11 +500,12 @@ class NammuController(object):
             self.wait_for_response(client, server_id)
         except RequestException as re:
             self.logger.error("Error when trying to send HTTP GET request.")
-            self.logger.exception(str(re))
+            self.logger.debug(str(re))
             return
         except Exception as e:
             self.logger.error("Server error.")
-            self.logger.exception(str(e))
+            self.logger.debug(str(e))
+            return
 
         # Send new request to fetch results and server logs
         # TODO: This shouldn't need a new client, but a new request inside the
@@ -566,16 +570,17 @@ class NammuController(object):
         """
         try:
             client.send()
-        except Timeout:
-            self.logger.error("ORACC server timed out after 5 seconds.")
-            raise
-        except ConnectionError:
-            self.logger.error("Can't connect to ORACC server at %s.",
+        except (Timeout, ConnectTimeout):
+            self.logger.error('ORACC %s server timed out after 5 seconds.',
                               client.url)
-            raise
+            self.logger.error('You can try with a different server from the '
+                              'settings menu.')
+            raise Exception('Connetion to server %s timed out.', url)
+        except ConnectionError:
+            raise Exception("Can't connect to ORACC server at %s.",
+                            client.url)
         except HTTPError:
-            self.logger.error("ORACC server returned invalid HTTP response.")
-            raise
+            raise Exception("ORACC server returned invalid HTTP response.")
 
     def wait_for_response(self, client, server_id):
         """
@@ -644,11 +649,8 @@ class NammuController(object):
     def editSettings(self, event=None):
         '''
         Show settings window for edition.
-        TODO: ORACC Server URL should be in a config file editable from a
-        settings form.
-        TODO: Disable this button until functionality is implemented.
         '''
-        self.logger.debug("Changing settings...")
+        edit_settings_controller = EditSettingsController(self)
 
     def displayModelView(self, event=None):
         '''
