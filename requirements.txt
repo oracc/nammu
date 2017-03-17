@@ -1,0 +1,6 @@
+requests<=2.12.0
+pytest<=3.0
+pyyaml
+mako
+ply
+https://github.com/ucl/pyoracc/archive/master.tar.gz
