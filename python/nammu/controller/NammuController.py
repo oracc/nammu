@@ -1,5 +1,5 @@
 '''
-Copyright 2015, 2016 University College London.
+Copyright 2015 - 2017 University College London.
 
 This file is part of Nammu.
 
@@ -33,6 +33,7 @@ from ModelController import ModelController
 from ToolbarController import ToolbarController
 from NewAtfController import NewAtfController
 from FindController import FindController
+from EditSettingsController import EditSettingsController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
@@ -140,7 +141,13 @@ class NammuController(object):
         4. Display file name in title bar
         '''
         if self.handleUnsaved():
-            if self.currentFilename:
+            # The path that the file chooser should default to should be:
+            # 1. Last used, if any
+            # 2. Value of config's working_dir
+            # 3. Nammu's folder
+            if self.config['working_dir']['default']:
+                default_path = self.config['working_dir']['default']
+            elif self.currentFilename:
                 default_path = os.path.dirname(self.currentFilename)
             else:
                 default_path = os.getcwd()
@@ -163,6 +170,10 @@ class NammuController(object):
                 self.view.setTitle(basename)
 
             # TODO: Else, prompt user to choose again before closing
+
+            # Update settings with current file's path
+            self.update_config_element(self.get_working_dir(),
+                                       'default', 'working_dir')
 
     def readTextFile(self, filename):
         '''
@@ -212,11 +223,29 @@ class NammuController(object):
             self.logger.info("File %s successfully saved.",
                              self.currentFilename)
 
-        # Find project and add to setting.yaml as default
-        project = self.get_project()
-        if project:
-            if self.config['projects']['default'] != project:
-                self.config['projects']['default'] = [project]
+        # Find project and language and add to settings.yaml as default
+        self.update_config()
+
+    def update_config(self):
+        '''
+        Find project and language and add to settings.yaml as default.
+        '''
+        self.update_config_element(self.get_project(), 'default', 'projects')
+        self.update_config_element(self.get_language(), 'default', 'languages')
+        self.update_config_element(self.get_working_dir(),
+                                   'default',
+                                   'working_dir')
+
+    def update_config_element(self, value, element, group):
+        '''
+        Update local config with given values if they are not None.
+        '''
+        self.logger.debug("Trying to update settings' %s with value %s.",
+                          element, value)
+        if value:
+            if self.config[group][element] != value:
+                self.config[group][element] = value
+                self.logger.debug("Settings updated.")
                 save_yaml_config(self.config)
 
     def saveAsFile(self, event=None):
@@ -253,12 +282,8 @@ class NammuController(object):
                 self.logger.info("File %s successfully saved.",
                                  self.currentFilename)
 
-        # Find project and add to setting.yaml as default
-        project = self.get_project()
-        if project:
-            if self.config['projects']['default'] != project:
-                self.config['projects']['default'] = [project]
-                save_yaml_config(self.config)
+        # Find project and language and add to settings.yaml as default
+        self.update_config()
 
     def writeTextFile(self, filename, text):
         '''
@@ -436,10 +461,10 @@ class NammuController(object):
         '''
         # Build request.zip on the fly, pack all needed in it and send to
         # server
-        # TODO: Would be nice these are read from config file.
-        url = 'http://oracc.museum.upenn.edu'
-        port = 8085
-        url_dir = 'p'
+        server = self.config['servers']['default']
+        url = self.config['servers'][server]['url']
+        port = self.config['servers'][server]['port']
+        url_dir = self.config['servers'][server]['dir']
 
         # Create HTTP client and prepare all input arguments for request
         client = SOAPClient(url, port, url_dir, method='POST')
@@ -461,9 +486,11 @@ class NammuController(object):
         except RequestException as re:
             self.logger.error(
                         "Error when trying to send first HTTP POST request.")
-            self.logger.exception(str(re))
+            self.logger.debug(str(re))
             return
-
+        except Exception as e:
+            self.logger.debug(str(e))
+            return
         server_id = client.get_response_id()
 
         # Wait for server to prepare response
@@ -473,11 +500,12 @@ class NammuController(object):
             self.wait_for_response(client, server_id)
         except RequestException as re:
             self.logger.error("Error when trying to send HTTP GET request.")
-            self.logger.exception(str(re))
+            self.logger.debug(str(re))
             return
         except Exception as e:
             self.logger.error("Server error.")
-            self.logger.exception(str(e))
+            self.logger.debug(str(e))
+            return
 
         # Send new request to fetch results and server logs
         # TODO: This shouldn't need a new client, but a new request inside the
@@ -542,16 +570,17 @@ class NammuController(object):
         """
         try:
             client.send()
-        except Timeout:
-            self.logger.error("ORACC server timed out after 5 seconds.")
-            raise
-        except ConnectionError:
-            self.logger.error("Can't connect to ORACC server at %s.",
+        except (Timeout, ConnectTimeout):
+            self.logger.error('ORACC %s server timed out after 5 seconds.',
                               client.url)
-            raise
+            self.logger.error('You can try with a different server from the '
+                              'settings menu.')
+            raise Exception('Connetion to server %s timed out.', url)
+        except ConnectionError:
+            raise Exception("Can't connect to ORACC server at %s.",
+                            client.url)
         except HTTPError:
-            self.logger.error("ORACC server returned invalid HTTP response.")
-            raise
+            raise Exception("ORACC server returned invalid HTTP response.")
 
     def wait_for_response(self, client, server_id):
         """
@@ -620,11 +649,8 @@ class NammuController(object):
     def editSettings(self, event=None):
         '''
         Show settings window for edition.
-        TODO: ORACC Server URL should be in a config file editable from a
-        settings form.
-        TODO: Disable this button until functionality is implemented.
         '''
-        self.logger.debug("Changing settings...")
+        edit_settings_controller = EditSettingsController(self)
 
     def displayModelView(self, event=None):
         '''
@@ -723,6 +749,47 @@ class NammuController(object):
                                       "'#project: xxx/xxx'.")
 
         return project
+
+    def get_language(self):
+        '''
+        Search for language protocol in text content.
+        First try to parse it and get it from the parser.
+        If that fails, try to find it with re ("#atf: lang xxxx").
+        If that fails as well, ignore.
+        '''
+        language = None
+        lang_value = None
+        lang_str = "#atf: lang"
+
+        nammu_text = self.atfAreaController.getAtfAreaText()
+
+        if lang_str in nammu_text:
+            try:
+                parsed_atf = self.parse(nammu_text)
+                lang_value = getattr(parsed.text, 'language')
+            except:
+                # File can't be parsed but might still contain a project code
+                try:
+                    lang_value = nammu_text.split(lang_str)[1].split()[0]
+                except IndexError:
+                    pass
+
+        # We need to return the dictionary key and not the value :S
+        for key, value in self.config['languages'].iteritems():
+            if value == lang_value:
+                language = key
+
+        return language
+
+    def get_working_dir(self):
+        '''
+        Look up working dir where the current ATF file is.
+        That should be saved as default working_dir.
+        '''
+        working_dir = None
+        if self.currentFilename:
+            working_dir = os.path.dirname(self.currentFilename)
+        return working_dir
 
     def setup_logger(self):
         """

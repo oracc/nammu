@@ -1,5 +1,5 @@
 '''
-Copyright 2015, 2016 University College London.
+Copyright 2015 - 2017 University College London.
 
 This file is part of Nammu.
 
@@ -34,11 +34,11 @@ This is a compilation of methods to be used from all Nammu classes.
 
 
 def set_font():
-    """
+    '''
     Loads font from resources' ttf file.
     DejaVuSans doesn't work in Retina display screens properly, so check OS,
     if OSX then use Monaco instead.
-    """
+    '''
     if "mac" in System.getProperty("os.name").lower():
         font = Font("Monaco", Font.PLAIN, 14)
     else:

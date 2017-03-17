@@ -1,5 +1,5 @@
 '''
-Copyright 2015, 2016 University College London.
+Copyright 2015 - 2017 University College London.
 
 This file is part of Nammu.
 
@@ -28,7 +28,7 @@ import urllib
 from java.lang import System, ClassLoader
 from zipfile import ZipFile
 from logging import Formatter
-from requests.exceptions import RequestException
+from requests.exceptions import RequestException, ConnectTimeout
 from HTTPRequest import HTTPRequest
 import xml.etree.ElementTree as ET
 
@@ -62,7 +62,13 @@ class SOAPClient(object):
         self.logger.debug("Sending request to server at %s.", url)
         self.logger.debug("HTTP request headers sent: %s", headers)
         self.logger.debug("HTTP request body sent: %s", body)
-        self.response = requests.post(url, data=body, headers=headers)
+        try:
+            self.response = requests.post(url, data=body, headers=headers,
+                                          timeout=3)
+        except ConnectTimeout:
+            self.logger.error('Connection timed out when sending POST '
+                              'request.')
+            raise
 
     def get_response_text(self):
         return self.response.text

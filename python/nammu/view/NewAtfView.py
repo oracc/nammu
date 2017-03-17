@@ -1,5 +1,5 @@
 '''
-Copyright 2015, 2016 University College London.
+Copyright 2015 - 2017 University College London.
 
 This file is part of Nammu.
 
@@ -298,9 +298,15 @@ class NewAtfView(JDialog):
         panel = JPanel()
         layout = SpringLayout()
         panel.setLayout(layout)
+        # Get language list from settings.yaml, removing the default one from
+        # the list
+        languages = self.languages.keys()
+        languages.remove('default')
         # Create necessary components and add them to panel.
         language_label = JLabel('Language: ')
-        self.language_combo = JComboBox(self.languages.keys())
+        self.language_combo = JComboBox(languages)
+        # Set selected language to default
+        self.language_combo.setSelectedItem(self.languages['default'])
         tooltip_text = "Choose a language from the dropdown menu."
         help_label = self.build_help_label(tooltip_text)
         panel.add(language_label)

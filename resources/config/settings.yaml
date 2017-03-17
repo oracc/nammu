@@ -1,7 +1,8 @@
 ---
-version: 0.8
+version: 0.12
 
 languages:
+    default: Sumerian
     Early Akkadian: akk-x-earakk
     Old Akkadian: akk-x-oldakk
     Ur III Akkadian: akk-x-ur3akk
@@ -88,4 +89,17 @@ find_keystrokes:
     replace_one: VK_R
     replace_all: VK_A
 
-working_dir: None
+working_dir:
+    default: None
+
+servers:
+    default: upenn
+    munich: 
+        url: http://oracc.ub.uni-muenchen.de
+        port: 8085
+        dir: 'p'
+    upenn: 
+        url: http://oracc.museum.upenn.edu
+        port: 8085
+        dir: 'p'
+
