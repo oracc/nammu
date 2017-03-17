@@ -25,7 +25,6 @@ import logging
 import logging.config
 import requests
 import urllib
-import socket
 from java.lang import System, ClassLoader
 from zipfile import ZipFile
 from logging import Formatter
