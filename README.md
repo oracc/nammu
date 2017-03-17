@@ -82,7 +82,7 @@ To run Nammu on your computer, you can download it from
 [here](https://github.com/oracc/nammu/releases/download/0.6/nammu-0.6.0.jar)
 and just double click on it to open it and use it.
 
-If you find any problem trying to open it, have a look in the (Troubleshooting)[#known-problems-and-troubleshooting] section.
+If you find any problem trying to open it, have a look in the [Troubleshooting](#known-problems-and-troubleshooting) section.
 
 ## Getting help
 If you run into trouble, or have any questions or suggestions, you can get in
