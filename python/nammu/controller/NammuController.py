@@ -653,9 +653,6 @@ class NammuController(object):
     def editSettings(self, event=None):
         '''
         Show settings window for edition.
-        TODO: ORACC Server URL should be in a config file editable from a
-        settings form.
-        TODO: Disable this button until functionality is implemented.
         '''
         edit_settings_controller = EditSettingsController(self)
 
