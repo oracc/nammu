@@ -52,7 +52,7 @@ Lemmatisation can only be done online with the ORACC server.
 #### Validation and lemmatisation against the ORACC server
 The ORACC server is hosted at University of Pennsylvania (Philadelphia) and
 maintained by [Prof. Steve Tinney](https://www.ling.upenn.edu/people/tinney).
-The ORACC server provides with SOAP web services for validation and lemmatisation
+The ORACC server provides SOAP web services for validation and lemmatisation
 of ATF files. Nammu acts as a SOAP client, requesting the server to validate
 and lemmatise ATF files, and then presents the server output in the GUI.
 
@@ -60,7 +60,7 @@ and lemmatise ATF files, and then presents the server output in the GUI.
 #### Validation with pyORACC
 Validation against the ORACC server requires the user to have Internet access.
 Since this is not always the case, the UCL RSDG is also developing
-an ATF parsing tool to provide with offline initial ATF validation.
+an ATF parsing tool to provide offline initial ATF validation.
 This tool is called pyORACC and you can find more information about it
 [here](https://github.com/oracc/pyoracc).
 
@@ -82,7 +82,7 @@ To run Nammu on your computer, you can download it from
 [here](https://github.com/oracc/nammu/releases/download/0.6/nammu-0.6.0.jar)
 and just double click on it to open it and use it.
 
-If you find any problem trying to open it,
+If you find any problem trying to open it, have a look in the (Troubleshooting)[#known-problems-and-troubleshooting] section.
 
 ## Getting help
 If you run into trouble, or have any questions or suggestions, you can get in
@@ -135,13 +135,14 @@ This folder will contain a log file with debug information output by Nammu and
 a [YAML file](https://github.com/oracc/nammu/blob/master/resources/config/logging.yaml)
 containing some configuration on how the logging works.
 
+You can see [here](https://github.com/oracc/nammu/blob/development/resources/config/logging.yaml)
+the default logging configuration.
+
 There is also [a configuration file](https://github.com/oracc/nammu/blob/master/resources/config/settings.yaml)
 for shortcuts, preferred working directory, preferred list of ORACC projects,
 etc. This will be fully editable from Nammu, but for now only working directory
 and lemmatisation server can be edited from the settings window.
 
-You can see [here](https://github.com/oracc/nammu/blob/development/resources/config/logging.yaml)
-the default logging configuration.
 
 #### Notes on Nammu's software development
 
