@@ -76,16 +76,23 @@ class EditSettingsView(JDialog):
         panel = JPanel(GridBagLayout())
         constraints = GridBagConstraints()
         constraints.insets = Insets(10, 10, 10, 10)
+        panel = self.build_working_dir_panel(constraints, panel)
+        panel = self.build_servers_panel(constraints, panel)
+        return panel
 
-        # Working directory row: label + field + button
-        # This is for users to browse for their preferred default directory
-        # when opening/creating a new file.
+    def build_working_dir_panel(self, constraints, panel):
+        '''
+        Working directory row: label + field + button
+        This is for users to browse for their preferred default directory
+        when opening/creating a new file.
+        '''
         working_dir_label = JLabel("Working directory:")
         constraints.weightx = 0.30
         constraints.gridx = 0
         constraints.gridy = 0
         constraints.anchor = GridBagConstraints.EAST
         panel.add(working_dir_label, constraints)
+
         self.field = JTextField()
         self.field.setEditable(False)
         # Can't find an elegant way to default to something that would be
@@ -100,6 +107,7 @@ class EditSettingsView(JDialog):
         constraints.fill = GridBagConstraints.HORIZONTAL
         constraints.insets = Insets(10, 10, 10, 5)
         panel.add(self.field, constraints)
+
         constraints.fill = 0
         button = JButton("Browse", actionPerformed=self.browse)
         constraints.weightx = 0.10
@@ -107,15 +115,21 @@ class EditSettingsView(JDialog):
         constraints.gridy = 0
         constraints.insets = Insets(10, 0, 10, 10)
         panel.add(button, constraints)
-        constraints.insets = Insets(10, 10, 80, 10)
 
-        # Server location row: label + dropdown
-        # Contains a drop down with the servers to choose from.
+        return panel
+
+    def build_servers_panel(self, constraints, panel):
+        '''
+        Server location row: label + dropdown
+        Contains a drop down with the servers to choose from.
+        '''
+        constraints.insets = Insets(10, 10, 80, 10)
         server_label = JLabel("ORACC server location:")
         constraints.weightx = 0.30
         constraints.gridx = 0
         constraints.gridy = 1
         panel.add(server_label, constraints)
+
         self.combo = self.build_servers_combobox()
         constraints.weightx = 0.70
         constraints.gridx = 1
