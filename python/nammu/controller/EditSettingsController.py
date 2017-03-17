@@ -54,7 +54,7 @@ class EditSettingsController:
         # TODO: Validate new values introduced by user.
         # TODO: As of v0.6, only working_dir and servers are editable from the
         #       settings window. The other tabs for keystrokes, languages and
-        #       projects will be added later. 
+        #       projects will be added later.
         self.config['working_dir']['default'] = working_dir
         self.config['servers']['default'] = server
         self.controller.logger.debug("Settings updated.")

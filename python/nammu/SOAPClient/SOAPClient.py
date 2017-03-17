@@ -66,7 +66,8 @@ class SOAPClient(object):
             self.response = requests.post(url, data=body, headers=headers,
                                           timeout=3)
         except ConnectTimeout:
-            self.logger.error('Connection timed out when sending POST request.')
+            self.logger.error('Connection timed out when sending POST '
+                              'request.')
             raise
 
     def get_response_text(self):
