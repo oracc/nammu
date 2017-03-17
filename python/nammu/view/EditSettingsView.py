@@ -77,6 +77,9 @@ class EditSettingsView(JDialog):
         constraints = GridBagConstraints()
         constraints.insets = Insets(10, 10, 10, 10)
 
+        # Working directory row: label + field + button
+        # This is for users to browse for their preferred default directory
+        # when opening/creating a new file.
         working_dir_label = JLabel("Working directory:")
         constraints.weightx = 0.30
         constraints.gridx = 0
@@ -101,6 +104,8 @@ class EditSettingsView(JDialog):
         panel.add(button, constraints)
         constraints.insets = Insets(10, 10, 80, 10)
 
+        # Server location row: label + dropdown
+        # Contains a drop down with the servers to choose from.
         server_label = JLabel("ORACC server location:")
         constraints.weightx = 0.30
         constraints.gridx = 0
@@ -131,46 +136,6 @@ class EditSettingsView(JDialog):
         # Make default server the selected item in combo box.
         combo.setSelectedItem(self.servers['default'].split(':'))
         return combo
-
-    def build_servers_panel(self):
-        '''
-        Create panel that contains a drop down with the servers to choose from.
-        '''
-        panel = JPanel(FlowLayout())
-        label = JLabel("ORACC server location:")
-        panel.add(label)
-        self.combo = JComboBox()
-        # Go through list of servers and add to combo box.
-        for server in self.servers.keys():
-            if server != "default":
-                combo_item = "{}: {}:{}".format(server,
-                                                self.servers[server]['url'],
-                                                self.servers[server]['port'])
-                self.combo.addItem(combo_item)
-                # If this item is the default one, set it as selected
-                if server == self.servers['default']:
-                    self.combo.setSelectedItem(combo_item)
-        # Make default server the selected item in combo box.
-        self.combo.setSelectedItem(self.servers['default'].split(':'))
-        panel.add(self.combo)
-        panel.setBorder(EmptyBorder(10, 10, 80, 10))
-        return panel
-
-    def build_working_dir_panel(self):
-        '''
-        Creates a panel to select preferred working directory.
-        '''
-        panel = JPanel(FlowLayout())
-        label = JLabel("Working directory:")
-        panel.add(label)
-        self.field = JTextField(25)
-        self.field.setEditable(False)
-        self.field.setText(self.working_dir['default'])
-        panel.add(self.field)
-        button = JButton("Browse", actionPerformed=self.browse)
-        panel.add(button)
-        panel.setBorder(EmptyBorder(30, 10, 30, 10))
-        return panel
 
     def build_buttons_panel(self):
         '''
