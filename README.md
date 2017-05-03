@@ -84,6 +84,34 @@ and just double click on it to open it and use it.
 
 If you find any problem trying to open it, have a look in the [Troubleshooting](#known-problems-and-troubleshooting) section.
 
+## Default keystrokes
+
+There's a set of default keystrokes for all actions that can be done with Nammu:
+
+| Action | Keystroke |
+|--|--|
+|New File| Ctrl/Cmd + N|
+|Open File| Ctrl/Cmd + O|
+|Close File| Ctrl/Cmd + W|
+|Save As | Ctrl/Cmd + E|
+|Save File| Ctrl/Cmd + S|
+|Validate| Ctrl/Cmd + D|
+|Lemmatise|Ctrl/Cmd + L|
+|Undo| Ctrl/Cmd + Z|
+|Redo| Ctrl/Cmd + Y|
+|Find| Ctrl/Cmd + F|
+|Find next| Ctrl/Cmd + G |
+|Replace all | Ctrl/Cmd + A|
+|Replace one | Ctrl/Cmd + R|
+|Show Help| Ctrl/Cmd + H|
+|Split Editor Horizontally| Ctrl/Cmd + .|
+|Split Editor Vertically| Ctrl/Cmd + ;|
+|Syntax Highlight Switch| Ctrl/Cmd + T|
+
+
+These are in your settings file and will be editable from the settings menu on a later release. 
+  
+  
 ## Getting help
 If you run into trouble, or have any questions or suggestions, you can get in
 touch with Nammu's developers by creating a new issue in this repository and
