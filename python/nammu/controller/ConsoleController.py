@@ -18,6 +18,8 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from ..view.ConsoleView import ConsoleView
+from javax.swing.text import StyleConstants, SimpleAttributeSet
+from java.awt import Color
 
 
 class ConsoleController(object):
@@ -31,5 +33,15 @@ class ConsoleController(object):
         self.controller = mainControler
 
     def addText(self, text):
-        self.view.edit_area.append(text)
+        doc = self.view.edit_area.getDocument()
+
+        # Configure the style of console text
+        style = SimpleAttributeSet()
+        StyleConstants.setForeground(style, Color.WHITE)
+        StyleConstants.setBackground(style, Color.BLACK)
+        StyleConstants.setFontSize(style, 14)
+        StyleConstants.setFontFamily(style, "Courier New")
+        StyleConstants.setBold(style, True)
+
+        doc.insertString(doc.getLength(), text, style)
         self.view.scroll()

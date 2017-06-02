@@ -18,8 +18,9 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from java.awt import Font, BorderLayout, Color, Dimension
-from javax.swing import JTextArea, JScrollPane, JPanel, BorderFactory
+from javax.swing import JEditorPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultCaret
+from javax.swing.text.html import HTMLEditorKit
 
 
 class ConsoleView(JPanel):
@@ -43,15 +44,18 @@ class ConsoleView(JPanel):
         # window
         self.setLayout(BorderLayout())
 
-        # Create console-looking area
-        self.edit_area = JTextArea()
-        self.edit_area.setLineWrap(True)
-        self.edit_area.setWrapStyleWord(True)
+        # Initialise the HTMLEditorKit so we can create the JEditorPane with
+        # the html content type, which enables line wrapping
+        html = HTMLEditorKit()
+
+        # Create console-looking area html.getContentType(), None
+        self.edit_area = JEditorPane()
         self.edit_area.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        self.edit_area.font = Font("Courier New", Font.BOLD, 14)
         self.edit_area.background = Color.BLACK
         self.edit_area.foreground = Color.WHITE
 
+        #self.edit_area.setEditorKit(self.edit_area.createEditorKitForContentType("text/html"))
+        self.edit_area.setContentType("text/html")
         # Disable writing in the console
         self.edit_area.setEditable(False)
 
