@@ -54,7 +54,9 @@ class ConsoleView(JPanel):
         self.edit_area.background = Color.BLACK
         self.edit_area.foreground = Color.WHITE
 
-        #self.edit_area.setEditorKit(self.edit_area.createEditorKitForContentType("text/html"))
+        #editor_kit = self.edit_area.createEditorKitForContentType("text/html")
+        #self.edit_area.setEditorKit(editor_kit)
+
         self.edit_area.setContentType("text/html")
         # Disable writing in the console
         self.edit_area.setEditable(False)
