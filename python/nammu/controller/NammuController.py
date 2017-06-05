@@ -784,11 +784,17 @@ class NammuController(object):
     def get_working_dir(self):
         '''
         Look up working dir where the current ATF file is.
-        That should be saved as default working_dir.
+        If it's a new file, use default working_dir from settings.
+        If all else fails, set up working dir to current dir from which Nammu
+        was opened.
         '''
-        working_dir = None
         if self.currentFilename:
             working_dir = os.path.dirname(self.currentFilename)
+        else:
+            try:
+                working_dir = self.config['working_dir']['default']
+            except KeyError:
+                working_dir = os.getcwd()
         return working_dir
 
     def setup_logger(self):
