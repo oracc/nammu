@@ -150,7 +150,7 @@ class NammuController(object):
             elif self.currentFilename:
                 default_path = os.path.dirname(self.currentFilename)
             else:
-                default_path = os.getcwd()
+                default_path = self.get_working_dir()
             fileChooser = JFileChooser(default_path)
             file_filter = FileNameExtensionFilter("ATF files", ["atf"])
             fileChooser.setFileFilter(file_filter)
@@ -192,7 +192,7 @@ class NammuController(object):
         '''
         atfText = self.atfAreaController.getAtfAreaText()
         if not self.currentFilename:
-            fileChooser = JFileChooser(os.getcwd())
+            fileChooser = JFileChooser(self.get_working_dir())
             status = fileChooser.showSaveDialog(self.view)
             if status == JFileChooser.APPROVE_OPTION:
                 atfFile = fileChooser.getSelectedFile()
@@ -254,7 +254,7 @@ class NammuController(object):
         Also checks for project name, and if found, makes it default.
         '''
         atfText = self.atfAreaController.getAtfAreaText()
-        fileChooser = JFileChooser(os.getcwd())
+        fileChooser = JFileChooser(self.get_working_dir())
         status = fileChooser.showSaveDialog(self.view)
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
