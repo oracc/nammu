@@ -141,17 +141,7 @@ class NammuController(object):
         4. Display file name in title bar
         '''
         if self.handleUnsaved():
-            # The path that the file chooser should default to should be:
-            # 1. Last used, if any
-            # 2. Value of config's working_dir
-            # 3. Nammu's folder
-            if self.config['working_dir']['default']:
-                default_path = self.config['working_dir']['default']
-            elif self.currentFilename:
-                default_path = os.path.dirname(self.currentFilename)
-            else:
-                default_path = os.getcwd()
-            fileChooser = JFileChooser(default_path)
+            fileChooser = JFileChooser(self.get_working_dir())
             file_filter = FileNameExtensionFilter("ATF files", ["atf"])
             fileChooser.setFileFilter(file_filter)
             status = fileChooser.showDialog(self.view, "Choose file")
@@ -192,7 +182,7 @@ class NammuController(object):
         '''
         atfText = self.atfAreaController.getAtfAreaText()
         if not self.currentFilename:
-            fileChooser = JFileChooser(os.getcwd())
+            fileChooser = JFileChooser(self.get_working_dir())
             status = fileChooser.showSaveDialog(self.view)
             if status == JFileChooser.APPROVE_OPTION:
                 atfFile = fileChooser.getSelectedFile()
@@ -254,7 +244,7 @@ class NammuController(object):
         Also checks for project name, and if found, makes it default.
         '''
         atfText = self.atfAreaController.getAtfAreaText()
-        fileChooser = JFileChooser(os.getcwd())
+        fileChooser = JFileChooser(self.get_working_dir())
         status = fileChooser.showSaveDialog(self.view)
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
@@ -784,11 +774,17 @@ class NammuController(object):
     def get_working_dir(self):
         '''
         Look up working dir where the current ATF file is.
-        That should be saved as default working_dir.
+        If it's a new file, use default working_dir from settings.
+        If all else fails, set up working dir to current dir from which Nammu
+        was opened.
         '''
-        working_dir = None
         if self.currentFilename:
             working_dir = os.path.dirname(self.currentFilename)
+        else:
+            try:
+                working_dir = self.config['working_dir']['default']
+            except KeyError:
+                working_dir = os.getcwd()
         return working_dir
 
     def setup_logger(self):
