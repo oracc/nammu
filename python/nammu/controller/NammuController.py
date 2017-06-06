@@ -91,7 +91,8 @@ class NammuController(object):
                 "You can choose an option from the menu to open an ATF or "
                 "create a new one from a template, or just start typing in "
                 "the text area.")
-        self.logger.info("this is a test of a link: <a href=\"http://www.google.com\">Google</a>")
+        self.logger.info("this is a test of a link: "
+                         "<a href=\'http://www.google.com\'>Google</a>.")
 
         # Display Nammu's view
         self.view.display()

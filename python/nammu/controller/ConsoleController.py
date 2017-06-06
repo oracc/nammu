@@ -31,17 +31,14 @@ class ConsoleController(object):
         self.view = ConsoleView(self)
         # Will also need delegating to parent presenter
         self.controller = mainControler
+        # Need a record of previous messages so we can rebuild the html
+        self.console_record = []
 
     def addText(self, text):
-        doc = self.view.edit_area.getDocument()
+        # Wrap the new console message in p tags and add it to the record
+        self.console_record.append('<p>{0}</p>'.format(text))
 
-        # Configure the style of console text
-        style = SimpleAttributeSet()
-        StyleConstants.setForeground(style, Color.WHITE)
-        StyleConstants.setBackground(style, Color.BLACK)
-        StyleConstants.setFontSize(style, 14)
-        StyleConstants.setFontFamily(style, "Courier New")
-        StyleConstants.setBold(style, True)
-
-        doc.insertString(doc.getLength(), text, style)
-        self.view.scroll()
+        # Update the console with all of the messages, we cant just insert
+        # text as we have to insert within the <body> tags, so refreshing the
+        # console with a new html page is the best solution
+        self.view.edit_area.setText(''.join(self.console_record))

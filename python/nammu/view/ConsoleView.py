@@ -21,7 +21,13 @@ from java.awt import Font, BorderLayout, Color, Dimension
 from javax.swing import JEditorPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultCaret
 from javax.swing.text.html import HTMLEditorKit
+
 from javax.swing.event import HyperlinkListener
+
+from swingutils.events import addEventListener
+
+from javax.swing.event.HyperlinkEvent import EventType
+
 
 
 class ConsoleView(JPanel):
@@ -45,27 +51,30 @@ class ConsoleView(JPanel):
         # window
         self.setLayout(BorderLayout())
 
-        # Initialise the HTMLEditorKit so we can create the JEditorPane with
-        # the html content type, which enables line wrapping
-        html = HTMLEditorKit()
+        # Create console-looking area html.getContentType(), None
+        self.edit_area = JEditorPane()
 
-        # Create console-looking area
-        self.edit_area = JEditorPane(html.getContentType(), None)
+        # Although most of the styling is done using css, we need to set these
+        # properties to ensure the html is rendered properly in the console
         self.edit_area.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.edit_area.background = Color.BLACK
-        self.edit_area.foreground = Color.WHITE
+        self.edit_area.setContentType("text/html")
 
-        #editor_kit = self.edit_area.createEditorKitForContentType("text/html")
-        #self.edit_area.setEditorKit(editor_kit)
-
-        #self.edit_area.setContentType("text/html")
-        # Disable writing in the console
+        # Disable writing in the console - required to render hyperlinks
         self.edit_area.setEditable(False)
 
-        hll = HyperlinkListener()
+        # Here we use css to style the console and its text
+        # TODO: we can expose these parameters in the settings.yaml file to
+        # allow users to change font sizes etc for accessability
+        doc = self.edit_area.getDocument()
+        bodyRule = ("body { font-family: Courier New; font-size: 14 pt; "
+                    "font-weight: bold; background-color: #000000;"
+                    " color: #FFFFFF}")
+        doc.getStyleSheet().addRule(bodyRule)
 
-        self.edit_area.addHyperlinkListener(hll)
-
+        # Set up a hyperlink listener
+        listener = addEventListener(self.edit_area, HyperlinkListener,
+                                    'hyperlinkUpdate', self.handleEvent)
 
         # Will need scrolling controls
         scrollingText = JScrollPane(self.edit_area)
@@ -84,3 +93,10 @@ class ConsoleView(JPanel):
         '''
         length = self.edit_area.getDocument().getLength()
         self.edit_area.setCaretPosition(length)
+
+    def handleEvent(self, event):
+        '''
+        A simple event handler for clicked hyperlinks.
+        '''
+        if event.getEventType() is EventType.ACTIVATED:
+            print '\nClick\n'
