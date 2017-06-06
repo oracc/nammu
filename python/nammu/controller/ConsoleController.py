@@ -34,7 +34,7 @@ class ConsoleController(object):
 
     def addText(self, text):
         # Wrap the new console message in p tags and add it to the record
-        self.console_record.append('<p>{0}</p>'.format(text))
+        self.console_record.append('{0}<br/>'.format(text))
 
         # Update the console with all of the messages, we cant just insert
         # text as we have to insert within the <body> tags, so refreshing the

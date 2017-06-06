@@ -95,4 +95,5 @@ class ConsoleView(JPanel):
         A simple event handler for clicked hyperlinks.
         '''
         if event.getEventType() is EventType.ACTIVATED:
-            print '\nClick\n'
+            error_line = event.getDescription()
+            print error_line

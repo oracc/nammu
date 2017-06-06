@@ -91,8 +91,6 @@ class NammuController(object):
                 "You can choose an option from the menu to open an ATF or "
                 "create a new one from a template, or just start typing in "
                 "the text area.")
-        self.logger.info("this is a test of a link: "
-                         "<a href=\'http://www.google.com\'>Google</a>.")
 
         # Display Nammu's view
         self.view.display()
@@ -398,7 +396,7 @@ class NammuController(object):
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
-        '''
+
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
 
@@ -423,9 +421,6 @@ class NammuController(object):
             self.logger.debug("Validating ATF done.")
         else:
             self.logger.error("Please save file before trying to validate.")
-        '''
-        a = u'00atf/belsunu.atf:51:X001001: o 8: translation uses undefined label'
-        self.process_server_response(a, '', None)
 
     def lemmatise(self, event=None):
         '''
@@ -543,16 +538,17 @@ class NammuController(object):
         """
         # Check if there were any validation errors and pass them to the
         # ATF area to refresh syntax highlighting.
-        self.process_validation_errors(oracc_log)
+
         if oracc_log:
             # TODO: Prompt dialog.
             if autolem:
                 self.logger.info("The lemmatisation returned some "
-                                 "errors: \n%s",
-                                 oracc_log)
+                                 "errors: \n")
+                self.process_validation_errors(oracc_log)
             else:
-                self.logger.info("The server returned some errors: \n%s",
-                                 oracc_log)
+                self.logger.info("The server returned some errors: \n")
+                self.process_validation_errors(oracc_log)
+
             self.logger.info("Please, see highlighted areas and correct "
                              "errors.")
 
@@ -624,6 +620,10 @@ class NammuController(object):
         for line in oracc_log.splitlines():
             if ':' in line:
                 try:
+                    server_filename = line.split(':')[0]
+                except IndexError:
+                    continue
+                try:
                     line_number = line.split(':')[1]
                 except IndexError:
                     continue
@@ -638,14 +638,19 @@ class NammuController(object):
                 if line_number not in validation_errors_server.keys():
                     validation_errors_server[line_number] = []
                 validation_errors_server[line_number].append(error_message)
+            else:
+                summary_line = line
 
         validation_errors = {}
         for line_num, errors in validation_errors_server.iteritems():
-            error_message = "<html><font face=\"verdana\" size=\"3\">"
+            error_message = ''
             for error in errors:
-                error_message += "&#149; " + error + "<br/>"
-            error_message += "</font></html>"
+                error_message += error
+                self.logger.info('<a href=' + str(line_num) + '>' + server_filename + ':' + line_num + ':' + project_id + '</a>:' + error)
             validation_errors[line_num] = error_message
+
+        # Finally, write the servers summary line to the logger
+        self.logger.info(summary_line)
 
         # Refresh validation errors
         self.atfAreaController.set_validation_errors(validation_errors)
