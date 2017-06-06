@@ -398,7 +398,7 @@ class NammuController(object):
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
-
+        '''
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
 
@@ -423,6 +423,9 @@ class NammuController(object):
             self.logger.debug("Validating ATF done.")
         else:
             self.logger.error("Please save file before trying to validate.")
+        '''
+        a = u'00atf/belsunu.atf:51:X001001: o 8: translation uses undefined label'
+        self.process_server_response(a, '', None)
 
     def lemmatise(self, event=None):
         '''
@@ -620,12 +623,18 @@ class NammuController(object):
         validation_errors_server = {}
         for line in oracc_log.splitlines():
             if ':' in line:
-                line_number = line.split(':')[1]
+                try:
+                    line_number = line.split(':')[1]
+                except IndexError:
+                    continue
                 try:
                     project_id = line.split(':')[2]
                 except IndexError:
                     continue
-                error_message = line.split(project_id + ':')[1]
+                try:
+                    error_message = line.split(project_id + ':')[1]
+                except IndexError:
+                    continue
                 if line_number not in validation_errors_server.keys():
                     validation_errors_server[line_number] = []
                 validation_errors_server[line_number].append(error_message)
