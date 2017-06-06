@@ -3,4 +3,5 @@ pytest<3.0
 pyyaml
 mako
 ply
+swingutils
 https://github.com/ucl/pyoracc/archive/master.tar.gz
