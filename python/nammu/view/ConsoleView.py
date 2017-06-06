@@ -17,17 +17,13 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+from swingutils.events import addEventListener
+
 from java.awt import Font, BorderLayout, Color, Dimension
 from javax.swing import JEditorPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultCaret
-from javax.swing.text.html import HTMLEditorKit
-
 from javax.swing.event import HyperlinkListener
-
-from swingutils.events import addEventListener
-
 from javax.swing.event.HyperlinkEvent import EventType
-
 
 
 class ConsoleView(JPanel):

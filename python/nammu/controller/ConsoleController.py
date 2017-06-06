@@ -18,8 +18,6 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from ..view.ConsoleView import ConsoleView
-from javax.swing.text import StyleConstants, SimpleAttributeSet
-from java.awt import Color
 
 
 class ConsoleController(object):
