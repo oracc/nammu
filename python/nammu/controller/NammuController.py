@@ -430,7 +430,6 @@ class NammuController(object):
         Don't lemmatise if file doesn't validate.
         '''
         # Clear previous log in Nammu's console
-        self.consoleController.view.edit_area.setText("")
         self.consoleController.clearConsole()
 
         # Clear tooltips from last validation
