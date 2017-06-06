@@ -40,3 +40,9 @@ class ConsoleController(object):
         # text as we have to insert within the <body> tags, so refreshing the
         # console with a new html page is the best solution
         self.view.edit_area.setText(''.join(self.console_record))
+
+    def clearConsole(self):
+        '''
+        Method to clear the console and console_record
+        '''
+        self.console_record = []

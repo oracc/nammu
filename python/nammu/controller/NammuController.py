@@ -394,7 +394,7 @@ class NammuController(object):
         However, the intention is to replace this with validation by pyoracc.
         '''
         # Clear previous log in Nammu's console
-        self.consoleController.view.edit_area.setText("")
+        self.consoleController.clearConsole()
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
@@ -431,6 +431,7 @@ class NammuController(object):
         '''
         # Clear previous log in Nammu's console
         self.consoleController.view.edit_area.setText("")
+        self.consoleController.clearConsole()
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
