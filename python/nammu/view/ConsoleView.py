@@ -111,6 +111,6 @@ class ConsoleView(JPanel):
             # this would need a caret listener to be constructed.
             for i in xrange(2):
                 atfCont.setCaretPosition(pos[0] + i)
-    
+
             # Return focus to the editor window
             atfCont.edit_area.requestFocusInWindow()
