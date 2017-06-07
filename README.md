@@ -183,6 +183,10 @@ JAR files can be run in any platform as long as the
 [Java Virtual Machine](https://en.wikipedia.org/wiki/Java_virtual_machine)
 has been installed. It doesn't require any other extra configuration.
 
+### Requirements
+
+Nammu is designed for and tested on Java 8. It is not currently possible to build the jar file using Java 7 due to problems with `jython-swingutils`. For more information on this issue and to follow progress in resolving it check out [this issue](https://github.com/oracc/nammu/issues/240).
+
 #### Contributors
 
 If you want to contribute to the code, or you want to install and run the code
