@@ -646,7 +646,11 @@ class NammuController(object):
             error_message = ''
             for error in errors:
                 error_message += error
-                self.logger.info('<a href=' + str(line_num) + '>' + server_filename + ':' + line_num + ':' + project_id + '</a>:' + error)
+                self.logger.info('<a href={0}>{1}:{0}:{2}</a>:{3}'
+                                 .format(line_num,
+                                         server_filename,
+                                         project_id,
+                                         error))
             validation_errors[line_num] = error_message
 
         # Finally, write the servers summary line to the logger
