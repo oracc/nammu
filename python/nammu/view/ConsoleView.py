@@ -47,7 +47,7 @@ class ConsoleView(JPanel):
         # window
         self.setLayout(BorderLayout())
 
-        # Create console-looking area html.getContentType(), None
+        # Create console-looking area
         self.edit_area = JEditorPane()
 
         # Although most of the styling is done using css, we need to set these
@@ -96,10 +96,21 @@ class ConsoleView(JPanel):
         '''
         if event.getEventType() is EventType.ACTIVATED:
 
-            # Fixing off by one error in line nos
-            error_line = int(event.getDescription()) + 1
-
             atfCont = self.controller.controller.atfAreaController
+
+            error_line = int(event.getDescription())
             text = atfCont.getAtfAreaText()
             pos = atfCont.getPositionFromLine(text, error_line)
-            atfCont.setCaretPosition(pos[0])
+
+            # pos[0] gives the position of the final character on the previous
+            # line, so add 1 char to move the caret to the start of error_line
+            # The method is called twice to catch the edge case where the user
+            # has the caret in the correct location prior to the click
+            # resulting in the screen not scrolling to the error line.
+            # This would be done with some logic around getCaretPosition(), but
+            # this would need a caret listener to be constructed.
+            for i in xrange(2):
+                atfCont.setCaretPosition(pos[0] + i)
+    
+            # Return focus to the editor window
+            atfCont.edit_area.requestFocusInWindow()
