@@ -95,5 +95,11 @@ class ConsoleView(JPanel):
         A simple event handler for clicked hyperlinks.
         '''
         if event.getEventType() is EventType.ACTIVATED:
-            error_line = event.getDescription()
-            print error_line
+
+            # Fixing off by one error in line nos
+            error_line = int(event.getDescription()) + 1
+
+            atfCont = self.controller.controller.atfAreaController
+            text = atfCont.getAtfAreaText()
+            pos = atfCont.getPositionFromLine(text, error_line)
+            atfCont.setCaretPosition(pos[0])
