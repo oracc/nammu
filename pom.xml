@@ -138,7 +138,6 @@
 						<param>pyyaml</param>
 						<param>mako</param>
 						<param>ply</param>
-						<param>jython-swingutils</param>
 						<param>https://github.com/ucl/pyoracc/archive/master.tar.gz</param>
 					</libraries>
 				</configuration>
