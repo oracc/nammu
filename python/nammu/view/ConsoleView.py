@@ -17,9 +17,13 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+from swingutils.events import addEventListener
+
 from java.awt import Font, BorderLayout, Color, Dimension
-from javax.swing import JTextArea, JScrollPane, JPanel, BorderFactory
+from javax.swing import JEditorPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultCaret
+from javax.swing.event import HyperlinkListener
+from javax.swing.event.HyperlinkEvent import EventType
 
 
 class ConsoleView(JPanel):
@@ -44,16 +48,29 @@ class ConsoleView(JPanel):
         self.setLayout(BorderLayout())
 
         # Create console-looking area
-        self.edit_area = JTextArea()
-        self.edit_area.setLineWrap(True)
-        self.edit_area.setWrapStyleWord(True)
-        self.edit_area.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        self.edit_area.font = Font("Courier New", Font.BOLD, 14)
-        self.edit_area.background = Color.BLACK
-        self.edit_area.foreground = Color.WHITE
+        self.edit_area = JEditorPane()
 
-        # Disable writing in the console
+        # Although most of the styling is done using css, we need to set these
+        # properties to ensure the html is rendered properly in the console
+        self.edit_area.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
+        self.edit_area.background = Color.BLACK
+        self.edit_area.setContentType("text/html")
+
+        # Disable writing in the console - required to render hyperlinks
         self.edit_area.setEditable(False)
+
+        # Here we use css to style the console and its text
+        # TODO: we can expose these parameters in the settings.yaml file to
+        # allow users to change font sizes etc for accessability
+        doc = self.edit_area.getDocument()
+        bodyRule = ("body { font-family: Courier New; font-size: 14 pt; "
+                    "font-weight: bold; background-color: #000000;"
+                    " color: #FFFFFF}")
+        doc.getStyleSheet().addRule(bodyRule)
+
+        # Set up a hyperlink listener
+        listener = addEventListener(self.edit_area, HyperlinkListener,
+                                    'hyperlinkUpdate', self.handleEvent)
 
         # Will need scrolling controls
         scrollingText = JScrollPane(self.edit_area)
@@ -72,3 +89,28 @@ class ConsoleView(JPanel):
         '''
         length = self.edit_area.getDocument().getLength()
         self.edit_area.setCaretPosition(length)
+
+    def handleEvent(self, event):
+        '''
+        A simple event handler for clicked hyperlinks.
+        '''
+        if event.getEventType() is EventType.ACTIVATED:
+
+            atfCont = self.controller.controller.atfAreaController
+
+            error_line = int(event.getDescription())
+            text = atfCont.getAtfAreaText()
+            pos = atfCont.getPositionFromLine(text, error_line)
+
+            # pos[0] gives the position of the final character on the previous
+            # line, so add 1 char to move the caret to the start of error_line
+            # The method is called twice to catch the edge case where the user
+            # has the caret in the correct location prior to the click
+            # resulting in the screen not scrolling to the error line.
+            # This would be done with some logic around getCaretPosition(), but
+            # this would need a caret listener to be constructed.
+            for i in xrange(2):
+                atfCont.setCaretPosition(pos[0] + i)
+
+            # Return focus to the editor window
+            atfCont.edit_area.requestFocusInWindow()

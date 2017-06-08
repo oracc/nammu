@@ -5,7 +5,7 @@
 
 	<groupId>uk.ac.ucl.rc.development.oracc</groupId>
 	<artifactId>nammu</artifactId>
-	<version>0.6.0</version>
+	<version>0.7.0</version>
 	<packaging>jar</packaging>
 
 	<name>nammu</name>
@@ -138,6 +138,7 @@
 						<param>pyyaml</param>
 						<param>mako</param>
 						<param>ply</param>
+						<param>jython-swingutils</param>
 						<param>https://github.com/ucl/pyoracc/archive/master.tar.gz</param>
 					</libraries>
 				</configuration>

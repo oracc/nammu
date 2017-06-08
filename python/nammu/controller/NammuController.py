@@ -382,7 +382,7 @@ class NammuController(object):
         However, the intention is to replace this with validation by pyoracc.
         '''
         # Clear previous log in Nammu's console
-        self.consoleController.view.edit_area.setText("")
+        self.consoleController.clearConsole()
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
@@ -418,7 +418,7 @@ class NammuController(object):
         Don't lemmatise if file doesn't validate.
         '''
         # Clear previous log in Nammu's console
-        self.consoleController.view.edit_area.setText("")
+        self.consoleController.clearConsole()
 
         # Clear tooltips from last validation
         self.atfAreaController.clearToolTips()
@@ -528,16 +528,18 @@ class NammuController(object):
         """
         # Check if there were any validation errors and pass them to the
         # ATF area to refresh syntax highlighting.
-        self.process_validation_errors(oracc_log)
+        self.atfAreaController.set_validation_errors({})
+
         if oracc_log:
             # TODO: Prompt dialog.
             if autolem:
                 self.logger.info("The lemmatisation returned some "
-                                 "errors: \n%s",
-                                 oracc_log)
+                                 "errors: \n")
+                self.process_validation_errors(oracc_log)
             else:
-                self.logger.info("The server returned some errors: \n%s",
-                                 oracc_log)
+                self.logger.info("The server returned some errors: \n")
+                self.process_validation_errors(oracc_log)
+
             self.logger.info("Please, see highlighted areas and correct "
                              "errors.")
 
@@ -605,26 +607,32 @@ class NammuController(object):
         Reads the log from the oracc server from the validation, and refreshes
         the dictionary with line numbers and error messages.
         """
-        validation_errors_server = {}
+        validation_errors = {}
         for line in oracc_log.splitlines():
             if ':' in line:
-                line_number = line.split(':')[1]
                 try:
+                    server_filename = line.split(':')[0]
+                    line_number = line.split(':')[1]
                     project_id = line.split(':')[2]
+                    error_message = line.split(project_id + ':')[1]
                 except IndexError:
                     continue
-                error_message = line.split(project_id + ':')[1]
-                if line_number not in validation_errors_server.keys():
-                    validation_errors_server[line_number] = []
-                validation_errors_server[line_number].append(error_message)
 
-        validation_errors = {}
-        for line_num, errors in validation_errors_server.iteritems():
-            error_message = "<html><font face=\"verdana\" size=\"3\">"
-            for error in errors:
-                error_message += "&#149; " + error + "<br/>"
-            error_message += "</font></html>"
-            validation_errors[line_num] = error_message
+                if line_number not in validation_errors.keys():
+                    validation_errors[line_number] = ''
+
+                formatted_err = ('<a href={0}>{1}:{0}:{2}</a>:{3}'
+                                 .format(line_number,
+                                         server_filename,
+                                         project_id,
+                                         error_message))
+                validation_errors[line_number] += formatted_err
+                self.logger.info(formatted_err)
+            else:
+                summary_line = line
+
+        # Finally, write the servers summary line to the logger
+        self.logger.info(summary_line)
 
         # Refresh validation errors
         self.atfAreaController.set_validation_errors(validation_errors)

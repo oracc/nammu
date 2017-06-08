@@ -25,6 +25,7 @@ from ..view.LineNumbersArea import LineNumbersArea
 from ..view.AtfEditArea import AtfEditArea
 from ..view.SyntaxHighlighter import SyntaxHighlighter
 import TextLineNumber
+import re
 
 
 class AtfAreaController(object):
@@ -182,3 +183,16 @@ class AtfAreaController(object):
         length = len(self.getAtfAreaText())
         self.syntax_highlighter._highlight_match(0, length, Color.white)
         self.syntax_highlighter.syntax_highlight()
+
+    def getPositionFromLine(self, text, line_num):
+        '''
+        Given a block of text and a line number, return a tuple containing
+        the caret position at the start and end of the given line.
+        '''
+        compiled = re.compile(r"\n")
+        textiter = compiled.finditer(text)
+        if line_num != 1:
+            pos = [m.start() for m in textiter][line_num - 2:line_num]
+        else:
+            pos = [0, textiter.next().start()]
+        return pos

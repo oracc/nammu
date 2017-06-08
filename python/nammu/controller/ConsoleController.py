@@ -29,7 +29,20 @@ class ConsoleController(object):
         self.view = ConsoleView(self)
         # Will also need delegating to parent presenter
         self.controller = mainControler
+        # Need a record of previous messages so we can rebuild the html
+        self.console_record = []
 
     def addText(self, text):
-        self.view.edit_area.append(text)
-        self.view.scroll()
+        # Wrap the new console message in p tags and add it to the record
+        self.console_record.append('{0}<br/>'.format(text.encode('utf-8')))
+
+        # Update the console with all of the messages, we cant just insert
+        # text as we have to insert within the <body> tags, so refreshing the
+        # console with a new html page is the best solution
+        self.view.edit_area.setText(''.join(self.console_record))
+
+    def clearConsole(self):
+        '''
+        Method to clear the console and console_record
+        '''
+        self.console_record = []
