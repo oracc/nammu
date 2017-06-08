@@ -102,7 +102,7 @@ class ConsoleView(JPanel):
             text = atfCont.getAtfAreaText()
             pos = atfCont.getPositionFromLine(text, error_line)
 
-            # pos[0] gives the position of the final character on the previous
+            # pos gives the position of the final character on the previous
             # line, so add 1 char to move the caret to the start of error_line
             # The method is called twice to catch the edge case where the user
             # has the caret in the correct location prior to the click
@@ -110,7 +110,7 @@ class ConsoleView(JPanel):
             # This would be done with some logic around getCaretPosition(), but
             # this would need a caret listener to be constructed.
             for i in xrange(2):
-                atfCont.setCaretPosition(pos[0] + i)
+                atfCont.setCaretPosition(pos + i)
 
             # Return focus to the editor window
             atfCont.edit_area.requestFocusInWindow()

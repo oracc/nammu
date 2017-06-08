@@ -192,7 +192,7 @@ class AtfAreaController(object):
         compiled = re.compile(r"\n")
         textiter = compiled.finditer(text)
         if line_num != 1:
-            pos = [m.start() for m in textiter][line_num - 2:line_num]
+            pos = [m.start() for m in textiter][line_num - 2]
         else:
-            pos = [0, textiter.next().start()]
+            pos = 0
         return pos
