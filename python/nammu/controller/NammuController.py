@@ -538,7 +538,7 @@ class NammuController(object):
         """
         # Check if there were any validation errors and pass them to the
         # ATF area to refresh syntax highlighting.
-        self.process_validation_errors(oracc_log)
+        self.atfAreaController.set_validation_errors({})
 
         if oracc_log:
             # TODO: Prompt dialog.
@@ -617,7 +617,7 @@ class NammuController(object):
         Reads the log from the oracc server from the validation, and refreshes
         the dictionary with line numbers and error messages.
         """
-        validation_errors_server = {}
+        validation_errors = {}
         for line in oracc_log.splitlines():
             if ':' in line:
                 try:
@@ -628,23 +628,18 @@ class NammuController(object):
                 except IndexError:
                     continue
 
-                if line_number not in validation_errors_server.keys():
-                    validation_errors_server[line_number] = []
-                validation_errors_server[line_number].append(error_message)
+                if line_number not in validation_errors.keys():
+                    validation_errors[line_number] = ''
+
+                formatted_err = ('<a href={0}>{1}:{0}:{2}</a>:{3}'
+                                             .format(line_number,
+                                             server_filename,
+                                             project_id,
+                                             error_message))
+                validation_errors[line_number] += formatted_err
+                self.logger.info(formatted_err)
             else:
                 summary_line = line
-
-        validation_errors = {}
-        for line_num, errors in validation_errors_server.iteritems():
-            error_message = ''
-            for error in errors:
-                error_message += error
-                self.logger.info('<a href={0}>{1}:{0}:{2}</a>:{3}'
-                                 .format(line_num,
-                                         server_filename,
-                                         project_id,
-                                         error))
-            validation_errors[line_num] = error_message
 
         # Finally, write the servers summary line to the logger
         self.logger.info(summary_line)
