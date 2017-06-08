@@ -132,8 +132,9 @@ class AtfAreaController(object):
         '''
         Calls to copy, paste and cut methods are just passed to text area.
         '''
-        if name in ('copy', 'paste', 'cut'):
-            return getattr(self.view.edit_area, name)
+        if name in ('copy', 'paste', 'cut', 'getSelectedText',
+                    'getSelectionStart'):
+            return getattr(self.edit_area, name)
 
     def syntax_highlight(self):
         '''
@@ -151,18 +152,6 @@ class AtfAreaController(object):
         Toggles split editor view.
         '''
         self.view.toggle_split(split_orientation)
-
-    def getSelectedText(self):
-        '''
-        Returns user selected text.
-        '''
-        return self.edit_area.getSelectedText()
-
-    def getSelectionStart(self):
-        '''
-        Returns position at which user selection starts.
-        '''
-        return self.edit_area.getSelectionStart()
 
     def replaceSelection(self, text):
         '''
