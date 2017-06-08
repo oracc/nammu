@@ -621,20 +621,12 @@ class NammuController(object):
             if ':' in line:
                 try:
                     server_filename = line.split(':')[0]
-                except IndexError:
-                    continue
-                try:
                     line_number = line.split(':')[1]
-                except IndexError:
-                    continue
-                try:
                     project_id = line.split(':')[2]
-                except IndexError:
-                    continue
-                try:
                     error_message = line.split(project_id + ':')[1]
                 except IndexError:
                     continue
+
                 if line_number not in validation_errors_server.keys():
                     validation_errors_server[line_number] = []
                 validation_errors_server[line_number].append(error_message)
