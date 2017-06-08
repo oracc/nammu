@@ -632,10 +632,10 @@ class NammuController(object):
                     validation_errors[line_number] = ''
 
                 formatted_err = ('<a href={0}>{1}:{0}:{2}</a>:{3}'
-                                             .format(line_number,
-                                             server_filename,
-                                             project_id,
-                                             error_message))
+                                 .format(line_number,
+                                         server_filename,
+                                         project_id,
+                                         error_message))
                 validation_errors[line_number] += formatted_err
                 self.logger.info(formatted_err)
             else:
