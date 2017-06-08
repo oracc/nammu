@@ -538,6 +538,7 @@ class NammuController(object):
         """
         # Check if there were any validation errors and pass them to the
         # ATF area to refresh syntax highlighting.
+        self.process_validation_errors(oracc_log)
 
         if oracc_log:
             # TODO: Prompt dialog.
