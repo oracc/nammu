@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import re
+
 from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
 
@@ -53,6 +55,9 @@ class AtfEditArea(JTextPane):
                     # validation errors.
                     return None
                 else:
+                    # Use this regex to strip the hyperlink tags before
+                    # displaying the tooltip
+                    err_msg = re.sub('<.+?>', '', err_msg)
                     return err_msg.decode('utf-8')
 
     def get_line_num(self, position):
