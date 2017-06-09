@@ -171,12 +171,8 @@ class SyntaxHighlighter:
                     attribs = self.error_attribs[defaultcolor]
                 else:
                     attribs = self.attribs[defaultcolor]
-                if len(text) > 0:
-                    # Only bother to get the line position if there is text
-                    atfCont = self.controller.controller.atfAreaController
-                    pos = atfCont.getPositionFromLine(text, line_num)
-                else:
-                    pos = 0
+                atfCont = self.controller.controller.atfAreaController
+                pos = atfCont.getPositionFromLine(text, line_num)
                 self.styledoc.setCharacterAttributes(pos,
                                                      len(line) + 1,
                                                      attribs,
@@ -241,12 +237,8 @@ class SyntaxHighlighter:
                 attribs = self.error_attribs[defaultcolor]
             else:
                 attribs = self.attribs[defaultcolor]
-            if len(text) > 0:
-                # Only bother to get the line position if there is text
-                atfCont = self.controller.controller.atfAreaController
-                pos = atfCont.getPositionFromLine(text, line_num)
-            else:
-                pos = 0
+            atfCont = self.controller.controller.atfAreaController
+            pos = atfCont.getPositionFromLine(text, line_num)
             self.styledoc.setCharacterAttributes(pos[0],
                                                  len(line) + 1,
                                                  attribs,
