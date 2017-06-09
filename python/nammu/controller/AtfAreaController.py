@@ -171,13 +171,14 @@ class AtfAreaController(object):
 
     def getPositionFromLine(self, text, line_num):
         '''
-        Given a block of text and a line number, return a tuple containing
-        the caret position at the start and end of the given line.
+        Given a block of text and a line number, return the caret position
+        at the start of the given line.
         '''
-        compiled = re.compile(r"\n")
-        textiter = compiled.finditer(text)
-        if line_num != 1:
-            pos = [m.start() for m in textiter][line_num - 2:line_num]
+        if len(text) > 0 and line_num != 1:
+            compiled = re.compile(r"\n")
+            textiter = compiled.finditer(text)
+            pos = [m.start() for m in textiter][line_num - 2]
         else:
-            pos = [0, textiter.next().start()]
+            pos = 0
+
         return pos
