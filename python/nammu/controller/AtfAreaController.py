@@ -130,10 +130,19 @@ class AtfAreaController(object):
 
     def __getattr__(self, name):
         '''
-        Calls to copy, paste and cut methods are just passed to text area.
+        Calls to copy, paste and cut, getSelectedText, getSelectionStart
+        methods are just passed to text area. replaceSelection and
+        setCaretPosition require the wrapper to handle their args.
         '''
-        if name in ('copy', 'paste', 'cut'):
-            return getattr(self.view.edit_area, name)
+        if name in ('copy', 'paste', 'cut', 'getSelectedText',
+                    'getSelectionStart'):
+            return getattr(self.edit_area, name)
+
+        elif name in ('replaceSelection', 'setCaretPosition'):
+
+            def wrapper(*args, **kw):
+                return getattr(self.edit_area, name)(*args, **kw)
+            return wrapper
 
     def syntax_highlight(self):
         '''
@@ -151,30 +160,6 @@ class AtfAreaController(object):
         Toggles split editor view.
         '''
         self.view.toggle_split(split_orientation)
-
-    def getSelectedText(self):
-        '''
-        Returns user selected text.
-        '''
-        return self.edit_area.getSelectedText()
-
-    def getSelectionStart(self):
-        '''
-        Returns position at which user selection starts.
-        '''
-        return self.edit_area.getSelectionStart()
-
-    def replaceSelection(self, text):
-        '''
-        Replace user selected text with given text.
-        '''
-        self.edit_area.replaceSelection(text)
-
-    def setCaretPosition(self, pos):
-        '''
-        Place caret in given position.
-        '''
-        self.edit_area.setCaretPosition(pos)
 
     def restore_highlight(self):
         '''
