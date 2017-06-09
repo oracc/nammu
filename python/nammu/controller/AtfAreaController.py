@@ -189,11 +189,11 @@ class AtfAreaController(object):
         Given a block of text and a line number, return the caret position
         at the start of the given line.
         '''
-        pos = 0
-        if len(text) > 0:
-            if line_num != 1:
-                compiled = re.compile(r"\n")
-                textiter = compiled.finditer(text)
-                pos = [m.start() for m in textiter][line_num - 2]
+        if len(text) > 0 and line_num != 1:
+            compiled = re.compile(r"\n")
+            textiter = compiled.finditer(text)
+            pos = [m.start() for m in textiter][line_num - 2]
+        else:
+            pos = 0
 
         return pos

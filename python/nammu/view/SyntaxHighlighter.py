@@ -239,7 +239,7 @@ class SyntaxHighlighter:
                 attribs = self.attribs[defaultcolor]
             atfCont = self.controller.controller.atfAreaController
             pos = atfCont.getPositionFromLine(text, line_num)
-            self.styledoc.setCharacterAttributes(pos[0],
+            self.styledoc.setCharacterAttributes(pos,
                                                  len(line) + 1,
                                                  attribs,
                                                  True)
