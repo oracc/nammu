@@ -166,19 +166,18 @@ class SyntaxHighlighter:
             splittext = text.split('\n')
 
             # Keep background style from validation errors
-            line_num = 1
-            for line in splittext:
+            for line_num, line in enumerate(splittext, start=1):
                 if str(line_num) in error_lines:
                     attribs = self.error_attribs[defaultcolor]
                 else:
                     attribs = self.attribs[defaultcolor]
-                textiter = re.finditer(r"\n", text)
-                if line_num != 1:
-                    pos = [m.start() for m in textiter][line_num - 2:line_num]
+                if len(text) > 0:
+                    # Only bother to get the line position if there is text
+                    atfCont = self.controller.controller.atfAreaController
+                    pos = atfCont.getPositionFromLine(text, line_num)
                 else:
-                    pos = [0, len(line)]
-                line_num += 1
-                self.styledoc.setCharacterAttributes(pos[0],
+                    pos = 0
+                self.styledoc.setCharacterAttributes(pos,
                                                      len(line) + 1,
                                                      attribs,
                                                      True)
@@ -237,18 +236,17 @@ class SyntaxHighlighter:
         splittext = text.split('\n')
 
         # Keep background style from validation errors
-        line_num = 1
-        for line in splittext:
+        for line_num, line in enumerate(splittext, start=1):
             if str(line_num) in self.controller.validation_errors.keys():
                 attribs = self.error_attribs[defaultcolor]
             else:
                 attribs = self.attribs[defaultcolor]
-            textiter = re.finditer(r"\n", text)
-            if line_num != 1:
-                pos = [m.start() for m in textiter][line_num - 2:line_num]
+            if len(text) > 0:
+                # Only bother to get the line position if there is text
+                atfCont = self.controller.controller.atfAreaController
+                pos = atfCont.getPositionFromLine(text, line_num)
             else:
-                pos = [0, len(line)]
-            line_num += 1
+                pos = 0
             self.styledoc.setCharacterAttributes(pos[0],
                                                  len(line) + 1,
                                                  attribs,
