@@ -232,7 +232,7 @@ class SyntaxHighlighter:
         # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
 
-        # Break test into separate lines
+        # Break text into separate lines
         splittext = text.split('\n')
 
         # Keep background style from validation errors
