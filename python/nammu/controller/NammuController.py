@@ -315,6 +315,8 @@ class NammuController(object):
                 else:
                     return False
             else:
+                # Clear previous log in Nammu's console and write warning
+                self.consoleController.clearConsole()
                 self.logger.info('{0} cannot be found.'
                                  .format(self.currentFilename))
                 return True
