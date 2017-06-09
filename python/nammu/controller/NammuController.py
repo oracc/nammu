@@ -317,6 +317,7 @@ class NammuController(object):
             else:
                 self.logger.info('{0} cannot be found.'
                                  .format(self.currentFilename))
+                return True
 
         elif nammuText:
             return True
