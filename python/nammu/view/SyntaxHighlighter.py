@@ -22,7 +22,7 @@ from java.awt import Color
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
 from ..utils import set_font
-
+from swingutils.threads.threadpool import TaskExecutor
 
 class SyntaxHighlighter:
     def __init__(self, controller):
@@ -34,6 +34,7 @@ class SyntaxHighlighter:
         self.styledoc = controller.edit_area_styledoc
         self.lexer = AtfLexer(skipinvalid=True).lexer
         self.syntax_highlight_on = True
+        self.executor = TaskExecutor()
 
     def setup_attribs(self):
         '''
@@ -142,6 +143,9 @@ class SyntaxHighlighter:
         self.tokencolorlu['default'] = ('black', False)
 
     def syntax_highlight(self):
+        self.executor.runBackground(self.background_highlight_on)
+
+    def background_highlight_on(self):
         '''
         Implements syntax highlighting based on pyoracc.
         If there are validation errors, highlight lines with errors.
@@ -211,6 +215,9 @@ class SyntaxHighlighter:
                                                          True)
 
     def syntax_highlight_off(self):
+        self.executor.runBackground(self.background_highlight_off)
+
+    def background_highlight_off(self):
         '''
         Remove coloring.
         TODO: Make this properly!
