@@ -308,11 +308,19 @@ class NammuController(object):
         nammuText = self.atfAreaController.getAtfAreaText()
 
         if self.currentFilename:
-            savedText = self.readTextFile(self.currentFilename)
-            if savedText != nammuText:
-                return True
+            if os.path.isfile(self.currentFilename):
+                savedText = self.readTextFile(self.currentFilename)
+                if savedText != nammuText:
+                    return True
+                else:
+                    return False
             else:
-                return False
+                # Clear previous log in Nammu's console and write warning
+                self.consoleController.clearConsole()
+                self.logger.info('{0} cannot be found.'
+                                 .format(self.currentFilename))
+                return True
+
         elif nammuText:
             return True
 

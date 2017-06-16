@@ -130,10 +130,19 @@ class AtfAreaController(object):
 
     def __getattr__(self, name):
         '''
-        Calls to copy, paste and cut methods are just passed to text area.
+        Calls to copy, paste and cut, getSelectedText, getSelectionStart
+        methods are just passed to text area. replaceSelection and
+        setCaretPosition require the wrapper to handle their args.
         '''
-        if name in ('copy', 'paste', 'cut'):
-            return getattr(self.view.edit_area, name)
+        if name in ('copy', 'paste', 'cut', 'getSelectedText',
+                    'getSelectionStart'):
+            return getattr(self.edit_area, name)
+
+        elif name in ('replaceSelection', 'setCaretPosition'):
+
+            def wrapper(*args, **kw):
+                return getattr(self.edit_area, name)(*args, **kw)
+            return wrapper
 
     def syntax_highlight(self):
         '''
@@ -152,30 +161,6 @@ class AtfAreaController(object):
         '''
         self.view.toggle_split(split_orientation)
 
-    def getSelectedText(self):
-        '''
-        Returns user selected text.
-        '''
-        return self.edit_area.getSelectedText()
-
-    def getSelectionStart(self):
-        '''
-        Returns position at which user selection starts.
-        '''
-        return self.edit_area.getSelectionStart()
-
-    def replaceSelection(self, text):
-        '''
-        Replace user selected text with given text.
-        '''
-        self.edit_area.replaceSelection(text)
-
-    def setCaretPosition(self, pos):
-        '''
-        Place caret in given position.
-        '''
-        self.edit_area.setCaretPosition(pos)
-
     def restore_highlight(self):
         '''
         Turn off syntax highlight of matches.
@@ -186,13 +171,14 @@ class AtfAreaController(object):
 
     def getPositionFromLine(self, text, line_num):
         '''
-        Given a block of text and a line number, return a tuple containing
-        the caret position at the start and end of the given line.
+        Given a block of text and a line number, return the caret position
+        at the start of the given line.
         '''
-        compiled = re.compile(r"\n")
-        textiter = compiled.finditer(text)
-        if line_num != 1:
-            pos = [m.start() for m in textiter][line_num - 2:line_num]
+        if len(text) > 0 and line_num != 1:
+            compiled = re.compile(r"\n")
+            textiter = compiled.finditer(text)
+            pos = [m.start() for m in textiter][line_num - 2]
         else:
-            pos = [0, textiter.next().start()]
+            pos = 0
+
         return pos
