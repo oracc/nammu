@@ -97,8 +97,8 @@ class SyntaxHighlighter:
         # Accent Colors
         self.colorlut['yellow'] = (181, 137, 0)
         self.colorlut['orange'] = (203, 75, 22)
-        self.colorlut['red'] = (220,  50, 47)
-        self.colorlut['magenta'] = (211,  54, 130)
+        self.colorlut['red'] = (220, 50, 47)
+        self.colorlut['magenta'] = (211, 54, 130)
         self.colorlut['violet'] = (108, 113, 196)
         self.colorlut['blue'] = (38, 139, 210)
         self.colorlut['cyan'] = (42, 161, 152)
