@@ -202,7 +202,7 @@ class SyntaxHighlighter:
                         color = self.tokencolorlu[tok.type][0]
                         styleline = self.tokencolorlu[tok.type][1]
                     if styleline:
-                        mylength = len(splittext[tok.lineno-1])
+                        mylength = len(splittext[tok.lineno - 1])
                     else:
                         mylength = len(tok.value)
                     if str(tok.lineno) in error_lines:
