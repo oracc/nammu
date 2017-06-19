@@ -31,6 +31,7 @@ from javax.swing.border import EmptyBorder
 class EditSettingsView(JDialog):
     def __init__(self, controller, working_dir, servers, keystrokes,
                  languages, projects):
+        fontsize = '14'
         self.logger = logging.getLogger("NammuController")
         self.setAlwaysOnTop(True)
         self.controller = controller
@@ -39,6 +40,7 @@ class EditSettingsView(JDialog):
         self.keystrokes = keystrokes
         self.languages = languages
         self.projects = projects
+        self.fontsize = fontsize
         self.pane = self.getContentPane()
 
     def build(self):
@@ -78,6 +80,7 @@ class EditSettingsView(JDialog):
         constraints.insets = Insets(10, 10, 10, 10)
         panel = self.build_working_dir_panel(constraints, panel)
         panel = self.build_servers_panel(constraints, panel)
+        panel = self.build_console_font_panel(constraints, panel)
         return panel
 
     def build_working_dir_panel(self, constraints, panel):
@@ -137,6 +140,36 @@ class EditSettingsView(JDialog):
         constraints.gridwidth = 2
         constraints.fill = GridBagConstraints.HORIZONTAL
         panel.add(self.combo, constraints)
+
+        return panel
+
+    def build_console_font_panel(self, constraints, panel):
+        '''
+
+
+        '''
+        working_dir_label = JLabel("Console font size:")
+        constraints.weightx = 0.30
+        constraints.gridx = 0
+        constraints.gridy = 2
+        constraints.anchor = GridBagConstraints.EAST
+        panel.add(working_dir_label, constraints)
+
+        self.field = JTextField()
+        self.field.setEditable(True)
+        # Can't find an elegant way to default to something that would be
+        # crossplatform, and I can't leave the default field empty.
+        if self.fontsize:
+            self.field.setText(self.fontsize)
+        else:
+            self.field.setText('16')
+
+        constraints.weightx = 0.60
+        constraints.gridx = 1
+        constraints.gridy = 2
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        constraints.insets = Insets(10, 10, 10, 5)
+        panel.add(self.field, constraints)
 
         return panel
 
