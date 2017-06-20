@@ -53,14 +53,11 @@ class SyntaxHighlighter:
             StyleConstants.setForeground(attribs,
                                          Color(*self.colorlut[color]))
             # Add yellow background to error line styling
-            # White if no error, otherwise it'll keep on being yellow forever
             if error:
                 StyleConstants.setBackground(attribs, Color.yellow)
             elif match:
                 # TODO: Change to another background colour Eleanor likes
                 StyleConstants.setBackground(attribs, Color.yellow)
-            #else:
-            #    StyleConstants.setBackground(attribs, Color.white)
             return attribs
 
         # Create two dictionaries of attributes, one per possible bg colour:
@@ -148,10 +145,9 @@ class SyntaxHighlighter:
     def syntax_highlight_thread(self):
         '''
         Implements syntax highlighting based on pyoracc.
-        If there are validation errors, highlight lines with errors.
         If user is doing find/replace, highlight matches.
         '''
-        #error_lines = self.controller.validation_errors.keys()
+
         if self.syntax_highlight_on:
             # Get text from styledoc
             area_length = self.styledoc.getLength()
@@ -168,19 +164,6 @@ class SyntaxHighlighter:
 
             # Break text into separate lines
             splittext = text.split('\n')
-
-            # Keep background style from validation errors
-            '''for line_num, line in enumerate(splittext, start=1):
-                #if str(line_num) in error_lines:
-                #    attribs = self.error_attribs[defaultcolor]
-                #else:
-                attribs = self.attribs[defaultcolor]
-                atfCont = self.controller.controller.atfAreaController
-                pos = atfCont.getPositionFromLine(text, line_num)
-                self.styledoc.setCharacterAttributes(pos,
-                                                     len(line) + 1,
-                                                     attribs,
-                                                     True)'''
 
         # Go through each token in the text, check which type it is to assign
         # a colour to it, check which position it is to set up default or
@@ -205,9 +188,7 @@ class SyntaxHighlighter:
                         mylength = len(splittext[tok.lineno - 1])
                     else:
                         mylength = len(tok.value)
-                    #if str(tok.lineno) in error_lines:
-                    #    attribs = self.error_attribs[color]
-                    #else:
+
                     attribs = self.attribs[color]
                     self.styledoc.setCharacterAttributes(tok.lexpos,
                                                          mylength,
@@ -217,14 +198,15 @@ class SyntaxHighlighter:
     def highlight_errors(self, text):
         splittext = text.split('\n')
         error_lines = self.controller.validation_errors.keys()
+        atfCont = self.controller.controller.atfAreaController
         color = self.tokencolorlu['default'][0]
         for i, line in enumerate(splittext, start=1):
             if str(i) in error_lines:
-                pos = self.controller.controller.atfAreaController.getPositionFromLine(text, i)
+                pos = atfCont.getPositionFromLine(text, i)
                 self.styledoc.setCharacterAttributes(pos,
                                                      len(line) + 1,
                                                      self.error_attribs[color],
-                                                     False)  # F merges styles?
+                                                     False)  # F merges styles
 
     def syntax_highlight_off(self):
         self.executor.runBackground(self.syntax_highlight_off_thread)
@@ -238,18 +220,8 @@ class SyntaxHighlighter:
         area_length = self.styledoc.getLength()
         text = self.styledoc.getText(0, area_length)
 
-        '''
-        # Reset lexer and parse text
-        self.lexer.input(text)
-        self.lexer.lineno = 1
-        while self.lexer.current_state() != 'INITIAL':
-            self.lexer.pop_state()'''
-
         # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
-
-        # Break text into separate lines
-        #splittext = text.split('\n')
 
         self.styledoc.setCharacterAttributes(0,
                                              area_length + 1,
@@ -259,20 +231,6 @@ class SyntaxHighlighter:
         # HERE WE WILL NEED TO RE-CALL THE ERROR HIGHLIGTING IF
         # WE WANT IT TO NOT BE REMOVED WHEN THE SYNTAX BUTTON IS TOGGLED
         self.highlight_errors(text)
-
-        '''
-        # Keep background style from validation errors
-        for line_num, line in enumerate(splittext, start=1):
-            #if str(line_num) in self.controller.validation_errors.keys():
-            #    attribs = self.error_attribs[defaultcolor]
-            #else:
-            attribs = self.attribs[defaultcolor]
-            atfCont = self.controller.controller.atfAreaController
-            pos = atfCont.getPositionFromLine(text, line_num)
-            self.styledoc.setCharacterAttributes(pos,
-                                                 len(line) + 1,
-                                                 attribs,
-                                                 True)'''
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
