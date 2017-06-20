@@ -37,6 +37,7 @@ class SyntaxHighlighter:
         self.syntax_highlight_on = True
         self.highlight_errors_on = True  # Expose this param
         self.executor = TaskExecutor()
+        self.no_of_lines = -1
 
     def setup_attribs(self):
         '''
@@ -194,21 +195,48 @@ class SyntaxHighlighter:
                                                          attribs,
                                                          False)
 
+    def error_wrapper(self, cursor_line):
+        pass
+
     def highlight_errors(self, text):
         '''
         Highlight lines which contain errors
         '''
-        splittext = text.split('\n')
+
         error_lines = self.controller.validation_errors.keys()
-        atfCont = self.controller.controller.atfAreaController
-        color = self.tokencolorlu['default'][0]
-        for i, line in enumerate(splittext, start=1):
-            if str(i) in error_lines:
-                pos = atfCont.getPositionFromLine(text, i)
-                self.styledoc.setCharacterAttributes(pos,
-                                                     len(line) + 1,
-                                                     self.error_attribs[color],
-                                                     False)  # F merges styles
+        cursor_line = 8
+        tmp = {}
+        if error_lines:
+
+            splittext = text.split('\n')
+            error_lines_int = [int(a) for a in error_lines]
+            if len(splittext) == self.no_of_lines or self.no_of_lines == -1:
+                atfCont = self.controller.controller.atfAreaController
+                color = self.tokencolorlu['default'][0]
+                for i in error_lines_int:
+                    pos = atfCont.getPositionFromLine(text, i)
+                    self.styledoc.setCharacterAttributes(
+                        pos,
+                        len(splittext[i - 1]) + 1,
+                        self.error_attribs[color],
+                        False)  # False merges styles
+            else:
+                if cursor_line > max(error_lines_int):
+                    pass
+                else:
+                    for q, err in enumerate(error_lines_int):
+                        if err > cursor_line:
+                            error_lines_int[q] += len(splittext) - self.no_of_lines
+
+                            # rebuild self.controller.validation_errors.keys()
+                            tmp[str(error_lines_int[q])] = self.controller.validation_errors[str(err)]
+
+                    self.controller.validation_errors = tmp
+                    self.no_of_lines = len(splittext)
+
+                    self.highlight_errors(text)
+
+            self.no_of_lines = len(splittext)
 
     def syntax_highlight_off(self):
         self.executor.runBackground(self.syntax_highlight_off_thread)

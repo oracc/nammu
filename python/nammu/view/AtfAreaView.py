@@ -128,9 +128,15 @@ class AtfAreaKeyListener(KeyListener):
         # Make sure we only syntax highlight when the key pressed is not an
         # action key (i.e. arrows, F1, ...) or is not shift, ctrl, alt, caps
         # lock or cmd.
-        if ((not ke.isActionKey()) and
-                (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
+        if ke.getKeyCode() == 10:
             self.controller.syntax_highlight()
+
+            #cursor_line = 0
+            #self.controller.syntax_highlighter.highlight_errors(self.controller.getAtfAreaText(), cursor_line)
+        else:
+            if ((not ke.isActionKey()) and
+                    (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
+                self.controller.syntax_highlight()
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.
