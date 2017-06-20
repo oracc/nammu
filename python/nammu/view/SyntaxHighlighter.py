@@ -24,6 +24,7 @@ from javax.swing.text import SimpleAttributeSet
 from ..utils import set_font
 from swingutils.threads.threadpool import TaskExecutor
 
+
 class SyntaxHighlighter:
     def __init__(self, controller):
         self.controller = controller
