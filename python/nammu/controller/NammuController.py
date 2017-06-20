@@ -417,6 +417,7 @@ class NammuController(object):
                             self.currentFilename)
 
             self.logger.debug("Validating ATF done.")
+            self.atfAreaController.syntax_highlighter.highlight_errors(self.atfAreaController.getAtfAreaText())
         else:
             self.logger.error("Please save file before trying to validate.")
 
