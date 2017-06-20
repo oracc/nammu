@@ -34,6 +34,7 @@ class SyntaxHighlighter:
         self.styledoc = controller.edit_area_styledoc
         self.lexer = AtfLexer(skipinvalid=True).lexer
         self.syntax_highlight_on = True
+        self.highlight_errors_on = True  # Expose this param
         self.executor = TaskExecutor()
 
     def setup_attribs(self):
@@ -104,7 +105,7 @@ class SyntaxHighlighter:
 
     def setup_syntax_highlight_tokens(self):
         '''
-        Assings colours depending on type of token.
+        Assigns colours depending on type of token.
         '''
         self.tokencolorlu = {}
         self.tokencolorlu['AMPERSAND'] = ('green', True)
@@ -145,13 +146,14 @@ class SyntaxHighlighter:
     def syntax_highlight_thread(self):
         '''
         Implements syntax highlighting based on pyoracc.
-        If user is doing find/replace, highlight matches.
         '''
-
         if self.syntax_highlight_on:
             # Get text from styledoc
             area_length = self.styledoc.getLength()
             text = self.styledoc.getText(0, area_length)
+
+            # Break text into separate lines
+            splittext = text.split('\n')
 
             # Reset lexer and parse text
             self.lexer.input(text)
@@ -162,16 +164,12 @@ class SyntaxHighlighter:
             # Reset all styling
             defaultcolor = self.tokencolorlu['default'][0]
 
-            # Break text into separate lines
-            splittext = text.split('\n')
-
         # Go through each token in the text, check which type it is to assign
-        # a colour to it, check which position it is to set up default or
-        # error background, etc.
+        # a colour to it.
         if self.syntax_highlight_on:
             for tok in self.lexer:
                 if tok.type in self.tokencolorlu:
-                    if type(self.tokencolorlu[tok.type]) is dict:
+                    if isinstance(self.tokencolorlu[tok.type], dict):
                         # the token should be styled differently depending
                         # on state
                         try:
@@ -196,6 +194,9 @@ class SyntaxHighlighter:
                                                          False)
 
     def highlight_errors(self, text):
+        '''
+        Highlight lines which contain errors
+        '''
         splittext = text.split('\n')
         error_lines = self.controller.validation_errors.keys()
         atfCont = self.controller.controller.atfAreaController
@@ -213,8 +214,8 @@ class SyntaxHighlighter:
 
     def syntax_highlight_off_thread(self):
         '''
-        Remove coloring.
-        TODO: Make this properly!
+        Remove all text styling, resetting to default.
+        If highlight_errors_on==true, the error highlighting will be reapplied.
         '''
         # Get text from styledoc
         area_length = self.styledoc.getLength()
@@ -230,7 +231,8 @@ class SyntaxHighlighter:
 
         # HERE WE WILL NEED TO RE-CALL THE ERROR HIGHLIGTING IF
         # WE WANT IT TO NOT BE REMOVED WHEN THE SYNTAX BUTTON IS TOGGLED
-        self.highlight_errors(text)
+        if self.highlight_errors_on:
+            self.highlight_errors(text)
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''

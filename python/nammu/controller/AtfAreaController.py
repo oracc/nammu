@@ -148,6 +148,7 @@ class AtfAreaController(object):
         '''
         Short hand for syntax highlighting.
         '''
+        self.syntax_highlighter.syntax_highlight_off()
         self.syntax_highlighter.syntax_highlight()
 
     def highlight_matches(self, matches, offset, current_match=None):
