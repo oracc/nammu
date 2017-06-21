@@ -37,7 +37,8 @@ class SyntaxHighlighter:
         self.syntax_highlight_on = True
         self.highlight_errors_on = True  # Expose this param
         self.executor = TaskExecutor()
-        self.no_of_lines = -1
+        self.no_of_lines = 15
+        #self.no_of_lines.append(self.current_line_count())
 
     def setup_attribs(self):
         '''
@@ -196,34 +197,62 @@ class SyntaxHighlighter:
                                                          False)
 
     def error_wrapper(self, cursor_line):
+        '''
+        Start here, need to pull the functionality highlighting the error lines
+        out of the below method. This should get around the issues of having to
+        pass around the text and the cursor position.
+        '''
         pass
 
-    def highlight_errors(self, text):
+    def current_line_count(self):
         '''
-        Highlight lines which contain errors
+        Helper function to get the number of lines in the text area.
         '''
 
+        area_length = self.styledoc.getLength()
+        text = self.styledoc.getText(0, area_length)
+        splittext = text.split('\n')
+
+        return len(splittext)
+
+    def highlight_errors_simple(self, text):
+
         error_lines = self.controller.validation_errors.keys()
-        cursor_line = 8
-        tmp = {}
+
         if error_lines:
 
             splittext = text.split('\n')
-            error_lines_int = [int(a) for a in error_lines]
-            if len(splittext) == self.no_of_lines or self.no_of_lines == -1:
-                atfCont = self.controller.controller.atfAreaController
-                color = self.tokencolorlu['default'][0]
-                for i in error_lines_int:
-                    pos = atfCont.getPositionFromLine(text, i)
-                    self.styledoc.setCharacterAttributes(
-                        pos,
-                        len(splittext[i - 1]) + 1,
-                        self.error_attribs[color],
-                        False)  # False merges styles
+
+            atfCont = self.controller.controller.atfAreaController
+            color = self.tokencolorlu['default'][0]
+            for i_ in error_lines:
+                i = int(i_)
+                pos = atfCont.getPositionFromLine(text, i)
+                self.styledoc.setCharacterAttributes(
+                    pos,
+                    len(splittext[i - 1]) + 1,
+                    self.error_attribs[color],
+                    False)  # False merges styles
+
+            #self.no_of_lines.append(self.current_line_count())
+            #self.no_of_lines = self.current_line_count()
+
+    def update_errors(self, text, cursor_line):
+        error_lines = self.controller.validation_errors.keys()
+        print error_lines
+        if error_lines:
+
+            splittext = text.split('\n')
+            print len(splittext), self.no_of_lines
+            if len(splittext) == self.no_of_lines:
+                self.highlight_errors_simple(text)
+
             else:
+                error_lines_int = [int(a) for a in error_lines]
                 if cursor_line > max(error_lines_int):
                     pass
                 else:
+                    tmp = {}
                     for q, err in enumerate(error_lines_int):
                         if err > cursor_line:
                             error_lines_int[q] += len(splittext) - self.no_of_lines
@@ -232,11 +261,10 @@ class SyntaxHighlighter:
                             tmp[str(error_lines_int[q])] = self.controller.validation_errors[str(err)]
 
                     self.controller.validation_errors = tmp
-                    self.no_of_lines = len(splittext)
 
-                    self.highlight_errors(text)
-
-            self.no_of_lines = len(splittext)
+                    self.highlight_errors_simple(text)
+                    #self.no_of_lines.append(self.current_line_count())
+                    self.no_of_lines = self.current_line_count()
 
     def syntax_highlight_off(self):
         self.executor.runBackground(self.syntax_highlight_off_thread)
@@ -261,7 +289,7 @@ class SyntaxHighlighter:
         # HERE WE WILL NEED TO RE-CALL THE ERROR HIGHLIGTING IF
         # WE WANT IT TO NOT BE REMOVED WHEN THE SYNTAX BUTTON IS TOGGLED
         if self.highlight_errors_on:
-            self.highlight_errors(text)
+            self.highlight_errors_simple(text)
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''

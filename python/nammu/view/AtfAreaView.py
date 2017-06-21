@@ -129,10 +129,11 @@ class AtfAreaKeyListener(KeyListener):
         # action key (i.e. arrows, F1, ...) or is not shift, ctrl, alt, caps
         # lock or cmd.
         if ke.getKeyCode() == 10:
+            print 'return!'
             self.controller.syntax_highlight()
 
-            #cursor_line = 0
-            #self.controller.syntax_highlighter.highlight_errors(self.controller.getAtfAreaText(), cursor_line)
+            cursor_line = 8
+            self.controller.syntax_highlighter.update_errors(self.controller.getAtfAreaText(), cursor_line)
         else:
             if ((not ke.isActionKey()) and
                     (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
