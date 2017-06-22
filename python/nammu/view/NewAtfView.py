@@ -433,24 +433,42 @@ class NewAtfView(JDialog):
         self.dispose()
 
     def create_template(self, event):
+        '''
+        Put together user selected elements of the template following ATF
+        file format.
+        '''
+        # &-line
+        # E.g. &X001001 = JCS 48, 089
         and_line = "{} = {}".format(self.left_field.getText().encode('utf-8'),
                                     self.right_field.getText().encode('utf-8'))
+
+        # Project line
+        # E.g. #project: cams/gkab
+        # E.g. #project: rimanum
         project_line = "#project: {}".format(
                             self.left_combo.getSelectedItem().encode('utf-8'))
         if self.right_combo.getSelectedItem():
             project_line = "{}/{}".format(
                             project_line,
                             self.right_combo.getSelectedItem().encode('utf-8'))
+
+        # Language line
+        # E.g. #atf: lang akk-x-stdbab
         language = self.language_combo.getSelectedItem()
         language_code = self.languages[language]
 
+        # Protocol line/s
+        # E.g. #atf: use unicode
+        protocols = ''
+        for protocol in self.protocols:
+            protocols += '#atf: use {}\n'.format(protocol)
+
+        # Put together all lines to create the template and show in ATF area
         self.controller.template = ('{}\n'
                                     '{}\n'
                                     '#atf: lang {}\n'
-                                    '#atf: use unicode\n'.format(and_line,
-                                                                 project_line,
-                                                                 language_code
-                                                                 )
+                                    '{}\n'.format(and_line, project_line,
+                                                   language_code, protocols)
                                     )
         self.controller.show_template()
         self.dispose()
