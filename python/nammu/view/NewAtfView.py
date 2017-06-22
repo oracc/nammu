@@ -429,7 +429,7 @@ class NewAtfView(JDialog):
         self.dispose()
 
     def blank(self, event):
-        self.controller.set_template()
+        self.controller.show_template()
         self.dispose()
 
     def create_template(self, event):
@@ -452,7 +452,7 @@ class NewAtfView(JDialog):
                                                                  language_code
                                                                  )
                                     )
-        self.controller.set_template()
+        self.controller.show_template()
         self.dispose()
 
 

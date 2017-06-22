@@ -33,6 +33,6 @@ class NewAtfController:
                                self.protocols)
         self.view.display()
 
-    def set_template(self):
+    def show_template(self):
         self.controller.atfAreaController.setAtfAreaText(
                                                 self.template.decode('utf-8'))
