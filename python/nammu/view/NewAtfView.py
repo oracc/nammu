@@ -468,7 +468,7 @@ class NewAtfView(JDialog):
                                     '{}\n'
                                     '#atf: lang {}\n'
                                     '{}\n'.format(and_line, project_line,
-                                                   language_code, protocols)
+                                                  language_code, protocols)
                                     )
         self.controller.show_template()
         self.dispose()
