@@ -208,12 +208,9 @@ class SyntaxHighlighter:
         '''
         Helper function to get the number of lines in the text area.
         '''
+        text = self.styledoc.getText(0, self.styledoc.getLength())
 
-        area_length = self.styledoc.getLength()
-        text = self.styledoc.getText(0, area_length)
-        splittext = text.split('\n')
-
-        return len(splittext)
+        return text.count('\n')
 
     def highlight_errors_simple(self, text):
 
