@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
-import re
 from pyoracc.atf.atflex import AtfLexer
 from java.awt import Color
 from javax.swing.text import StyleContext, StyleConstants
@@ -196,21 +195,13 @@ class SyntaxHighlighter:
                                                          attribs,
                                                          False)
 
-    def error_wrapper(self, cursor_line):
-        '''
-        Start here, need to pull the functionality highlighting the error lines
-        out of the below method. This should get around the issues of having to
-        pass around the text and the cursor position.
-        '''
-        pass
-
     def current_line_count(self):
         '''
         Helper function to get the number of lines in the text area.
         '''
         text = self.styledoc.getText(0, self.styledoc.getLength())
 
-        return text.count('\n')
+        return text.count('\n') + 1
 
     def highlight_errors_simple(self, text):
 
