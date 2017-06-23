@@ -213,7 +213,9 @@ from previous executions:
 5. This will create Nammu's jar in the `target` folder. Then you can execute it
 like this:
  ```
+
  java -jar  target/nammu-0.7.1.jar
+
  ```
 
 If you find any problem or need more information, you can create an issue
