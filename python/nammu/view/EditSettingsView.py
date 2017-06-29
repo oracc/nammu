@@ -96,20 +96,20 @@ class EditSettingsView(JDialog):
         constraints.anchor = GridBagConstraints.EAST
         panel.add(working_dir_label, constraints)
 
-        self.field = JTextField()
-        self.field.setEditable(False)
+        self.wd_field = JTextField()
+        self.wd_field.setEditable(False)
         # Can't find an elegant way to default to something that would be
         # crossplatform, and I can't leave the default field empty.
         if self.working_dir['default'] != "None":
-            self.field.setText(self.working_dir['default'])
+            self.wd_field.setText(self.working_dir['default'])
         else:
-            self.field.setText(os.getcwd())
+            self.wd_field.setText(os.getcwd())
         constraints.weightx = 0.60
         constraints.gridx = 1
         constraints.gridy = 0
         constraints.fill = GridBagConstraints.HORIZONTAL
         constraints.insets = Insets(10, 10, 10, 5)
-        panel.add(self.field, constraints)
+        panel.add(self.wd_field, constraints)
 
         constraints.fill = 0
         button = JButton("Browse", actionPerformed=self.browse)
@@ -155,21 +155,21 @@ class EditSettingsView(JDialog):
         constraints.anchor = GridBagConstraints.EAST
         panel.add(working_dir_label, constraints)
 
-        self.field = JTextField()
-        self.field.setEditable(True)
+        self.fs_field = JTextField()
+        self.fs_field.setEditable(True)
         # Can't find an elegant way to default to something that would be
         # crossplatform, and I can't leave the default field empty.
         if self.fontsize:
-            self.field.setText(self.fontsize)
+            self.fs_field.setText(self.fontsize)
         else:
-            self.field.setText('16')
+            self.fs_field.setText('16')
 
         constraints.weightx = 0.60
         constraints.gridx = 1
         constraints.gridy = 2
         constraints.fill = GridBagConstraints.HORIZONTAL
         constraints.insets = Insets(10, 10, 10, 5)
-        panel.add(self.field, constraints)
+        panel.add(self.fs_field, constraints)
 
         return panel
 
@@ -260,10 +260,12 @@ class EditSettingsView(JDialog):
         '''
         # Update only the working_dir and the server for now
         # TODO: update keystrokes, projects list, etc.
-        working_dir = self.field.getText()
+        working_dir = self.wd_field.getText()
+
+        fontsize = self.fs_field.getText()
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
-        self.controller.update_config(working_dir, server)
+        self.controller.update_config(working_dir, server, fontsize)
         # Close window
         self.dispose()
 
@@ -271,7 +273,7 @@ class EditSettingsView(JDialog):
         '''
         Open new dialog for the user to select a path as default working dir.
         '''
-        default_path = self.field.getText()
+        default_path = self.wd_field.getText()
         if not os.path.isdir(default_path):
             default_path = os.getcwd()
         fileChooser = JFileChooser(default_path)
@@ -281,4 +283,4 @@ class EditSettingsView(JDialog):
         # OSX in the implementation of JFileChooser!
         status = fileChooser.showOpenDialog(self)
         if status == JFileChooser.APPROVE_OPTION:
-            self.field.setText(fileChooser.getSelectedFile().toString())
+            self.wd_field.setText(fileChooser.getSelectedFile().toString())

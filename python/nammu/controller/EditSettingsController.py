@@ -46,7 +46,7 @@ class EditSettingsController:
                                              keyword)
                 self.view.display_error(keyword)
 
-    def update_config(self, working_dir, server, keystrokes=None,
+    def update_config(self, working_dir, server, fontsize, keystrokes=None,
                       languages=None, projects=None):
         '''
         Update the settings file with the user input.
@@ -57,5 +57,6 @@ class EditSettingsController:
         #       projects will be added later.
         self.config['working_dir']['default'] = working_dir
         self.config['servers']['default'] = server
+        self.config['console_style']['fontsize'] = fontsize
         self.controller.logger.debug("Settings updated.")
         save_yaml_config(self.config)
