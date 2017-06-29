@@ -59,13 +59,15 @@ class ConsoleView(JPanel):
         # Disable writing in the console - required to render hyperlinks
         self.edit_area.setEditable(False)
 
+        fontsize = self.controller.config['console_style']['fontsize']
+
         # Here we use css to style the console and its text
         # TODO: we can expose these parameters in the settings.yaml file to
         # allow users to change font sizes etc for accessability
         doc = self.edit_area.getDocument()
-        bodyRule = ("body { font-family: Courier New; font-size: 14 pt; "
+        bodyRule = ("body {{ font-family: Courier New; font-size: {0} pt; "
                     "font-weight: bold; background-color: #000000;"
-                    " color: #FFFFFF}")
+                    " color: #FFFFFF}}").format(fontsize)
         doc.getStyleSheet().addRule(bodyRule)
 
         # Set up a hyperlink listener

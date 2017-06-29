@@ -27,8 +27,8 @@ class EditSettingsController:
         self.config = self.controller.config
         self.load_config()
         self.view = EditSettingsView(self, self.working_dir, self.servers,
-                                     self.keystrokes, self.languages,
-                                     self.projects)
+                                     self.console_style, self.keystrokes,
+                                     self.languages, self.projects)
         self.view.display()
 
     def load_config(self):
@@ -37,7 +37,7 @@ class EditSettingsController:
         this settings editor.
         '''
         config_keywords = ['working_dir', 'servers', 'keystrokes',
-                           'languages', 'projects']
+                           'languages', 'projects', 'console_style']
         for keyword in config_keywords:
             try:
                 setattr(self, keyword, self.config[keyword])

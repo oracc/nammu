@@ -29,9 +29,8 @@ from javax.swing.border import EmptyBorder
 
 
 class EditSettingsView(JDialog):
-    def __init__(self, controller, working_dir, servers, keystrokes,
-                 languages, projects):
-        fontsize = '14'
+    def __init__(self, controller, working_dir, servers, console_style,
+                 keystrokes, languages, projects):
         self.logger = logging.getLogger("NammuController")
         self.setAlwaysOnTop(True)
         self.controller = controller
@@ -40,7 +39,7 @@ class EditSettingsView(JDialog):
         self.keystrokes = keystrokes
         self.languages = languages
         self.projects = projects
-        self.fontsize = fontsize
+        self.fontsize = console_style['fontsize']
         self.pane = self.getContentPane()
 
     def build(self):
