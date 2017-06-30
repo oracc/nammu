@@ -159,7 +159,7 @@ class EditSettingsView(JDialog):
         # Can't find an elegant way to default to something that would be
         # crossplatform, and I can't leave the default field empty.
         if self.fontsize:
-            self.fs_field.setText(self.fontsize)
+            self.fs_field.setText("{}".format(self.fontsize))
         else:
             self.fs_field.setText('16')
 
