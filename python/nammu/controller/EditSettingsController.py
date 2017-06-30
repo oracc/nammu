@@ -60,3 +60,6 @@ class EditSettingsController:
         self.config['console_style']['fontsize'] = fontsize
         self.controller.logger.debug("Settings updated.")
         save_yaml_config(self.config)
+
+    def refreshConsole(self):
+        self.controller.consoleController.refreshConsole()

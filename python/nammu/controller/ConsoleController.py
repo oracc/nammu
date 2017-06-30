@@ -50,3 +50,6 @@ class ConsoleController(object):
         Method to clear the console and console_record
         '''
         self.console_record = []
+
+    def refreshConsole(self):
+        self.view.refreshConsole()

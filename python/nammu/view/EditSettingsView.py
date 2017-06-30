@@ -288,7 +288,7 @@ class EditSettingsView(JDialog):
         server = self.combo.getSelectedItem().split(':')[0]
         self.controller.update_config(working_dir, server, fontsize)
         # On saving settings, update the console properties
-        self.controller.controller.consoleController.view.refreshConsole()
+        self.controller.refreshConsole()
         # Close window
         self.dispose()
 
