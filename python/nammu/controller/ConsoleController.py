@@ -25,8 +25,12 @@ class ConsoleController(object):
     Creates the console view and handles console actions.
     '''
     def __init__(self, mainControler):
+        # Load the config file
+        self.config = mainControler.config
+
         # Create view with a reference to its controller to handle events
         self.view = ConsoleView(self)
+
         # Will also need delegating to parent presenter
         self.controller = mainControler
         # Need a record of previous messages so we can rebuild the html
@@ -46,3 +50,6 @@ class ConsoleController(object):
         Method to clear the console and console_record
         '''
         self.console_record = []
+
+    def refreshConsole(self):
+        self.view.refreshConsole()

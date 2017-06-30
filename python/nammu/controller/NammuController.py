@@ -65,15 +65,15 @@ class NammuController(object):
         2. Create main view that'll bind all the components
         3. Create event/action handlers - EventBus?
         '''
-        # Create this controller first since it's where the log will be
+        # Load Nammu's settings
+        self.config = get_yaml_config('settings.yaml')
+
+        # Create this controller next since it's where the log will be
         # displayed
         self.consoleController = ConsoleController(self)
 
         # Set up logging system
         self.logger = self.setup_logger()
-
-        # Load Nammu's settings
-        self.config = get_yaml_config('settings.yaml')
 
         # Create all the controllers
         self.menuController = MenuController(self)
