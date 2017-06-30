@@ -55,7 +55,8 @@ class EditSettingsView(JDialog):
         Build panel with tabs for each of the settings editable sections.
         '''
         tabbed_pane = JTabbedPane()
-        tab_titles = ["General", "Keystrokes", "Languages", "Projects"]
+        tab_titles = ["General", "Keystrokes", "Languages", "Projects",
+                      "Appearance"]
         for title in tab_titles:
             panel = self.build_settings_panel(title.lower())
             tabbed_pane.addTab(title, panel)
@@ -221,6 +222,17 @@ class EditSettingsView(JDialog):
     def build_projects_panel(self):
         '''
         Create the panel that'll go in the Projects tab. This should contain
+        the list of preferred projects and a means to select which is the
+        preferred default.
+        '''
+        panel = JPanel()
+        label = JLabel("Coming soon...")
+        panel.add(label, BorderLayout.CENTER)
+        return panel
+
+    def build_appearance_panel(self):
+        '''
+        Create the panel that'll go in the Appearance tab. This should contain
         the list of preferred projects and a means to select which is the
         preferred default.
         '''
