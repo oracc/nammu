@@ -80,7 +80,6 @@ class EditSettingsView(JDialog):
         constraints.insets = Insets(10, 10, 10, 10)
         panel = self.build_working_dir_panel(constraints, panel)
         panel = self.build_servers_panel(constraints, panel)
-        panel = self.build_console_font_panel(constraints, panel)
         return panel
 
     def build_working_dir_panel(self, constraints, panel):
@@ -145,14 +144,15 @@ class EditSettingsView(JDialog):
 
     def build_console_font_panel(self, constraints, panel):
         '''
-
-
+        Font size on a textfield.
+        TODO: Check user inserts numbers and not strings within a reasonable
+        range.
         '''
         working_dir_label = JLabel("Console font size:")
-        constraints.weightx = 0.30
+        constraints.weightx = 0.20
         constraints.gridx = 0
-        constraints.gridy = 2
-        constraints.anchor = GridBagConstraints.EAST
+        constraints.gridy = 0
+        #constraints.anchor = GridBagConstraints.EAST
         panel.add(working_dir_label, constraints)
 
         self.fs_field = JTextField()
@@ -164,11 +164,11 @@ class EditSettingsView(JDialog):
         else:
             self.fs_field.setText('16')
 
-        constraints.weightx = 0.60
+        constraints.weightx = 0.80
         constraints.gridx = 1
-        constraints.gridy = 2
+        constraints.gridy = 0
         constraints.fill = GridBagConstraints.HORIZONTAL
-        constraints.insets = Insets(10, 10, 10, 5)
+        constraints.insets = Insets(10, 50, 10, 5)
         panel.add(self.fs_field, constraints)
 
         return panel
@@ -236,9 +236,10 @@ class EditSettingsView(JDialog):
         the list of preferred projects and a means to select which is the
         preferred default.
         '''
-        panel = JPanel()
-        label = JLabel("Coming soon...")
-        panel.add(label, BorderLayout.CENTER)
+        panel = JPanel(GridBagLayout())
+        constraints = GridBagConstraints()
+        constraints.insets = Insets(10, 10, 10, 10)
+        panel = self.build_console_font_panel(constraints, panel)
         return panel
 
     def display(self):
