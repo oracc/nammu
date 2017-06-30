@@ -274,7 +274,8 @@ class EditSettingsView(JDialog):
         working_dir = self.wd_field.getText()
         fontsize = self.fs_field.getText()
 
-        if isinstance(fontsize, int) and (fontsize >= 8 and fontsize <= 36):
+        # Use isnumeric() to test if a unicode string only has digits
+        if fontsize.isnumeric() and (int(fontsize) >= 8 and int(fontsize) <= 30):
             pass
         else:
             self.logger.error("Invalid fontsize. Please enter a number "
