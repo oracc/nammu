@@ -265,6 +265,8 @@ class EditSettingsView(JDialog):
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
         self.controller.update_config(working_dir, server, fontsize)
+        # On saving settings, update the console properties
+        self.controller.controller.consoleController.view.refreshConsole()
         # Close window
         self.dispose()
 
