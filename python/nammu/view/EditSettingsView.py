@@ -260,8 +260,16 @@ class EditSettingsView(JDialog):
         # Update only the working_dir and the server for now
         # TODO: update keystrokes, projects list, etc.
         working_dir = self.wd_field.getText()
-
         fontsize = self.fs_field.getText()
+
+        if isinstance(fontsize, int) and (fontsize >= 8 and fontsize <= 36):
+            pass
+        else:
+            self.logger.error("Invalid fontsize. Please enter a number "
+                              "between 8 and 36.\n\n"
+                              "Font set to default value: 14")
+            fontsize = 14
+
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
         self.controller.update_config(working_dir, server, fontsize)
