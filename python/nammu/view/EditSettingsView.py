@@ -231,9 +231,8 @@ class EditSettingsView(JDialog):
 
     def build_appearance_panel(self):
         '''
-        Create the panel that'll go in the Appearance tab. This should contain
-        the list of preferred projects and a means to select which is the
-        preferred default.
+        Create the panel that'll go in the Appearance tab. This will contain
+        fields to set the font properties.
         '''
         panel = JPanel(GridBagLayout())
         constraints = GridBagConstraints()
@@ -272,15 +271,17 @@ class EditSettingsView(JDialog):
         # Update only the working_dir and the server for now
         # TODO: update keystrokes, projects list, etc.
         working_dir = self.wd_field.getText()
+
+        # Read the fontsize from the textfield
         fontsize = self.fs_field.getText()
 
         # Use isnumeric() to test if a unicode string only has digits
-        if fontsize.isnumeric() and (int(fontsize) >= 8 and int(fontsize) <= 30):
+        if fontsize.isnumeric() and (8 <= int(fontsize) <= 30):
             pass
         else:
-            self.logger.error("Invalid fontsize. Please enter a number "
+            self.logger.error("Invalid font size. Please enter a number "
                               "between 8 and 36.\n\n"
-                              "Font set to default value: 14")
+                              "Font size set to default value: 14")
             fontsize = 14
 
         # The server format is "name: url:port". We only need "name"
