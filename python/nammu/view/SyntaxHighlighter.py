@@ -96,8 +96,8 @@ class SyntaxHighlighter:
         # Accent Colors
         self.colorlut['yellow'] = (181, 137, 0)
         self.colorlut['orange'] = (203, 75, 22)
-        self.colorlut['red'] = (220,  50, 47)
-        self.colorlut['magenta'] = (211,  54, 130)
+        self.colorlut['red'] = (220, 50, 47)
+        self.colorlut['magenta'] = (211, 54, 130)
         self.colorlut['violet'] = (108, 113, 196)
         self.colorlut['blue'] = (38, 139, 210)
         self.colorlut['cyan'] = (42, 161, 152)
@@ -106,7 +106,7 @@ class SyntaxHighlighter:
 
     def setup_syntax_highlight_tokens(self):
         '''
-        Assings colours depending on type of token.
+        Assigns colours depending on type of token.
         '''
         self.tokencolorlu = {}
         self.tokencolorlu['AMPERSAND'] = ('green', True)
@@ -198,7 +198,7 @@ class SyntaxHighlighter:
                         color = self.tokencolorlu[tok.type][0]
                         styleline = self.tokencolorlu[tok.type][1]
                     if styleline:
-                        mylength = len(splittext[tok.lineno-1])
+                        mylength = len(splittext[tok.lineno - 1])
                     else:
                         mylength = len(tok.value)
                     if str(tok.lineno) in error_lines:
