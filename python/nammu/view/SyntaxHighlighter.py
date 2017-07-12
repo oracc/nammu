@@ -35,6 +35,17 @@ class SyntaxHighlighter:
         self.lexer = AtfLexer(skipinvalid=True).lexer
         self.syntax_highlight_on = True
 
+        # Compile regexes for simple syntax highlighting
+        self.andline_1 = re.compile(r'^.&[PQX].*')
+        self.andline_2 = re.compile(r'^&.*')
+        self.block_1 = re.compile(r'^@[a-zA-Z0-9]+')
+        self.block_2 = re.compile(r'^@\([a-zA-Z0-9 ]+\)')
+        self.dollar = re.compile(r'^\$.*')
+        self.linkline_1 = re.compile(r'^\|\|.*')
+        self.linkline_2 = re.compile(r'^<<.*')
+        self.linkline_3 = re.compile(r'^>>.*')
+        self.comment = re.compile(r'^#.*')
+
     def setup_attribs(self):
         '''
         Initialize colours, listeners and tokens to be syntax highlighted.
@@ -143,6 +154,43 @@ class SyntaxHighlighter:
 
     def syntax_highlight(self):
         '''
+        Implements simple syntax highlighting using regex which should match
+        the emacs style users are used to.
+        '''
+        atfCont = self.controller.controller.atfAreaController
+        if self.syntax_highlight_on:
+            # Get text from styledoc
+            area_length = self.styledoc.getLength()
+            text = self.styledoc.getText(0, area_length)
+            splittext = text.split('\n')
+            color = self.tokencolorlu['default'][0]
+
+            # Keep background style from validation errors
+            for line_num, line in enumerate(splittext, start=1):
+                if self.comment.match(line):
+                    color = 'cyan'
+                elif self.dollar.match(line):
+                    color = 'violet'
+                elif self.andline_1.match(line) or self.andline_2.match(line):
+                    color = 'green'
+                elif self.block_1.match(line) or self.block_2.match(line):
+                    color = 'red'
+                elif (self.linkline_1.match(line) or
+                      self.linkline_2.match(line) or
+                      self.linkline_3.match(line)):
+                    color = 'blue'
+                else:
+                    color = self.tokencolorlu['default'][0]
+
+                attribs = self.attribs[color]
+                pos = atfCont.getPositionFromLine(text, line_num)
+                self.styledoc.setCharacterAttributes(pos,
+                                                     len(line) + 1,
+                                                     attribs,
+                                                     True)
+
+    def syntax_highlight_old(self):
+        '''
         Implements syntax highlighting based on pyoracc.
         If there are validation errors, highlight lines with errors.
         If user is doing find/replace, highlight matches.
@@ -211,6 +259,29 @@ class SyntaxHighlighter:
                                                          True)
 
     def syntax_highlight_off(self):
+        '''
+        Clear syntax highlighting
+        '''
+        # Get text from styledoc
+        area_length = self.styledoc.getLength()
+        text = self.styledoc.getText(0, area_length)
+
+        # Reset all styling
+        defaultcolor = self.tokencolorlu['default'][0]
+
+        # Break text into separate lines
+        splittext = text.split('\n')
+
+        for line_num, line in enumerate(splittext, start=1):
+            atfCont = self.controller.controller.atfAreaController
+            pos = atfCont.getPositionFromLine(text, line_num)
+            attribs = self.attribs[defaultcolor]
+            self.styledoc.setCharacterAttributes(pos,
+                                                 len(line) + 1,
+                                                 attribs,
+                                                 True)
+
+    def syntax_highlight_off_old(self):
         '''
         Remove coloring.
         TODO: Make this properly!
