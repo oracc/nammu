@@ -174,9 +174,9 @@ class SyntaxHighlighter:
                     color = 'green'
                 elif self.block_1.match(line) or self.block_2.match(line):
                     color = 'red'
-                elif self.linkline_1.match(line) or
-                     self.linkline_2.match(line) or
-                     self.linkline_3.match(line):
+                elif (self.linkline_1.match(line) or
+                      self.linkline_2.match(line) or
+                      self.linkline_3.match(line)):
                     color = 'blue'
                 else:
                     color = self.tokencolorlu['default'][0]
