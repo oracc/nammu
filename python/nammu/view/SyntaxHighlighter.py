@@ -165,7 +165,6 @@ class SyntaxHighlighter:
             splittext = text.split('\n')
             color = self.tokencolorlu['default'][0]
 
-            # Keep background style from validation errors
             for line_num, line in enumerate(splittext, start=1):
                 if self.comment.match(line):
                     color = 'cyan'
@@ -175,9 +174,9 @@ class SyntaxHighlighter:
                     color = 'green'
                 elif self.block_1.match(line) or self.block_2.match(line):
                     color = 'red'
-                elif (self.linkline_1.match(line) or
-                      self.linkline_2.match(line) or
-                      self.linkline_3.match(line)):
+                elif self.linkline_1.match(line) or
+                     self.linkline_2.match(line) or
+                     self.linkline_3.match(line):
                     color = 'blue'
                 else:
                     color = self.tokencolorlu['default'][0]
