@@ -158,14 +158,19 @@ class SyntaxHighlighter:
         the emacs style users are used to.
         '''
         atfCont = self.controller.controller.atfAreaController
+        # caret_pos = atfCont.edit_area.getCaretPosition()
         if self.syntax_highlight_on:
             # Get text from styledoc
             area_length = self.styledoc.getLength()
             text = self.styledoc.getText(0, area_length)
             splittext = text.split('\n')
+
+            # get line start and ends for full text
+            positions = atfCont.getLinePositions(text)
+
             color = self.tokencolorlu['default'][0]
 
-            for line_num, line in enumerate(splittext, start=1):
+            for line_no, line in enumerate(splittext, start=1):
                 if self.comment.match(line):
                     color = 'cyan'
                 elif self.dollar.match(line):
@@ -182,9 +187,8 @@ class SyntaxHighlighter:
                     color = self.tokencolorlu['default'][0]
 
                 attribs = self.attribs[color]
-                pos = atfCont.getPositionFromLine(text, line_num)
-                self.styledoc.setCharacterAttributes(pos,
-                                                     len(line) + 1,
+                self.styledoc.setCharacterAttributes(positions[line_no - 1][0],
+                                                     positions[line_no - 1][1],
                                                      attribs,
                                                      True)
 
