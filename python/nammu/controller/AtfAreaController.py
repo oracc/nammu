@@ -189,7 +189,7 @@ class AtfAreaController(object):
         at the start and end of each line as a list of tuples in the order
         (start, end) assuming left to right text.
 
-        The hacky list slicing is to handle off by one errors as the first line
+        The hacky list addition is to handle off by one errors as the 1st line
         starts at position 0, whereas every other line starts at +1 past the
         end of the last line and we also need to add in the final line length
         manually.
