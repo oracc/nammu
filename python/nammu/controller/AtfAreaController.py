@@ -150,6 +150,12 @@ class AtfAreaController(object):
         '''
         self.syntax_highlighter.syntax_highlight()
 
+    def syntax_highlight_update(self):
+        '''
+        Short hand for updating syntax highlighting.
+        '''
+        self.syntax_highlighter.syntax_highlight_update()
+
     def highlight_matches(self, matches, offset, current_match=None):
         self.syntax_highlighter.highlight_matches(matches,
                                                   offset,

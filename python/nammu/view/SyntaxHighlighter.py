@@ -193,6 +193,44 @@ class SyntaxHighlighter:
                                                      attribs,
                                                      True)
 
+    def syntax_highlight_update(self):
+        '''
+        Update syntax highlighting only on the current cursor position
+        '''
+        atfCont = self.controller.controller.atfAreaController
+
+        # Get text from styledoc
+        area_length = self.styledoc.getLength()
+        text = self.styledoc.getText(0, area_length)
+
+        caret_pos = atfCont.edit_area.getCaretPosition()
+        left = text[:caret_pos]
+        right = text[caret_pos:]
+
+        left_re = re.findall(r'\n.*', left)[-1]
+        right_re = re.findall(r'.*\n', right)[0]
+
+        if self.comment.match(left_re):
+            color = 'cyan'
+        elif self.dollar.match(left_re):
+            color = 'violet'
+        elif self.andline_1.match(left_re) or self.andline_2.match(left_re):
+            color = 'green'
+        elif self.block_1.match(left_re) or self.block_2.match(left_re):
+            color = 'red'
+        elif (self.linkline_1.match(left_re) or
+              self.linkline_2.match(left_re) or
+              self.linkline_3.match(left_re)):
+            color = 'blue'
+        else:
+            color = self.tokencolorlu['default'][0]
+
+        attribs = self.attribs[color]
+        self.styledoc.setCharacterAttributes(caret_pos - len(left_re),
+                                             len(left_re) + len(right_re),
+                                             attribs,
+                                             True)
+
     def syntax_highlight_old(self):
         '''
         Implements syntax highlighting based on pyoracc.

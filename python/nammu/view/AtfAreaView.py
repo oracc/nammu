@@ -129,7 +129,7 @@ class AtfAreaKeyListener(KeyListener):
         # lock or cmd.
         if ((not ke.isActionKey()) and
                 (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
-            self.controller.syntax_highlight()
+            self.controller.syntax_highlight_update()
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.
