@@ -23,6 +23,9 @@ from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
 from ..utils import set_font
 
+from swingutils.threads.threadpool import TaskExecutor
+executor = TaskExecutor()
+
 
 class SyntaxHighlighter:
     def __init__(self, controller):
@@ -152,6 +155,7 @@ class SyntaxHighlighter:
         self.tokencolorlu['CLOSER'] = ('green', False)
         self.tokencolorlu['default'] = ('black', False)
 
+    @executor.backgroundTask
     def syntax_highlight(self):
         '''
         Implements simple syntax highlighting using regex which should match
@@ -193,6 +197,7 @@ class SyntaxHighlighter:
                                                      attribs,
                                                      True)
 
+    @executor.backgroundTask
     def syntax_highlight_update(self):
         '''
         Update syntax highlighting only on the current cursor position
@@ -315,6 +320,7 @@ class SyntaxHighlighter:
                                                          attribs,
                                                          True)
 
+    @executor.backgroundTask
     def syntax_highlight_off(self):
         '''
         Clear syntax highlighting
