@@ -203,11 +203,24 @@ class SyntaxHighlighter:
         area_length = self.styledoc.getLength()
         text = self.styledoc.getText(0, area_length)
 
+        # Get the current cursor position
         caret_pos = atfCont.edit_area.getCaretPosition()
 
-        # Split the text about the cursor
-        left = re.findall(r'\n.*', text[:caret_pos])[-1]
-        right = re.findall(r'.*\n', text[caret_pos:])[0]
+        # Split the text about the cursor to get the full line
+        left = re.findall(r'\n.*', text[:caret_pos])
+        right = re.findall(r'.*\n', text[caret_pos:])
+
+        # Need to handle the first line not starting with a line break
+        if len(left) == 0:
+            left = text[:caret_pos]
+        else:
+            left = left[-1]
+
+        # Need to handle the last line not ending with a line break
+        if len(right) == 0:
+            right = text[caret_pos:]
+        else:
+            right = right[0]
 
         # Color remains None if there is no styling to apply
         color = None
@@ -228,8 +241,8 @@ class SyntaxHighlighter:
         # If the color of the line is not black, change it.
         if color:
             attribs = self.attribs[color]
-            self.styledoc.setCharacterAttributes(caret_pos - len(left_re),
-                                                 len(left_re) + len(right_re),
+            self.styledoc.setCharacterAttributes(caret_pos - len(left),
+                                                 len(left) + len(right),
                                                  attribs,
                                                  True)
 
