@@ -156,6 +156,7 @@ class SyntaxHighlighter:
         '''
         Implements simple syntax highlighting using regex which should match
         the emacs style users are used to.
+        Currently does not reimplement error highlighting.
         '''
         atfCont = self.controller.controller.atfAreaController
         # caret_pos = atfCont.edit_area.getCaretPosition()
