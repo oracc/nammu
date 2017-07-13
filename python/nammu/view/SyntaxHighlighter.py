@@ -209,6 +209,9 @@ class SyntaxHighlighter:
         left = re.findall(r'\n.*', text[:caret_pos])[-1]
         right = re.findall(r'.*\n', text[caret_pos:])[0]
 
+        # Color remains None if there is no styling to apply
+        color = None
+
         if self.comment.match(left):
             color = 'cyan'
         elif self.dollar.match(left):
