@@ -155,6 +155,24 @@ class SyntaxHighlighter:
         self.tokencolorlu['CLOSER'] = ('green', False)
         self.tokencolorlu['default'] = ('black', False)
 
+    def syntax_highlight_logic(self, line):
+        if self.comment.match(line):
+            color = 'cyan'
+        elif self.dollar.match(line):
+            color = 'violet'
+        elif self.andline_1.match(line) or self.andline_2.match(line):
+            color = 'green'
+        elif self.block_1.match(line) or self.block_2.match(line):
+            color = 'red'
+        elif (self.linkline_1.match(line) or
+              self.linkline_2.match(line) or
+              self.linkline_3.match(line)):
+            color = 'blue'
+        else:
+            color = self.tokencolorlu['default'][0]
+
+        return color
+
     @executor.backgroundTask
     def syntax_highlight(self):
         '''
@@ -173,28 +191,11 @@ class SyntaxHighlighter:
             # get line start and ends for full text
             positions = atfCont.getLinePositions(text)
 
-            color = self.tokencolorlu['default'][0]
-
             for line_no, line in enumerate(splittext, start=1):
-                if self.comment.match(line):
-                    color = 'cyan'
-                elif self.dollar.match(line):
-                    color = 'violet'
-                elif self.andline_1.match(line) or self.andline_2.match(line):
-                    color = 'green'
-                elif self.block_1.match(line) or self.block_2.match(line):
-                    color = 'red'
-                elif (self.linkline_1.match(line) or
-                      self.linkline_2.match(line) or
-                      self.linkline_3.match(line)):
-                    color = 'blue'
-                else:
-                    color = self.tokencolorlu['default'][0]
-
-                attribs = self.attribs[color]
+                color = self.syntax_highlight_logic(line)
                 self.styledoc.setCharacterAttributes(positions[line_no - 1][0],
                                                      positions[line_no - 1][1],
-                                                     attribs,
+                                                     self.attribs[color],
                                                      True)
 
     @executor.backgroundTask
@@ -228,25 +229,12 @@ class SyntaxHighlighter:
         else:
             right = right[0]
 
-        if self.comment.match(left):
-            color = 'cyan'
-        elif self.dollar.match(left):
-            color = 'violet'
-        elif self.andline_1.match(left) or self.andline_2.match(left):
-            color = 'green'
-        elif self.block_1.match(left) or self.block_2.match(left):
-            color = 'red'
-        elif (self.linkline_1.match(left) or
-              self.linkline_2.match(left) or
-              self.linkline_3.match(left)):
-            color = 'blue'
-        else:
-            color = self.tokencolorlu['default'][0]
+        # Figure out the color the line should be
+        color = self.syntax_highlight_logic(left)
 
-        attribs = self.attribs[color]
         self.styledoc.setCharacterAttributes(caret_pos - len(left),
                                              len(left) + len(right),
-                                             attribs,
+                                             self.attribs[color],
                                              True)
 
     def syntax_highlight_old(self):
