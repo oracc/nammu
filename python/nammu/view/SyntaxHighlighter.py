@@ -17,15 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import re
-from pyoracc.atf.atflex import AtfLexer
 from java.awt import Color
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
+from swingutils.threads.threadpool import TaskExecutor
 from ..utils import set_font
 
-from swingutils.threads.threadpool import TaskExecutor
+# Create a TaskExecutor to handle threading
 executor = TaskExecutor()
-
 
 class SyntaxHighlighter:
     def __init__(self, controller):
@@ -35,7 +34,6 @@ class SyntaxHighlighter:
         self.font = set_font()
         self.setup_attribs()
         self.styledoc = controller.edit_area_styledoc
-        self.lexer = AtfLexer(skipinvalid=True).lexer
         self.syntax_highlight_on = True
 
         # Compile regexes for simple syntax highlighting
