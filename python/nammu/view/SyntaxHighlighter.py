@@ -156,6 +156,9 @@ class SyntaxHighlighter:
         self.tokencolorlu['default'] = ('black', False)
 
     def syntax_highlight_logic(self, line):
+        '''
+        
+        '''
         if self.comment.match(line):
             color = 'cyan'
         elif self.dollar.match(line):
@@ -237,75 +240,6 @@ class SyntaxHighlighter:
                                              self.attribs[color],
                                              True)
 
-    def syntax_highlight_old(self):
-        '''
-        Implements syntax highlighting based on pyoracc.
-        If there are validation errors, highlight lines with errors.
-        If user is doing find/replace, highlight matches.
-        '''
-        error_lines = self.controller.validation_errors.keys()
-        if self.syntax_highlight_on:
-            # Get text from styledoc
-            area_length = self.styledoc.getLength()
-            text = self.styledoc.getText(0, area_length)
-
-            # Reset lexer and parse text
-            self.lexer.input(text)
-            self.lexer.lineno = 1
-            while self.lexer.current_state() != 'INITIAL':
-                self.lexer.pop_state()
-
-            # Reset all styling
-            defaultcolor = self.tokencolorlu['default'][0]
-
-            # Break text into separate lines
-            splittext = text.split('\n')
-
-            # Keep background style from validation errors
-            for line_num, line in enumerate(splittext, start=1):
-                if str(line_num) in error_lines:
-                    attribs = self.error_attribs[defaultcolor]
-                else:
-                    attribs = self.attribs[defaultcolor]
-                atfCont = self.controller.controller.atfAreaController
-                pos = atfCont.getPositionFromLine(text, line_num)
-                self.styledoc.setCharacterAttributes(pos,
-                                                     len(line) + 1,
-                                                     attribs,
-                                                     True)
-
-        # Go through each token in the text, check which type it is to assign
-        # a colour to it, check which position it is to set up default or
-        # error background, etc.
-        if self.syntax_highlight_on:
-            for tok in self.lexer:
-                if tok.type in self.tokencolorlu:
-                    if type(self.tokencolorlu[tok.type]) is dict:
-                        # the token should be styled differently depending
-                        # on state
-                        try:
-                            state = self.lexer.current_state()
-                            color = self.tokencolorlu[tok.type][state][0]
-                            styleline = self.tokencolorlu[tok.type][state][1]
-                        except KeyError:
-                            color = self.tokencolorlu['default'][0]
-                            styleline = self.tokencolorlu['default'][1]
-                    else:
-                        color = self.tokencolorlu[tok.type][0]
-                        styleline = self.tokencolorlu[tok.type][1]
-                    if styleline:
-                        mylength = len(splittext[tok.lineno - 1])
-                    else:
-                        mylength = len(tok.value)
-                    if str(tok.lineno) in error_lines:
-                        attribs = self.error_attribs[color]
-                    else:
-                        attribs = self.attribs[color]
-                    self.styledoc.setCharacterAttributes(tok.lexpos,
-                                                         mylength,
-                                                         attribs,
-                                                         True)
-
     @executor.backgroundTask
     def syntax_highlight_off(self):
         '''
@@ -325,40 +259,6 @@ class SyntaxHighlighter:
             atfCont = self.controller.controller.atfAreaController
             pos = atfCont.getPositionFromLine(text, line_num)
             attribs = self.attribs[defaultcolor]
-            self.styledoc.setCharacterAttributes(pos,
-                                                 len(line) + 1,
-                                                 attribs,
-                                                 True)
-
-    def syntax_highlight_off_old(self):
-        '''
-        Remove coloring.
-        TODO: Make this properly!
-        '''
-        # Get text from styledoc
-        area_length = self.styledoc.getLength()
-        text = self.styledoc.getText(0, area_length)
-
-        # Reset lexer and parse text
-        self.lexer.input(text)
-        self.lexer.lineno = 1
-        while self.lexer.current_state() != 'INITIAL':
-            self.lexer.pop_state()
-
-        # Reset all styling
-        defaultcolor = self.tokencolorlu['default'][0]
-
-        # Break text into separate lines
-        splittext = text.split('\n')
-
-        # Keep background style from validation errors
-        for line_num, line in enumerate(splittext, start=1):
-            if str(line_num) in self.controller.validation_errors.keys():
-                attribs = self.error_attribs[defaultcolor]
-            else:
-                attribs = self.attribs[defaultcolor]
-            atfCont = self.controller.controller.atfAreaController
-            pos = atfCont.getPositionFromLine(text, line_num)
             self.styledoc.setCharacterAttributes(pos,
                                                  len(line) + 1,
                                                  attribs,
