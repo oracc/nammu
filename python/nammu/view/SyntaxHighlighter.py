@@ -26,6 +26,7 @@ from ..utils import set_font
 # Create a TaskExecutor to handle threading
 executor = TaskExecutor()
 
+
 class SyntaxHighlighter:
     def __init__(self, controller):
         self.controller = controller
