@@ -219,8 +219,8 @@ class SyntaxHighlighter:
 
         # Split the text about the cursor to get the full line, but don't
         # capture the newline on the left of the line
-        left = left_search.findall(text[:caret_pos])
-        right = right_search.findall(text[caret_pos:])
+        left = self.left_search.findall(text[:caret_pos])
+        right = self.right_search.findall(text[caret_pos:])
 
         # Need to handle the first line not starting with a line break
         if len(left) == 0:
