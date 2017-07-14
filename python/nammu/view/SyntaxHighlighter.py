@@ -287,7 +287,13 @@ class SyntaxHighlighter:
             #self.no_of_lines.append(self.current_line_count())
             #self.no_of_lines = self.current_line_count()
 
+    def current_line_count(self):
+        '''
+        Helper function to get the number of lines in the text area.
+        '''
+        text = self.styledoc.getText(0, self.styledoc.getLength())
 
+        return text.count('\n') + 1
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
