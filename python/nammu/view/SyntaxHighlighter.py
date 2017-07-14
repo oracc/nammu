@@ -157,7 +157,7 @@ class SyntaxHighlighter:
 
     def syntax_highlight_logic(self, line):
         '''
-        
+        Logic block to figure out what color to make a line.
         '''
         if self.comment.match(line):
             color = 'cyan'
