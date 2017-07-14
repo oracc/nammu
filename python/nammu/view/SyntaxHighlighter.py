@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import re
+from pyoracc.atf.atflex import AtfLexer
 from java.awt import Color
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
@@ -36,6 +37,7 @@ class SyntaxHighlighter:
         self.setup_attribs()
         self.styledoc = controller.edit_area_styledoc
         self.syntax_highlight_on = True
+        self.highlight_errors_on = True
 
         # Compile regexes for simple syntax highlighting
         self.andline_1 = re.compile(r'^.&[PQX].*')
@@ -254,17 +256,39 @@ class SyntaxHighlighter:
         # Reset all styling
         defaultcolor = self.tokencolorlu['default'][0]
 
-        # Break text into separate lines
-        splittext = text.split('\n')
+        self.styledoc.setCharacterAttributes(0,
+                                             area_length + 1,
+                                             self.attribs[defaultcolor],
+                                             True)
 
-        for line_num, line in enumerate(splittext, start=1):
+        # HERE WE WILL NEED TO RE-CALL THE ERROR HIGHLIGTING IF
+        # WE WANT IT TO NOT BE REMOVED WHEN THE SYNTAX BUTTON IS TOGGLED
+        if self.highlight_errors_on:
+            self.highlight_errors_simple(text)
+
+    def highlight_errors_simple(self, text):
+
+        error_lines = self.controller.validation_errors.keys()
+
+        if error_lines:
+
+            splittext = text.split('\n')
+
             atfCont = self.controller.controller.atfAreaController
-            pos = atfCont.getPositionFromLine(text, line_num)
-            attribs = self.attribs[defaultcolor]
-            self.styledoc.setCharacterAttributes(pos,
-                                                 len(line) + 1,
-                                                 attribs,
-                                                 True)
+            color = self.tokencolorlu['default'][0]
+            for i_ in error_lines:
+                i = int(i_)
+                pos = atfCont.getPositionFromLine(text, i)
+                self.styledoc.setCharacterAttributes(
+                    pos,
+                    len(splittext[i - 1]) + 1,
+                    self.error_attribs[color],
+                    False)  # False merges styles
+
+            #self.no_of_lines.append(self.current_line_count())
+            #self.no_of_lines = self.current_line_count()
+
+
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
