@@ -75,8 +75,6 @@ class SyntaxHighlighter:
             elif match:
                 # TODO: Change to another background colour Eleanor likes
                 StyleConstants.setBackground(attribs, Color.yellow)
-            else:
-                StyleConstants.setBackground(attribs, Color.white)
             return attribs
 
         # Create two dictionaries of attributes, one per possible bg colour:
@@ -202,7 +200,7 @@ class SyntaxHighlighter:
                 self.styledoc.setCharacterAttributes(positions[line_no - 1][0],
                                                      positions[line_no - 1][1],
                                                      self.attribs[color],
-                                                     True)
+                                                     False)
 
     @executor.backgroundTask
     def syntax_highlight_update(self, offset=0):
@@ -242,7 +240,7 @@ class SyntaxHighlighter:
         self.styledoc.setCharacterAttributes(caret_pos - len(left),
                                              len(left) + len(right),
                                              self.attribs[color],
-                                             True)
+                                             False)
 
     @executor.backgroundTask
     def syntax_highlight_off(self):
@@ -267,6 +265,7 @@ class SyntaxHighlighter:
             self.highlight_errors_simple(text)
 
     def highlight_errors_simple(self, text):
+        print 'validation done'
 
         error_lines = self.controller.validation_errors.keys()
 
