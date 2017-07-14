@@ -211,8 +211,9 @@ class SyntaxHighlighter:
         # Get the current cursor position
         caret_pos = atfCont.edit_area.getCaretPosition()
 
-        # Split the text about the cursor to get the full line
-        left = re.findall(r'\n.*', text[:caret_pos])
+        # Split the text about the cursor to get the full line, but don't
+        # capture the newline on the left of the line
+        left = re.findall(r'[^\n].*', text[:caret_pos])
         right = re.findall(r'.*\n', text[caret_pos:])
 
         # Need to handle the first line not starting with a line break
@@ -242,6 +243,8 @@ class SyntaxHighlighter:
               self.linkline_2.match(left) or
               self.linkline_3.match(left)):
             color = 'blue'
+        else:
+            color = self.tokencolorlu['default'][0]
 
         # If the color of the line is not black, change it.
         if color:
