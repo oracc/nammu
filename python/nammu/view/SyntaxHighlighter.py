@@ -48,6 +48,8 @@ class SyntaxHighlighter:
         self.linkline_2 = re.compile(r'^<<.*')
         self.linkline_3 = re.compile(r'^>>.*')
         self.comment = re.compile(r'^#.*')
+        self.left_search = re.compile(r'[^\n].*')
+        self.right_search = re.compile(r'.*\n')
 
     def setup_attribs(self):
         '''
@@ -217,8 +219,8 @@ class SyntaxHighlighter:
 
         # Split the text about the cursor to get the full line, but don't
         # capture the newline on the left of the line
-        left = re.findall(r'[^\n].*', text[:caret_pos])
-        right = re.findall(r'.*\n', text[caret_pos:])
+        left = left_search.findall(text[:caret_pos])
+        right = right_search.findall(text[caret_pos:])
 
         # Need to handle the first line not starting with a line break
         if len(left) == 0:
