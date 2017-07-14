@@ -150,11 +150,12 @@ class AtfAreaController(object):
         '''
         self.syntax_highlighter.syntax_highlight()
 
-    def syntax_highlight_update(self):
+    def syntax_highlight_update(self, offset=0):
         '''
         Short hand for updating syntax highlighting.
+        Offset is used to catch end of line errors on a backspace press.
         '''
-        self.syntax_highlighter.syntax_highlight_update()
+        self.syntax_highlighter.syntax_highlight_update(offset=offset)
 
     def highlight_matches(self, matches, offset, current_match=None):
         self.syntax_highlighter.highlight_matches(matches,

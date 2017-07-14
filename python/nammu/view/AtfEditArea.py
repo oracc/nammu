@@ -81,7 +81,7 @@ class AtfEditArea(JTextPane):
         after replacing some text.
         '''
         super(AtfEditArea, self).replaceSelection(text)
-        # self.controller.syntax_highlight_update()
+        self.controller.syntax_highlight_update()
 
     def cut(self):
         '''

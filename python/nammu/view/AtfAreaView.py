@@ -127,9 +127,11 @@ class AtfAreaKeyListener(KeyListener):
         # Make sure we only syntax highlight when the key pressed is not an
         # action key (i.e. arrows, F1, ...) or is not shift, ctrl, alt, caps
         # lock or cmd.
-        if ((not ke.isActionKey()) and
-                (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
-            self.controller.syntax_highlight_update()
+        # This replicates the JTextPane replaceSelection() method behaviour
+        # We only need to catch backspace (8) presses now.
+        # Offset is used to catch end of line errors on a backspace press.
+        if ke.getKeyCode() == 8:
+            self.controller.syntax_highlight_update(offset=1)
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.

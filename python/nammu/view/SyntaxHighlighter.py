@@ -204,9 +204,10 @@ class SyntaxHighlighter:
                                                      True)
 
     @executor.backgroundTask
-    def syntax_highlight_update(self):
+    def syntax_highlight_update(self, offset=0):
         '''
-        Update syntax highlighting only on the current cursor position
+        Update syntax highlighting only on the current cursor position.
+        Offset is used to catch end of line errors on a backspace press.
         '''
         atfCont = self.controller.controller.atfAreaController
 
@@ -215,7 +216,7 @@ class SyntaxHighlighter:
         text = self.styledoc.getText(0, area_length)
 
         # Get the current cursor position
-        caret_pos = atfCont.edit_area.getCaretPosition()
+        caret_pos = atfCont.edit_area.getCaretPosition() + offset
 
         # Split the text about the cursor to get the full line, but don't
         # capture the newline on the left of the line
