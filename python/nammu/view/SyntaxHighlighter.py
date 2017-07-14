@@ -228,9 +228,6 @@ class SyntaxHighlighter:
         else:
             right = right[0]
 
-        # Color remains None if there is no styling to apply
-        color = None
-
         if self.comment.match(left):
             color = 'cyan'
         elif self.dollar.match(left):
@@ -246,13 +243,11 @@ class SyntaxHighlighter:
         else:
             color = self.tokencolorlu['default'][0]
 
-        # If the color of the line is not black, change it.
-        if color:
-            attribs = self.attribs[color]
-            self.styledoc.setCharacterAttributes(caret_pos - len(left),
-                                                 len(left) + len(right),
-                                                 attribs,
-                                                 True)
+        attribs = self.attribs[color]
+        self.styledoc.setCharacterAttributes(caret_pos - len(left),
+                                             len(left) + len(right),
+                                             attribs,
+                                             True)
 
     def syntax_highlight_old(self):
         '''
