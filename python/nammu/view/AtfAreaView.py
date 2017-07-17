@@ -132,6 +132,9 @@ class AtfAreaKeyListener(KeyListener):
         # Offset is used to catch end of line errors on a backspace press.
         if ke.getKeyCode() == 8:
             self.controller.syntax_highlight_update(offset=1)
+        elif ke.getKeyCode() == 10:
+            print 'carriage return!'
+        #    self.controller.syntax_highlight_update()
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.

@@ -204,7 +204,6 @@ class SyntaxHighlighter:
                                                      positions[line_no - 1][1],
                                                      self.attribs[color],
                                                      False)
-                print 'main syntax', self.attribs[color]
 
     #@executor.backgroundTask
     def syntax_highlight_update(self, offset=0):
@@ -221,15 +220,13 @@ class SyntaxHighlighter:
         # Get the current cursor position
         caret_pos = atfCont.edit_area.getCaretPosition() + offset
 
-        # get background color of caret position here to see what to set it to upon update
-
+        # get line number from caret position here
         positions = atfCont.getLinePositions(text)
         line_no = -1
         for i, p in enumerate(positions, start=1):
-            print i, p, caret_pos
             if p[0] <= caret_pos <= p[1]:
                 line_no = str(i)
-        print 'we are on line', line_no
+        print line_no
 
         # Split the text about the cursor to get the full line, but don't
         # capture the newline on the left of the line
@@ -251,19 +248,16 @@ class SyntaxHighlighter:
         # Figure out the color the line should be
         color = self.syntax_highlight_logic(left)
         err_lines = self.controller.validation_errors.keys()
-        print 'error_lines', err_lines
+
         if line_no in err_lines:
             attribs = self.error_attribs[color]
-            print 'error attribs', attribs
         else:
             attribs = self.attribs[color]
-            print 'normal attribs', attribs
 
         self.styledoc.setCharacterAttributes(caret_pos - len(left),
                                              len(left) + len(right),
                                              attribs,
                                              False)
-        print 'update syntax', self.attribs[color]
 
     #@executor.backgroundTask
     def syntax_highlight_off(self):
@@ -281,8 +275,6 @@ class SyntaxHighlighter:
                                              area_length + 1,
                                              self.attribs[defaultcolor],
                                              True)
-
-        print 'syntax highlight off', self.attribs[defaultcolor]
 
         # HERE WE WILL NEED TO RE-CALL THE ERROR HIGHLIGTING IF
         # WE WANT IT TO NOT BE REMOVED WHEN THE SYNTAX BUTTON IS TOGGLED
@@ -324,11 +316,9 @@ class SyntaxHighlighter:
                                                      positions[line_no - 1][1],
                                                      self.attribs[color],
                                                      False)
-                print 'reset error lines', self.attribs[color]
 
     def highlight_errors(self, text):
         error_lines = self.controller.validation_errors.keys()
-        print error_lines
         if error_lines:
 
             splittext = text.split('\n')
@@ -343,7 +333,6 @@ class SyntaxHighlighter:
                     len(splittext[i - 1]) + 1,
                     self.error_attribs[color],
                     True)  # False merges styles
-                print 'highlight errors', self.error_attribs[color]
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
