@@ -75,8 +75,8 @@ class SyntaxHighlighter:
             elif match:
                 # TODO: Change to another background colour Eleanor likes
                 StyleConstants.setBackground(attribs, Color.yellow)
-            #else:
-            #    StyleConstants.setBackground(attribs, Color.white)
+            else:
+                StyleConstants.setBackground(attribs, Color.white)
 
             return attribs
 
@@ -180,14 +180,13 @@ class SyntaxHighlighter:
 
         return color
 
-    @executor.backgroundTask
+    #@executor.backgroundTask
     def syntax_highlight(self):
         '''
         Implements simple syntax highlighting using regex which should match
         the emacs style users are used to.
         Currently does not reimplement error highlighting.
         '''
-        print 'main syntax'
         atfCont = self.controller.controller.atfAreaController
 
         if self.syntax_highlight_on:
@@ -205,14 +204,14 @@ class SyntaxHighlighter:
                                                      positions[line_no - 1][1],
                                                      self.attribs[color],
                                                      False)
+                print 'main syntax', self.attribs[color]
 
-    @executor.backgroundTask
+    #@executor.backgroundTask
     def syntax_highlight_update(self, offset=0):
         '''
         Update syntax highlighting only on the current cursor position.
         Offset is used to catch end of line errors on a backspace press.
         '''
-        print 'update syntax'
         atfCont = self.controller.controller.atfAreaController
 
         # Get text from styledoc
@@ -221,6 +220,16 @@ class SyntaxHighlighter:
 
         # Get the current cursor position
         caret_pos = atfCont.edit_area.getCaretPosition() + offset
+
+        # get background color of caret position here to see what to set it to upon update
+
+        positions = atfCont.getLinePositions(text)
+        line_no = -1
+        for i, p in enumerate(positions, start=1):
+            print i, p, caret_pos
+            if p[0] <= caret_pos <= p[1]:
+                line_no = str(i)
+        print 'we are on line', line_no
 
         # Split the text about the cursor to get the full line, but don't
         # capture the newline on the left of the line
@@ -241,18 +250,26 @@ class SyntaxHighlighter:
 
         # Figure out the color the line should be
         color = self.syntax_highlight_logic(left)
+        err_lines = self.controller.validation_errors.keys()
+        print 'error_lines', err_lines
+        if line_no in err_lines:
+            attribs = self.error_attribs[color]
+            print 'error attribs', attribs
+        else:
+            attribs = self.attribs[color]
+            print 'normal attribs', attribs
 
         self.styledoc.setCharacterAttributes(caret_pos - len(left),
                                              len(left) + len(right),
-                                             self.attribs[color],
+                                             attribs,
                                              False)
+        print 'update syntax', self.attribs[color]
 
-    @executor.backgroundTask
+    #@executor.backgroundTask
     def syntax_highlight_off(self):
         '''
         Clear syntax highlighting
         '''
-        print 'syntax highlight off'
         # Get text from styledoc
         area_length = self.styledoc.getLength()
         text = self.styledoc.getText(0, area_length)
@@ -265,6 +282,8 @@ class SyntaxHighlighter:
                                              self.attribs[defaultcolor],
                                              True)
 
+        print 'syntax highlight off', self.attribs[defaultcolor]
+
         # HERE WE WILL NEED TO RE-CALL THE ERROR HIGHLIGTING IF
         # WE WANT IT TO NOT BE REMOVED WHEN THE SYNTAX BUTTON IS TOGGLED
         if self.highlight_errors_on:
@@ -276,8 +295,6 @@ class SyntaxHighlighter:
         validation is performed.
         Do not thread this to avoid race conditions.
         '''
-
-        print 'reset error lines'
         error_lines = self.controller.validation_errors.keys()
         atfCont = self.controller.controller.atfAreaController
 
@@ -294,7 +311,7 @@ class SyntaxHighlighter:
             positions = atfCont.getLinePositions(text)
 
             for line_no in error_lines:
-                line = text[positions[line_no][0]:positions[line_no][1]]
+                line = text[positions[line_no - 1][0]:positions[line_no - 1][1]]
                 color = self.syntax_highlight_logic(line)
 
                 # ADDING THE BG COLOR HERE WORKS, UNTIL THE A SECOND ERROR APPEARS
@@ -303,14 +320,13 @@ class SyntaxHighlighter:
                 # ATTRIBUTES BUT I DONT KNOW
                 StyleConstants.setBackground(self.attribs[color], Color.white)
 
-
-                self.styledoc.setCharacterAttributes(positions[line_no][0],
-                                                     positions[line_no][1],
+                self.styledoc.setCharacterAttributes(positions[line_no - 1][0],
+                                                     positions[line_no - 1][1],
                                                      self.attribs[color],
                                                      False)
+                print 'reset error lines', self.attribs[color]
 
     def highlight_errors(self, text):
-        print 'highlight errors'
         error_lines = self.controller.validation_errors.keys()
         print error_lines
         if error_lines:
@@ -327,6 +343,7 @@ class SyntaxHighlighter:
                     len(splittext[i - 1]) + 1,
                     self.error_attribs[color],
                     True)  # False merges styles
+                print 'highlight errors', self.error_attribs[color]
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
