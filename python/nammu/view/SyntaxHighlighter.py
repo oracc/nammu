@@ -75,6 +75,9 @@ class SyntaxHighlighter:
             elif match:
                 # TODO: Change to another background colour Eleanor likes
                 StyleConstants.setBackground(attribs, Color.yellow)
+            #else:
+            #    StyleConstants.setBackground(attribs, Color.white)
+
             return attribs
 
         # Create two dictionaries of attributes, one per possible bg colour:
@@ -184,6 +187,7 @@ class SyntaxHighlighter:
         the emacs style users are used to.
         Currently does not reimplement error highlighting.
         '''
+        print 'main syntax'
         atfCont = self.controller.controller.atfAreaController
 
         if self.syntax_highlight_on:
@@ -208,6 +212,7 @@ class SyntaxHighlighter:
         Update syntax highlighting only on the current cursor position.
         Offset is used to catch end of line errors on a backspace press.
         '''
+        print 'update syntax'
         atfCont = self.controller.controller.atfAreaController
 
         # Get text from styledoc
@@ -247,6 +252,7 @@ class SyntaxHighlighter:
         '''
         Clear syntax highlighting
         '''
+        print 'syntax highlight off'
         # Get text from styledoc
         area_length = self.styledoc.getLength()
         text = self.styledoc.getText(0, area_length)
@@ -262,13 +268,51 @@ class SyntaxHighlighter:
         # HERE WE WILL NEED TO RE-CALL THE ERROR HIGHLIGTING IF
         # WE WANT IT TO NOT BE REMOVED WHEN THE SYNTAX BUTTON IS TOGGLED
         if self.highlight_errors_on:
-            self.highlight_errors_simple(text)
+            self.highlight_errors(text)
 
-    def highlight_errors_simple(self, text):
-        print 'validation done'
+    def reset_error_lines(self):
+        '''
+        This should be called on the validation click, but before any
+        validation is performed.
+        Do not thread this to avoid race conditions.
+        '''
 
+        print 'reset error lines'
         error_lines = self.controller.validation_errors.keys()
+        atfCont = self.controller.controller.atfAreaController
 
+        if error_lines:
+
+            # We need ints to use as indexes later on
+            error_lines = [int(l) for l in error_lines]
+
+            # Get text from styledoc
+            area_length = self.styledoc.getLength()
+            text = self.styledoc.getText(0, area_length)
+
+            # get line start and ends for full text
+            positions = atfCont.getLinePositions(text)
+
+            for line_no in error_lines:
+                line = text[positions[line_no][0]:positions[line_no][1]]
+                color = self.syntax_highlight_logic(line)
+
+                # ADDING THE BG COLOR HERE WORKS, UNTIL THE A SECOND ERROR APPEARS
+                # ON THE SAME LINE. SO IT SEEMS THAT WHITE IS PERSISTENT OVER YELLOW
+                # THIS MIGHT BE DUE TO THE FALSE/TRUE FLAG IN SETTING THE
+                # ATTRIBUTES BUT I DONT KNOW
+                StyleConstants.setBackground(self.attribs[color], Color.white)
+
+
+                self.styledoc.setCharacterAttributes(positions[line_no][0],
+                                                     positions[line_no][1],
+                                                     self.attribs[color],
+                                                     False)
+
+    def highlight_errors(self, text):
+        print 'highlight errors'
+        error_lines = self.controller.validation_errors.keys()
+        print error_lines
         if error_lines:
 
             splittext = text.split('\n')
@@ -282,18 +326,7 @@ class SyntaxHighlighter:
                     pos,
                     len(splittext[i - 1]) + 1,
                     self.error_attribs[color],
-                    False)  # False merges styles
-
-            #self.no_of_lines.append(self.current_line_count())
-            #self.no_of_lines = self.current_line_count()
-
-    def current_line_count(self):
-        '''
-        Helper function to get the number of lines in the text area.
-        '''
-        text = self.styledoc.getText(0, self.styledoc.getLength())
-
-        return text.count('\n') + 1
+                    True)  # False merges styles
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''

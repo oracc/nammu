@@ -398,6 +398,9 @@ class NammuController(object):
         if self.currentFilename:
             self.logger.debug("Validating ATF file %s.", self.currentFilename)
 
+            # Reset any old error highlighting before validating
+            self.atfAreaController.syntax_highlighter.reset_error_lines()
+
             # Search for project name in file. If not found, don't validate
             project = self.get_project()
 
@@ -418,7 +421,7 @@ class NammuController(object):
 
             self.logger.debug("Validating ATF done.")
             text = self.atfAreaController.getAtfAreaText()
-            self.atfAreaController.syntax_highlighter.highlight_errors_simple(text)
+            self.atfAreaController.syntax_highlighter.highlight_errors(text)
         else:
             self.logger.error("Please save file before trying to validate.")
 
