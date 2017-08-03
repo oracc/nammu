@@ -18,8 +18,8 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import re
-from java.awt import BorderLayout, Dimension, Color
-from java.awt.event import KeyListener
+from java.awt import BorderLayout, Dimension, Color, Point
+from java.awt.event import KeyListener, AdjustmentListener
 from javax.swing import JScrollPane, JPanel, JSplitPane
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
@@ -70,6 +70,8 @@ class AtfAreaView(JPanel):
         self.container.setRowHeaderView(self.line_numbers_area)
         self.add(self.container, BorderLayout.CENTER)
 
+        self.container.getVerticalScrollBar().addAdjustmentListener(atfAreaAdjustmentListener(self.container, self.edit_area))
+
         # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
         # Also needed in secondary area:
@@ -113,6 +115,20 @@ class AtfAreaView(JPanel):
             self.container.setDividerLocation(0.5)
             self.container.setResizeWeight(0.5)
             self.add(self.container, BorderLayout.CENTER)
+
+
+class atfAreaAdjustmentListener(AdjustmentListener):
+    def __init__(self, container, edit_area):
+        self.container = container
+        self.edit_area = edit_area
+
+    def adjustmentValueChanged(self, e):
+        if not e.getValueIsAdjusting():
+            extent = self.container.getViewport().getExtentSize()
+            top_left_position = self.container.getViewport().getViewPosition()
+            top_left_char = self.edit_area.viewToModel(top_left_position)
+            bottom_left_position = Point(top_left_position.x, top_left_position.y + extent.height)
+            bottom_left_char = self.edit_area.viewToModel(bottom_left_position)
 
 
 class AtfAreaKeyListener(KeyListener):
