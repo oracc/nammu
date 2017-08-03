@@ -70,7 +70,7 @@ class AtfAreaView(JPanel):
         self.container.setRowHeaderView(self.line_numbers_area)
         self.add(self.container, BorderLayout.CENTER)
 
-        self.container.getVerticalScrollBar().addAdjustmentListener(atfAreaAdjustmentListener(self.container, self.edit_area))
+        self.container.getVerticalScrollBar().addAdjustmentListener(atfAreaAdjustmentListener(self))
 
         # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
@@ -118,17 +118,23 @@ class AtfAreaView(JPanel):
 
 
 class atfAreaAdjustmentListener(AdjustmentListener):
-    def __init__(self, container, edit_area):
-        self.container = container
-        self.edit_area = edit_area
+    def __init__(self, areaview):
+        self.container = areaview.container
+        self.edit_area = areaview.edit_area
+        self.areaviewcontroller = areaview.controller
 
     def adjustmentValueChanged(self, e):
         if not e.getValueIsAdjusting():
             extent = self.container.getViewport().getExtentSize()
             top_left_position = self.container.getViewport().getViewPosition()
             top_left_char = self.edit_area.viewToModel(top_left_position)
-            bottom_left_position = Point(top_left_position.x, top_left_position.y + extent.height)
+            bottom_left_position = Point(top_left_position.x,
+                                         top_left_position.y + extent.height)
             bottom_left_char = self.edit_area.viewToModel(bottom_left_position)
+
+            # Call SyntaxHighlighter(top_left_char, bottom_left_char)
+            self.areaviewcontroller.syntax_highlight(top_left_char,
+                                                     bottom_left_char)
 
 
 class AtfAreaKeyListener(KeyListener):

@@ -144,11 +144,25 @@ class AtfAreaController(object):
                 return getattr(self.edit_area, name)(*args, **kw)
             return wrapper
 
-    def syntax_highlight(self):
+    def get_viewport_top_bottom(self, top, bottom):
         '''
-        Short hand for syntax highlighting.
+        Get the top and bottom of the viewport from scroll events
         '''
-        self.syntax_highlighter.syntax_highlight()
+        top_line = self.edit_area.get_line_num(top)
+        bottom_line = self.edit_area.get_line_num(bottom)
+
+        return top_line, bottom_line
+
+    def syntax_highlight(self, top_position=None, bottom_position=None):
+        '''
+        Short hand for syntax highlighting. Takes the line bounds.
+        '''
+        if top_position is not None and bottom_position is not None:
+            top_line, bottom_line = self.get_viewport_top_bottom(top_position,
+                                                                 bottom_position)
+            self.syntax_highlighter.syntax_highlight(top_line, bottom_line)
+        else:
+            self.syntax_highlighter.syntax_highlight()
 
     def highlight_matches(self, matches, offset, current_match=None):
         self.syntax_highlighter.highlight_matches(matches,
