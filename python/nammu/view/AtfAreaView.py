@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import re
 from java.awt import BorderLayout, Dimension, Color
 from java.awt.event import KeyListener
 from javax.swing import JScrollPane, JPanel, JSplitPane
@@ -128,9 +127,14 @@ class AtfAreaKeyListener(KeyListener):
         # Make sure we only syntax highlight when the key pressed is not an
         # action key (i.e. arrows, F1, ...) or is not shift, ctrl, alt, caps
         # lock or cmd.
-        if ((not ke.isActionKey()) and
-                (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
-            self.controller.syntax_highlight()
+        # This replicates the JTextPane replaceSelection() method behaviour
+        # We only need to catch backspace (8) presses now.
+        # Offset is used to catch end of line errors on a backspace press.
+        if ke.getKeyCode() == 8:
+            self.controller.syntax_highlight_update(offset=1)
+        elif ke.getKeyCode() == 10:
+            print 'carriage return!'
+        #    self.controller.syntax_highlight_update()
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.

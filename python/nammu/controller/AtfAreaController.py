@@ -150,6 +150,13 @@ class AtfAreaController(object):
         '''
         self.syntax_highlighter.syntax_highlight()
 
+    def syntax_highlight_update(self, offset=0, line_offset=0):
+        '''
+        Short hand for updating syntax highlighting.
+        Offset is used to catch end of line errors on a backspace press.
+        '''
+        self.syntax_highlighter.syntax_highlight_update(offset=offset)
+
     def highlight_matches(self, matches, offset, current_match=None):
         self.syntax_highlighter.highlight_matches(matches,
                                                   offset,
@@ -182,3 +189,27 @@ class AtfAreaController(object):
             pos = 0
 
         return pos
+
+    def getLinePositions(self, text):
+        '''
+        Given a block of text, return the caret positions
+        at the start and end of each line as a list of tuples in the order
+        (start, end) assuming left to right text.
+
+        The hacky list addition is to handle off by one errors as the 1st line
+        starts at position 0, whereas every other line starts at +1 past the
+        end of the last line and we also need to add in the final line length
+        manually.
+        '''
+        if len(text) > 0:
+            compiled = re.compile(r"\n")
+            textiter = compiled.finditer(text)
+            pos = [m.start() for m in textiter]
+        else:
+            return [(0, 0)]
+
+        # Build lists of the starts and ends of each line
+        starts = [0] + [x + 1 for x in pos]
+        ends = pos + [len(text)]
+
+        return zip(starts, ends)
