@@ -73,7 +73,12 @@ class AtfEditArea(JTextPane):
         still works when you set text from elsewhere in the code.
         '''
         super(AtfEditArea, self).setText(text)
-        self.controller.syntax_highlight()
+
+        top_caret, bottom_caret = self.controller.view.get_viewport_carets()
+
+        # call here with a top line and bottom line for initial highlighting
+        # on file load
+        self.controller.syntax_highlight(top_caret, bottom_caret)
 
     def replaceSelection(self, text):
         '''

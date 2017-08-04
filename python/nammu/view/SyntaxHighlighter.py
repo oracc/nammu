@@ -35,7 +35,7 @@ class SyntaxHighlighter:
         self.lexer = AtfLexer(skipinvalid=True).lexer
         self.syntax_highlight_on = True
         # This helps with access to the text area that needs to be highlighted
-        self.viewport_extent = (1, 1)
+        self.viewport_extent = (1, 1, 1, 1)
 
     def setup_attribs(self):
         '''
@@ -158,7 +158,7 @@ class SyntaxHighlighter:
         error_lines = self.controller.validation_errors.keys()
 
         # Check that syntax highlight in on and that there is text to highlight
-        no_of_chars = self.viewport_extent[2] - self.viewport_extent[3]
+        no_of_chars = self.viewport_extent[3] - self.viewport_extent[2]
         if not self.syntax_highlight_on or no_of_chars < 1:
             return
 
@@ -186,8 +186,9 @@ class SyntaxHighlighter:
             else:
                 attribs = self.attribs[defaultcolor]
             atfCont = self.controller.controller.atfAreaController
-            pos = atfCont.getPositionFromLine(text, line_num)
-            self.styledoc.setCharacterAttributes(pos,
+            pos = atfCont.getPositionFromLine(text,
+                                              line_num - start_line_no + 1)
+            self.styledoc.setCharacterAttributes(pos + self.viewport_extent[2],
                                                  len(line) + 1,
                                                  attribs,
                                                  True)
@@ -218,7 +219,8 @@ class SyntaxHighlighter:
                     attribs = self.error_attribs[color]
                 else:
                     attribs = self.attribs[color]
-                self.styledoc.setCharacterAttributes(tok.lexpos,
+                self.styledoc.setCharacterAttributes(tok.lexpos +
+                                                     self.viewport_extent[2],
                                                      mylength,
                                                      attribs,
                                                      True)
