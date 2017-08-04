@@ -153,14 +153,17 @@ class AtfAreaController(object):
 
         return top_line, bottom_line
 
-    def syntax_highlight(self, top_position=None, bottom_position=None):
+    def syntax_highlight(self, top_caret=None, bottom_caret=None):
         '''
         Short hand for syntax highlighting. Takes the line bounds.
         '''
-        if top_position is not None and bottom_position is not None:
-            top_line, bottom_line = self.get_viewport_top_bottom(top_position,
-                                                                 bottom_position)
-            self.syntax_highlighter.syntax_highlight(top_line, bottom_line)
+        if top_caret is not None and bottom_caret is not None:
+            top_line, bottom_line = self.get_viewport_top_bottom(top_caret,
+                                                                 bottom_caret)
+            self.syntax_highlighter.syntax_highlight(top_line,
+                                                     bottom_line,
+                                                     top_caret,
+                                                     bottom_caret)
         else:
             self.syntax_highlighter.syntax_highlight()
 

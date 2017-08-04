@@ -34,6 +34,8 @@ class SyntaxHighlighter:
         self.styledoc = controller.edit_area_styledoc
         self.lexer = AtfLexer(skipinvalid=True).lexer
         self.syntax_highlight_on = True
+        # This helps with access to the text area that needs to be highlighted
+        self.viewport_extent = (1, 1)
 
     def setup_attribs(self):
         '''
@@ -96,8 +98,8 @@ class SyntaxHighlighter:
         # Accent Colors
         self.colorlut['yellow'] = (181, 137, 0)
         self.colorlut['orange'] = (203, 75, 22)
-        self.colorlut['red'] = (220,  50, 47)
-        self.colorlut['magenta'] = (211,  54, 130)
+        self.colorlut['red'] = (220, 50, 47)
+        self.colorlut['magenta'] = (211, 54, 130)
         self.colorlut['violet'] = (108, 113, 196)
         self.colorlut['blue'] = (38, 139, 210)
         self.colorlut['cyan'] = (42, 161, 152)
@@ -141,7 +143,8 @@ class SyntaxHighlighter:
         self.tokencolorlu['CLOSER'] = ('green', False)
         self.tokencolorlu['default'] = ('black', False)
 
-    def syntax_highlight(self, top_line=None, bottom_line=None):
+    def syntax_highlight(self, top_line=None, bottom_line=None,
+                         top_caret=None, bottom_caret=None):
         '''
         Implements syntax highlighting based on pyoracc.
         If there are validation errors, highlight lines with errors.
@@ -149,71 +152,76 @@ class SyntaxHighlighter:
         '''
 
         if top_line is not None and bottom_line is not None:
-            print 'hello', top_line, bottom_line
+            self.viewport_extent = (top_line, bottom_line,
+                                    top_caret, bottom_caret)
 
-        else:
-            error_lines = self.controller.validation_errors.keys()
-            if self.syntax_highlight_on:
-                # Get text from styledoc
-                area_length = self.styledoc.getLength()
-                text = self.styledoc.getText(0, area_length)
+        error_lines = self.controller.validation_errors.keys()
 
-                # Reset lexer and parse text
-                self.lexer.input(text)
-                self.lexer.lineno = 1
-                while self.lexer.current_state() != 'INITIAL':
-                    self.lexer.pop_state()
+        # Check that syntax highlight in on and that there is text to highlight
+        no_of_chars = self.viewport_extent[2] - self.viewport_extent[3]
+        if not self.syntax_highlight_on or no_of_chars < 1:
+            return
 
-                # Reset all styling
-                defaultcolor = self.tokencolorlu['default'][0]
+        # Get only the text on the screen
+        text = self.styledoc.getText(self.viewport_extent[2], no_of_chars)
 
-                # Break text into separate lines
-                splittext = text.split('\n')
+        # Reset lexer and parse text
+        self.lexer.input(text)
+        self.lexer.lineno = 1
+        while self.lexer.current_state() != 'INITIAL':
+            self.lexer.pop_state()
 
-                # Keep background style from validation errors
-                for line_num, line in enumerate(splittext, start=1):
-                    if str(line_num) in error_lines:
-                        attribs = self.error_attribs[defaultcolor]
-                    else:
-                        attribs = self.attribs[defaultcolor]
-                    atfCont = self.controller.controller.atfAreaController
-                    pos = atfCont.getPositionFromLine(text, line_num)
-                    self.styledoc.setCharacterAttributes(pos,
-                                                         len(line) + 1,
-                                                         attribs,
-                                                         True)
+        # Reset all styling
+        defaultcolor = self.tokencolorlu['default'][0]
 
-            # Go through each token in the text, check which type it is to assign
-            # a colour to it, check which position it is to set up default or
-            # error background, etc.
-            if self.syntax_highlight_on:
-                for tok in self.lexer:
-                    if tok.type in self.tokencolorlu:
-                        if type(self.tokencolorlu[tok.type]) is dict:
-                            # the token should be styled differently depending
-                            # on state
-                            try:
-                                state = self.lexer.current_state()
-                                color = self.tokencolorlu[tok.type][state][0]
-                                styleline = self.tokencolorlu[tok.type][state][1]
-                            except KeyError:
-                                color = self.tokencolorlu['default'][0]
-                                styleline = self.tokencolorlu['default'][1]
-                        else:
-                            color = self.tokencolorlu[tok.type][0]
-                            styleline = self.tokencolorlu[tok.type][1]
-                        if styleline:
-                            mylength = len(splittext[tok.lineno-1])
-                        else:
-                            mylength = len(tok.value)
-                        if str(tok.lineno) in error_lines:
-                            attribs = self.error_attribs[color]
-                        else:
-                            attribs = self.attribs[color]
-                        self.styledoc.setCharacterAttributes(tok.lexpos,
-                                                             mylength,
-                                                             attribs,
-                                                             True)
+        # Break text into separate lines
+        splittext = text.split('\n')
+
+        # Keep background style from validation errors
+        # Only process lines that are on the screen
+        start_line_no = self.viewport_extent[0]
+        for line_num, line in enumerate(splittext, start=start_line_no):
+            if str(line_num) in error_lines:
+                attribs = self.error_attribs[defaultcolor]
+            else:
+                attribs = self.attribs[defaultcolor]
+            atfCont = self.controller.controller.atfAreaController
+            pos = atfCont.getPositionFromLine(text, line_num)
+            self.styledoc.setCharacterAttributes(pos,
+                                                 len(line) + 1,
+                                                 attribs,
+                                                 True)
+
+    # Go through each token in the text, check which type it is to assign
+    # a colour to it, check which position it is to set up default or
+    # error background, etc.
+        for tok in self.lexer:
+            if tok.type in self.tokencolorlu:
+                if type(self.tokencolorlu[tok.type]) is dict:
+                    # the token should be styled differently depending
+                    # on state
+                    try:
+                        state = self.lexer.current_state()
+                        color = self.tokencolorlu[tok.type][state][0]
+                        styleline = self.tokencolorlu[tok.type][state][1]
+                    except KeyError:
+                        color = self.tokencolorlu['default'][0]
+                        styleline = self.tokencolorlu['default'][1]
+                else:
+                    color = self.tokencolorlu[tok.type][0]
+                    styleline = self.tokencolorlu[tok.type][1]
+                if styleline:
+                    mylength = len(splittext[tok.lineno - 1])
+                else:
+                    mylength = len(tok.value)
+                if str(tok.lineno) in error_lines:
+                    attribs = self.error_attribs[color]
+                else:
+                    attribs = self.attribs[color]
+                self.styledoc.setCharacterAttributes(tok.lexpos,
+                                                     mylength,
+                                                     attribs,
+                                                     True)
 
     def syntax_highlight_off(self):
         '''
