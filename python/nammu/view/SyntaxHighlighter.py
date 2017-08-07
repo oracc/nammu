@@ -245,17 +245,21 @@ class SyntaxHighlighter:
 
         # Break text into separate lines
         splittext = text.split('\n')
+        attribs = self.attribs[defaultcolor]
 
-        # Keep background style from validation errors
-        for line_num, line in enumerate(splittext, start=1):
-            if str(line_num) in self.controller.validation_errors.keys():
-                attribs = self.error_attribs[defaultcolor]
-            else:
-                attribs = self.attribs[defaultcolor]
+        self.styledoc.setCharacterAttributes(0,
+                                             area_length,
+                                             attribs,
+                                             True)
+
+        for line_num in self.controller.validation_errors.keys():
+            line_no = int(line_num)
+
+            attribs = self.error_attribs[defaultcolor]
             atfCont = self.controller.controller.atfAreaController
-            pos = atfCont.getPositionFromLine(text, line_num)
+            pos = atfCont.getPositionFromLine(text, line_no)
             self.styledoc.setCharacterAttributes(pos,
-                                                 len(line) + 1,
+                                                 len(splittext[line_no - 1]),
                                                  attribs,
                                                  True)
 
