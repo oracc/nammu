@@ -38,7 +38,8 @@ from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
 from java.net import URI
-from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
+from javax.swing import (JFileChooser, JOptionPane, ToolTipManager,
+                         JSplitPane, SwingUtilities)
 from javax.swing.filechooser import FileNameExtensionFilter
 from javax.swing.text import DefaultCaret
 from pyoracc.atf.atffile import AtfFile
@@ -172,11 +173,21 @@ class NammuController(object):
                                                     DefaultCaret.ALWAYS_UPDATE)
                 syntax_highlight.syntax_highlight_on = True
 
+                print self.atfAreaController.view.vert_scroll.getWidth()
+
+                SwingUtilities.invokeLater(self.tmpfunc)
+
+
             # TODO: Else, prompt user to choose again before closing
 
             # Update settings with current file's path
             self.update_config_element(self.get_working_dir(),
                                        'default', 'working_dir')
+
+    def tmpFunc(self):
+        atfview = self.atfAreaController.view
+        top, bottom = atfview.get_viewport_carets()
+        self.atfAreaController.syntax_highlight(top, bottom)
 
     def readTextFile(self, filename):
         '''
