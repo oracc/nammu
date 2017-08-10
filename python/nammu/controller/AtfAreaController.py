@@ -35,6 +35,7 @@ class AtfAreaController(object):
     def __init__(self, mainControler):
         # Create text edition area
         self.edit_area = AtfEditArea(self)
+        self.caret = self.edit_area.getCaret()
         self.secondary_area = AtfEditArea(self)
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)

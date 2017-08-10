@@ -40,6 +40,7 @@ from java.lang import System, Integer, ClassLoader
 from java.net import URI
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
+from javax.swing.text import DefaultCaret
 from pyoracc.atf.atffile import AtfFile
 from requests.exceptions import RequestException
 from requests.exceptions import Timeout, ConnectionError, HTTPError
@@ -155,9 +156,21 @@ class NammuController(object):
                 # Clear ATF area before adding next text to clean up tooltips
                 # and such
                 self.atfAreaController.clearAtfArea()
+
+                # Turn off caret movement and highligting for file load
+                self.atfAreaController.caret.setUpdatePolicy(
+                                                    DefaultCaret.NEVER_UPDATE)
+                syntax_highlight = self.atfAreaController.syntax_highlighter
+                syntax_highlight.syntax_highlight_on = False
                 self.atfAreaController.setAtfAreaText(atfText)
+
                 self.logger.debug("File %s successfully opened.", filename)
                 self.view.setTitle(basename)
+
+                # Re-enable caret updating and syntax highlighting after load
+                self.atfAreaController.caret.setUpdatePolicy(
+                                                    DefaultCaret.ALWAYS_UPDATE)
+                syntax_highlight.syntax_highlight_on = True
 
             # TODO: Else, prompt user to choose again before closing
 
