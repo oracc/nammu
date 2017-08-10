@@ -425,6 +425,9 @@ class NammuController(object):
         Connect to ORACC server and retrieved lemmatised version of ATF file.
         Don't lemmatise if file doesn't validate.
         '''
+        # Grab the caret position before lemmatising
+        pre_cursor = self.atfAreaController.edit_area.getCaretPosition()
+
         # Clear previous log in Nammu's console
         self.consoleController.clearConsole()
 
@@ -447,6 +450,9 @@ class NammuController(object):
                                 self.currentFilename)
 
             self.logger.debug("Lemmatising ATF done.")
+
+            # Restore the caret position following lemmatisation
+            self.atfAreaController.edit_area.setCaretPosition(pre_cursor)
         else:
             self.logger.error("Please save file before trying to lemmatise.")
 
