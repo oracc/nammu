@@ -128,51 +128,10 @@ class AtfAreaView(JPanel):
                                      top_left_position.y + extent.height)
         bottom_left_char = self.edit_area.viewToModel(bottom_left_position)
 
-        # This is where we will implement the lookbehind, with the result being
-        # a modified top_left_char value being returned.
+        # Pad the top of the viewport to capture up to the nearest header
+        top_left_char = self.controller.pad_viewport_caret(top_left_char)
 
-        # Get the text in the full edit area
-        text = self.edit_area.getText()
-
-        # Test that there is text in the edit area
-        if len(text) == 0:
-            return top_left_char, bottom_left_char
-
-        # Test if the line we are currently on is a header line
-        if text[top_left_char] == '&':
-            return top_left_char, bottom_left_char
-
-        # slice text to only contain the characters above the viewport
-        text_above = text[:top_left_char]
-        # This catches malformed headers at the top of a file.
-        if len(text_above) == 0:
-            return top_left_char, bottom_left_char
-
-        # Split the text above the viewport into lines
-        lines = text_above.split('\n')
-        header_line_no = None
-
-        # Iterate over the list backwards, as this is more efficient
-        for line_no, line in reversed(list(enumerate(lines))):
-            if line.startswith('&'):
-                header_line_no = line_no
-                break
-
-        # line 0 will evaluate as false so need to be explicit here
-        if header_line_no is not None:
-            # If we have a header line, in the text above the viewport,
-            # update the top_left_char value
-            cursor_line_no = self.edit_area.get_line_num(top_left_char)
-            char_count = len('\n'.join(lines[header_line_no:cursor_line_no]))
-
-            top_left_char = top_left_char - char_count
-
-            if top_left_char < 0:
-                top_left_char = 0
-
-            return top_left_char, bottom_left_char
-        else:
-            return top_left_char, bottom_left_char
+        return top_left_char, bottom_left_char
 
 
 class atfAreaAdjustmentListener(AdjustmentListener):
