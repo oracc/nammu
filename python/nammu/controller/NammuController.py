@@ -158,6 +158,8 @@ class NammuController(object):
                 self.atfAreaController.setAtfAreaText(atfText)
                 self.logger.debug("File %s successfully opened.", filename)
                 self.view.setTitle(basename)
+                # Reset the caret position to the top of the file
+                self.atfAreaController.edit_area.setCaretPosition(0)
 
             # TODO: Else, prompt user to choose again before closing
 
