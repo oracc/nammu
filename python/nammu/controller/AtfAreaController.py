@@ -154,7 +154,7 @@ class AtfAreaController(object):
 
         return top_line, bottom_line
 
-    def pad_viewport_caret(self, top_left_char):
+    def pad_top_viewport_caret(self, top_left_char):
         # Get the text in the full edit area
         text = self.edit_area.getText()
 
@@ -189,7 +189,7 @@ class AtfAreaController(object):
             cursor_line_no = self.edit_area.get_line_num(top_left_char)
             char_count = len('\n'.join(lines[header_line_no:cursor_line_no]))
 
-            top_left_char = top_left_char - char_count
+            top_left_char -= char_count
 
             # This will catch any errors if the char_count goes wrong
             if top_left_char < 0:
@@ -198,6 +198,30 @@ class AtfAreaController(object):
             return top_left_char
         else:
             return top_left_char
+
+    def pad_bottom_viewport_caret(self, bottom_left_char):
+        # Get the text in the full edit area
+        text = self.edit_area.getText()
+
+        # Test that there is text in the edit area
+        if len(text) == 0:
+            return bottom_left_char
+
+        # slice text to only contain the characters below the viewport
+        text_below = text[bottom_left_char:]
+
+        # Check there is text below the viewport
+        if len(text_below) == 0:
+            return bottom_left_char
+
+        # Split the text below the viewport into lines
+        lines = text_below.split('\n')
+
+        # Get no of chars on the last line of the viewport and the next 2 lines
+        char_count = len('\n'.join(lines[:3]))
+        bottom_left_char += char_count
+
+        return bottom_left_char
 
     def syntax_highlight(self, top_caret=None, bottom_caret=None):
         '''

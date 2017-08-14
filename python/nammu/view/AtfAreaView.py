@@ -128,10 +128,17 @@ class AtfAreaView(JPanel):
                                      top_left_position.y + extent.height)
         bottom_left_char = self.edit_area.viewToModel(bottom_left_position)
 
-        # Pad the top of the viewport to capture up to the nearest header
-        top_left_char = self.controller.pad_viewport_caret(top_left_char)
+        # Something has gone wrong. Assume that top_left should be at the start
+        # of the file
+        if top_left_char >= bottom_left_char:
+            top_left_char = 0
 
-        return top_left_char, bottom_left_char
+        # Pad the top of the viewport to capture up to the nearest header and
+        # the bottom by 2 lines
+        top_ch = self.controller.pad_top_viewport_caret(top_left_char)
+        bottom_ch = self.controller.pad_bottom_viewport_caret(bottom_left_char)
+
+        return top_ch, bottom_ch
 
 
 class atfAreaAdjustmentListener(AdjustmentListener):
