@@ -133,10 +133,14 @@ class AtfAreaView(JPanel):
         if top_left_char >= bottom_left_char:
             top_left_char = 0
 
+        # Get the text in the full edit area
+        text = self.controller.edit_area.getText()
+
         # Pad the top of the viewport to capture up to the nearest header and
         # the bottom by 2 lines
-        top_ch = self.controller.pad_top_viewport_caret(top_left_char)
-        bottom_ch = self.controller.pad_bottom_viewport_caret(bottom_left_char)
+        top_ch = self.controller.pad_top_viewport_caret(top_left_char, text)
+        bottom_ch = self.controller.pad_bottom_viewport_caret(bottom_left_char,
+                                                              text)
 
         return top_ch, bottom_ch
 

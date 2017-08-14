@@ -154,9 +154,7 @@ class AtfAreaController(object):
 
         return top_line, bottom_line
 
-    def pad_top_viewport_caret(self, top_left_char):
-        # Get the text in the full edit area
-        text = self.edit_area.getText()
+    def pad_top_viewport_caret(self, top_left_char, text):
 
         # Test that there is text in the edit area
         if len(text) == 0:
@@ -199,9 +197,7 @@ class AtfAreaController(object):
         else:
             return top_left_char
 
-    def pad_bottom_viewport_caret(self, bottom_left_char):
-        # Get the text in the full edit area
-        text = self.edit_area.getText()
+    def pad_bottom_viewport_caret(self, bottom_left_char, text):
 
         # Test that there is text in the edit area
         if len(text) == 0:
