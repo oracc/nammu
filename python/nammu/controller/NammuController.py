@@ -177,7 +177,6 @@ class NammuController(object):
 
                 SwingUtilities.invokeLater(self.tmpfunc)
 
-
             # TODO: Else, prompt user to choose again before closing
 
             # Update settings with current file's path
