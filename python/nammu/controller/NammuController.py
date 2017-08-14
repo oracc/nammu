@@ -25,6 +25,7 @@ from logging.handlers import RotatingFileHandler
 import os
 import urllib
 import re
+from swingutils.threads.swing import runSwingLater
 
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
@@ -38,8 +39,7 @@ from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
 from java.net import URI
-from javax.swing import (JFileChooser, JOptionPane, ToolTipManager,
-                         JSplitPane, SwingUtilities)
+from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
 from javax.swing.text import DefaultCaret
 from pyoracc.atf.atffile import AtfFile
@@ -173,9 +173,9 @@ class NammuController(object):
                                                     DefaultCaret.ALWAYS_UPDATE)
                 syntax_highlight.syntax_highlight_on = True
 
-                print self.atfAreaController.view.vert_scroll.getWidth()
-
-                SwingUtilities.invokeLater(self.tmpfunc)
+                # Now dispatch syntax highlighting in a new thread so
+                # we dont highlight before the full file is loaded
+                runSwingLater(self.initHighlighting)
 
             # TODO: Else, prompt user to choose again before closing
 
@@ -183,7 +183,11 @@ class NammuController(object):
             self.update_config_element(self.get_working_dir(),
                                        'default', 'working_dir')
 
-    def tmpFunc(self):
+    def initHighlighting(self):
+        '''
+        A helper function to be called when we need to initialise syntax
+        highlighting in a different thread.
+        '''
         atfview = self.atfAreaController.view
         top, bottom = atfview.get_viewport_carets()
         self.atfAreaController.syntax_highlight(top, bottom)
