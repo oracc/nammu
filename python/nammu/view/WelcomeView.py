@@ -37,8 +37,6 @@ class WelcomeView(JDialog):
         self.logger = logging.getLogger('NammuController')
         self.setAlwaysOnTop(False)
         self.controller = controller
-        self.new_user = self.controller.config['new_user']
-        self.pane = self.getContentPane()  # Not sure about this.
 
     def display(self):
         '''
@@ -48,13 +46,13 @@ class WelcomeView(JDialog):
         self.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
         self.setResizable(False)
         self.setTitle('Welcome to Nammu')
-        self.pack()  # What does this do?
+        self.pack()
         self.setLocationRelativeTo(None)
         self.visible = 1
 
     def build(self):
         '''
-        Create all tab panels and put together to form the settings window.
+        Adds the welcome panel to the JDialog window.
         '''
         self.setLayout(BorderLayout())
         self.add(self.build_welcome_panel(), BorderLayout.CENTER)
@@ -70,10 +68,10 @@ class WelcomeView(JDialog):
         close_button = JButton('Close', actionPerformed=self.close_action)
         panel.add(close_button, constraints)
 
-        message = ('<html>Welcome to Nammu, an editor for the ORACC project'
+        message = ('<html>Welcome to Nammu, an editor for the ORACC project '
                   '<a href=\'oracc\'>Click here</a> for help getting started '
-                  ' with ORACC and <a href=\'nammu\'>here</a> to learn more'
-                  ' about Nammu</html>')
+                  'with ORACC and <a href=\'nammu\'>here</a> to learn more '
+                  'about Nammu</html>')
         welcome_label = JEditorPane('text/html', message)
 
         # Disable writing in the console - required to render hyperlinks
@@ -103,7 +101,7 @@ class WelcomeView(JDialog):
     def handleEvent(self, event):
         '''
         A simple event handler for clicked hyperlinks, to direct to the
-        documentation and the github repo
+        documentation and the github repo.
         '''
         if event.getEventType() is EventType.ACTIVATED:
 
