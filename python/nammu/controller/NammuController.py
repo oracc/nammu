@@ -113,6 +113,9 @@ class NammuController(object):
                      'oracc': ('http://oracc.museum.upenn.edu/doc/help/'
                               'editinginatf/')}
 
+        # Now that init is done, launch the welcome screen if needed
+        self.launchWelcomeScreen()
+
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
     # require interaction of several subcontrollers who have no visibility.
@@ -651,13 +654,17 @@ class NammuController(object):
         # Refresh validation errors
         self.atfAreaController.set_validation_errors(validation_errors)
 
+    def launchWelcomeScreen(self):
+        if self.config['new_user']:
+            WelcomeController(self)
+
+
     def printFile(self, event=None):
         '''
         Print file.
         TODO: Disable this button until functionality is implemented.
         '''
         self.logger.debug("Printing file...")
-        welcome = WelcomeController(self)
 
     def editSettings(self, event=None):
         '''
