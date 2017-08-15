@@ -111,7 +111,7 @@ class NammuController(object):
         # Here are the current urls for nammu on github and the oracc docs
         self.urls = {'nammu': 'https://github.com/oracc/nammu',
                      'oracc': ('http://oracc.museum.upenn.edu/doc/help/'
-                              'editinginatf/')}
+                               'editinginatf/')}
 
         # Now that init is done, launch the welcome screen if needed
         self.launchWelcomeScreen()
@@ -655,9 +655,11 @@ class NammuController(object):
         self.atfAreaController.set_validation_errors(validation_errors)
 
     def launchWelcomeScreen(self):
+        '''
+        Checks if new_user flag is true, launches the welcome screen if needed
+        '''
         if self.config['new_user']:
             WelcomeController(self)
-
 
     def printFile(self, event=None):
         '''

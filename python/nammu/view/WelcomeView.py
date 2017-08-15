@@ -132,7 +132,6 @@ class WelcomeView(JDialog):
         # Close the welcome window
         self.dispose()
 
-
     def handleEvent(self, event):
         '''
         A simple event handler for clicked hyperlinks, to direct to the
