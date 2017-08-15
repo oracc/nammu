@@ -210,40 +210,6 @@ class SyntaxHighlighter:
                                                          attribs,
                                                          True)
 
-    def syntax_highlight_off(self):
-        '''
-        Remove coloring.
-        TODO: Make this properly!
-        '''
-        # Get text from styledoc
-        area_length = self.styledoc.getLength()
-        text = self.styledoc.getText(0, area_length)
-
-        # Reset lexer and parse text
-        self.lexer.input(text)
-        self.lexer.lineno = 1
-        while self.lexer.current_state() != 'INITIAL':
-            self.lexer.pop_state()
-
-        # Reset all styling
-        defaultcolor = self.tokencolorlu['default'][0]
-
-        # Break text into separate lines
-        splittext = text.split('\n')
-
-        # Keep background style from validation errors
-        for line_num, line in enumerate(splittext, start=1):
-            if str(line_num) in self.controller.validation_errors.keys():
-                attribs = self.error_attribs[defaultcolor]
-            else:
-                attribs = self.attribs[defaultcolor]
-            atfCont = self.controller.controller.atfAreaController
-            pos = atfCont.getPositionFromLine(text, line_num)
-            self.styledoc.setCharacterAttributes(pos,
-                                                 len(line) + 1,
-                                                 attribs,
-                                                 True)
-
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
         Highlight text and apply highlight background for matches, taking
