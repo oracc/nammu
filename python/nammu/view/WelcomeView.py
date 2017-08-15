@@ -21,13 +21,10 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 import os
 from swingutils.events import addEventListener
-
-from java.awt import Font, Dimension
-from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
-from java.awt import GridBagLayout, GridBagConstraints, Insets
-from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
-from javax.swing import JLabel, BoxLayout, JTextField, JButton, JCheckBox
-from javax.swing import JFileChooser, JEditorPane, JScrollPane, BorderFactory
+from java.awt import (Color, BorderLayout, GridBagLayout, GridBagConstraints,
+                      Insets)
+from javax.swing import (JDialog, JFrame, JPanel, JButton, JCheckBox,
+                         JEditorPane, JScrollPane, BorderFactory)
 from javax.swing.border import EmptyBorder
 from javax.swing.event import HyperlinkListener
 from javax.swing.event.HyperlinkEvent import EventType
@@ -76,24 +73,24 @@ class WelcomeView(JDialog):
                    '<p>Learn more about Nammu <a href=\'nammu\'>here</a>.</p>'
                    '</body></html>')
 
+        # Configure a JEditorPane to display HTML for our welcome message
         msg_pane = JEditorPane()
-
-        # Required to render hyperlinks
         msg_pane.setEditable(False)
-
         kit = HTMLEditorKit()
         msg_pane.setEditorKit(kit)
-
         scrollPane = JScrollPane(msg_pane)
 
+        # This handles the stylesheet applied to the welcome message
         styleSheet = kit.getStyleSheet()
         styleSheet.addRule('body {color:black; font-size: 16 pt; }')
         styleSheet.addRule('h1 {text-align:center; }')
         styleSheet.addRule('h2 {text-align:center; }')
 
+        # Set the JEditorPane background to match the rest of the window
         msg_pane.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         msg_pane.background = Color(238, 238, 238)
 
+        # Add the message and the css and to the JEditorPane
         doc = kit.createDefaultDocument()
         msg_pane.setDocument(doc)
         msg_pane.setText(message)
@@ -102,6 +99,7 @@ class WelcomeView(JDialog):
         listener = addEventListener(msg_pane, HyperlinkListener,
                                     'hyperlinkUpdate', self.handleEvent)
 
+        # Configure the placement of the JEditorPane
         constraints.gridx = 1
         constraints.gridy = 1
         constraints.fill = GridBagConstraints.BOTH
@@ -109,20 +107,19 @@ class WelcomeView(JDialog):
 
         panel.add(msg_pane, constraints)
 
+        # Build and place the checkbox
         self.checkbox = JCheckBox('Don\'t show this message again.',
                                   selected=False)
         constraints.gridx = 1
         constraints.gridy = 2
         panel.add(self.checkbox, constraints)
 
+        # Build and place the close button
         close_button = JButton('Close', actionPerformed=self.close_action)
 
         constraints.gridx = 2
         constraints.gridy = 2
-
-
         panel.add(close_button, constraints)
-
 
         return panel
 
