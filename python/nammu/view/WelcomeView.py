@@ -67,12 +67,6 @@ class WelcomeView(JDialog):
         constraints = GridBagConstraints()
         constraints.insets = Insets(10, 10, 10, 10)
 
-        doc_button = JButton('Documentation', actionPerformed=self.mock_action)
-        panel.add(doc_button, constraints)
-
-        nammu_button = JButton('About Nammu', actionPerformed=self.mock_action)
-        panel.add(nammu_button, constraints)
-
         close_button = JButton('Close', actionPerformed=self.close_action)
         panel.add(close_button, constraints)
 
@@ -95,9 +89,6 @@ class WelcomeView(JDialog):
         panel.add(self.checkbox, constraints)
 
         return panel
-
-    def mock_action(self, event):
-        print 'Hello world'
 
     def close_action(self, event):
 
