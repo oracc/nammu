@@ -41,11 +41,11 @@ class TestSOAP(object):
                              'start="<SOAP-ENV:Envelope>"; '
                              'start-info="application/soap+xml"; '
                              'boundary="==========boundary========"'),
-            'Host': 'http://oracc.museum.upenn.edu:8085',
+            'Host': 'http://build-oracc.museum.upenn.edu:8085',
             'Content-Length': '2011',
             'MIME-Version': '1.0'
         }
-        client = SOAPClient('http://oracc.museum.upenn.edu',
+        client = SOAPClient('http://build-oracc.museum.upenn.edu',
                             '8085',
                             'p',
                             method='POST')
@@ -63,12 +63,12 @@ class TestSOAP(object):
         has confirmed the validation/lemmatisation is ready.
         """
         goal_headers = {
-            'Host': 'http://oracc.museum.upenn.edu:8085',
+            'Host': 'http://build-oracc.museum.upenn.edu:8085',
             'Content-Transfer-Encoding': '7bit',
             'MIME-Version': '1.0',
             'Content-Type': 'application/soap+xml'
         }
-        client = SOAPClient('http://oracc.museum.upenn.edu',
+        client = SOAPClient('http://build-oracc.museum.upenn.edu',
                             '8085',
                             'p',
                             method='POST')
@@ -102,7 +102,7 @@ class TestSOAP(object):
                     </osc-meth:Request>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>"""
-        client = SOAPClient('http://oracc.museum.upenn.edu',
+        client = SOAPClient('http://build-oracc.museum.upenn.edu',
                             '8085',
                             'p',
                             method='POST')
@@ -135,7 +135,7 @@ class TestSOAP(object):
                     </osc-meth:Response>
                 </SOAP-ENV:Body>
             </SOAP-ENV:Envelope>"""
-        client = SOAPClient('http://oracc.museum.upenn.edu',
+        client = SOAPClient('http://build-oracc.museum.upenn.edu',
                             '8085',
                             'p',
                             method='POST')
