@@ -34,6 +34,7 @@ from ToolbarController import ToolbarController
 from NewAtfController import NewAtfController
 from FindController import FindController
 from EditSettingsController import EditSettingsController
+from WelcomeController import WelcomeController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
@@ -651,6 +652,7 @@ class NammuController(object):
         TODO: Disable this button until functionality is implemented.
         '''
         self.logger.debug("Printing file...")
+        welcome = WelcomeController(self)
 
     def editSettings(self, event=None):
         '''
