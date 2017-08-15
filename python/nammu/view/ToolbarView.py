@@ -30,9 +30,6 @@ class ToolbarView(JToolBar):
         # Give reference to controller to delegate action response
         self.controller = controller
 
-        # TODO Refactor to avoid duplication - See issue#16
-        # https://github.com/UCL-RITS/nammu/issues/16
-
         # Content needs to be displayed in an orderly fashion so that buttons
         # are placed where we expect them to be, not in the ramdon order dicts
         # have.
