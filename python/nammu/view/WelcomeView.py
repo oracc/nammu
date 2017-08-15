@@ -22,14 +22,16 @@ import logging
 import os
 from swingutils.events import addEventListener
 
+from java.awt import Font, Dimension
 from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
 from java.awt import GridBagLayout, GridBagConstraints, Insets
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
 from javax.swing import JLabel, BoxLayout, JTextField, JButton, JCheckBox
-from javax.swing import JFileChooser, JEditorPane
+from javax.swing import JFileChooser, JEditorPane, JScrollPane, BorderFactory
 from javax.swing.border import EmptyBorder
 from javax.swing.event import HyperlinkListener
 from javax.swing.event.HyperlinkEvent import EventType
+from javax.swing.text.html import HTMLEditorKit
 
 
 class WelcomeView(JDialog):
@@ -65,26 +67,62 @@ class WelcomeView(JDialog):
         constraints = GridBagConstraints()
         constraints.insets = Insets(10, 10, 10, 10)
 
-        close_button = JButton('Close', actionPerformed=self.close_action)
-        panel.add(close_button, constraints)
+        message = ('<html><body>'
+                   '<h1>Welcome to Nammu</h1>'
+                   '<h2>An editor for the ORACC project<h2>'
+                   '<p>'
+                   '<a href=\'oracc\'>Click here</a> for help with ORACC.'
+                   '</p>'
+                   '<p>Learn more about Nammu <a href=\'nammu\'>here</a>.</p>'
+                   '</body></html>')
 
-        message = ('<html>Welcome to Nammu, an editor for the ORACC project '
-                  '<a href=\'oracc\'>Click here</a> for help getting started '
-                  'with ORACC and <a href=\'nammu\'>here</a> to learn more '
-                  'about Nammu</html>')
-        welcome_label = JEditorPane('text/html', message)
+        msg_pane = JEditorPane()
 
-        # Disable writing in the console - required to render hyperlinks
-        welcome_label.setEditable(False)
+        # Required to render hyperlinks
+        msg_pane.setEditable(False)
+
+        kit = HTMLEditorKit()
+        msg_pane.setEditorKit(kit)
+
+        scrollPane = JScrollPane(msg_pane)
+
+        styleSheet = kit.getStyleSheet()
+        styleSheet.addRule('body {color:black; font-size: 16 pt; }')
+        styleSheet.addRule('h1 {text-align:center; }')
+        styleSheet.addRule('h2 {text-align:center; }')
+
+        msg_pane.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
+        msg_pane.background = Color(238, 238, 238)
+
+        doc = kit.createDefaultDocument()
+        msg_pane.setDocument(doc)
+        msg_pane.setText(message)
 
         # Set up a hyperlink listener
-        listener = addEventListener(welcome_label, HyperlinkListener,
+        listener = addEventListener(msg_pane, HyperlinkListener,
                                     'hyperlinkUpdate', self.handleEvent)
 
-        panel.add(welcome_label, constraints)
+        constraints.gridx = 1
+        constraints.gridy = 1
+        constraints.fill = GridBagConstraints.BOTH
+        constraints.anchor = GridBagConstraints.CENTER
 
-        self.checkbox = JCheckBox('Don\'t show this message again.', selected=False)
+        panel.add(msg_pane, constraints)
+
+        self.checkbox = JCheckBox('Don\'t show this message again.',
+                                  selected=False)
+        constraints.gridx = 1
+        constraints.gridy = 2
         panel.add(self.checkbox, constraints)
+
+        close_button = JButton('Close', actionPerformed=self.close_action)
+
+        constraints.gridx = 2
+        constraints.gridy = 2
+
+
+        panel.add(close_button, constraints)
+
 
         return panel
 
