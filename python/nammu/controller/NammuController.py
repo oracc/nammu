@@ -108,6 +108,11 @@ class NammuController(object):
         # Find windows shouldn't coexist
         self.finding = False
 
+        # Here are the current urls for nammu on github and the oracc docs
+        self.urls = {'nammu': 'https://github.com/oracc/nammu',
+                     'oracc': ('http://oracc.museum.upenn.edu/doc/help/'
+                              'editinginatf/')}
+
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
     # require interaction of several subcontrollers who have no visibility.
@@ -833,14 +838,13 @@ class NammuController(object):
         """
         Show ATF validation help.
         """
-        self._open_website("http://oracc.museum.upenn.edu/doc/help/"
-                           "editinginatf/")
+        self._open_website(self.urls['oracc'])
 
     def showAbout(self, event=None):
         """
         Show repo's website with info about ORACC and Nammu.
         """
-        self._open_website("https://github.com/oracc/nammu")
+        self._open_website(self.urls['nammu'])
 
     def _open_website(self, url):
         uri = URI(url)

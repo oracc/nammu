@@ -116,10 +116,7 @@ class WelcomeView(JDialog):
         '''
         if event.getEventType() is EventType.ACTIVATED:
 
-            urls = {'nammu': 'https://github.com/oracc/nammu',
-                    'oracc': ('http://oracc.museum.upenn.edu/doc/help/'
-                              'editinginatf/')}
+            # Shorthand for NammuController
+            nammu = self.controller.controller
 
-            clicked = event.getDescription()
-
-            self.controller.controller._open_website(urls[clicked])
+            nammu._open_website(nammu.urls[event.getDescription()])
