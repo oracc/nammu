@@ -40,8 +40,8 @@ class ToolbarView(JToolBar):
         # OrderedDict to work
         tooltips = {}
         tooltips = collections.OrderedDict()
-        tooltips['newFile'] = 'Creates empty ATF file for edition'
-        tooltips['openFile'] = 'Opens ATF file for edition'
+        tooltips['newFile'] = 'Creates empty ATF file for editing'
+        tooltips['openFile'] = 'Opens ATF file for editing'
         tooltips['saveFile'] = 'Saves current file'
         tooltips['saveAsFile'] = 'Save As...'
         tooltips['closeFile'] = 'Closes current file'
