@@ -64,9 +64,21 @@
 						      <include>**/*py.class</include>
 				          </includes>
 					  </fileset>
+						<fileset>
+				          <directory>./resources/lib</directory>
+				          <includes>
+						      <include>*.class</include>
+				          </includes>
+					  </fileset>
 			    </filesets>
 			  </configuration>
 		  </plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.2</version>
+			</plugin>
 
 			<!-- Make sure resources like toolbar icons are copied to final
             jar -->
