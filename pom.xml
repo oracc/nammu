@@ -86,6 +86,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.0.1</version>
 				<executions>
+
 					<execution>
 						<id>copy-resources</id>
 						<phase>validate</phase>
@@ -102,22 +103,26 @@
 		 					</resources>
 						</configuration>
 					</execution>
+
 					<execution>
 						<id>copy-java-class</id>
-						<phase>validate</phase>
+						<phase>process-classes</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/target/classes/Lib</outputDirectory>
+							<outputDirectory>${basedir}/resources/lib</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${basedir}/resources/lib</directory>
-									<filtering>false</filtering>
+									<directory>${basedir}/target/classes</directory>
+									<includes>
+										<include>*.class</include>
+									</includes>
 								</resource>
 							</resources>
 						</configuration>
 					</execution>
+
 				</executions>
 			</plugin>
 
