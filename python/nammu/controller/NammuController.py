@@ -658,7 +658,10 @@ class NammuController(object):
         '''
         Checks if new_user flag is true, launches the welcome screen if needed
         '''
-        if self.config['new_user']:
+        try:
+            if self.config['new_user']:
+                WelcomeController(self)
+        except KeyError:
             WelcomeController(self)
 
     def printFile(self, event=None):
