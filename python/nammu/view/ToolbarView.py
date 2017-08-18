@@ -30,9 +30,6 @@ class ToolbarView(JToolBar):
         # Give reference to controller to delegate action response
         self.controller = controller
 
-        # TODO Refactor to avoid duplication - See issue#16
-        # https://github.com/UCL-RITS/nammu/issues/16
-
         # Content needs to be displayed in an orderly fashion so that buttons
         # are placed where we expect them to be, not in the ramdon order dicts
         # have.
@@ -43,8 +40,8 @@ class ToolbarView(JToolBar):
         # OrderedDict to work
         tooltips = {}
         tooltips = collections.OrderedDict()
-        tooltips['newFile'] = 'Creates empty ATF file for edition'
-        tooltips['openFile'] = 'Opens ATF file for edition'
+        tooltips['newFile'] = 'Creates empty ATF file for editing'
+        tooltips['openFile'] = 'Opens ATF file for editing'
         tooltips['saveFile'] = 'Saves current file'
         tooltips['saveAsFile'] = 'Save As...'
         tooltips['closeFile'] = 'Closes current file'
@@ -54,7 +51,6 @@ class ToolbarView(JToolBar):
         tooltips['copy'] = 'Copy text selection'
         tooltips['cut'] = 'Cut text selection'
         tooltips['paste'] = 'Paste clipboard content'
-        tooltips['syntax_highlight_switch'] = 'Switch on/off syntax_highlight'
         tooltips['validate'] = 'Check current ATF correctness'
         tooltips['lemmatise'] = 'Obtain lemmas for current ATF text'
         tooltips['displayModelView'] = 'Change to ATF data model view'
@@ -69,8 +65,7 @@ class ToolbarView(JToolBar):
             button.setToolTipText(tooltip)
             self.add(button)
             # Work out is separator is needed
-            if name in ['printFile', 'redo', 'paste',
-                        'syntax_highlight_switch', 'lemmatise', 'unicode',
+            if name in ['printFile', 'redo', 'paste', 'lemmatise', 'unicode',
                         'console', 'displayModelView', 'showAbout']:
                 self.addSeparator()
 

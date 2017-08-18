@@ -23,12 +23,16 @@ from swingutils.threads.swing import runSwingLater
 from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
 
+import MyStyledEditorKit
+
 from ..utils import set_font
 
 
 class AtfEditArea(JTextPane):
 
     def __init__(self, controller):
+        # This custom StyledEditorKit fixes broken line wrapping.
+        self.setEditorKit(MyStyledEditorKit())
         self.controller = controller
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.font = set_font()

@@ -891,14 +891,3 @@ class NammuController(object):
                 self.find_controller = FindController(self)
         else:
             self.find_controller = FindController(self)
-
-    def syntax_highlight_switch(self, event=None):
-        '''
-        Turns syntax highlight on or off.
-        '''
-        self.atfAreaController.syntax_highlighter.syntax_highlight_on = \
-            not self.atfAreaController.syntax_highlighter.syntax_highlight_on
-        if not self.atfAreaController.syntax_highlighter.syntax_highlight_on:
-            self.atfAreaController.syntax_highlighter.syntax_highlight_off()
-        else:
-            self.atfAreaController.syntax_highlight()
