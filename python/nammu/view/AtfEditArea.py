@@ -18,6 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import re
+from swingutils.threads.swing import runSwingLater
 
 from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
@@ -77,7 +78,11 @@ class AtfEditArea(JTextPane):
         still works when you set text from elsewhere in the code.
         '''
         super(AtfEditArea, self).setText(text)
-        self.controller.syntax_highlight()
+
+        # call here with a top line and bottom line for highlighting following
+        # a set text call
+        top_caret, bottom_caret = self.controller.view.get_viewport_carets()
+        self.controller.syntax_highlight(top_caret, bottom_caret)
 
     def replaceSelection(self, text):
         '''

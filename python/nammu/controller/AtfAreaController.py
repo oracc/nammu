@@ -35,6 +35,7 @@ class AtfAreaController(object):
     def __init__(self, mainControler):
         # Create text edition area
         self.edit_area = AtfEditArea(self)
+        self.caret = self.edit_area.getCaret()
         self.secondary_area = AtfEditArea(self)
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
@@ -144,11 +145,93 @@ class AtfAreaController(object):
                 return getattr(self.edit_area, name)(*args, **kw)
             return wrapper
 
-    def syntax_highlight(self):
+    def get_viewport_top_bottom(self, top, bottom):
         '''
-        Short hand for syntax highlighting.
+        Get the top and bottom of the viewport from scroll events
         '''
-        self.syntax_highlighter.syntax_highlight()
+        top_line = self.edit_area.get_line_num(top)
+        bottom_line = self.edit_area.get_line_num(bottom)
+
+        return top_line, bottom_line
+
+    def pad_top_viewport_caret(self, top_left_char, text):
+
+        # Test that there is text in the edit area
+        if len(text) == 0:
+            return top_left_char
+
+        # Test if the line we are currently on is a header line
+        if text[top_left_char] == '&':
+            return top_left_char
+
+        # slice text to only contain the characters above the viewport
+        text_above = text[:top_left_char]
+        # This catches malformed headers at the top of a file.
+        if len(text_above) == 0:
+            return top_left_char
+
+        # Split the text above the viewport into lines
+        lines = text_above.split('\n')
+        header_line_no = None
+
+        # Iterate over the list backwards, as this is more efficient
+        for line_no, line in reversed(list(enumerate(lines))):
+            if line.startswith('&'):
+                header_line_no = line_no
+                break
+
+        # line 0 will evaluate as false so need to be explicit here
+        if header_line_no is not None:
+            # If we have a header line, in the text above the viewport,
+            # update the top_left_char value
+            cursor_line_no = self.edit_area.get_line_num(top_left_char)
+            char_count = len('\n'.join(lines[header_line_no:cursor_line_no]))
+
+            top_left_char -= char_count
+
+            # This will catch any errors if the char_count goes wrong
+            if top_left_char < 0:
+                top_left_char = 0
+
+            return top_left_char
+        else:
+            return top_left_char
+
+    def pad_bottom_viewport_caret(self, bottom_left_char, text):
+
+        # Test that there is text in the edit area
+        if len(text) == 0:
+            return bottom_left_char
+
+        # slice text to only contain the characters below the viewport
+        text_below = text[bottom_left_char:]
+
+        # Check there is text below the viewport
+        if len(text_below) == 0:
+            return bottom_left_char
+
+        # Split the text below the viewport into lines
+        lines = text_below.split('\n')
+
+        # Get no of chars on the last line of the viewport and the next 2 lines
+        char_count = len('\n'.join(lines[:3]))
+        bottom_left_char += char_count
+
+        return bottom_left_char
+
+    def syntax_highlight(self, top_caret=None, bottom_caret=None):
+        '''
+        Short hand for syntax highlighting. Takes the line bounds.
+        '''
+        if top_caret is not None and bottom_caret is not None:
+            top_line, bottom_line = self.get_viewport_top_bottom(top_caret,
+                                                                 bottom_caret)
+            self.syntax_highlighter.syntax_highlight(top_line,
+                                                     bottom_line,
+                                                     top_caret,
+                                                     bottom_caret)
+        else:
+            self.syntax_highlighter.syntax_highlight()
 
     def highlight_matches(self, matches, offset, current_match=None):
         self.syntax_highlighter.highlight_matches(matches,

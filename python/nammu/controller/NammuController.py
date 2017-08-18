@@ -25,6 +25,7 @@ from logging.handlers import RotatingFileHandler
 import os
 import urllib
 import re
+from swingutils.threads.swing import runSwingLater
 
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
@@ -40,6 +41,7 @@ from java.lang import System, Integer, ClassLoader
 from java.net import URI
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
+from javax.swing.text import DefaultCaret
 from pyoracc.atf.atffile import AtfFile
 from requests.exceptions import RequestException
 from requests.exceptions import Timeout, ConnectionError, HTTPError
@@ -155,15 +157,40 @@ class NammuController(object):
                 # Clear ATF area before adding next text to clean up tooltips
                 # and such
                 self.atfAreaController.clearAtfArea()
+
+                # Turn off caret movement and highligting for file load
+                self.atfAreaController.caret.setUpdatePolicy(
+                                                    DefaultCaret.NEVER_UPDATE)
+                syntax_highlight = self.atfAreaController.syntax_highlighter
+                syntax_highlight.syntax_highlight_on = False
                 self.atfAreaController.setAtfAreaText(atfText)
+
                 self.logger.debug("File %s successfully opened.", filename)
                 self.view.setTitle(basename)
+
+                # Re-enable caret updating and syntax highlighting after load
+                self.atfAreaController.caret.setUpdatePolicy(
+                                                    DefaultCaret.ALWAYS_UPDATE)
+                syntax_highlight.syntax_highlight_on = True
+
+                # Now dispatch syntax highlighting in a new thread so
+                # we dont highlight before the full file is loaded
+                runSwingLater(self.initHighlighting)
 
             # TODO: Else, prompt user to choose again before closing
 
             # Update settings with current file's path
             self.update_config_element(self.get_working_dir(),
                                        'default', 'working_dir')
+
+    def initHighlighting(self):
+        '''
+        A helper function to be called when we need to initialise syntax
+        highlighting in a different thread.
+        '''
+        atfview = self.atfAreaController.view
+        top, bottom = atfview.get_viewport_carets()
+        self.atfAreaController.syntax_highlight(top, bottom)
 
     def readTextFile(self, filename):
         '''
@@ -425,6 +452,8 @@ class NammuController(object):
         Connect to ORACC server and retrieved lemmatised version of ATF file.
         Don't lemmatise if file doesn't validate.
         '''
+        # Grab the caret position before lemmatising
+        pre_cursor = self.atfAreaController.edit_area.getCaretPosition()
         # Clear previous log in Nammu's console
         self.consoleController.clearConsole()
 
@@ -447,6 +476,8 @@ class NammuController(object):
                                 self.currentFilename)
 
             self.logger.debug("Lemmatising ATF done.")
+            # Restore the caret position following lemmatisation
+            self.atfAreaController.edit_area.setCaretPosition(pre_cursor)
         else:
             self.logger.error("Please save file before trying to lemmatise.")
 

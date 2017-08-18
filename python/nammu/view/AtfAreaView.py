@@ -18,8 +18,8 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import re
-from java.awt import BorderLayout, Dimension, Color
-from java.awt.event import KeyListener
+from java.awt import BorderLayout, Dimension, Color, Point
+from java.awt.event import KeyListener, AdjustmentListener
 from javax.swing import JScrollPane, JPanel, JSplitPane
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
@@ -70,10 +70,13 @@ class AtfAreaView(JPanel):
         self.container.setRowHeaderView(self.line_numbers_area)
         self.add(self.container, BorderLayout.CENTER)
 
+        self.vert_scroll = self.container.getVerticalScrollBar()
+        self.vert_scroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
+
         # Key listener that triggers syntax highlighting, etc. upon key release
-        self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
+        self.edit_area.addKeyListener(AtfAreaKeyListener(self))
         # Also needed in secondary area:
-        self.secondary_area.addKeyListener(AtfAreaKeyListener(self.controller))
+        self.secondary_area.addKeyListener(AtfAreaKeyListener(self))
 
     def toggle_split(self, split_orientation=None):
         '''
@@ -114,6 +117,48 @@ class AtfAreaView(JPanel):
             self.container.setResizeWeight(0.5)
             self.add(self.container, BorderLayout.CENTER)
 
+    def get_viewport_carets(self):
+        '''
+        Get the top left and bottom left caret position of the current viewport
+        '''
+        extent = self.container.getViewport().getExtentSize()
+        top_left_position = self.container.getViewport().getViewPosition()
+        top_left_char = self.edit_area.viewToModel(top_left_position)
+        bottom_left_position = Point(top_left_position.x,
+                                     top_left_position.y + extent.height)
+        bottom_left_char = self.edit_area.viewToModel(bottom_left_position)
+
+        # Something has gone wrong. Assume that top_left should be at the start
+        # of the file
+        if top_left_char >= bottom_left_char:
+            top_left_char = 0
+
+        # Get the text in the full edit area
+        text = self.controller.edit_area.getText()
+
+        # Pad the top of the viewport to capture up to the nearest header and
+        # the bottom by 2 lines
+        top_ch = self.controller.pad_top_viewport_caret(top_left_char, text)
+        bottom_ch = self.controller.pad_bottom_viewport_caret(bottom_left_char,
+                                                              text)
+
+        return top_ch, bottom_ch
+
+
+class atfAreaAdjustmentListener(AdjustmentListener):
+    def __init__(self, areaview):
+        self.areaviewcontroller = areaview.controller
+        self.areaview = areaview
+
+    def adjustmentValueChanged(self, e):
+        if not e.getValueIsAdjusting():
+
+            top_l_char, bottom_l_char = self.areaview.get_viewport_carets()
+
+            # Call SyntaxHighlighter(top_l_char, bottom_l_char)
+            self.areaviewcontroller.syntax_highlight(top_l_char,
+                                                     bottom_l_char)
+
 
 class AtfAreaKeyListener(KeyListener):
     """
@@ -121,8 +166,9 @@ class AtfAreaKeyListener(KeyListener):
     line numbers (they'll need to be redrawn when a new line or block is added
     or removed).
     """
-    def __init__(self, controller):
-        self.controller = controller
+    def __init__(self, areaview):
+        self.areaviewcontroller = areaview.controller
+        self.areaview = areaview
 
     def keyReleased(self, ke):
         # Make sure we only syntax highlight when the key pressed is not an
@@ -130,7 +176,8 @@ class AtfAreaKeyListener(KeyListener):
         # lock or cmd.
         if ((not ke.isActionKey()) and
                 (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
-            self.controller.syntax_highlight()
+            top_l_char, bottom_l_char = self.areaview.get_viewport_carets()
+            self.areaviewcontroller.syntax_highlight(top_l_char, bottom_l_char)
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.
