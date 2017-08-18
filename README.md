@@ -218,6 +218,9 @@ like this:
 
  ```
 
+6. You can also run Nammu in development mode from the console. See instructions:
+https://github.com/oracc/nammu/wiki/Running-Nammu-from-a-console 
+
 If you find any problem or need more information, you can create an issue
 [here](https://github.com/oracc/nammu/issues).
 
