@@ -35,6 +35,7 @@ from ToolbarController import ToolbarController
 from NewAtfController import NewAtfController
 from FindController import FindController
 from EditSettingsController import EditSettingsController
+from WelcomeController import WelcomeController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
@@ -108,6 +109,14 @@ class NammuController(object):
 
         # Find windows shouldn't coexist
         self.finding = False
+
+        # Here are the current urls for nammu on github and the oracc docs
+        self.urls = {'nammu': 'https://github.com/oracc/nammu',
+                     'oracc': ('http://oracc.museum.upenn.edu/doc/help/'
+                               'editinginatf/')}
+
+        # Now that init is done, launch the welcome screen if needed
+        self.launchWelcomeScreen()
 
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
@@ -676,6 +685,16 @@ class NammuController(object):
         # Refresh validation errors
         self.atfAreaController.set_validation_errors(validation_errors)
 
+    def launchWelcomeScreen(self):
+        '''
+        Checks if new_user flag is true, launches the welcome screen if needed
+        '''
+        try:
+            if self.config['new_user']:
+                WelcomeController(self)
+        except KeyError:
+            WelcomeController(self)
+
     def printFile(self, event=None):
         '''
         Print file.
@@ -862,14 +881,13 @@ class NammuController(object):
         """
         Show ATF validation help.
         """
-        self._open_website("http://oracc.museum.upenn.edu/doc/help/"
-                           "editinginatf/")
+        self._open_website(self.urls['oracc'])
 
     def showAbout(self, event=None):
         """
         Show repo's website with info about ORACC and Nammu.
         """
-        self._open_website("https://github.com/oracc/nammu")
+        self._open_website(self.urls['nammu'])
 
     def _open_website(self, url):
         uri = URI(url)
