@@ -219,6 +219,10 @@ class AtfAreaController(object):
 
         return bottom_left_char
 
+    def update_error_lines_insert(self, caret_line, no_of_newlines):
+        print 'newlines', no_of_newlines
+        print 'caret_line', caret_line
+
     def syntax_highlight(self, top_caret=None, bottom_caret=None):
         '''
         Short hand for syntax highlighting. Takes the line bounds.

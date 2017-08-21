@@ -24,7 +24,7 @@ from javax.swing import JScrollPane, JPanel, JSplitPane
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
 from javax.swing.undo import UndoManager, CompoundEdit
-from javax.swing.event import UndoableEditListener
+from javax.swing.event import UndoableEditListener, DocumentListener
 from contextlib import contextmanager
 from .AtfEditArea import AtfEditArea
 
@@ -77,6 +77,9 @@ class AtfAreaView(JPanel):
         self.edit_area.addKeyListener(AtfAreaKeyListener(self))
         # Also needed in secondary area:
         self.secondary_area.addKeyListener(AtfAreaKeyListener(self))
+
+        # Add a document listener to track changes to files
+        self.edit_area.getDocument().addDocumentListener(atfAreaDocumentListener(self))
 
     def toggle_split(self, split_orientation=None):
         '''
@@ -143,6 +146,37 @@ class AtfAreaView(JPanel):
                                                               text)
 
         return top_ch, bottom_ch
+
+
+class atfAreaDocumentListener(DocumentListener):
+    def __init__(self, areaview):
+        self.areaviewcontroller = areaview.controller
+        self.areaview = areaview
+
+    def changedUpdate(self, e):
+        pass
+
+    def insertUpdate(self, e):
+        text = self.areaviewcontroller.edit_area.getText()
+        length = e.getLength()
+        offset = e.getOffset()
+
+        insert = text[offset:length + offset]
+
+        if '\n' in insert:
+            no_of_newlines = insert.count('\n')
+
+            # Get the line no of the caret postion
+            caret_line = self.areaviewcontroller.edit_area.get_line_num(offset)
+
+            # Call our error line update method here, passing no_of_newlines
+            self.areaviewcontroller.update_error_lines_insert(caret_line,
+                                                              no_of_newlines)
+
+    def removeUpdate(self, e):
+        print 'remove'
+        print 'length', e.getLength()
+        print 'offset', e.getOffset()
 
 
 class atfAreaAdjustmentListener(AdjustmentListener):
