@@ -81,6 +81,8 @@ class AtfAreaView(JPanel):
         # Add a document listener to track changes to files
         self.edit_area.getDocument().addDocumentListener(atfAreaDocumentListener(self))
 
+        self.oldtext = ''
+
     def toggle_split(self, split_orientation=None):
         '''
         Clear ATF edit area and repaint chosen layout (splitscreen/scrollpane).
@@ -157,6 +159,11 @@ class atfAreaDocumentListener(DocumentListener):
         pass
 
     def insertUpdate(self, e):
+
+        # Only need to do this if we have error lines
+        if self.areaviewcontroller.validation_errors == {}:
+            return
+
         text = self.areaviewcontroller.edit_area.getText()
         length = e.getLength()
         offset = e.getOffset()
@@ -174,9 +181,27 @@ class atfAreaDocumentListener(DocumentListener):
                                                               no_of_newlines)
 
     def removeUpdate(self, e):
-        print 'remove'
-        print 'length', e.getLength()
-        print 'offset', e.getOffset()
+
+        # Only need to do this if we have error_lines
+        if self.areaviewcontroller.validation_errors == {}:
+            return
+
+        text = self.areaview.oldtext
+        length = e.getLength()
+        offset = e.getOffset()
+
+        removed = text[offset:length + offset]
+
+        if '\n' in removed:
+            no_removed_lines = removed.count('\n')
+
+            # Get the line no of the caret postion
+            caret_line = self.areaviewcontroller.edit_area.get_line_num(offset)
+
+            # Call our error line update method here, passing no_removed_lines
+            self.areaviewcontroller.update_error_lines_remove(caret_line,
+                                                              no_removed_lines)
+
 
 
 class atfAreaAdjustmentListener(AdjustmentListener):
@@ -216,7 +241,10 @@ class AtfAreaKeyListener(KeyListener):
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.
     def keyPressed(self, ke):
-        pass
+        # Set the oldtext parameter, which stores the contents of the textfield
+        # prior to the edits triggered by the keypress event. Needed for
+        # tracking error highlighting on removal of lines.
+        self.areaview.oldtext = self.areaviewcontroller.edit_area.getText()
 
     def keyTyped(self, ke):
         # It would be more natural to use this event. However
@@ -259,6 +287,10 @@ class AtfUndoableEditListener(UndoableEditListener):
     def undoableEditHappened(self, event):
         edit = event.getEdit()
         edit_type = str(edit.getType())
+
+        if edit_type == "REMOVE":
+            # This could be a place where we can get info about the removed text
+            pass
 
         # If significant INSERT/REMOVE event happen, end and add current
         # edit compound to undo_manager and start a new one.

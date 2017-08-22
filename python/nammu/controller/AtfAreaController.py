@@ -224,9 +224,6 @@ class AtfAreaController(object):
         if no_of_newlines < 1:
             return
 
-        if self.validation_errors == {}:
-            return
-
         error_lines = self.validation_errors.keys()
 
         error_lines_int = [int(a) for a in error_lines]
@@ -243,7 +240,26 @@ class AtfAreaController(object):
 
             self.validation_errors = tmp
 
-            top_l_char, bottom_l_char = self.view.get_viewport_carets()
+    def update_error_lines_remove(self, caret_line, no_of_removed_lines):
+
+        if no_of_removed_lines < 1:
+            return
+
+        error_lines = self.validation_errors.keys()
+
+        error_lines_int = [int(a) for a in error_lines]
+
+        if caret_line < min(error_lines_int):
+
+            tmp = {}
+            for q, err in enumerate(error_lines_int):
+                if err > caret_line:
+                    error_lines_int[q] -= no_of_removed_lines
+
+                    # rebuild self.controller.validation_errors.keys()
+                    tmp[str(error_lines_int[q])] = self.validation_errors[str(err)]
+
+            self.validation_errors = tmp
 
     def syntax_highlight(self, top_caret=None, bottom_caret=None):
         '''
