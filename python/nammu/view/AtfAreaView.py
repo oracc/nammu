@@ -81,6 +81,9 @@ class AtfAreaView(JPanel):
         # Add a document listener to track changes to files
         self.edit_area.getDocument().addDocumentListener(atfAreaDocumentListener(self))
 
+        # instance variable to store a record of the text contents prior to the
+        # most recent change. Needed so that the different listeners can access
+        # this to handle error line updating.
         self.oldtext = ''
 
     def toggle_split(self, split_orientation=None):
