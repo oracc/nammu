@@ -246,21 +246,59 @@ class AtfAreaController(object):
         e_lines_int = [int(a) for a in error_lines]
 
         # We only care about edits hapenning above error lines
-        if caret_line < max(error_lines_int):
+        if caret_line > max(e_lines_int):
+            return
 
-            tmp = {}
-            for q, err in enumerate(e_lines_int):
-                if err > caret_line:
-                    # either increment or decrement based on insert or remove
-                    if flag == 'insert':
-                        e_lines_int[q] += no_of_lines
-                    elif flag == 'remove':
-                        e_lines_int[q] -= no_of_lines
+        tmp = {}
+        for q, err in enumerate(e_lines_int):
 
-                    # rebuild self.controller.validation_errors.keys()
-                    tmp[str(e_lines_int[q])] = self.validation_errors[str(err)]
+            # The easiest case, we are above an error line
+            if err > caret_line:
+                fixed_line_no = self.line_fix(e_lines_int[q], no_of_lines,
+                                              flag)
 
-            self.validation_errors = tmp
+                # rebuild self.controller.validation_errors
+                tmp[str(fixed_line_no)] = self.validation_errors[str(err)]
+
+            # Edge case - we are on the error line
+            elif err == caret_line:
+
+                # need logic here to detect if not at end of a line
+                # THIS ALWAYS EVALS TO TRUE WHICH CORRESPONDS TO *NOT* being
+                # AT THE END OF A LINE. CHANGE TO A FALSE STATEMENT TO MAKE
+                # WORK FOR THE CURSOR AT THE END OF THE LINE BEHAVIOUR.
+                # NOT YET SURE HOW TO ACTUALLY TEST FOR THESE CONDITIONS
+                if 1 == 1:
+
+                    fixed_line_no = self.line_fix(e_lines_int[q],
+                                                  no_of_lines,
+                                                  flag)
+
+                    # rebuild self.controller.validation_errors
+                    tmp[str(fixed_line_no)] = self.validation_errors[str(err)]
+                else:
+                    tmp[str(err)] = self.validation_errors[str(err)]
+            # We are below the error line so do nothing
+            else:
+                tmp[str(err)] = self.validation_errors[str(err)]
+
+        # Write the updated line numbers to the error dictionary
+        self.validation_errors = tmp
+
+    def line_fix(self, e_line_no, no_of_lines, flag):
+        '''
+        Helper function containing the logic for incrementing or decrementing
+        line numbers
+        '''
+        if flag == 'insert':
+            e_line_no += no_of_lines
+        elif flag == 'remove':
+            e_line_no -= no_of_lines
+            # handle potential out of bounds - 1 is top of the file
+            if e_line_no < 1:
+                e_line_no = 1
+
+        return e_line_no
 
     def syntax_highlight(self, top_caret=None, bottom_caret=None):
         '''
