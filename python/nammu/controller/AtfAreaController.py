@@ -243,22 +243,22 @@ class AtfAreaController(object):
         error_lines = self.validation_errors.keys()
 
         # For legacy reasons the keys are strings, but we need ints
-        error_lines_int = [int(a) for a in error_lines]
+        e_lines_int = [int(a) for a in error_lines]
 
         # We only care about edits hapenning above error lines
         if caret_line < max(error_lines_int):
 
             tmp = {}
-            for q, err in enumerate(error_lines_int):
+            for q, err in enumerate(e_lines_int):
                 if err > caret_line:
                     # either increment or decrement based on insert or remove
                     if flag == 'insert':
-                        error_lines_int[q] += no_of_lines
+                        e_lines_int[q] += no_of_lines
                     elif flag == 'remove':
-                        error_lines_int[q] -= no_of_lines
+                        e_lines_int[q] -= no_of_lines
 
                     # rebuild self.controller.validation_errors.keys()
-                    tmp[str(error_lines_int[q])] = self.validation_errors[str(err)]
+                    tmp[str(e_lines_int[q])] = self.validation_errors[str(err)]
 
             self.validation_errors = tmp
 
