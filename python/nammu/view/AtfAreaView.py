@@ -291,10 +291,6 @@ class AtfUndoableEditListener(UndoableEditListener):
         edit = event.getEdit()
         edit_type = str(edit.getType())
 
-        if edit_type == "REMOVE":
-            # This could be a place where we can get info about the removed text
-            pass
-
         # If significant INSERT/REMOVE event happen, end and add current
         # edit compound to undo_manager and start a new one.
         if ((edit_type == "INSERT" or edit_type == "REMOVE") and
