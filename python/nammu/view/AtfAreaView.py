@@ -158,53 +158,54 @@ class atfAreaDocumentListener(DocumentListener):
         self.areaviewcontroller = areaview.controller
         self.areaview = areaview
 
-    def changedUpdate(self, e):
-        pass
 
-    def insertUpdate(self, e):
-
-        # Only need to do this if we have error lines
-        if self.areaviewcontroller.validation_errors == {}:
-            return
-
-        text = self.areaviewcontroller.edit_area.getText()
-        length = e.getLength()
-        offset = e.getOffset()
-
-        insert = text[offset:length + offset]
-
-        if '\n' in insert:
-            no_of_newlines = insert.count('\n')
-
-            # Get the line no of the caret postion
-            caret_line = self.areaviewcontroller.edit_area.get_line_num(offset)
-
-            # Call our error line update method here, passing no_of_newlines
-            self.areaviewcontroller.update_error_lines_insert(caret_line,
-                                                              no_of_newlines)
-
-    def removeUpdate(self, e):
+    def errorUpdate(self, e, text, flag):
+        '''
+        Method to handle the updating of error lines.
+        '''
 
         # Only need to do this if we have error_lines
         if self.areaviewcontroller.validation_errors == {}:
             return
 
-        text = self.areaview.oldtext
+        # Gets the position and length of the edit to the document
         length = e.getLength()
         offset = e.getOffset()
 
-        removed = text[offset:length + offset]
+        # Slice out the edited text
+        edited = text[offset:length + offset]
 
-        if '\n' in removed:
-            no_removed_lines = removed.count('\n')
+        if '\n' in edited:
+            no_of_newlines = edited.count('\n')
 
             # Get the line no of the caret postion
             caret_line = self.areaviewcontroller.edit_area.get_line_num(offset)
 
-            # Call our error line update method here, passing no_removed_lines
-            self.areaviewcontroller.update_error_lines_remove(caret_line,
-                                                              no_removed_lines)
+            # Call our error line update method here, passing no_of_newlines
+            self.areaviewcontroller.update_error_lines(caret_line,
+                                                       no_of_newlines,
+                                                       flag)
 
+    def changedUpdate(self, e):
+        '''
+        Must be implemented to avoid NotImplemented errors
+        '''
+        pass
+
+    def insertUpdate(self, e):
+        '''
+        Listen for an insertion to the document.
+        '''
+        text = self.areaviewcontroller.edit_area.getText()
+        self.errorUpdate(e, text, 'insert')
+
+    def removeUpdate(self, e):
+        '''
+        Listen for a removal from the document
+        '''
+        # Get the text prior to this edit event
+        text = self.areaview.oldtext
+        self.errorUpdate(e, text, 'remove')
 
 
 class atfAreaAdjustmentListener(AdjustmentListener):

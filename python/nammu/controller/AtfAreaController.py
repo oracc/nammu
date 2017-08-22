@@ -155,6 +155,10 @@ class AtfAreaController(object):
         return top_line, bottom_line
 
     def pad_top_viewport_caret(self, top_left_char, text):
+        '''
+        Extend the top of the viewport to the nearest header, so we don't
+        have problems with malformed atf files being highlighted.
+        '''
 
         # Test that there is text in the edit area
         if len(text) == 0:
@@ -198,6 +202,10 @@ class AtfAreaController(object):
             return top_left_char
 
     def pad_bottom_viewport_caret(self, bottom_left_char, text):
+        '''
+        Adds two lines to the bottom of the viewport so we dont have any
+        unhighlighted lines visible.
+        '''
 
         # Test that there is text in the edit area
         if len(text) == 0:
@@ -219,42 +227,35 @@ class AtfAreaController(object):
 
         return bottom_left_char
 
-    def update_error_lines_insert(self, caret_line, no_of_newlines):
+    def update_error_lines(self, caret_line, no_of_lines, flag):
+        '''
+        Given a caret line number, a number of lines and a flag indicating
+        whether the error lines need incremented ('insert') or decremented
+        ('remove'). Update the line numbers of the keys in the dictionary
+        self.validation_errors so that error highlighting follows broken lines
+        during editing.
+        '''
 
-        if no_of_newlines < 1:
+        # If the supplied edit does not add or remove any lines, do nothing
+        if no_of_lines < 1:
             return
 
         error_lines = self.validation_errors.keys()
 
+        # For legacy reasons the keys are strings, but we need ints
         error_lines_int = [int(a) for a in error_lines]
 
-        if caret_line < min(error_lines_int):
+        # We only care about edits hapenning above error lines
+        if caret_line < max(error_lines_int):
 
             tmp = {}
             for q, err in enumerate(error_lines_int):
                 if err > caret_line:
-                    error_lines_int[q] += no_of_newlines
-
-                    # rebuild self.controller.validation_errors.keys()
-                    tmp[str(error_lines_int[q])] = self.validation_errors[str(err)]
-
-            self.validation_errors = tmp
-
-    def update_error_lines_remove(self, caret_line, no_of_removed_lines):
-
-        if no_of_removed_lines < 1:
-            return
-
-        error_lines = self.validation_errors.keys()
-
-        error_lines_int = [int(a) for a in error_lines]
-
-        if caret_line < min(error_lines_int):
-
-            tmp = {}
-            for q, err in enumerate(error_lines_int):
-                if err > caret_line:
-                    error_lines_int[q] -= no_of_removed_lines
+                    # either increment or decrement based on insert or remove
+                    if flag == 'insert':
+                        error_lines_int[q] += no_of_lines
+                    elif flag == 'remove':
+                        error_lines_int[q] -= no_of_lines
 
                     # rebuild self.controller.validation_errors.keys()
                     tmp[str(error_lines_int[q])] = self.validation_errors[str(err)]
