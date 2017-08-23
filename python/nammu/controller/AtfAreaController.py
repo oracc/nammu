@@ -257,7 +257,8 @@ class AtfAreaController(object):
         tmp = {}
         for q, err in enumerate(e_lines_int):
             # We are above an error line or on an error line but not at its end
-            if (err > caret_line) or (err == caret_line and caret_pos != line_end):
+            if (err > caret_line) or (err == caret_line and
+                                      caret_pos != line_end):
                 fixed_line_no = self.line_fix(e_lines_int[q], no_of_lines,
                                               flag)
 
