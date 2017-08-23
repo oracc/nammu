@@ -249,39 +249,22 @@ class AtfAreaController(object):
         if caret_line > max(e_lines_int):
             return
 
+        # We need the line end position and the caret position
+        positions = self.getLinePositions(self.view.oldtext)
+        caret_pos = self.edit_area.getCaretPosition()
+        line_end = positions[caret_line - 1][1]
+
         tmp = {}
         for q, err in enumerate(e_lines_int):
-
-            # The easiest case, we are above an error line
-            if err > caret_line:
+            # We are above an error line or on an error line but not at its end
+            if (err > caret_line) or (err == caret_line and caret_pos != line_end):
                 fixed_line_no = self.line_fix(e_lines_int[q], no_of_lines,
                                               flag)
 
                 # rebuild self.controller.validation_errors
                 tmp[str(fixed_line_no)] = self.validation_errors[str(err)]
 
-            # Edge case - we are on the error line
-            elif err == caret_line:
-
-                # We need the line end position and the caret position
-                positions = self.getLinePositions(self.view.oldtext)
-                caret_pos = self.edit_area.getCaretPosition()
-                line_end = positions[caret_line - 1][1]
-
-                # If we are not at the end of a line, update the highlighting
-                if caret_pos != line_end:
-
-                    fixed_line_no = self.line_fix(e_lines_int[q],
-                                                  no_of_lines,
-                                                  flag)
-
-                    # rebuild self.controller.validation_errors
-                    tmp[str(fixed_line_no)] = self.validation_errors[str(err)]
-                else:
-                    # We are at the end of a line, so an insert will not alter
-                    # the error line's position
-                    tmp[str(err)] = self.validation_errors[str(err)]
-            # We are below the error line so do nothing
+            # We are below or after the error lines so do nothing
             else:
                 tmp[str(err)] = self.validation_errors[str(err)]
 
