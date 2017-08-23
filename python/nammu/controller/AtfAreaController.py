@@ -263,12 +263,13 @@ class AtfAreaController(object):
             # Edge case - we are on the error line
             elif err == caret_line:
 
-                # need logic here to detect if not at end of a line
-                # THIS ALWAYS EVALS TO TRUE WHICH CORRESPONDS TO *NOT* being
-                # AT THE END OF A LINE. CHANGE TO A FALSE STATEMENT TO MAKE
-                # WORK FOR THE CURSOR AT THE END OF THE LINE BEHAVIOUR.
-                # NOT YET SURE HOW TO ACTUALLY TEST FOR THESE CONDITIONS
-                if 1 == 1:
+                # We need the line end position and the caret position
+                positions = self.getLinePositions(self.view.oldtext)
+                caret_pos = self.edit_area.getCaretPosition()
+                line_end = positions[caret_line - 1][1]
+                
+                # If we are not at the end of a line, update the highlighting
+                if caret_pos != line_end:
 
                     fixed_line_no = self.line_fix(e_lines_int[q],
                                                   no_of_lines,
@@ -277,6 +278,8 @@ class AtfAreaController(object):
                     # rebuild self.controller.validation_errors
                     tmp[str(fixed_line_no)] = self.validation_errors[str(err)]
                 else:
+                    # We are at the end of a line, so an insert will not alter
+                    # the error line's position
                     tmp[str(err)] = self.validation_errors[str(err)]
             # We are below the error line so do nothing
             else:
@@ -346,3 +349,26 @@ class AtfAreaController(object):
             pos = 0
 
         return pos
+
+    def getLinePositions(self, text):
+        '''
+        Given a block of text, return the caret positions
+        at the start and end of each line as a list of tuples in the order
+        (start, end) assuming left to right text.
+        The hacky list addition is to handle off by one errors as the 1st line
+        starts at position 0, whereas every other line starts at +1 past the
+        end of the last line and we also need to add in the final line length
+        manually.
+        '''
+        if len(text) > 0:
+            compiled = re.compile(r"\n")
+            textiter = compiled.finditer(text)
+            pos = [m.start() for m in textiter]
+        else:
+            return [(0, 0)]
+
+        # Build lists of the starts and ends of each line
+        starts = [0] + [x + 1 for x in pos]
+        ends = pos + [len(text)]
+
+        return zip(starts, ends)
