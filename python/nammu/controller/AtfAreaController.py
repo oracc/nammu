@@ -267,7 +267,7 @@ class AtfAreaController(object):
                 positions = self.getLinePositions(self.view.oldtext)
                 caret_pos = self.edit_area.getCaretPosition()
                 line_end = positions[caret_line - 1][1]
-                
+
                 # If we are not at the end of a line, update the highlighting
                 if caret_pos != line_end:
 
