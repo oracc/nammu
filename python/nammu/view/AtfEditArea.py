@@ -90,7 +90,6 @@ class AtfEditArea(JTextPane):
         after replacing some text.
         '''
         super(AtfEditArea, self).replaceSelection(text)
-        self.controller.syntax_highlight()
 
     def cut(self):
         '''
@@ -98,7 +97,6 @@ class AtfEditArea(JTextPane):
         works when user cuts text via toolbar button or mouse.
         '''
         super(AtfEditArea, self).cut()
-        self.controller.syntax_highlight()
 
     def copy(self):
         '''
@@ -106,7 +104,6 @@ class AtfEditArea(JTextPane):
         works when user copies text via toolbar button or mouse.
         '''
         super(AtfEditArea, self).copy()
-        self.controller.syntax_highlight()
 
     def paste(self):
         '''
@@ -114,7 +111,6 @@ class AtfEditArea(JTextPane):
         works when user pastes text via toolbar button or mouse.
         '''
         super(AtfEditArea, self).paste()
-        self.controller.syntax_highlight()
 
 
 class CustomMouseListener(MouseAdapter):
