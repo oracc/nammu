@@ -37,7 +37,8 @@ class EditSettingsController:
         this settings editor.
         '''
         config_keywords = ['working_dir', 'servers', 'keystrokes',
-                           'languages', 'projects', 'console_style']
+                           'languages', 'projects', 'console_style',
+                           'edit_area_style']
         for keyword in config_keywords:
             try:
                 setattr(self, keyword, self.config[keyword])
@@ -46,7 +47,8 @@ class EditSettingsController:
                                              keyword)
                 self.view.display_error(keyword)
 
-    def update_config(self, working_dir, server, fontsize, keystrokes=None,
+    def update_config(self, working_dir, server, console_fontsize, font_color,
+                      background_color, edit_area_fontsize,  keystrokes=None,
                       languages=None, projects=None):
         '''
         Update the settings file with the user input.
@@ -57,9 +59,16 @@ class EditSettingsController:
         #       projects will be added later.
         self.config['working_dir']['default'] = working_dir
         self.config['servers']['default'] = server
-        self.config['console_style']['fontsize'] = fontsize
+        self.config['console_style']['fontsize']['user'] = console_fontsize
+        self.config['console_style']['font_color']['user'] = console_fontsize
+        self.config[
+                'console_style']['background_color']['user'] = background_color
+        self.config['edit_area_style']['fontsize']['user'] = edit_area_fontsize
         self.controller.logger.debug("Settings updated.")
         save_yaml_config(self.config)
 
     def refreshConsole(self):
         self.controller.consoleController.refreshConsole()
+
+    def refreshEditArea(self):
+        self.controller.atfAreaController.refreshEditArea()
