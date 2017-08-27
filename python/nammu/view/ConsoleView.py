@@ -78,14 +78,21 @@ class ConsoleView(JPanel):
         self.add(scrollingText, BorderLayout.CENTER)
 
     def refreshConsole(self):
-            # Here we use css to style the console and its text
-            fontsize = self.controller.config['console_style']['fontsize']
+        '''
+        Restyle console using CSS with user selected appearance settings.
+        '''
+        fontsize = self.controller.config['console_style']['fontsize']['user']
+        background_color = self.controller.config[
+                                'console_style']['background_color']['user']
+        font_color = self.controller.config['console_style']['font_color']['user']
 
-            doc = self.edit_area.getDocument()
-            bodyRule = ("body {{ font-family: Monaco; font-size: {0} pt; "
-                        "font-weight: bold; background-color: #EEEEEE;"
-                        " color: #000000}}").format(fontsize)
-            doc.getStyleSheet().addRule(bodyRule)
+        bodyRule = ("body {{ font-family: Monaco; font-size: {0} pt; "
+                    "font-weight: bold; background-color: {1};"
+                    " color: {2} }}").format(fontsize, background_color,
+                                             font_color)
+
+        doc = self.edit_area.getDocument()
+        doc.getStyleSheet().addRule(bodyRule)
 
     def scroll(self):
         '''
