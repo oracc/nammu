@@ -39,7 +39,7 @@ class EditSettingsView(JDialog):
         self.keystrokes = keystrokes
         self.languages = languages
         self.projects = projects
-        self.fontsize = console_style['fontsize']
+        self.fontsize = console_style['fontsize']['user']
         self.pane = self.getContentPane()
 
     def build(self):
@@ -156,12 +156,11 @@ class EditSettingsView(JDialog):
 
         self.fs_field = JTextField()
         self.fs_field.setEditable(True)
-        # Can't find an elegant way to default to something that would be
-        # crossplatform, and I can't leave the default field empty.
         if self.fontsize:
             self.fs_field.setText("{}".format(self.fontsize))
         else:
-            self.fs_field.setText('16')
+            self.fs_field.setText(self.controller.config[
+                                    'console_style']['fontsize']['default'])
 
         constraints.weightx = 0.80
         constraints.gridx = 1
@@ -281,14 +280,20 @@ class EditSettingsView(JDialog):
         else:
             self.logger.error("Invalid font size. Please enter a number "
                               "between 8 and 36.\n\n"
-                              "Font size set to default value: 14")
-            fontsize = 14
+                              "Font size set to default value: {}".format(
+                                self.controller.config[
+                                    'console_style']['fontsize']['default']
+                              ))
+            fontsize = self.controller.config[
+                                        'console_style']['fontsize']['user']
 
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
-        self.controller.update_config(working_dir, server, fontsize)
-        # On saving settings, update the console properties
+        self.controller.update_config(working_dir, server, int(fontsize),
+                                      'Black', 'LightGrey', 14)
+        # On saving settings, update the console and edit area properties
         self.controller.refreshConsole()
+        self.controller.refreshEditArea()
         # Close window
         self.dispose()
 
