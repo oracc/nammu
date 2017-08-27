@@ -29,7 +29,8 @@ class SyntaxHighlighter:
         self.controller = controller
         self.setup_syntax_highlight_colours()
         self.setup_syntax_highlight_tokens()
-        self.font = set_font()
+        config = self.controller.controller.config
+        self.font = set_font(config['edit_area_style']['fontsize']['user'])
         self.setup_attribs()
         self.styledoc = controller.edit_area_styledoc
         self.lexer = AtfLexer(skipinvalid=True).lexer
