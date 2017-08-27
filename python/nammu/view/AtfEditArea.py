@@ -35,7 +35,8 @@ class AtfEditArea(JTextPane):
         self.setEditorKit(MyStyledEditorKit())
         self.controller = controller
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        self.font = set_font()
+        config = self.controller.controller.config
+        self.font = set_font(config['edit_area_style']['fontsize']['user'])
         # If this is not done, no tooltips appear
         self.setToolTipText("")
         # Consume mouse events when over this JTextPane
@@ -112,6 +113,11 @@ class AtfEditArea(JTextPane):
         '''
         super(AtfEditArea, self).paste()
 
+    def refresh(self, fontsize):
+        '''
+
+        '''
+        self.font = set_font(fontsize)
 
 class CustomMouseListener(MouseAdapter):
     '''
