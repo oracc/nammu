@@ -18,7 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import re
-from java.awt import BorderLayout, Dimension, Color, Point
+from java.awt import BorderLayout, Dimension, Point
 from java.awt.event import KeyListener, AdjustmentListener
 from javax.swing import JScrollPane, JPanel, JSplitPane
 from javax.swing.text import StyleContext, StyleConstants
