@@ -21,7 +21,7 @@ from java.awt import Color
 from javax.swing import JTextPane, BorderFactory
 from javax.swing.text import SimpleAttributeSet, StyleConstants, DefaultCaret
 
-from ..utils import set_font
+from ..utils import set_font, get_yaml_config
 
 
 class LineNumbersArea(JTextPane):
@@ -35,9 +35,12 @@ class LineNumbersArea(JTextPane):
         StyleConstants.setAlignment(para_attribs, StyleConstants.ALIGN_RIGHT)
         self.setParagraphAttributes(para_attribs, True)
 
-        # Use default font style
+        # Load Nammu's settings
+        config = get_yaml_config('settings.yaml')
+        print(config['edit_area_style']['fontsize']['user'])
+        # Use default font style for edit area
         default_attribs = SimpleAttributeSet()
-        self.font = set_font()
+        self.font = set_font(config['edit_area_style']['fontsize']['user'])
         StyleConstants.setFontFamily(default_attribs, self.font.getFamily())
         StyleConstants.setFontSize(default_attribs, self.font.getSize())
         StyleConstants.setForeground(default_attribs, Color.gray)
