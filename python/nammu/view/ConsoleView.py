@@ -84,7 +84,8 @@ class ConsoleView(JPanel):
         fontsize = self.controller.config['console_style']['fontsize']['user']
         background_color = self.controller.config[
                                 'console_style']['background_color']['user']
-        font_color = self.controller.config['console_style']['font_color']['user']
+        font_color = self.controller.config[
+                                'console_style']['font_color']['user']
 
         bodyRule = ("body {{ font-family: Monaco; font-size: {0} pt; "
                     "font-weight: bold; background-color: {1};"
