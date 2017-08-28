@@ -30,7 +30,7 @@ from javax.swing.border import EmptyBorder
 
 class EditSettingsView(JDialog):
     def __init__(self, controller, working_dir, servers, console_style,
-                 keystrokes, languages, projects):
+                 edit_area_style, keystrokes, languages, projects):
         self.logger = logging.getLogger("NammuController")
         self.setAlwaysOnTop(True)
         self.controller = controller
@@ -39,7 +39,11 @@ class EditSettingsView(JDialog):
         self.keystrokes = keystrokes
         self.languages = languages
         self.projects = projects
-        self.fontsize = console_style['fontsize']['user']
+        self.console_fontsize = console_style['fontsize']['user']
+        self.console_font_color = console_style['font_color']['user']
+        self.console_background_color = console_style[
+                                                    'background_color']['user']
+        self.edit_area_fontsize = edit_area_style['fontsize']['user']
         self.pane = self.getContentPane()
 
     def build(self):
@@ -120,6 +124,48 @@ class EditSettingsView(JDialog):
 
         return panel
 
+    def build_console_background_color_panel(self, constraints, panel):
+        '''
+        Server location row: label + dropdown
+        Contains a drop down with the servers to choose from.
+        '''
+        server_label = JLabel("Console background color:")
+        constraints.weightx = 0.30
+        constraints.gridx = 0
+        constraints.gridy = 2
+        panel.add(server_label, constraints)
+
+        self.combo = self.build_color_combobox()
+        constraints.weightx = 0.70
+        constraints.gridx = 1
+        constraints.gridy = 2
+        constraints.gridwidth = 2
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        panel.add(self.combo, constraints)
+
+        return panel
+
+    def build_console_font_color_panel(self, constraints, panel):
+        '''
+        Server location row: label + dropdown
+        Contains a drop down with the servers to choose from.
+        '''
+        server_label = JLabel("Console font color:")
+        constraints.weightx = 0.30
+        constraints.gridx = 0
+        constraints.gridy = 3
+        panel.add(server_label, constraints)
+
+        self.combo = self.build_color_combobox()
+        constraints.weightx = 0.70
+        constraints.gridx = 1
+        constraints.gridy = 3
+        constraints.gridwidth = 2
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        panel.add(self.combo, constraints)
+
+        return panel
+
     def build_servers_panel(self, constraints, panel):
         '''
         Server location row: label + dropdown
@@ -148,16 +194,17 @@ class EditSettingsView(JDialog):
         TODO: Check user inserts numbers and not strings within a reasonable
         range.
         '''
-        working_dir_label = JLabel("Console font size:")
+        fontzise_label = JLabel("Console font size:")
         constraints.weightx = 0.20
         constraints.gridx = 0
         constraints.gridy = 0
-        panel.add(working_dir_label, constraints)
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        panel.add(fontzise_label, constraints)
 
         self.fs_field = JTextField()
         self.fs_field.setEditable(True)
-        if self.fontsize:
-            self.fs_field.setText("{}".format(self.fontsize))
+        if self.console_fontsize:
+            self.fs_field.setText("{}".format(self.console_fontsize))
         else:
             self.fs_field.setText(self.controller.config[
                                     'console_style']['fontsize']['default'])
@@ -166,10 +213,45 @@ class EditSettingsView(JDialog):
         constraints.gridx = 1
         constraints.gridy = 0
         constraints.fill = GridBagConstraints.HORIZONTAL
-        constraints.insets = Insets(10, 50, 10, 5)
         panel.add(self.fs_field, constraints)
 
         return panel
+
+    def build_edit_area_font_panel(self, constraints, panel):
+        '''
+        Font size on a textfield.
+        TODO: Check user inserts numbers and not strings within a reasonable
+        range.
+        '''
+        fontzise_label = JLabel("Edit area font size:")
+        constraints.weightx = 0.20
+        constraints.gridx = 0
+        constraints.gridy = 4
+        panel.add(fontzise_label, constraints)
+
+        self.edit_area_fs_field = JTextField()
+        self.edit_area_fs_field.setEditable(True)
+        if self.edit_area_fontsize:
+            self.edit_area_fs_field.setText(
+                                    "{}".format(self.edit_area_fontsize))
+        else:
+            self.edit_area_fs_field.setText(self.controller.config[
+                                    'edit_area_style']['fontsize']['default'])
+
+        constraints.weightx = 0.80
+        constraints.gridx = 1
+        constraints.gridy = 4
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        panel.add(self.edit_area_fs_field, constraints)
+
+        return panel
+
+    def build_color_combobox(self):
+        combo = JComboBox()
+        for color in ('LightGrey', 'Black', 'Yellow'):
+            combo.addItem(color)
+        combo.setSelectedItem(self.console_font_color)
+        return combo
 
     def build_servers_combobox(self):
         combo = JComboBox()
@@ -230,13 +312,17 @@ class EditSettingsView(JDialog):
 
     def build_appearance_panel(self):
         '''
-        Create the panel that'll go in the Appearance tab. This will contain
-        fields to set the font properties.
+        Create the panel that'll go in the General tab. This should contain
+        options for choosing which server to use for validation as well as
+        default working dir.
         '''
         panel = JPanel(GridBagLayout())
         constraints = GridBagConstraints()
         constraints.insets = Insets(10, 10, 10, 10)
         panel = self.build_console_font_panel(constraints, panel)
+        panel = self.build_console_font_color_panel(constraints, panel)
+        panel = self.build_console_background_color_panel(constraints, panel)
+        panel = self.build_edit_area_font_panel(constraints, panel)
         return panel
 
     def display(self):
@@ -272,24 +358,41 @@ class EditSettingsView(JDialog):
         working_dir = self.wd_field.getText()
 
         # Read the fontsize from the textfield
-        fontsize = self.fs_field.getText()
+        console_fontsize = self.fs_field.getText()
+        edit_area_fontsize = self.edit_area_fs_field.getText()
 
         # Use isnumeric() to test if a unicode string only has digits
-        if fontsize.isnumeric() and (8 <= int(fontsize) <= 30):
+        if (console_fontsize.isnumeric() and
+                                        (8 <= int(console_fontsize) <= 30)):
             pass
         else:
-            self.logger.error("Invalid font size. Please enter a number "
-                              "between 8 and 36.\n\n"
+            self.logger.error("Invalid console font size. Please enter a "
+                              "number between 8 and 36.\n\n"
                               "Font size set to default value: {}".format(
                                 self.controller.config[
                                     'console_style']['fontsize']['default']
                               ))
-            fontsize = self.controller.config[
+            console_fontsize = self.controller.config[
                                         'console_style']['fontsize']['user']
+
+        if (edit_area_fontsize.isnumeric() and
+                                        (8 <= int(edit_area_fontsize) <= 30)):
+            pass
+        else:
+            self.logger.error("Invalid edit area font size. Please enter a "
+                              "number between 8 and 36.\n\n"
+                              "Font size set to default value: {}".format(
+                                self.controller.config[
+                                    'edit_area_style']['fontsize']['default']
+                              ))
+            edit_area_fontsize = self.controller.config[
+                                        'edit_area_style']['fontsize']['user']
 
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
-        self.controller.update_config(working_dir, server, int(fontsize),
+        self.controller.update_config(working_dir, server,
+                                      int(console_fontsize),
+                                      int(edit_area_fontsize),
                                       'Black', 'LightGrey', 14)
         # On saving settings, update the console and edit area properties
         self.controller.refreshConsole()

@@ -27,8 +27,9 @@ class EditSettingsController:
         self.config = self.controller.config
         self.load_config()
         self.view = EditSettingsView(self, self.working_dir, self.servers,
-                                     self.console_style, self.keystrokes,
-                                     self.languages, self.projects)
+                                     self.console_style, self.edit_area_style,
+                                     self.keystrokes, self.languages,
+                                     self.projects)
         self.view.display()
 
     def load_config(self):
@@ -60,7 +61,7 @@ class EditSettingsController:
         self.config['working_dir']['default'] = working_dir
         self.config['servers']['default'] = server
         self.config['console_style']['fontsize']['user'] = console_fontsize
-        self.config['console_style']['font_color']['user'] = console_fontsize
+        self.config['console_style']['font_color']['user'] = font_color
         self.config[
                 'console_style']['background_color']['user'] = background_color
         self.config['edit_area_style']['fontsize']['user'] = edit_area_fontsize
