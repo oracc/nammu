@@ -59,8 +59,8 @@ class EditSettingsView(JDialog):
         Build panel with tabs for each of the settings editable sections.
         '''
         tabbed_pane = JTabbedPane()
-        tab_titles = ["General", "Keystrokes", "Languages", "Projects",
-                      "Appearance"]
+        tab_titles = ["General", "Appearance", "Keystrokes", "Languages",
+                      "Projects"]
         for title in tab_titles:
             panel = self.build_settings_panel(title.lower())
             tabbed_pane.addTab(title, panel)
@@ -135,13 +135,13 @@ class EditSettingsView(JDialog):
         constraints.gridy = 2
         panel.add(server_label, constraints)
 
-        self.combo = self.build_color_combobox()
+        self.background_color_combo = self.build_background_color_combobox()
         constraints.weightx = 0.70
         constraints.gridx = 1
         constraints.gridy = 2
         constraints.gridwidth = 2
         constraints.fill = GridBagConstraints.HORIZONTAL
-        panel.add(self.combo, constraints)
+        panel.add(self.background_color_combo, constraints)
 
         return panel
 
@@ -156,13 +156,13 @@ class EditSettingsView(JDialog):
         constraints.gridy = 3
         panel.add(server_label, constraints)
 
-        self.combo = self.build_color_combobox()
+        self.font_color_combo = self.build_color_combobox()
         constraints.weightx = 0.70
         constraints.gridx = 1
         constraints.gridy = 3
         constraints.gridwidth = 2
         constraints.fill = GridBagConstraints.HORIZONTAL
-        panel.add(self.combo, constraints)
+        panel.add(self.font_color_combo, constraints)
 
         return panel
 
@@ -251,6 +251,14 @@ class EditSettingsView(JDialog):
         for color in ('LightGrey', 'Black', 'Yellow'):
             combo.addItem(color)
         combo.setSelectedItem(self.console_font_color)
+        return combo
+
+
+    def build_background_color_combobox(self):
+        combo = JComboBox()
+        for color in ('LightGrey', 'Black', 'Yellow'):
+            combo.addItem(color)
+        combo.setSelectedItem(self.console_background_color)
         return combo
 
     def build_servers_combobox(self):
@@ -363,7 +371,7 @@ class EditSettingsView(JDialog):
 
         # Use isnumeric() to test if a unicode string only has digits
         if (console_fontsize.isnumeric() and
-                                        (8 <= int(console_fontsize) <= 30)):
+           (8 <= int(console_fontsize) <= 30)):
             pass
         else:
             self.logger.error("Invalid console font size. Please enter a "
@@ -376,7 +384,7 @@ class EditSettingsView(JDialog):
                                         'console_style']['fontsize']['user']
 
         if (edit_area_fontsize.isnumeric() and
-                                        (8 <= int(edit_area_fontsize) <= 30)):
+           (8 <= int(edit_area_fontsize) <= 30)):
             pass
         else:
             self.logger.error("Invalid edit area font size. Please enter a "
@@ -390,10 +398,12 @@ class EditSettingsView(JDialog):
 
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
-        self.controller.update_config(working_dir, server,
-                                      int(console_fontsize),
-                                      int(edit_area_fontsize),
-                                      'Black', 'LightGrey', 14)
+        self.controller.update_config(
+                            working_dir, server,
+                            int(console_fontsize),
+                            self.font_color_combo.getSelectedItem(),
+                            self.background_color_combo.getSelectedItem(),
+                            int(edit_area_fontsize))
         # On saving settings, update the console and edit area properties
         self.controller.refreshConsole()
         self.controller.refreshEditArea()

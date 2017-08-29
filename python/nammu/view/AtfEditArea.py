@@ -113,12 +113,11 @@ class AtfEditArea(JTextPane):
         '''
         super(AtfEditArea, self).paste()
 
-    def refresh(self, fontsize):
+    def refresh(self):
         '''
-        Repaint edit area.
-        '''
-        self.font = set_font(fontsize)
 
+        '''
+        pass
 
 class CustomMouseListener(MouseAdapter):
     '''

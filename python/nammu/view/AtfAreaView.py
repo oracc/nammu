@@ -27,6 +27,7 @@ from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener, DocumentListener
 from contextlib import contextmanager
 from .AtfEditArea import AtfEditArea
+from ..utils import set_font
 
 
 class AtfAreaView(JPanel):
@@ -152,6 +153,14 @@ class AtfAreaView(JPanel):
                                                               text)
 
         return top_ch, bottom_ch
+
+    def refresh(self):
+        '''
+        Restyle edit area using user selected appearance settings.
+        '''
+        fontsize = self.controller.controller.config['edit_area_style']['fontsize']['user']
+        self.controller.font = set_font(fontsize)
+
 
 
 class atfAreaDocumentListener(DocumentListener):
