@@ -29,8 +29,8 @@ from javax.swing.border import EmptyBorder
 
 
 class EditSettingsView(JDialog):
-    def __init__(self, controller, working_dir, servers, keystrokes,
-                 languages, projects):
+    def __init__(self, controller, working_dir, servers, console_style,
+                 keystrokes, languages, projects):
         self.logger = logging.getLogger("NammuController")
         self.setAlwaysOnTop(True)
         self.controller = controller
@@ -39,6 +39,7 @@ class EditSettingsView(JDialog):
         self.keystrokes = keystrokes
         self.languages = languages
         self.projects = projects
+        self.fontsize = console_style['fontsize']
         self.pane = self.getContentPane()
 
     def build(self):
@@ -54,7 +55,8 @@ class EditSettingsView(JDialog):
         Build panel with tabs for each of the settings editable sections.
         '''
         tabbed_pane = JTabbedPane()
-        tab_titles = ["General", "Keystrokes", "Languages", "Projects"]
+        tab_titles = ["General", "Keystrokes", "Languages", "Projects",
+                      "Appearance"]
         for title in tab_titles:
             panel = self.build_settings_panel(title.lower())
             tabbed_pane.addTab(title, panel)
@@ -93,20 +95,20 @@ class EditSettingsView(JDialog):
         constraints.anchor = GridBagConstraints.EAST
         panel.add(working_dir_label, constraints)
 
-        self.field = JTextField()
-        self.field.setEditable(False)
+        self.wd_field = JTextField()
+        self.wd_field.setEditable(False)
         # Can't find an elegant way to default to something that would be
         # crossplatform, and I can't leave the default field empty.
         if self.working_dir['default'] != "None":
-            self.field.setText(self.working_dir['default'])
+            self.wd_field.setText(self.working_dir['default'])
         else:
-            self.field.setText(os.getcwd())
+            self.wd_field.setText(os.getcwd())
         constraints.weightx = 0.60
         constraints.gridx = 1
         constraints.gridy = 0
         constraints.fill = GridBagConstraints.HORIZONTAL
         constraints.insets = Insets(10, 10, 10, 5)
-        panel.add(self.field, constraints)
+        panel.add(self.wd_field, constraints)
 
         constraints.fill = 0
         button = JButton("Browse", actionPerformed=self.browse)
@@ -137,6 +139,36 @@ class EditSettingsView(JDialog):
         constraints.gridwidth = 2
         constraints.fill = GridBagConstraints.HORIZONTAL
         panel.add(self.combo, constraints)
+
+        return panel
+
+    def build_console_font_panel(self, constraints, panel):
+        '''
+        Font size on a textfield.
+        TODO: Check user inserts numbers and not strings within a reasonable
+        range.
+        '''
+        working_dir_label = JLabel("Console font size:")
+        constraints.weightx = 0.20
+        constraints.gridx = 0
+        constraints.gridy = 0
+        panel.add(working_dir_label, constraints)
+
+        self.fs_field = JTextField()
+        self.fs_field.setEditable(True)
+        # Can't find an elegant way to default to something that would be
+        # crossplatform, and I can't leave the default field empty.
+        if self.fontsize:
+            self.fs_field.setText("{}".format(self.fontsize))
+        else:
+            self.fs_field.setText('16')
+
+        constraints.weightx = 0.80
+        constraints.gridx = 1
+        constraints.gridy = 0
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        constraints.insets = Insets(10, 50, 10, 5)
+        panel.add(self.fs_field, constraints)
 
         return panel
 
@@ -197,6 +229,17 @@ class EditSettingsView(JDialog):
         panel.add(label, BorderLayout.CENTER)
         return panel
 
+    def build_appearance_panel(self):
+        '''
+        Create the panel that'll go in the Appearance tab. This will contain
+        fields to set the font properties.
+        '''
+        panel = JPanel(GridBagLayout())
+        constraints = GridBagConstraints()
+        constraints.insets = Insets(10, 10, 10, 10)
+        panel = self.build_console_font_panel(constraints, panel)
+        return panel
+
     def display(self):
         '''
         Displays window.
@@ -227,10 +270,25 @@ class EditSettingsView(JDialog):
         '''
         # Update only the working_dir and the server for now
         # TODO: update keystrokes, projects list, etc.
-        working_dir = self.field.getText()
+        working_dir = self.wd_field.getText()
+
+        # Read the fontsize from the textfield
+        fontsize = self.fs_field.getText()
+
+        # Use isnumeric() to test if a unicode string only has digits
+        if fontsize.isnumeric() and (8 <= int(fontsize) <= 30):
+            pass
+        else:
+            self.logger.error("Invalid font size. Please enter a number "
+                              "between 8 and 36.\n\n"
+                              "Font size set to default value: 14")
+            fontsize = 14
+
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
-        self.controller.update_config(working_dir, server)
+        self.controller.update_config(working_dir, server, fontsize)
+        # On saving settings, update the console properties
+        self.controller.refreshConsole()
         # Close window
         self.dispose()
 
@@ -238,7 +296,7 @@ class EditSettingsView(JDialog):
         '''
         Open new dialog for the user to select a path as default working dir.
         '''
-        default_path = self.field.getText()
+        default_path = self.wd_field.getText()
         if not os.path.isdir(default_path):
             default_path = os.getcwd()
         fileChooser = JFileChooser(default_path)
@@ -248,4 +306,4 @@ class EditSettingsView(JDialog):
         # OSX in the implementation of JFileChooser!
         status = fileChooser.showOpenDialog(self)
         if status == JFileChooser.APPROVE_OPTION:
-            self.field.setText(fileChooser.getSelectedFile().toString())
+            self.wd_field.setText(fileChooser.getSelectedFile().toString())

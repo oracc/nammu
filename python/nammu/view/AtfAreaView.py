@@ -18,13 +18,13 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import re
-from java.awt import BorderLayout, Dimension, Color
-from java.awt.event import KeyListener
+from java.awt import BorderLayout, Dimension, Color, Point
+from java.awt.event import KeyListener, AdjustmentListener
 from javax.swing import JScrollPane, JPanel, JSplitPane
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
 from javax.swing.undo import UndoManager, CompoundEdit
-from javax.swing.event import UndoableEditListener
+from javax.swing.event import UndoableEditListener, DocumentListener
 from contextlib import contextmanager
 from .AtfEditArea import AtfEditArea
 
@@ -70,10 +70,22 @@ class AtfAreaView(JPanel):
         self.container.setRowHeaderView(self.line_numbers_area)
         self.add(self.container, BorderLayout.CENTER)
 
+        self.vert_scroll = self.container.getVerticalScrollBar()
+        self.vert_scroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
+
         # Key listener that triggers syntax highlighting, etc. upon key release
-        self.edit_area.addKeyListener(AtfAreaKeyListener(self.controller))
+        self.edit_area.addKeyListener(AtfAreaKeyListener(self))
         # Also needed in secondary area:
-        self.secondary_area.addKeyListener(AtfAreaKeyListener(self.controller))
+        self.secondary_area.addKeyListener(AtfAreaKeyListener(self))
+
+        # Add a document listener to track changes to files
+        docListener = atfAreaDocumentListener(self)
+        self.edit_area.getDocument().addDocumentListener(docListener)
+
+        # instance variable to store a record of the text contents prior to the
+        # most recent change. Needed so that the different listeners can access
+        # this to handle error line updating.
+        self.oldtext = ''
 
     def toggle_split(self, split_orientation=None):
         '''
@@ -114,6 +126,104 @@ class AtfAreaView(JPanel):
             self.container.setResizeWeight(0.5)
             self.add(self.container, BorderLayout.CENTER)
 
+    def get_viewport_carets(self):
+        '''
+        Get the top left and bottom left caret position of the current viewport
+        '''
+        extent = self.container.getViewport().getExtentSize()
+        top_left_position = self.container.getViewport().getViewPosition()
+        top_left_char = self.edit_area.viewToModel(top_left_position)
+        bottom_left_position = Point(top_left_position.x,
+                                     top_left_position.y + extent.height)
+        bottom_left_char = self.edit_area.viewToModel(bottom_left_position)
+
+        # Something has gone wrong. Assume that top_left should be at the start
+        # of the file
+        if top_left_char >= bottom_left_char:
+            top_left_char = 0
+
+        # Get the text in the full edit area
+        text = self.controller.edit_area.getText()
+
+        # Pad the top of the viewport to capture up to the nearest header and
+        # the bottom by 2 lines
+        top_ch = self.controller.pad_top_viewport_caret(top_left_char, text)
+        bottom_ch = self.controller.pad_bottom_viewport_caret(bottom_left_char,
+                                                              text)
+
+        return top_ch, bottom_ch
+
+
+class atfAreaDocumentListener(DocumentListener):
+    def __init__(self, areaview):
+        self.areaviewcontroller = areaview.controller
+        self.areaview = areaview
+
+    def errorUpdate(self, e, text, flag):
+        '''
+        Method to handle the updating of error lines.
+        flag indicates whether the error lines need incremented ('insert')
+        or decrmented ('remove').
+        '''
+
+        # Only need to do this if we have error_lines
+        if self.areaviewcontroller.validation_errors == {}:
+            return
+
+        # Gets the position and length of the edit to the document
+        length = e.getLength()
+        offset = e.getOffset()
+
+        # Slice out the edited text
+        edited = text[offset:length + offset]
+
+        if '\n' in edited:
+            no_of_newlines = edited.count('\n')
+
+            # Get the line no of the caret postion
+            caret_line = self.areaviewcontroller.edit_area.get_line_num(offset)
+
+            # Call our error line update method here, passing no_of_newlines
+            self.areaviewcontroller.update_error_lines(caret_line,
+                                                       no_of_newlines,
+                                                       flag)
+
+    def changedUpdate(self, e):
+        '''
+        Must be implemented to avoid NotImplemented errors
+        '''
+        pass
+
+    def insertUpdate(self, e):
+        '''
+        Listen for an insertion to the document.
+        '''
+        text = self.areaviewcontroller.edit_area.getText()
+        self.errorUpdate(e, text, 'insert')
+
+    def removeUpdate(self, e):
+        '''
+        Listen for a removal from the document
+        '''
+        # Get the text prior to this edit event
+        text = self.areaview.oldtext
+        self.errorUpdate(e, text, 'remove')
+
+
+class atfAreaAdjustmentListener(AdjustmentListener):
+    def __init__(self, areaview):
+        self.areaviewcontroller = areaview.controller
+        self.areaview = areaview
+
+    def adjustmentValueChanged(self, e):
+        if not e.getValueIsAdjusting():
+
+            top_l_char, bottom_l_char = self.areaview.get_viewport_carets()
+
+            # Call SyntaxHighlighter(top_l_char, bottom_l_char)
+            self.areaviewcontroller.syntax_highlight(top_l_char,
+                                                     bottom_l_char)
+
 
 class AtfAreaKeyListener(KeyListener):
     """
@@ -121,8 +231,9 @@ class AtfAreaKeyListener(KeyListener):
     line numbers (they'll need to be redrawn when a new line or block is added
     or removed).
     """
-    def __init__(self, controller):
-        self.controller = controller
+    def __init__(self, areaview):
+        self.areaviewcontroller = areaview.controller
+        self.areaview = areaview
 
     def keyReleased(self, ke):
         # Make sure we only syntax highlight when the key pressed is not an
@@ -130,12 +241,16 @@ class AtfAreaKeyListener(KeyListener):
         # lock or cmd.
         if ((not ke.isActionKey()) and
                 (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
-            self.controller.syntax_highlight()
+            top_l_char, bottom_l_char = self.areaview.get_viewport_carets()
+            self.areaviewcontroller.syntax_highlight(top_l_char, bottom_l_char)
 
     # We have to implement these since the baseclass versions
     # raise non implemented errors when called by the event.
     def keyPressed(self, ke):
-        pass
+        # Set the oldtext parameter, which stores the contents of the textfield
+        # prior to the edits triggered by the keypress event. Needed for
+        # tracking error highlighting on removal of lines.
+        self.areaview.oldtext = self.areaviewcontroller.edit_area.getText()
 
     def keyTyped(self, ke):
         # It would be more natural to use this event. However

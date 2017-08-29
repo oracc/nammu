@@ -35,6 +35,7 @@ class AtfAreaController(object):
     def __init__(self, mainControler):
         # Create text edition area
         self.edit_area = AtfEditArea(self)
+        self.caret = self.edit_area.getCaret()
         self.secondary_area = AtfEditArea(self)
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
@@ -144,11 +145,161 @@ class AtfAreaController(object):
                 return getattr(self.edit_area, name)(*args, **kw)
             return wrapper
 
-    def syntax_highlight(self):
+    def get_viewport_top_bottom(self, top, bottom):
         '''
-        Short hand for syntax highlighting.
+        Get the top and bottom of the viewport from scroll events
         '''
-        self.syntax_highlighter.syntax_highlight()
+        top_line = self.edit_area.get_line_num(top)
+        bottom_line = self.edit_area.get_line_num(bottom)
+
+        return top_line, bottom_line
+
+    def pad_top_viewport_caret(self, top_left_char, text):
+        '''
+        Extend the top of the viewport to the nearest header, so we don't
+        have problems with malformed atf files being highlighted.
+        '''
+
+        # Test that there is text in the edit area
+        if len(text) == 0:
+            return top_left_char
+
+        # Test if the line we are currently on is a header line
+        if text[top_left_char] == '&':
+            return top_left_char
+
+        # slice text to only contain the characters above the viewport
+        text_above = text[:top_left_char]
+        # This catches malformed headers at the top of a file.
+        if len(text_above) == 0:
+            return top_left_char
+
+        # Split the text above the viewport into lines
+        lines = text_above.split('\n')
+        header_line_no = None
+
+        # Iterate over the list backwards, as this is more efficient
+        for line_no, line in reversed(list(enumerate(lines))):
+            if line.startswith('&'):
+                header_line_no = line_no
+                break
+
+        # line 0 will evaluate as false so need to be explicit here
+        if header_line_no is not None:
+            # If we have a header line, in the text above the viewport,
+            # update the top_left_char value
+            cursor_line_no = self.edit_area.get_line_num(top_left_char)
+            char_count = len('\n'.join(lines[header_line_no:cursor_line_no]))
+
+            top_left_char -= char_count
+
+            # This will catch any errors if the char_count goes wrong
+            if top_left_char < 0:
+                top_left_char = 0
+
+            return top_left_char
+        else:
+            return top_left_char
+
+    def pad_bottom_viewport_caret(self, bottom_left_char, text):
+        '''
+        Adds two lines to the bottom of the viewport so we dont have any
+        unhighlighted lines visible.
+        '''
+
+        # Test that there is text in the edit area
+        if len(text) == 0:
+            return bottom_left_char
+
+        # slice text to only contain the characters below the viewport
+        text_below = text[bottom_left_char:]
+
+        # Check there is text below the viewport
+        if len(text_below) == 0:
+            return bottom_left_char
+
+        # Split the text below the viewport into lines
+        lines = text_below.split('\n')
+
+        # Get no of chars on the last line of the viewport and the next 2 lines
+        char_count = len('\n'.join(lines[:3]))
+        bottom_left_char += char_count
+
+        return bottom_left_char
+
+    def update_error_lines(self, caret_line, no_of_lines, flag):
+        '''
+        Given a caret line number, a number of lines and a flag indicating
+        whether the error lines need incremented ('insert') or decremented
+        ('remove'). Update the line numbers of the keys in the dictionary
+        self.validation_errors so that error highlighting follows broken lines
+        during editing.
+        '''
+
+        # If the supplied edit does not add or remove any lines, do nothing
+        if no_of_lines < 1:
+            return
+
+        error_lines = self.validation_errors.keys()
+
+        # For legacy reasons the keys are strings, but we need ints
+        e_lines_int = [int(a) for a in error_lines]
+
+        # We only care about edits hapenning above error lines
+        if caret_line > max(e_lines_int):
+            return
+
+        # We need the line end position and the caret position
+        positions = self.getLinePositions(self.view.oldtext)
+        caret_pos = self.edit_area.getCaretPosition()
+        line_end = positions[caret_line - 1][1]
+
+        tmp = {}
+        for q, err in enumerate(e_lines_int):
+            # We are above an error line or on an error line but not at its end
+            if (err > caret_line) or (err == caret_line and
+                                      caret_pos != line_end):
+                fixed_line_no = self.line_fix(e_lines_int[q], no_of_lines,
+                                              flag)
+
+                # rebuild self.controller.validation_errors
+                tmp[str(fixed_line_no)] = self.validation_errors[str(err)]
+
+            # We are below or after the error lines so do nothing
+            else:
+                tmp[str(err)] = self.validation_errors[str(err)]
+
+        # Write the updated line numbers to the error dictionary
+        self.validation_errors = tmp
+
+    def line_fix(self, e_line_no, no_of_lines, flag):
+        '''
+        Helper function containing the logic for incrementing or decrementing
+        line numbers
+        '''
+        if flag == 'insert':
+            e_line_no += no_of_lines
+        elif flag == 'remove':
+            e_line_no -= no_of_lines
+            # handle potential out of bounds - 1 is top of the file
+            if e_line_no < 1:
+                e_line_no = 1
+
+        return e_line_no
+
+    def syntax_highlight(self, top_caret=None, bottom_caret=None):
+        '''
+        Short hand for syntax highlighting. Takes the line bounds.
+        '''
+        if top_caret is not None and bottom_caret is not None:
+            top_line, bottom_line = self.get_viewport_top_bottom(top_caret,
+                                                                 bottom_caret)
+            self.syntax_highlighter.syntax_highlight(top_line,
+                                                     bottom_line,
+                                                     top_caret,
+                                                     bottom_caret)
+        else:
+            self.syntax_highlighter.syntax_highlight()
 
     def highlight_matches(self, matches, offset, current_match=None):
         self.syntax_highlighter.highlight_matches(matches,
@@ -182,3 +333,26 @@ class AtfAreaController(object):
             pos = 0
 
         return pos
+
+    def getLinePositions(self, text):
+        '''
+        Given a block of text, return the caret positions
+        at the start and end of each line as a list of tuples in the order
+        (start, end) assuming left to right text.
+        The hacky list addition is to handle off by one errors as the 1st line
+        starts at position 0, whereas every other line starts at +1 past the
+        end of the last line and we also need to add in the final line length
+        manually.
+        '''
+        if len(text) > 0:
+            compiled = re.compile(r"\n")
+            textiter = compiled.finditer(text)
+            pos = [m.start() for m in textiter]
+        else:
+            return [(0, 0)]
+
+        # Build lists of the starts and ends of each line
+        starts = [0] + [x + 1 for x in pos]
+        ends = pos + [len(text)]
+
+        return zip(starts, ends)

@@ -5,7 +5,7 @@
 
 	<groupId>uk.ac.ucl.rc.development.oracc</groupId>
 	<artifactId>nammu</artifactId>
-	<version>0.7.1</version>
+	<version>0.8.0</version>
 	<packaging>jar</packaging>
 
 	<name>nammu</name>
@@ -64,16 +64,29 @@
 						      <include>**/*py.class</include>
 				          </includes>
 					  </fileset>
+						<fileset>
+				          <directory>./resources/lib</directory>
+				          <includes>
+						      <include>*.class</include>
+				          </includes>
+					  </fileset>
 			    </filesets>
 			  </configuration>
 		  </plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.2</version>
+			</plugin>
 
 			<!-- Make sure resources like toolbar icons are copied to final
             jar -->
   		<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>3.0.2</version>
 				<executions>
+
 					<execution>
 						<id>copy-resources</id>
 						<phase>validate</phase>
@@ -90,22 +103,26 @@
 		 					</resources>
 						</configuration>
 					</execution>
+
 					<execution>
 						<id>copy-java-class</id>
-						<phase>validate</phase>
+						<phase>process-classes</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/target/classes/Lib</outputDirectory>
+							<outputDirectory>${basedir}/resources/lib</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${basedir}/resources/lib</directory>
-									<filtering>false</filtering>
+									<directory>${basedir}/target/classes</directory>
+									<includes>
+										<include>*.class</include>
+									</includes>
 								</resource>
 							</resources>
 						</configuration>
 					</execution>
+
 				</executions>
 			</plugin>
 

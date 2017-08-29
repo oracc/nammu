@@ -18,9 +18,12 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import re
+from swingutils.threads.swing import runSwingLater
 
 from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
+
+import MyStyledEditorKit
 
 from ..utils import set_font
 
@@ -28,6 +31,8 @@ from ..utils import set_font
 class AtfEditArea(JTextPane):
 
     def __init__(self, controller):
+        # This custom StyledEditorKit fixes broken line wrapping.
+        self.setEditorKit(MyStyledEditorKit())
         self.controller = controller
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
         self.font = set_font()
@@ -73,7 +78,11 @@ class AtfEditArea(JTextPane):
         still works when you set text from elsewhere in the code.
         '''
         super(AtfEditArea, self).setText(text)
-        self.controller.syntax_highlight()
+
+        # call here with a top line and bottom line for highlighting following
+        # a set text call
+        top_caret, bottom_caret = self.controller.view.get_viewport_carets()
+        self.controller.syntax_highlight(top_caret, bottom_caret)
 
     def replaceSelection(self, text):
         '''
@@ -81,7 +90,6 @@ class AtfEditArea(JTextPane):
         after replacing some text.
         '''
         super(AtfEditArea, self).replaceSelection(text)
-        self.controller.syntax_highlight()
 
     def cut(self):
         '''
@@ -89,7 +97,6 @@ class AtfEditArea(JTextPane):
         works when user cuts text via toolbar button or mouse.
         '''
         super(AtfEditArea, self).cut()
-        self.controller.syntax_highlight()
 
     def copy(self):
         '''
@@ -97,7 +104,6 @@ class AtfEditArea(JTextPane):
         works when user copies text via toolbar button or mouse.
         '''
         super(AtfEditArea, self).copy()
-        self.controller.syntax_highlight()
 
     def paste(self):
         '''
@@ -105,7 +111,6 @@ class AtfEditArea(JTextPane):
         works when user pastes text via toolbar button or mouse.
         '''
         super(AtfEditArea, self).paste()
-        self.controller.syntax_highlight()
 
 
 class CustomMouseListener(MouseAdapter):

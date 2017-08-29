@@ -52,21 +52,15 @@ class ConsoleView(JPanel):
 
         # Although most of the styling is done using css, we need to set these
         # properties to ensure the html is rendered properly in the console
-        self.edit_area.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        self.edit_area.background = Color.BLACK
+        self.edit_area.border = BorderFactory.createEmptyBorder(6, 6, 6, 6)
+        self.edit_area.background = Color(238, 238, 238)
         self.edit_area.setContentType("text/html")
 
         # Disable writing in the console - required to render hyperlinks
         self.edit_area.setEditable(False)
 
-        # Here we use css to style the console and its text
-        # TODO: we can expose these parameters in the settings.yaml file to
-        # allow users to change font sizes etc for accessability
-        doc = self.edit_area.getDocument()
-        bodyRule = ("body { font-family: Courier New; font-size: 14 pt; "
-                    "font-weight: bold; background-color: #000000;"
-                    " color: #FFFFFF}")
-        doc.getStyleSheet().addRule(bodyRule)
+        # Initial call to refresh console to set the console font properties
+        self.refreshConsole()
 
         # Set up a hyperlink listener
         listener = addEventListener(self.edit_area, HyperlinkListener,
@@ -82,6 +76,16 @@ class ConsoleView(JPanel):
 
         # Add to parent panel
         self.add(scrollingText, BorderLayout.CENTER)
+
+    def refreshConsole(self):
+            # Here we use css to style the console and its text
+            fontsize = self.controller.config['console_style']['fontsize']
+
+            doc = self.edit_area.getDocument()
+            bodyRule = ("body {{ font-family: Monaco; font-size: {0} pt; "
+                        "font-weight: bold; background-color: #EEEEEE;"
+                        " color: #000000}}").format(fontsize)
+            doc.getStyleSheet().addRule(bodyRule)
 
     def scroll(self):
         '''

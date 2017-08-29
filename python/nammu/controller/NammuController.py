@@ -25,6 +25,7 @@ from logging.handlers import RotatingFileHandler
 import os
 import urllib
 import re
+from swingutils.threads.swing import runSwingLater
 
 from AtfAreaController import AtfAreaController
 from ConsoleController import ConsoleController
@@ -34,12 +35,14 @@ from ToolbarController import ToolbarController
 from NewAtfController import NewAtfController
 from FindController import FindController
 from EditSettingsController import EditSettingsController
+from WelcomeController import WelcomeController
 from java.awt import Desktop
 from java.io import File
 from java.lang import System, Integer, ClassLoader
 from java.net import URI
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
+from javax.swing.text import DefaultCaret
 from pyoracc.atf.atffile import AtfFile
 from requests.exceptions import RequestException
 from requests.exceptions import Timeout, ConnectionError, HTTPError
@@ -65,15 +68,15 @@ class NammuController(object):
         2. Create main view that'll bind all the components
         3. Create event/action handlers - EventBus?
         '''
-        # Create this controller first since it's where the log will be
+        # Load Nammu's settings
+        self.config = get_yaml_config('settings.yaml')
+
+        # Create this controller next since it's where the log will be
         # displayed
         self.consoleController = ConsoleController(self)
 
         # Set up logging system
         self.logger = self.setup_logger()
-
-        # Load Nammu's settings
-        self.config = get_yaml_config('settings.yaml')
 
         # Create all the controllers
         self.menuController = MenuController(self)
@@ -106,6 +109,14 @@ class NammuController(object):
 
         # Find windows shouldn't coexist
         self.finding = False
+
+        # Here are the current urls for nammu on github and the oracc docs
+        self.urls = {'nammu': 'https://github.com/oracc/nammu',
+                     'oracc': ('http://oracc.museum.upenn.edu/doc/help/'
+                               'editinginatf/')}
+
+        # Now that init is done, launch the welcome screen if needed
+        self.launchWelcomeScreen()
 
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
@@ -155,15 +166,40 @@ class NammuController(object):
                 # Clear ATF area before adding next text to clean up tooltips
                 # and such
                 self.atfAreaController.clearAtfArea()
+
+                # Turn off caret movement and highligting for file load
+                self.atfAreaController.caret.setUpdatePolicy(
+                                                    DefaultCaret.NEVER_UPDATE)
+                syntax_highlight = self.atfAreaController.syntax_highlighter
+                syntax_highlight.syntax_highlight_on = False
                 self.atfAreaController.setAtfAreaText(atfText)
+
                 self.logger.debug("File %s successfully opened.", filename)
                 self.view.setTitle(basename)
+
+                # Re-enable caret updating and syntax highlighting after load
+                self.atfAreaController.caret.setUpdatePolicy(
+                                                    DefaultCaret.ALWAYS_UPDATE)
+                syntax_highlight.syntax_highlight_on = True
+
+                # Now dispatch syntax highlighting in a new thread so
+                # we dont highlight before the full file is loaded
+                runSwingLater(self.initHighlighting)
 
             # TODO: Else, prompt user to choose again before closing
 
             # Update settings with current file's path
             self.update_config_element(self.get_working_dir(),
                                        'default', 'working_dir')
+
+    def initHighlighting(self):
+        '''
+        A helper function to be called when we need to initialise syntax
+        highlighting in a different thread.
+        '''
+        atfview = self.atfAreaController.view
+        top, bottom = atfview.get_viewport_carets()
+        self.atfAreaController.syntax_highlight(top, bottom)
 
     def readTextFile(self, filename):
         '''
@@ -425,6 +461,8 @@ class NammuController(object):
         Connect to ORACC server and retrieved lemmatised version of ATF file.
         Don't lemmatise if file doesn't validate.
         '''
+        # Grab the caret position before lemmatising
+        pre_cursor = self.atfAreaController.edit_area.getCaretPosition()
         # Clear previous log in Nammu's console
         self.consoleController.clearConsole()
 
@@ -447,6 +485,8 @@ class NammuController(object):
                                 self.currentFilename)
 
             self.logger.debug("Lemmatising ATF done.")
+            # Restore the caret position following lemmatisation
+            self.atfAreaController.edit_area.setCaretPosition(pre_cursor)
         else:
             self.logger.error("Please save file before trying to lemmatise.")
 
@@ -645,6 +685,16 @@ class NammuController(object):
         # Refresh validation errors
         self.atfAreaController.set_validation_errors(validation_errors)
 
+    def launchWelcomeScreen(self):
+        '''
+        Checks if new_user flag is true, launches the welcome screen if needed
+        '''
+        try:
+            if self.config['new_user']:
+                WelcomeController(self)
+        except KeyError:
+            WelcomeController(self)
+
     def printFile(self, event=None):
         '''
         Print file.
@@ -831,14 +881,13 @@ class NammuController(object):
         """
         Show ATF validation help.
         """
-        self._open_website("http://oracc.museum.upenn.edu/doc/help/"
-                           "editinginatf/")
+        self._open_website(self.urls['oracc'])
 
     def showAbout(self, event=None):
         """
         Show repo's website with info about ORACC and Nammu.
         """
-        self._open_website("https://github.com/oracc/nammu")
+        self._open_website(self.urls['nammu'])
 
     def _open_website(self, url):
         uri = URI(url)
@@ -860,14 +909,3 @@ class NammuController(object):
                 self.find_controller = FindController(self)
         else:
             self.find_controller = FindController(self)
-
-    def syntax_highlight_switch(self, event=None):
-        '''
-        Turns syntax highlight on or off.
-        '''
-        self.atfAreaController.syntax_highlighter.syntax_highlight_on = \
-            not self.atfAreaController.syntax_highlighter.syntax_highlight_on
-        if not self.atfAreaController.syntax_highlighter.syntax_highlight_on:
-            self.atfAreaController.syntax_highlighter.syntax_highlight_off()
-        else:
-            self.atfAreaController.syntax_highlight()
