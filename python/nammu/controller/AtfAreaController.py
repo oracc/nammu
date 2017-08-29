@@ -359,5 +359,6 @@ class AtfAreaController(object):
 
     def refreshEditArea(self):
         '''
-        Repain edit area with appeareance chosen by user.
+        Repaint edit area with appeareance chosen by user.
         '''
+        self.view.refresh()
