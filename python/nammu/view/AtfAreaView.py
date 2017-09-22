@@ -17,8 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import re
-from java.awt import BorderLayout, Dimension, Point
+from java.awt import BorderLayout, Dimension, Point, Font, Color
 from java.awt.event import KeyListener, AdjustmentListener
 from javax.swing import JScrollPane, JPanel, JSplitPane
 from javax.swing.text import StyleContext, StyleConstants
@@ -158,9 +157,19 @@ class AtfAreaView(JPanel):
         '''
         Restyle edit area using user selected appearance settings.
         '''
-        fontsize = self.controller.controller.config['edit_area_style']['fontsize']['user']
-        self.controller.font = set_font(fontsize)
+        config = self.controller.controller.config
 
+        # Create a new font with the new size
+        font = set_font(config['edit_area_style']['fontsize']['user'])
+
+        attrs = self.controller.edit_area.getInputAttributes()
+        StyleConstants.setFontSize(attrs, font.getSize())
+
+        # Get the Styledoc so we can update it
+        doc = self.controller.edit_area.getStyledDocument()
+
+        # Apply the new fontsize to the whole document
+        doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
 
 
 class atfAreaDocumentListener(DocumentListener):
