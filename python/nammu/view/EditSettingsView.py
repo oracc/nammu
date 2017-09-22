@@ -354,6 +354,29 @@ class EditSettingsView(JDialog):
         '''
         self.dispose()
 
+    def valiate_fontsize(self, input_size, target):
+        '''
+        Method to validate an input fontsize. The target parameter is used to
+        switch between validating the the console and the edit area. If the
+        value is invalid, return the previous user fontsize that was stored.
+        '''
+        if target == 'console':
+            target_key = 'console_style'
+        else:
+            target_key = 'edit_area_style'
+
+        # Use isnumeric() to test if a unicode string only has digits
+        if (input_size.isnumeric() and (8 <= int(input_size) <= 30)):
+            return input_size
+        else:
+            input_size = self.controller.config[target_key]['fontsize']['user']
+            self.logger.error("Invalid {} font size. Please enter a "
+                              "number between 8 and 36.\n\n"
+                              "Font size left at "
+                              "previous value: {}".format(target, input_size))
+
+            return input_size
+
     def save(self, event=None):
         '''
         Save changes made by user on local settings file.
@@ -366,32 +389,10 @@ class EditSettingsView(JDialog):
         console_fontsize = self.fs_field.getText()
         edit_area_fontsize = self.edit_area_fs_field.getText()
 
-        # Use isnumeric() to test if a unicode string only has digits
-        if (console_fontsize.isnumeric() and
-           (8 <= int(console_fontsize) <= 30)):
-            pass
-        else:
-            self.logger.error("Invalid console font size. Please enter a "
-                              "number between 8 and 36.\n\n"
-                              "Font size left at previous value: {}".format(
-                                self.controller.config[
-                                    'console_style']['fontsize']['user']
-                              ))
-            console_fontsize = self.controller.config[
-                                        'console_style']['fontsize']['user']
-
-        if (edit_area_fontsize.isnumeric() and
-           (8 <= int(edit_area_fontsize) <= 30)):
-            pass
-        else:
-            self.logger.error("Invalid edit area font size. Please enter a "
-                              "number between 8 and 36.\n\n"
-                              "Font size left at previous value: {}".format(
-                                self.controller.config[
-                                    'edit_area_style']['fontsize']['user']
-                              ))
-            edit_area_fontsize = self.controller.config[
-                                        'edit_area_style']['fontsize']['user']
+        # Validate the input fontsizes
+        console_fontsize = self.valiate_fontsize(console_fontsize, 'console')
+        edit_area_fontsize = self.valiate_fontsize(edit_area_fontsize,
+                                                   'edit area')
 
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
