@@ -220,8 +220,6 @@ class EditSettingsView(JDialog):
     def build_edit_area_font_panel(self, constraints, panel):
         '''
         Font size on a textfield.
-        TODO: Check user inserts numbers and not strings within a reasonable
-        range.
         '''
         fontzise_label = JLabel("Edit area font size:")
         constraints.weightx = 0.20
@@ -375,9 +373,9 @@ class EditSettingsView(JDialog):
         else:
             self.logger.error("Invalid console font size. Please enter a "
                               "number between 8 and 36.\n\n"
-                              "Font size set to default value: {}".format(
+                              "Font size left at previous value: {}".format(
                                 self.controller.config[
-                                    'console_style']['fontsize']['default']
+                                    'console_style']['fontsize']['user']
                               ))
             console_fontsize = self.controller.config[
                                         'console_style']['fontsize']['user']
@@ -388,9 +386,9 @@ class EditSettingsView(JDialog):
         else:
             self.logger.error("Invalid edit area font size. Please enter a "
                               "number between 8 and 36.\n\n"
-                              "Font size set to default value: {}".format(
+                              "Font size left at previous value: {}".format(
                                 self.controller.config[
-                                    'edit_area_style']['fontsize']['default']
+                                    'edit_area_style']['fontsize']['user']
                               ))
             edit_area_fontsize = self.controller.config[
                                         'edit_area_style']['fontsize']['user']
