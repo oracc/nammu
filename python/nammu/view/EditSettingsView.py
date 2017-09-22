@@ -253,7 +253,6 @@ class EditSettingsView(JDialog):
         combo.setSelectedItem(self.console_font_color)
         return combo
 
-
     def build_background_color_combobox(self):
         combo = JComboBox()
         for color in ('LightGrey', 'Black', 'Yellow'):
