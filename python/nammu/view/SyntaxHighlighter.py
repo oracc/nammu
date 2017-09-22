@@ -29,8 +29,8 @@ class SyntaxHighlighter:
         self.controller = controller
         self.setup_syntax_highlight_colours()
         self.setup_syntax_highlight_tokens()
-        config = self.controller.controller.config
-        self.font = set_font(config['edit_area_style']['fontsize']['user'])
+        self.conf = self.controller.controller.config
+        self.font = set_font(self.conf['edit_area_style']['fontsize']['user'])
         self.setup_attribs()
         self.styledoc = controller.edit_area_styledoc
         self.lexer = AtfLexer(skipinvalid=True).lexer
@@ -158,7 +158,13 @@ class SyntaxHighlighter:
 
         error_lines = self.controller.validation_errors.keys()
 
-        # Check that syntax highlight in on and that there is text to highlight
+        # Test if the user has recently updated the font size for the editor
+        newfont = set_font(self.conf['edit_area_style']['fontsize']['user'])
+        if self.font != newfont:
+            self.font = newfont
+            self.setup_attribs()
+
+        # Check that syntax highlight is on and that there is text to highlight
         no_of_chars = self.viewport_extent[3] - self.viewport_extent[2]
         if not self.syntax_highlight_on or no_of_chars < 1:
             return
