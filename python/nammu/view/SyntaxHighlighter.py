@@ -158,12 +158,6 @@ class SyntaxHighlighter:
 
         error_lines = self.controller.validation_errors.keys()
 
-        # Test if the user has recently updated the font size for the editor
-        newfont = set_font(self.conf['edit_area_style']['fontsize']['user'])
-        if self.font != newfont:
-            self.font = newfont
-            self.setup_attribs()
-
         # Check that syntax highlight is on and that there is text to highlight
         no_of_chars = self.viewport_extent[3] - self.viewport_extent[2]
         if not self.syntax_highlight_on or no_of_chars < 1:
