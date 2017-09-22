@@ -87,13 +87,11 @@ class ConsoleView(JPanel):
         font_color = self.controller.config[
                                 'console_style']['font_color']['user']
 
-
         bodyRule = ("body {{ font-family: Monaco; font-size: {0} pt; "
                     "font-weight: bold; background-color: {1};"
                     " color: {2} }}").format(fontsize, background_color,
                                              font_color)
 
-        print(bodyRule)
         doc = self.edit_area.getDocument()
         doc.getStyleSheet().addRule(bodyRule)
         self.edit_area.repaint()
