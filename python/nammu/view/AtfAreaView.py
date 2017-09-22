@@ -168,14 +168,14 @@ class AtfAreaView(JPanel):
         self.controller.syntax_highlighter.font = font
         self.controller.syntax_highlighter.setup_attribs()
 
-        # attrs = self.controller.edit_area.getInputAttributes()
-        # StyleConstants.setFontSize(attrs, font.getSize())
-        #
-        # # Get the Styledoc so we can update it
-        # doc = self.controller.edit_area.getStyledDocument()
-        #
-        # # Apply the new fontsize to the whole document
-        # doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
+        attrs = self.controller.edit_area.getInputAttributes()
+        StyleConstants.setFontSize(attrs, font.getSize())
+
+        # Get the Styledoc so we can update it
+        doc = self.controller.edit_area.getStyledDocument()
+
+        # Apply the new fontsize to the whole document
+        doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
 
 
 class atfAreaDocumentListener(DocumentListener):
