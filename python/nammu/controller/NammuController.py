@@ -270,7 +270,12 @@ class NammuController(object):
                           element, value)
         if value:
             if self.config[group][element] != value:
-                self.config[group][element] = value
+                # We need to ensure that this value is written inside a list
+                # otherwise we get odd behaviour for some config files.
+                if group == 'projects' and element == 'default':
+                    self.config[group][element] = [value]
+                else:
+                    self.config[group][element] = value
                 self.logger.debug("Settings updated.")
                 save_yaml_config(self.config)
 
