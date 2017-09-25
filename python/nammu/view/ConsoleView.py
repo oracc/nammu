@@ -58,6 +58,11 @@ class ConsoleView(JPanel):
         # Disable writing in the console - required to render hyperlinks
         self.edit_area.setEditable(False)
 
+        # Map CSS color strings to Java Color objects
+        self.colors = {'LightGrey': Color(238, 238, 238),
+                       'Black': Color(0, 0, 0),
+                       'Yellow': Color(255, 255, 0)}
+
         # Initial call to refresh console to set the console style properties
         self.refreshConsole()
 
@@ -94,12 +99,7 @@ class ConsoleView(JPanel):
         doc.getStyleSheet().addRule(bodyRule)
 
         # Set background color
-
-        color_dict = {'LightGrey': Color(238, 238, 238),
-                      'Black': Color(0, 0, 0),
-                      'Yellow': Color(255, 255, 0)}
-
-        self.edit_area.background = color_dict[background_color]
+        self.edit_area.background = self.colors[background_color]
         self.edit_area.repaint()
 
     def scroll(self):
