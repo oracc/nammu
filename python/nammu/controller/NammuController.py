@@ -219,6 +219,8 @@ class NammuController(object):
         atfText = self.atfAreaController.getAtfAreaText()
         if not self.currentFilename:
             fileChooser = JFileChooser(self.get_working_dir())
+            file_filter = FileNameExtensionFilter("ATF files", ["atf"])
+            fileChooser.setFileFilter(file_filter)
             status = fileChooser.showSaveDialog(self.view)
             if status == JFileChooser.APPROVE_OPTION:
                 atfFile = fileChooser.getSelectedFile()
@@ -236,6 +238,7 @@ class NammuController(object):
                             JOptionPane.YES_NO_OPTION)
                     if reply == JOptionPane.NO_OPTION:
                         return
+                filename = self.force_atf_extension(filename)
                 self.currentFilename = filename
                 self.view.setTitle(basename)
             else:
@@ -251,6 +254,19 @@ class NammuController(object):
 
         # Find project and language and add to settings.yaml as default
         self.update_config()
+
+    def force_atf_extension(self, filename):
+        '''
+        Ensures that any filename being saved has an atf extension.
+        Needed as non-atf files will not validate on the oracc server
+        '''
+        if os.path.splitext(filename)[1] != '.atf':
+            self.logger.error("Supplied filename: {0} does not have the "
+                              "required atf extension. File will be "
+                              "saved as {0}.atf.".format(filename))
+            filename = '{}.atf'.format(filename)
+
+        return filename
 
     def update_config(self):
         '''
@@ -286,6 +302,8 @@ class NammuController(object):
         '''
         atfText = self.atfAreaController.getAtfAreaText()
         fileChooser = JFileChooser(self.get_working_dir())
+        file_filter = FileNameExtensionFilter("ATF files", ["atf"])
+        fileChooser.setFileFilter(file_filter)
         status = fileChooser.showSaveDialog(self.view)
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
@@ -302,6 +320,7 @@ class NammuController(object):
                             JOptionPane.YES_NO_OPTION)
                 if reply == JOptionPane.NO_OPTION:
                     return
+            filename = self.force_atf_extension(filename)
             self.currentFilename = filename
             self.view.setTitle(basename)
             try:
