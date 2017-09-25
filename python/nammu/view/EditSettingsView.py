@@ -390,6 +390,20 @@ class EditSettingsView(JDialog):
 
         return bg_color, font_color
 
+    def validate_working_dir(self, working_dir):
+        '''
+        Method to validate input working directories. If directory does not
+        exist or if a path to a file is provided instead of a path to a
+        directory the method returns None.
+        '''
+        if os.path.isdir(working_dir):
+            return working_dir
+        else:
+            self.logger.error("{} is not a valid working directory."
+                              " No working directory has been "
+                              "saved".format(working_dir))
+            return None
+
     def save(self, event=None):
         '''
         Save changes made by user on local settings file.
@@ -401,6 +415,9 @@ class EditSettingsView(JDialog):
         # Read the fontsize from the textfield
         console_fontsize = self.fs_field.getText()
         edit_area_fontsize = self.edit_area_fs_field.getText()
+
+        # Validate the working directory input string
+        working_dir = self.validate_working_dir(working_dir)
 
         # Validate the input fontsizes
         console_fontsize = self.valiate_fontsize(console_fontsize, 'console')
