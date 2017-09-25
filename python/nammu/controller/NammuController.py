@@ -432,27 +432,37 @@ class NammuController(object):
         self.atfAreaController.clearToolTips()
 
         if self.currentFilename:
-            self.logger.debug("Validating ATF file %s.", self.currentFilename)
+            # Get the file extension of the current file
+            file_ext = os.path.splitext(self.currentFilename)[1]
 
-            # Search for project name in file. If not found, don't validate
-            project = self.get_project()
+            if file_ext == '.atf':
+                self.logger.debug("Validating ATF file %s.",
+                                  self.currentFilename)
 
-            if project:
-                self.send_command("atf", project)
-            else:
-                # TODO: Prompt dialog
-                if self.currentFilename:
-                    self.logger.error(
-                            "No project found in file %s. "
-                            "Add project and retry.",
-                            self.currentFilename)
+                # Search for project name in file. If not found, don't validate
+                project = self.get_project()
+
+                if project:
+                    self.send_command("atf", project)
                 else:
-                    self.logger.error(
-                            "No project found in file %s. "
-                            "Add project and retry.",
-                            self.currentFilename)
+                    # TODO: Prompt dialog
+                    if self.currentFilename:
+                        self.logger.error(
+                                "No project found in file %s. "
+                                "Add project and retry.",
+                                self.currentFilename)
+                    else:
+                        self.logger.error(
+                                "No project found in file %s. "
+                                "Add project and retry.",
+                                self.currentFilename)
 
-            self.logger.debug("Validating ATF done.")
+                self.logger.debug("Validating ATF done.")
+            else:
+                self.logger.error("Unable to validate file with extension {}. "
+                                  "Please re-save the file with the "
+                                  "file extension .atf and try "
+                                  "again.".format(file_ext))
         else:
             self.logger.error("Please save file before trying to validate.")
 
