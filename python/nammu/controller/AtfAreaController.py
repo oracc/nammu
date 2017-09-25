@@ -42,6 +42,9 @@ class AtfAreaController(object):
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
         self.secondary_line_numbers = TextLineNumber(self.secondary_area)
+        # Ensure the line numbers update when the editor font is changed
+        self.line_numbers_area.setUpdateFont(True)
+        self.secondary_line_numbers.setUpdateFont(True)
         # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
         # Get a reference to the view's undo_manager
