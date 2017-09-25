@@ -205,9 +205,12 @@ class NammuController(object):
         '''
         Helper function to open file for reading.
         '''
+        if os.path.splitext(filename)[1] != '.atf':
+            self.logger.error("WARNING: supplied file ({}) does not appear "
+                              "to be an atf file. File load may behave "
+                              "unexpectedly.".format(filename))
         text = codecs.open(filename, encoding='utf-8').read()
         return text
-        # TODO: Check if selected file is ATF or at least text file!
 
     def saveFile(self, event=None):
         '''
