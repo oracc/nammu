@@ -354,7 +354,7 @@ class EditSettingsView(JDialog):
         '''
         self.dispose()
 
-    def valiate_fontsize(self, input_size, target):
+    def validate_fontsize(self, input_size, target):
         '''
         Method to validate an input fontsize. The target parameter is used to
         switch between validating the the console and the edit area. If the
@@ -420,8 +420,8 @@ class EditSettingsView(JDialog):
         working_dir = self.validate_working_dir(working_dir)
 
         # Validate the input fontsizes
-        console_fontsize = self.valiate_fontsize(console_fontsize, 'console')
-        edit_area_fontsize = self.valiate_fontsize(edit_area_fontsize,
+        console_fontsize = self.validate_fontsize(console_fontsize, 'console')
+        edit_area_fontsize = self.validate_fontsize(edit_area_fontsize,
                                                    'edit area')
 
         # Validate input console colors
