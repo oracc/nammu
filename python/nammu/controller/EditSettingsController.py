@@ -49,12 +49,11 @@ class EditSettingsController:
                 self.view.display_error(keyword)
 
     def update_config(self, working_dir, server, console_fontsize, font_color,
-                      background_color, edit_area_fontsize,  keystrokes=None,
+                      background_color, edit_area_fontsize, keystrokes=None,
                       languages=None, projects=None):
         '''
         Update the settings file with the user input.
         '''
-        # TODO: Validate new values introduced by user.
         # TODO: As of v0.6, only working_dir and servers are editable from the
         #       settings window. The other tabs for keystrokes, languages and
         #       projects will be added later.

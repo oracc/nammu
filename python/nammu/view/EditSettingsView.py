@@ -377,6 +377,19 @@ class EditSettingsView(JDialog):
 
             return input_size
 
+    def validate_colors(self, bg_color, font_color):
+        '''
+        Validate console colors to ensure they do not match.
+        '''
+        if bg_color == font_color:
+            config = self.controller.config
+            self.logger.error("Console font colour cannot match background"
+                              " colour. Resetting to default values.")
+            bg_color = config['console_style']['background_color']['default']
+            font_color = config['console_style']['font_color']['default']
+
+        return bg_color, font_color
+
     def save(self, event=None):
         '''
         Save changes made by user on local settings file.
@@ -394,14 +407,16 @@ class EditSettingsView(JDialog):
         edit_area_fontsize = self.valiate_fontsize(edit_area_fontsize,
                                                    'edit area')
 
+        # Validate input console colors
+        bg_color = self.background_color_combo.getSelectedItem()
+        font_color = self.font_color_combo.getSelectedItem()
+        bg_color, font_color = self.validate_colors(bg_color, font_color)
+
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
-        self.controller.update_config(
-                            working_dir, server,
-                            int(console_fontsize),
-                            self.font_color_combo.getSelectedItem(),
-                            self.background_color_combo.getSelectedItem(),
-                            int(edit_area_fontsize))
+        self.controller.update_config(working_dir, server,
+                                      int(console_fontsize), font_color,
+                                      bg_color, int(edit_area_fontsize))
         # On saving settings, update the console and edit area properties
         self.controller.refreshConsole()
         self.controller.refreshEditArea()

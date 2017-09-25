@@ -53,13 +53,12 @@ class ConsoleView(JPanel):
         # Although most of the styling is done using css, we need to set these
         # properties to ensure the html is rendered properly in the console
         self.edit_area.border = BorderFactory.createEmptyBorder(6, 6, 6, 6)
-        self.edit_area.background = Color(238, 238, 238)
         self.edit_area.setContentType("text/html")
 
         # Disable writing in the console - required to render hyperlinks
         self.edit_area.setEditable(False)
 
-        # Initial call to refresh console to set the console font properties
+        # Initial call to refresh console to set the console style properties
         self.refreshConsole()
 
         # Set up a hyperlink listener
@@ -88,12 +87,19 @@ class ConsoleView(JPanel):
                                 'console_style']['font_color']['user']
 
         bodyRule = ("body {{ font-family: Monaco; font-size: {0} pt; "
-                    "font-weight: bold; background-color: {1};"
-                    " color: {2} }}").format(fontsize, background_color,
-                                             font_color)
-
+                    "font-weight: bold; color: {1} }}").format(fontsize,
+                                                               font_color)
+        # Set font properties
         doc = self.edit_area.getDocument()
         doc.getStyleSheet().addRule(bodyRule)
+
+        # Set background color
+
+        color_dict = {'LightGrey': Color(238, 238, 238),
+                      'Black': Color(0, 0, 0),
+                      'Yellow': Color(255, 255, 0)}
+
+        self.edit_area.background = color_dict[background_color]
         self.edit_area.repaint()
 
     def scroll(self):
