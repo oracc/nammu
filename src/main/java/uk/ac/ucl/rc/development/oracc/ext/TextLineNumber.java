@@ -455,7 +455,6 @@ public class TextLineNumber extends JPanel
 			if (updateFont)
 			{
 				Font newFont = (Font) evt.getNewValue();
-        System.out.println(newFont);
 				setFont(newFont);
 				lastDigits = 0;
 				setPreferredWidth();
