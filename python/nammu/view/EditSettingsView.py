@@ -360,13 +360,14 @@ class EditSettingsView(JDialog):
         the console font sizes 'console_style' or the edit area font sizes
         'edit_area_style'. If the value is invalid, return the previous user
         fontsize that was stored.
+        The second return value is a bool indicating if the value has changed.
         '''
         # Extract plain english from key name for use in error message
         target = target_key[:-6].replace('_', ' ')
 
         # Use isnumeric() to test if a unicode string only has digits
         if (input_size.isnumeric() and (8 <= int(input_size) <= 30)):
-            return input_size
+            return input_size, True
         else:
             input_size = self.controller.config[target_key]['fontsize']['user']
             self.logger.error("Invalid {} font size. Please enter a "
@@ -374,34 +375,69 @@ class EditSettingsView(JDialog):
                               "Font size left at "
                               "previous value: {}".format(target, input_size))
 
-            return input_size
+            return input_size, False
 
     def validate_colors(self, bg_color, font_color):
         '''
         Validate console colors to ensure they do not match.
+        The second return value is a bool indicating if the value has changed.
         '''
+        valid = True
         if bg_color == font_color:
             config = self.controller.config
             self.logger.error("Console font colour cannot match background"
                               " colour. Resetting to default values.")
             bg_color = config['console_style']['background_color']['default']
             font_color = config['console_style']['font_color']['default']
+            valid = False
 
-        return bg_color, font_color
+        return bg_color, font_color, valid
 
     def validate_working_dir(self, working_dir):
         '''
         Method to validate input working directories. If directory does not
         exist or if a path to a file is provided instead of a path to a
         directory the method returns None.
+        The second return value is a bool indicating if the value has changed.
         '''
         if os.path.isdir(working_dir):
-            return working_dir
+            return working_dir, True
         else:
             self.logger.error("{} is not a valid working directory."
                               " No working directory has been "
                               "saved".format(working_dir))
-            return None
+            return None, False
+
+    def validate_all_inputs(self, working_dir, console_fontsize,
+                            edit_area_fontsize, bg_color, font_color):
+        '''
+        Wrapper around the input validation methods. Returns a tuple containing
+        the validated inputs with the last value in the tuple a boolean set to
+        False if any of the values have been altered during the validation
+        and True if there have been no changes.
+        '''
+        # Collect the results of each validation. In future we might use this
+        # to provide more detailed error logging on bad user input
+        validation_results = []
+
+        # Validate the working directory input string
+        working_dir, v = self.validate_working_dir(working_dir)
+        validation_results.append(v)
+
+        # Validate the input fontsizes
+        con_size, v = self.validate_fontsize(console_fontsize, 'console_style')
+        validation_results.append(v)
+
+        edit_size, v = self.validate_fontsize(edit_area_fontsize,
+                                              'edit_area_style')
+        validation_results.append(v)
+
+        # Validate input console colors
+        bg_color, font_color, v = self.validate_colors(bg_color, font_color)
+        validation_results.append(v)
+
+        return (working_dir, int(con_size), font_color, bg_color,
+                int(edit_size), all(validation_results))
 
     def save(self, event=None):
         '''
@@ -415,25 +451,25 @@ class EditSettingsView(JDialog):
         console_fontsize = self.fs_field.getText()
         edit_area_fontsize = self.edit_area_fs_field.getText()
 
-        # Validate the working directory input string
-        working_dir = self.validate_working_dir(working_dir)
-
-        # Validate the input fontsizes
-        console_fontsize = self.validate_fontsize(console_fontsize,
-                                                  'console_style')
-        edit_area_fontsize = self.validate_fontsize(edit_area_fontsize,
-                                                    'edit_area_style')
-
-        # Validate input console colors
+        # Get the user selected font and background colours
         bg_color = self.background_color_combo.getSelectedItem()
         font_color = self.font_color_combo.getSelectedItem()
-        bg_color, font_color = self.validate_colors(bg_color, font_color)
+
+        validated = self.validate_all_inputs(working_dir, console_fontsize,
+                                             edit_area_fontsize, bg_color,
+                                             font_color)
 
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
-        self.controller.update_config(working_dir, server,
-                                      int(console_fontsize), font_color,
-                                      bg_color, int(edit_area_fontsize))
+        self.controller.update_config(validated[0], server,
+                                      validated[1], validated[2],
+                                      validated[3], int(validated[4]))
+
+        # If no values have been changed, print that settings have been
+        # updated without errors
+        if validated[5]:
+            self.logger.info("Settings have been successfully updated.")
+
         # On saving settings, update the console and edit area properties
         self.controller.refreshConsole()
         self.controller.refreshEditArea()
