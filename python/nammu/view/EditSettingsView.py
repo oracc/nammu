@@ -191,8 +191,6 @@ class EditSettingsView(JDialog):
     def build_console_font_panel(self, constraints, panel):
         '''
         Font size on a textfield.
-        TODO: Check user inserts numbers and not strings within a reasonable
-        range.
         '''
         fontzise_label = JLabel("Console font size:")
         constraints.weightx = 0.20
