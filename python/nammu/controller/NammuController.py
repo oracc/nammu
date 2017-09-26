@@ -206,6 +206,7 @@ class NammuController(object):
         Helper function to open file for reading.
         '''
         if os.path.splitext(filename)[1] != '.atf':
+            self.consoleController.clearConsole()
             self.logger.error("WARNING: supplied file ({}) does not appear "
                               "to be an atf file. File load may behave "
                               "unexpectedly.".format(filename))
@@ -263,6 +264,7 @@ class NammuController(object):
         Needed as non-atf files will not validate on the oracc server
         '''
         if os.path.splitext(filename)[1] != '.atf':
+            self.consoleController.clearConsole()
             self.logger.error("Supplied filename: {0} does not have the "
                               "required atf extension. File will be "
                               "saved as {0}.atf.".format(filename))
