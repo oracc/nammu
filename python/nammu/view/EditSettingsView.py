@@ -354,16 +354,15 @@ class EditSettingsView(JDialog):
         '''
         self.dispose()
 
-    def validate_fontsize(self, input_size, target):
+    def validate_fontsize(self, input_size, target_key):
         '''
-        Method to validate an input fontsize. The target parameter is used to
-        switch between validating the the console and the edit area. If the
-        value is invalid, return the previous user fontsize that was stored.
+        Method to validate an input fontsize. The target key points to either
+        the console font sizes 'console_style' or the edit area font sizes
+        'edit_area_style'. If the value is invalid, return the previous user
+        fontsize that was stored.
         '''
-        if target == 'console':
-            target_key = 'console_style'
-        else:
-            target_key = 'edit_area_style'
+        # Extract plain english from key name for use in error message
+        target = target_key[:-6].replace('_', ' ')
 
         # Use isnumeric() to test if a unicode string only has digits
         if (input_size.isnumeric() and (8 <= int(input_size) <= 30)):
@@ -420,9 +419,10 @@ class EditSettingsView(JDialog):
         working_dir = self.validate_working_dir(working_dir)
 
         # Validate the input fontsizes
-        console_fontsize = self.validate_fontsize(console_fontsize, 'console')
+        console_fontsize = self.validate_fontsize(console_fontsize,
+                                                  'console_style')
         edit_area_fontsize = self.validate_fontsize(edit_area_fontsize,
-                                                   'edit area')
+                                                    'edit_area_style')
 
         # Validate input console colors
         bg_color = self.background_color_combo.getSelectedItem()
