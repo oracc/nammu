@@ -135,7 +135,18 @@ def get_yaml_config(yaml_filename):
         update_yaml_config(path_to_jar, yaml_path, path_to_config)
 
     # Load YAML config
-    return yaml.load(open(path_to_config, 'r'))
+    return fix_old_default_project_yaml(yaml.load(open(path_to_config, 'r')))
+
+
+def fix_old_default_project_yaml(yaml):
+    '''
+    Method to ensure compatability between old config files and verisons
+    of nammu > 0.8
+    '''
+    if 'projects' in yaml.keys():
+        if isinstance(yaml['projects']['default'], basestring):
+            yaml['projects']['default'] = [yaml['projects']['default']]
+    return yaml
 
 
 def different_versions(version1, version2):
