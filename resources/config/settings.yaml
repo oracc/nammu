@@ -108,8 +108,8 @@ console_style:
         default: 11
         user: 11
     background_color:
-        default: LightGrey
-        user: LightGrey
+        default: Gray
+        user: Gray
     font_color:
         default: Black
         user: Black

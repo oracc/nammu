@@ -36,7 +36,7 @@ from NewAtfController import NewAtfController
 from FindController import FindController
 from EditSettingsController import EditSettingsController
 from WelcomeController import WelcomeController
-from java.awt import Desktop
+from java.awt import Desktop, Color
 from java.io import File
 from java.lang import System, Integer, ClassLoader
 from java.net import URI

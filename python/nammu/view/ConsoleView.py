@@ -59,7 +59,7 @@ class ConsoleView(JPanel):
         self.edit_area.setEditable(False)
 
         # Map CSS color strings to Java Color objects
-        self.colors = {'LightGrey': Color(238, 238, 238),
+        self.colors = {'Gray': Color(238, 238, 238),
                        'Black': Color(0, 0, 0),
                        'Yellow': Color(255, 255, 0)}
 

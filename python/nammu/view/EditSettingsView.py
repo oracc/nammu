@@ -41,11 +41,13 @@ class EditSettingsView(JDialog):
         self.projects = projects
         self.console_fontsize = console_style['fontsize']['user']
         self.console_font_color = console_style['font_color']['user']
-        self.console_bg_color = console_style[
-                                                    'background_color']['user']
+        self.console_bg_color = console_style['background_color']['user']
         self.edit_area_fontsize = edit_area_style['fontsize']['user']
         self.pane = self.getContentPane()
-        self.color_options = ('LightGrey', 'Black', 'Yellow')
+
+        # Grab the console color options from the console view
+        self.consoleView = self.controller.controller.consoleController.view
+        self.color_options = self.consoleView.colors.keys()
 
     def build(self):
         '''
