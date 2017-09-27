@@ -153,10 +153,10 @@ class EditSettingsView(JDialog):
         Server location row: label + dropdown
         Contains a drop down with the servers to choose from.
         '''
-        server_label = JLabel("Console background color:")
+        console_bg_label = JLabel("Console background color:")
         constraints = self.add_constraints(constraints, weightx=0.30,
                                            gridx=0, gridy=2)
-        panel.add(server_label, constraints)
+        panel.add(console_bg_label, constraints)
 
         self.bg_color_combo = self.build_combobox(self.color_options,
                                                   self.console_bg_color)
@@ -172,10 +172,10 @@ class EditSettingsView(JDialog):
         Server location row: label + dropdown
         Contains a drop down with the servers to choose from.
         '''
-        server_label = JLabel("Console font color:")
+        console_font_label = JLabel("Console font color:")
         constraints = self.add_constraints(constraints, weightx=0.30,
                                            gridx=0, gridy=3)
-        panel.add(server_label, constraints)
+        panel.add(console_font_label, constraints)
 
         self.font_color_combo = self.build_combobox(self.color_options,
                                                     self.console_font_color)
