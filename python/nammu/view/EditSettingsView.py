@@ -85,8 +85,8 @@ class EditSettingsView(JDialog):
         panel = JPanel(GridBagLayout())
         constraints = self.add_constraints(GridBagConstraints(),
                                            insets=Insets(10, 10, 10, 10))
-        panel = self.build_working_dir_panel(constraints, panel)
-        panel = self.build_servers_panel(constraints, panel)
+        self.build_working_dir_panel(constraints, panel)
+        self.build_servers_panel(constraints, panel)
         return panel
 
     def add_constraints(self, constraints, weightx=None, gridx=None,
@@ -148,8 +148,6 @@ class EditSettingsView(JDialog):
                                            insets=Insets(10, 0, 10, 10))
         panel.add(button, constraints)
 
-        return panel
-
     def build_console_background_color_panel(self, constraints, panel):
         '''
         Server location row: label + dropdown
@@ -166,8 +164,6 @@ class EditSettingsView(JDialog):
                                            gridx=1, gridy=2, gridwidth=2,
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.bg_color_combo, constraints)
-
-        return panel
 
     def build_console_font_color_panel(self, constraints, panel):
         '''
@@ -186,8 +182,6 @@ class EditSettingsView(JDialog):
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.font_color_combo, constraints)
 
-        return panel
-
     def build_servers_panel(self, constraints, panel):
         '''
         Server location row: label + dropdown
@@ -204,8 +198,6 @@ class EditSettingsView(JDialog):
                                            gridx=1, gridy=1, gridwidth=2,
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.combo, constraints)
-
-        return panel
 
     def build_console_font_panel(self, constraints, panel):
         '''
@@ -230,8 +222,6 @@ class EditSettingsView(JDialog):
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.fs_field, constraints)
 
-        return panel
-
     def build_edit_area_font_panel(self, constraints, panel):
         '''
         Font size on a textfield.
@@ -254,8 +244,6 @@ class EditSettingsView(JDialog):
                                            gridx=1, gridy=4,
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.edit_area_fs_field, constraints)
-
-        return panel
 
     def build_combobox(self, choices, default):
         '''
@@ -335,10 +323,10 @@ class EditSettingsView(JDialog):
         panel = JPanel(GridBagLayout())
         constraints = self.add_constraints(GridBagConstraints(),
                                            insets=Insets(10, 10, 10, 10))
-        panel = self.build_console_font_panel(constraints, panel)
-        panel = self.build_console_font_color_panel(constraints, panel)
-        panel = self.build_console_background_color_panel(constraints, panel)
-        panel = self.build_edit_area_font_panel(constraints, panel)
+        self.build_console_font_panel(constraints, panel)
+        self.build_console_font_color_panel(constraints, panel)
+        self.build_console_background_color_panel(constraints, panel)
+        self.build_edit_area_font_panel(constraints, panel)
         return panel
 
     def display(self):
