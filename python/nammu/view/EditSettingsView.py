@@ -80,11 +80,35 @@ class EditSettingsView(JDialog):
         default working dir.
         '''
         panel = JPanel(GridBagLayout())
-        constraints = GridBagConstraints()
-        constraints.insets = Insets(10, 10, 10, 10)
+        constraints = self.add_constraints(GridBagConstraints(),
+                                           insets=Insets(10, 10, 10, 10))
         panel = self.build_working_dir_panel(constraints, panel)
         panel = self.build_servers_panel(constraints, panel)
         return panel
+
+    def add_constraints(self, constraints, weightx=None, gridx=None,
+                        gridy=None, fill=None, insets=None, gridwidth=None,
+                        anchor=None):
+        '''
+        Wrapper around the various constraints we need to set.
+        '''
+        # Cant use pythonic truth value test as we need 0 to evaluate as true
+        if weightx is not None:
+            constraints.weightx = weightx
+        if gridx is not None:
+            constraints.gridx = gridx
+        if gridy is not None:
+            constraints.gridy = gridy
+        if fill is not None:
+            constraints.fill = fill
+        if insets is not None:
+            constraints.insets = insets
+        if gridwidth is not None:
+            constraints.gridwidth = gridwidth
+        if anchor is not None:
+            constraints.anchor = anchor
+
+        return constraints
 
     def build_working_dir_panel(self, constraints, panel):
         '''
@@ -93,10 +117,10 @@ class EditSettingsView(JDialog):
         when opening/creating a new file.
         '''
         working_dir_label = JLabel("Working directory:")
-        constraints.weightx = 0.30
-        constraints.gridx = 0
-        constraints.gridy = 0
-        constraints.anchor = GridBagConstraints.EAST
+        constraints = self.add_constraints(constraints, weightx=0.30,
+                                           gridx=0, gridy=0,
+                                           anchor=GridBagConstraints.EAST)
+
         panel.add(working_dir_label, constraints)
 
         self.wd_field = JTextField()
@@ -107,19 +131,18 @@ class EditSettingsView(JDialog):
             self.wd_field.setText(self.working_dir['default'])
         else:
             self.wd_field.setText(os.getcwd())
-        constraints.weightx = 0.60
-        constraints.gridx = 1
-        constraints.gridy = 0
-        constraints.fill = GridBagConstraints.HORIZONTAL
-        constraints.insets = Insets(10, 10, 10, 5)
+
+        constraints = self.add_constraints(constraints, weightx=0.60,
+                                           gridx=1, gridy=0,
+                                           fill=GridBagConstraints.HORIZONTAL,
+                                           insets=Insets(10, 10, 10, 5))
         panel.add(self.wd_field, constraints)
 
         constraints.fill = 0
         button = JButton("Browse", actionPerformed=self.browse)
-        constraints.weightx = 0.10
-        constraints.gridx = 2
-        constraints.gridy = 0
-        constraints.insets = Insets(10, 0, 10, 10)
+        constraints = self.add_constraints(constraints, weightx=0.10,
+                                           gridx=2, gridy=0,
+                                           insets=Insets(10, 0, 10, 10))
         panel.add(button, constraints)
 
         return panel
@@ -130,17 +153,14 @@ class EditSettingsView(JDialog):
         Contains a drop down with the servers to choose from.
         '''
         server_label = JLabel("Console background color:")
-        constraints.weightx = 0.30
-        constraints.gridx = 0
-        constraints.gridy = 2
+        constraints = self.add_constraints(constraints, weightx=0.30,
+                                           gridx=0, gridy=2)
         panel.add(server_label, constraints)
 
         self.background_color_combo = self.build_background_color_combobox()
-        constraints.weightx = 0.70
-        constraints.gridx = 1
-        constraints.gridy = 2
-        constraints.gridwidth = 2
-        constraints.fill = GridBagConstraints.HORIZONTAL
+        constraints = self.add_constraints(constraints, weightx=0.70,
+                                           gridx=1, gridy=2, gridwidth=2,
+                                           fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.background_color_combo, constraints)
 
         return panel
@@ -151,17 +171,14 @@ class EditSettingsView(JDialog):
         Contains a drop down with the servers to choose from.
         '''
         server_label = JLabel("Console font color:")
-        constraints.weightx = 0.30
-        constraints.gridx = 0
-        constraints.gridy = 3
+        constraints = self.add_constraints(constraints, weightx=0.30,
+                                           gridx=0, gridy=3)
         panel.add(server_label, constraints)
 
         self.font_color_combo = self.build_color_combobox()
-        constraints.weightx = 0.70
-        constraints.gridx = 1
-        constraints.gridy = 3
-        constraints.gridwidth = 2
-        constraints.fill = GridBagConstraints.HORIZONTAL
+        constraints = self.add_constraints(constraints, weightx=0.70,
+                                           gridx=1, gridy=3, gridwidth=2,
+                                           fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.font_color_combo, constraints)
 
         return panel
@@ -171,19 +188,16 @@ class EditSettingsView(JDialog):
         Server location row: label + dropdown
         Contains a drop down with the servers to choose from.
         '''
-        constraints.insets = Insets(10, 10, 80, 10)
         server_label = JLabel("ORACC server location:")
-        constraints.weightx = 0.30
-        constraints.gridx = 0
-        constraints.gridy = 1
+        constraints = self.add_constraints(constraints, weightx=0.30,
+                                           gridx=0, gridy=1,
+                                           insets=Insets(10, 10, 80, 10))
         panel.add(server_label, constraints)
 
         self.combo = self.build_servers_combobox()
-        constraints.weightx = 0.70
-        constraints.gridx = 1
-        constraints.gridy = 1
-        constraints.gridwidth = 2
-        constraints.fill = GridBagConstraints.HORIZONTAL
+        constraints = self.add_constraints(constraints, weightx=0.70,
+                                           gridx=1, gridy=1, gridwidth=2,
+                                           fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.combo, constraints)
 
         return panel
@@ -193,10 +207,9 @@ class EditSettingsView(JDialog):
         Font size on a textfield.
         '''
         fontzise_label = JLabel("Console font size:")
-        constraints.weightx = 0.20
-        constraints.gridx = 0
-        constraints.gridy = 0
-        constraints.fill = GridBagConstraints.HORIZONTAL
+        constraints = self.add_constraints(constraints, weightx=0.20,
+                                           gridx=0, gridy=0,
+                                           fill=GridBagConstraints.HORIZONTAL)
         panel.add(fontzise_label, constraints)
 
         self.fs_field = JTextField()
@@ -207,10 +220,9 @@ class EditSettingsView(JDialog):
             self.fs_field.setText(self.controller.config[
                                     'console_style']['fontsize']['default'])
 
-        constraints.weightx = 0.80
-        constraints.gridx = 1
-        constraints.gridy = 0
-        constraints.fill = GridBagConstraints.HORIZONTAL
+        constraints = self.add_constraints(constraints, weightx=0.80,
+                                           gridx=1, gridy=0,
+                                           fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.fs_field, constraints)
 
         return panel
@@ -220,9 +232,8 @@ class EditSettingsView(JDialog):
         Font size on a textfield.
         '''
         fontzise_label = JLabel("Edit area font size:")
-        constraints.weightx = 0.20
-        constraints.gridx = 0
-        constraints.gridy = 4
+        constraints = self.add_constraints(constraints, weightx=0.20,
+                                           gridx=0, gridy=4)
         panel.add(fontzise_label, constraints)
 
         self.edit_area_fs_field = JTextField()
@@ -234,10 +245,9 @@ class EditSettingsView(JDialog):
             self.edit_area_fs_field.setText(self.controller.config[
                                     'edit_area_style']['fontsize']['default'])
 
-        constraints.weightx = 0.80
-        constraints.gridx = 1
-        constraints.gridy = 4
-        constraints.fill = GridBagConstraints.HORIZONTAL
+        constraints = self.add_constraints(constraints, weightx=0.80,
+                                           gridx=1, gridy=4,
+                                           fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.edit_area_fs_field, constraints)
 
         return panel
@@ -320,8 +330,8 @@ class EditSettingsView(JDialog):
         default working dir.
         '''
         panel = JPanel(GridBagLayout())
-        constraints = GridBagConstraints()
-        constraints.insets = Insets(10, 10, 10, 10)
+        constraints = self.add_constraints(GridBagConstraints(),
+                                           insets=Insets(10, 10, 10, 10))
         panel = self.build_console_font_panel(constraints, panel)
         panel = self.build_console_font_color_panel(constraints, panel)
         panel = self.build_console_background_color_panel(constraints, panel)
