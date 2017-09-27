@@ -41,10 +41,11 @@ class EditSettingsView(JDialog):
         self.projects = projects
         self.console_fontsize = console_style['fontsize']['user']
         self.console_font_color = console_style['font_color']['user']
-        self.console_background_color = console_style[
+        self.console_bg_color = console_style[
                                                     'background_color']['user']
         self.edit_area_fontsize = edit_area_style['fontsize']['user']
         self.pane = self.getContentPane()
+        self.color_options = ('LightGrey', 'Black', 'Yellow')
 
     def build(self):
         '''
@@ -157,11 +158,12 @@ class EditSettingsView(JDialog):
                                            gridx=0, gridy=2)
         panel.add(server_label, constraints)
 
-        self.background_color_combo = self.build_background_color_combobox()
+        self.bg_color_combo = self.build_combobox(self.color_options,
+                                                  self.console_bg_color)
         constraints = self.add_constraints(constraints, weightx=0.70,
                                            gridx=1, gridy=2, gridwidth=2,
                                            fill=GridBagConstraints.HORIZONTAL)
-        panel.add(self.background_color_combo, constraints)
+        panel.add(self.bg_color_combo, constraints)
 
         return panel
 
@@ -175,7 +177,8 @@ class EditSettingsView(JDialog):
                                            gridx=0, gridy=3)
         panel.add(server_label, constraints)
 
-        self.font_color_combo = self.build_color_combobox()
+        self.font_color_combo = self.build_combobox(self.color_options,
+                                                    self.console_font_color)
         constraints = self.add_constraints(constraints, weightx=0.70,
                                            gridx=1, gridy=3, gridwidth=2,
                                            fill=GridBagConstraints.HORIZONTAL)
@@ -252,18 +255,16 @@ class EditSettingsView(JDialog):
 
         return panel
 
-    def build_color_combobox(self):
+    def build_combobox(self, choices, default):
+        '''
+        Generic method to construct a combobox. choices should be an iterable
+        of strings of the choices to be made and default should be a string
+        which is equal to one of the values within the iterable.
+        '''
         combo = JComboBox()
-        for color in ('LightGrey', 'Black', 'Yellow'):
-            combo.addItem(color)
-        combo.setSelectedItem(self.console_font_color)
-        return combo
-
-    def build_background_color_combobox(self):
-        combo = JComboBox()
-        for color in ('LightGrey', 'Black', 'Yellow'):
-            combo.addItem(color)
-        combo.setSelectedItem(self.console_background_color)
+        for choice in choices:
+            combo.addItem(choice)
+        combo.setSelectedItem(default)
         return combo
 
     def build_servers_combobox(self):
@@ -460,7 +461,7 @@ class EditSettingsView(JDialog):
         edit_area_fontsize = self.edit_area_fs_field.getText()
 
         # Get the user selected font and background colours
-        bg_color = self.background_color_combo.getSelectedItem()
+        bg_color = self.bg_color_combo.getSelectedItem()
         font_color = self.font_color_combo.getSelectedItem()
 
         validated = self.validate_all_inputs(working_dir, console_fontsize,
