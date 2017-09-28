@@ -205,9 +205,13 @@ class NammuController(object):
         '''
         Helper function to open file for reading.
         '''
+        if os.path.splitext(filename)[1] != '.atf':
+            self.consoleController.clearConsole()
+            self.logger.error("WARNING: supplied file ({}) does not appear "
+                              "to be an atf file. File load may behave "
+                              "unexpectedly.".format(filename))
         text = codecs.open(filename, encoding='utf-8').read()
         return text
-        # TODO: Check if selected file is ATF or at least text file!
 
     def saveFile(self, event=None):
         '''
@@ -219,11 +223,12 @@ class NammuController(object):
         atfText = self.atfAreaController.getAtfAreaText()
         if not self.currentFilename:
             fileChooser = JFileChooser(self.get_working_dir())
+            file_filter = FileNameExtensionFilter("ATF files", ["atf"])
+            fileChooser.setFileFilter(file_filter)
             status = fileChooser.showSaveDialog(self.view)
             if status == JFileChooser.APPROVE_OPTION:
                 atfFile = fileChooser.getSelectedFile()
                 filename = atfFile.getCanonicalPath()
-                basename = atfFile.getName()
                 # Make sure users check before lightly overwriting a file
                 # No need to ask if they choose to save on the file they are
                 # currently and knowingly editing.
@@ -236,8 +241,9 @@ class NammuController(object):
                             JOptionPane.YES_NO_OPTION)
                     if reply == JOptionPane.NO_OPTION:
                         return
+                filename = self.force_atf_extension(filename)
                 self.currentFilename = filename
-                self.view.setTitle(basename)
+                self.view.setTitle(os.path.basename(filename))
             else:
                 return
         try:
@@ -251,6 +257,20 @@ class NammuController(object):
 
         # Find project and language and add to settings.yaml as default
         self.update_config()
+
+    def force_atf_extension(self, filename):
+        '''
+        Ensures that any filename being saved has an atf extension.
+        Needed as non-atf files will not validate on the oracc server
+        '''
+        if os.path.splitext(filename)[1] != '.atf':
+            self.consoleController.clearConsole()
+            self.logger.error("Supplied filename: {0} does not have the "
+                              "required atf extension. File will be "
+                              "saved as {0}.atf.".format(filename))
+            filename = '{}.atf'.format(filename)
+
+        return filename
 
     def update_config(self):
         '''
@@ -270,7 +290,12 @@ class NammuController(object):
                           element, value)
         if value:
             if self.config[group][element] != value:
-                self.config[group][element] = value
+                # We need to ensure that this value is written inside a list
+                # otherwise we get odd behaviour for some config files.
+                if group == 'projects' and element == 'default':
+                    self.config[group][element] = [value]
+                else:
+                    self.config[group][element] = value
                 self.logger.debug("Settings updated.")
                 save_yaml_config(self.config)
 
@@ -281,6 +306,8 @@ class NammuController(object):
         '''
         atfText = self.atfAreaController.getAtfAreaText()
         fileChooser = JFileChooser(self.get_working_dir())
+        file_filter = FileNameExtensionFilter("ATF files", ["atf"])
+        fileChooser.setFileFilter(file_filter)
         status = fileChooser.showSaveDialog(self.view)
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
@@ -297,6 +324,7 @@ class NammuController(object):
                             JOptionPane.YES_NO_OPTION)
                 if reply == JOptionPane.NO_OPTION:
                     return
+            filename = self.force_atf_extension(filename)
             self.currentFilename = filename
             self.view.setTitle(basename)
             try:
@@ -432,27 +460,37 @@ class NammuController(object):
         self.atfAreaController.clearToolTips()
 
         if self.currentFilename:
-            self.logger.debug("Validating ATF file %s.", self.currentFilename)
+            # Get the file extension of the current file
+            file_ext = os.path.splitext(self.currentFilename)[1]
 
-            # Search for project name in file. If not found, don't validate
-            project = self.get_project()
+            if file_ext == '.atf':
+                self.logger.debug("Validating ATF file %s.",
+                                  self.currentFilename)
 
-            if project:
-                self.send_command("atf", project)
-            else:
-                # TODO: Prompt dialog
-                if self.currentFilename:
-                    self.logger.error(
-                            "No project found in file %s. "
-                            "Add project and retry.",
-                            self.currentFilename)
+                # Search for project name in file. If not found, don't validate
+                project = self.get_project()
+
+                if project:
+                    self.send_command("atf", project)
                 else:
-                    self.logger.error(
-                            "No project found in file %s. "
-                            "Add project and retry.",
-                            self.currentFilename)
+                    # TODO: Prompt dialog
+                    if self.currentFilename:
+                        self.logger.error(
+                                "No project found in file %s. "
+                                "Add project and retry.",
+                                self.currentFilename)
+                    else:
+                        self.logger.error(
+                                "No project found in file %s. "
+                                "Add project and retry.",
+                                self.currentFilename)
 
-            self.logger.debug("Validating ATF done.")
+                self.logger.debug("Validating ATF done.")
+            else:
+                self.logger.error("Unable to validate file with extension {}. "
+                                  "Please re-save the file with the "
+                                  "file extension .atf and try "
+                                  "again.".format(file_ext))
         else:
             self.logger.error("Please save file before trying to validate.")
 
