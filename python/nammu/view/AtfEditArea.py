@@ -35,7 +35,6 @@ class AtfEditArea(JTextPane):
         self.setEditorKit(MyStyledEditorKit())
         self.controller = controller
         self.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
-        self.font = set_font()
         # If this is not done, no tooltips appear
         self.setToolTipText("")
         # Consume mouse events when over this JTextPane

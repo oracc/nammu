@@ -33,6 +33,8 @@ class AtfAreaController(object):
     Creates the ATF area (edit/object) view and handles its actions.
     '''
     def __init__(self, mainControler):
+        # Will also need delegating to parent presenter
+        self.controller = mainControler
         # Create text edition area
         self.edit_area = AtfEditArea(self)
         self.caret = self.edit_area.getCaret()
@@ -40,10 +42,11 @@ class AtfAreaController(object):
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
         self.secondary_line_numbers = TextLineNumber(self.secondary_area)
+        # Ensure the line numbers update when the editor font is changed
+        self.line_numbers_area.setUpdateFont(True)
+        self.secondary_line_numbers.setUpdateFont(True)
         # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
-        # Will also need delegating to parent presenter
-        self.controller = mainControler
         # Get a reference to the view's undo_manager
         self.undo_manager = self.view.undo_manager
         # Initialise validation errors
@@ -356,3 +359,9 @@ class AtfAreaController(object):
         ends = pos + [len(text)]
 
         return zip(starts, ends)
+
+    def refreshEditArea(self):
+        '''
+        Repaint edit area with appeareance chosen by user.
+        '''
+        self.view.refresh()

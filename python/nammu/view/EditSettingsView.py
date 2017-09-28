@@ -30,7 +30,7 @@ from javax.swing.border import EmptyBorder
 
 class EditSettingsView(JDialog):
     def __init__(self, controller, working_dir, servers, console_style,
-                 keystrokes, languages, projects):
+                 edit_area_style, keystrokes, languages, projects):
         self.logger = logging.getLogger("NammuController")
         self.setAlwaysOnTop(True)
         self.controller = controller
@@ -39,8 +39,15 @@ class EditSettingsView(JDialog):
         self.keystrokes = keystrokes
         self.languages = languages
         self.projects = projects
-        self.fontsize = console_style['fontsize']
+        self.console_fontsize = console_style['fontsize']['user']
+        self.console_font_color = console_style['font_color']['user']
+        self.console_bg_color = console_style['background_color']['user']
+        self.edit_area_fontsize = edit_area_style['fontsize']['user']
         self.pane = self.getContentPane()
+
+        # Grab the console color options from the console view
+        self.consoleView = self.controller.controller.consoleController.view
+        self.color_options = self.consoleView.colors.keys()
 
     def build(self):
         '''
@@ -55,8 +62,8 @@ class EditSettingsView(JDialog):
         Build panel with tabs for each of the settings editable sections.
         '''
         tabbed_pane = JTabbedPane()
-        tab_titles = ["General", "Keystrokes", "Languages", "Projects",
-                      "Appearance"]
+        tab_titles = ["General", "Appearance", "Keystrokes", "Languages",
+                      "Projects"]
         for title in tab_titles:
             panel = self.build_settings_panel(title.lower())
             tabbed_pane.addTab(title, panel)
@@ -76,11 +83,35 @@ class EditSettingsView(JDialog):
         default working dir.
         '''
         panel = JPanel(GridBagLayout())
-        constraints = GridBagConstraints()
-        constraints.insets = Insets(10, 10, 10, 10)
-        panel = self.build_working_dir_panel(constraints, panel)
-        panel = self.build_servers_panel(constraints, panel)
+        constraints = self.add_constraints(GridBagConstraints(),
+                                           insets=Insets(10, 10, 10, 10))
+        self.build_working_dir_panel(constraints, panel)
+        self.build_servers_panel(constraints, panel)
         return panel
+
+    def add_constraints(self, constraints, weightx=None, gridx=None,
+                        gridy=None, fill=None, insets=None, gridwidth=None,
+                        anchor=None):
+        '''
+        Wrapper around the various constraints we need to set.
+        '''
+        # Cant use pythonic truth value test as we need 0 to evaluate as true
+        if weightx is not None:
+            constraints.weightx = weightx
+        if gridx is not None:
+            constraints.gridx = gridx
+        if gridy is not None:
+            constraints.gridy = gridy
+        if fill is not None:
+            constraints.fill = fill
+        if insets is not None:
+            constraints.insets = insets
+        if gridwidth is not None:
+            constraints.gridwidth = gridwidth
+        if anchor is not None:
+            constraints.anchor = anchor
+
+        return constraints
 
     def build_working_dir_panel(self, constraints, panel):
         '''
@@ -89,10 +120,10 @@ class EditSettingsView(JDialog):
         when opening/creating a new file.
         '''
         working_dir_label = JLabel("Working directory:")
-        constraints.weightx = 0.30
-        constraints.gridx = 0
-        constraints.gridy = 0
-        constraints.anchor = GridBagConstraints.EAST
+        constraints = self.add_constraints(constraints, weightx=0.30,
+                                           gridx=0, gridy=0,
+                                           anchor=GridBagConstraints.EAST)
+
         panel.add(working_dir_label, constraints)
 
         self.wd_field = JTextField()
@@ -103,74 +134,128 @@ class EditSettingsView(JDialog):
             self.wd_field.setText(self.working_dir['default'])
         else:
             self.wd_field.setText(os.getcwd())
-        constraints.weightx = 0.60
-        constraints.gridx = 1
-        constraints.gridy = 0
-        constraints.fill = GridBagConstraints.HORIZONTAL
-        constraints.insets = Insets(10, 10, 10, 5)
+
+        constraints = self.add_constraints(constraints, weightx=0.60,
+                                           gridx=1, gridy=0,
+                                           fill=GridBagConstraints.HORIZONTAL,
+                                           insets=Insets(10, 10, 10, 5))
         panel.add(self.wd_field, constraints)
 
         constraints.fill = 0
         button = JButton("Browse", actionPerformed=self.browse)
-        constraints.weightx = 0.10
-        constraints.gridx = 2
-        constraints.gridy = 0
-        constraints.insets = Insets(10, 0, 10, 10)
+        constraints = self.add_constraints(constraints, weightx=0.10,
+                                           gridx=2, gridy=0,
+                                           insets=Insets(10, 0, 10, 10))
         panel.add(button, constraints)
 
-        return panel
+    def build_console_background_color_panel(self, constraints, panel):
+        '''
+        Server location row: label + dropdown
+        Contains a drop down with the servers to choose from.
+        '''
+        console_bg_label = JLabel("Console background color:")
+        constraints = self.add_constraints(constraints, weightx=0.30,
+                                           gridx=0, gridy=2)
+        panel.add(console_bg_label, constraints)
+
+        self.bg_color_combo = self.build_combobox(self.color_options,
+                                                  self.console_bg_color)
+        constraints = self.add_constraints(constraints, weightx=0.70,
+                                           gridx=1, gridy=2, gridwidth=2,
+                                           fill=GridBagConstraints.HORIZONTAL)
+        panel.add(self.bg_color_combo, constraints)
+
+    def build_console_font_color_panel(self, constraints, panel):
+        '''
+        Server location row: label + dropdown
+        Contains a drop down with the servers to choose from.
+        '''
+        console_font_label = JLabel("Console font color:")
+        constraints = self.add_constraints(constraints, weightx=0.30,
+                                           gridx=0, gridy=3)
+        panel.add(console_font_label, constraints)
+
+        self.font_color_combo = self.build_combobox(self.color_options,
+                                                    self.console_font_color)
+        constraints = self.add_constraints(constraints, weightx=0.70,
+                                           gridx=1, gridy=3, gridwidth=2,
+                                           fill=GridBagConstraints.HORIZONTAL)
+        panel.add(self.font_color_combo, constraints)
 
     def build_servers_panel(self, constraints, panel):
         '''
         Server location row: label + dropdown
         Contains a drop down with the servers to choose from.
         '''
-        constraints.insets = Insets(10, 10, 80, 10)
         server_label = JLabel("ORACC server location:")
-        constraints.weightx = 0.30
-        constraints.gridx = 0
-        constraints.gridy = 1
+        constraints = self.add_constraints(constraints, weightx=0.30,
+                                           gridx=0, gridy=1,
+                                           insets=Insets(10, 10, 80, 10))
         panel.add(server_label, constraints)
 
         self.combo = self.build_servers_combobox()
-        constraints.weightx = 0.70
-        constraints.gridx = 1
-        constraints.gridy = 1
-        constraints.gridwidth = 2
-        constraints.fill = GridBagConstraints.HORIZONTAL
+        constraints = self.add_constraints(constraints, weightx=0.70,
+                                           gridx=1, gridy=1, gridwidth=2,
+                                           fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.combo, constraints)
-
-        return panel
 
     def build_console_font_panel(self, constraints, panel):
         '''
         Font size on a textfield.
-        TODO: Check user inserts numbers and not strings within a reasonable
-        range.
         '''
-        working_dir_label = JLabel("Console font size:")
-        constraints.weightx = 0.20
-        constraints.gridx = 0
-        constraints.gridy = 0
-        panel.add(working_dir_label, constraints)
+        fontzise_label = JLabel("Console font size:")
+        constraints = self.add_constraints(constraints, weightx=0.20,
+                                           gridx=0, gridy=0,
+                                           fill=GridBagConstraints.HORIZONTAL)
+        panel.add(fontzise_label, constraints)
 
         self.fs_field = JTextField()
         self.fs_field.setEditable(True)
-        # Can't find an elegant way to default to something that would be
-        # crossplatform, and I can't leave the default field empty.
-        if self.fontsize:
-            self.fs_field.setText("{}".format(self.fontsize))
+        if self.console_fontsize:
+            self.fs_field.setText("{}".format(self.console_fontsize))
         else:
-            self.fs_field.setText('16')
+            self.fs_field.setText(self.controller.config[
+                                    'console_style']['fontsize']['default'])
 
-        constraints.weightx = 0.80
-        constraints.gridx = 1
-        constraints.gridy = 0
-        constraints.fill = GridBagConstraints.HORIZONTAL
-        constraints.insets = Insets(10, 50, 10, 5)
+        constraints = self.add_constraints(constraints, weightx=0.80,
+                                           gridx=1, gridy=0,
+                                           fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.fs_field, constraints)
 
-        return panel
+    def build_edit_area_font_panel(self, constraints, panel):
+        '''
+        Font size on a textfield.
+        '''
+        fontzise_label = JLabel("Edit area font size:")
+        constraints = self.add_constraints(constraints, weightx=0.20,
+                                           gridx=0, gridy=4)
+        panel.add(fontzise_label, constraints)
+
+        self.edit_area_fs_field = JTextField()
+        self.edit_area_fs_field.setEditable(True)
+        if self.edit_area_fontsize:
+            self.edit_area_fs_field.setText(
+                                    "{}".format(self.edit_area_fontsize))
+        else:
+            self.edit_area_fs_field.setText(self.controller.config[
+                                    'edit_area_style']['fontsize']['default'])
+
+        constraints = self.add_constraints(constraints, weightx=0.80,
+                                           gridx=1, gridy=4,
+                                           fill=GridBagConstraints.HORIZONTAL)
+        panel.add(self.edit_area_fs_field, constraints)
+
+    def build_combobox(self, choices, default):
+        '''
+        Generic method to construct a combobox. choices should be an iterable
+        of strings of the choices to be made and default should be a string
+        which is equal to one of the values within the iterable.
+        '''
+        combo = JComboBox()
+        for choice in choices:
+            combo.addItem(choice)
+        combo.setSelectedItem(default)
+        return combo
 
     def build_servers_combobox(self):
         combo = JComboBox()
@@ -231,13 +316,17 @@ class EditSettingsView(JDialog):
 
     def build_appearance_panel(self):
         '''
-        Create the panel that'll go in the Appearance tab. This will contain
-        fields to set the font properties.
+        Create the panel that'll go in the General tab. This should contain
+        options for choosing which server to use for validation as well as
+        default working dir.
         '''
         panel = JPanel(GridBagLayout())
-        constraints = GridBagConstraints()
-        constraints.insets = Insets(10, 10, 10, 10)
-        panel = self.build_console_font_panel(constraints, panel)
+        constraints = self.add_constraints(GridBagConstraints(),
+                                           insets=Insets(10, 10, 10, 10))
+        self.build_console_font_panel(constraints, panel)
+        self.build_console_font_color_panel(constraints, panel)
+        self.build_console_background_color_panel(constraints, panel)
+        self.build_edit_area_font_panel(constraints, panel)
         return panel
 
     def display(self):
@@ -264,6 +353,91 @@ class EditSettingsView(JDialog):
         '''
         self.dispose()
 
+    def validate_fontsize(self, input_size, target_key):
+        '''
+        Method to validate an input fontsize. The target key points to either
+        the console font sizes 'console_style' or the edit area font sizes
+        'edit_area_style'. If the value is invalid, return the previous user
+        fontsize that was stored.
+        The second return value is a bool indicating if the value has changed.
+        '''
+        # Extract plain english from key name for use in error message
+        target = target_key[:-6].replace('_', ' ')
+
+        # Use isnumeric() to test if a unicode string only has digits
+        if (input_size.isnumeric() and (8 <= int(input_size) <= 30)):
+            return input_size, True
+        else:
+            input_size = self.controller.config[target_key]['fontsize']['user']
+            self.logger.error("Invalid {} font size. Please enter a "
+                              "number between 8 and 36.\n\n"
+                              "Font size left at "
+                              "previous value: {}".format(target, input_size))
+
+            return input_size, False
+
+    def validate_colors(self, bg_color, font_color):
+        '''
+        Validate console colors to ensure they do not match.
+        The second return value is a bool indicating if the value has changed.
+        '''
+        valid = True
+        if bg_color == font_color:
+            config = self.controller.config
+            self.logger.error("Console font colour cannot match background"
+                              " colour. Resetting to default values.")
+            bg_color = config['console_style']['background_color']['default']
+            font_color = config['console_style']['font_color']['default']
+            valid = False
+
+        return bg_color, font_color, valid
+
+    def validate_working_dir(self, working_dir):
+        '''
+        Method to validate input working directories. If directory does not
+        exist or if a path to a file is provided instead of a path to a
+        directory the method returns None.
+        The second return value is a bool indicating if the value has changed.
+        '''
+        if os.path.isdir(working_dir):
+            return working_dir, True
+        else:
+            self.logger.error("{} is not a valid working directory."
+                              " No working directory has been "
+                              "saved".format(working_dir))
+            return None, False
+
+    def validate_all_inputs(self, working_dir, console_fontsize,
+                            edit_area_fontsize, bg_color, font_color):
+        '''
+        Wrapper around the input validation methods. Returns a tuple containing
+        the validated inputs with the last value in the tuple a boolean set to
+        False if any of the values have been altered during the validation
+        and True if there have been no changes.
+        '''
+        # Collect the results of each validation. In future we might use this
+        # to provide more detailed error logging on bad user input
+        validation_results = []
+
+        # Validate the working directory input string
+        working_dir, v = self.validate_working_dir(working_dir)
+        validation_results.append(v)
+
+        # Validate the input fontsizes
+        con_size, v = self.validate_fontsize(console_fontsize, 'console_style')
+        validation_results.append(v)
+
+        edit_size, v = self.validate_fontsize(edit_area_fontsize,
+                                              'edit_area_style')
+        validation_results.append(v)
+
+        # Validate input console colors
+        bg_color, font_color, v = self.validate_colors(bg_color, font_color)
+        validation_results.append(v)
+
+        return (working_dir, int(con_size), font_color, bg_color,
+                int(edit_size), all(validation_results))
+
     def save(self, event=None):
         '''
         Save changes made by user on local settings file.
@@ -273,22 +447,31 @@ class EditSettingsView(JDialog):
         working_dir = self.wd_field.getText()
 
         # Read the fontsize from the textfield
-        fontsize = self.fs_field.getText()
+        console_fontsize = self.fs_field.getText()
+        edit_area_fontsize = self.edit_area_fs_field.getText()
 
-        # Use isnumeric() to test if a unicode string only has digits
-        if fontsize.isnumeric() and (8 <= int(fontsize) <= 30):
-            pass
-        else:
-            self.logger.error("Invalid font size. Please enter a number "
-                              "between 8 and 36.\n\n"
-                              "Font size set to default value: 14")
-            fontsize = 14
+        # Get the user selected font and background colours
+        bg_color = self.bg_color_combo.getSelectedItem()
+        font_color = self.font_color_combo.getSelectedItem()
+
+        validated = self.validate_all_inputs(working_dir, console_fontsize,
+                                             edit_area_fontsize, bg_color,
+                                             font_color)
 
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
-        self.controller.update_config(working_dir, server, fontsize)
-        # On saving settings, update the console properties
+        self.controller.update_config(validated[0], server,
+                                      validated[1], validated[2],
+                                      validated[3], int(validated[4]))
+
+        # If no values have been changed, print that settings have been
+        # updated without errors
+        if validated[5]:
+            self.logger.info("Settings have been successfully updated.")
+
+        # On saving settings, update the console and edit area properties
         self.controller.refreshConsole()
+        self.controller.refreshEditArea()
         # Close window
         self.dispose()
 

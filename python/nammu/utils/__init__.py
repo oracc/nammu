@@ -33,20 +33,21 @@ This is a compilation of methods to be used from all Nammu classes.
 '''
 
 
-def set_font():
+def set_font(font_size):
     '''
     Loads font from resources' ttf file.
     DejaVuSans doesn't work in Retina display screens properly, so check OS,
     if OSX then use Monaco instead.
     '''
+    # Take into account user preferred font size
     if "mac" in System.getProperty("os.name").lower():
-        font = Font("Monaco", Font.PLAIN, 14)
+        font = Font("Monaco", Font.PLAIN, font_size)
     else:
         path_to_ttf = 'resources/fonts/dejavu/ttf/DejaVuSans.ttf'
         loader = ClassLoader.getSystemClassLoader()
         stream = loader.getResourceAsStream(path_to_ttf)
         font = Font.createFont(Font.TRUETYPE_FONT, stream)
-        font = font.deriveFont(Font.PLAIN, 14)
+        font = font.deriveFont(Font.PLAIN, font_size)
     return font
 
 

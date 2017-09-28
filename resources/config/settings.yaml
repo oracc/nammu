@@ -1,5 +1,5 @@
 ---
-version: 0.14
+version: 0.15
 
 languages:
     default: Sumerian
@@ -104,6 +104,19 @@ servers:
         dir: 'p'
 
 console_style:
-  fontsize: 11
+    fontsize:
+        default: 11
+        user: 11
+    background_color:
+        default: Gray
+        user: Gray
+    font_color:
+        default: Black
+        user: Black
+
+edit_area_style:
+    fontsize:
+        default: 14
+        user: 14
 
 new_user: True
