@@ -256,7 +256,6 @@ class NammuController(object):
             self.logger.info("File {} successfully "
                              "saved.".format(self.currentFilename))
 
-
         # Find project and language and add to settings.yaml as default
         self.update_config()
 
