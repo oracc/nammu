@@ -174,7 +174,8 @@ class NammuController(object):
                 syntax_highlight.syntax_highlight_on = False
                 self.atfAreaController.setAtfAreaText(atfText)
 
-                self.logger.debug("File %s successfully opened.", filename)
+                self.consoleController.clearConsole()
+                self.logger.info("File %s successfully opened.", filename)
                 self.view.setTitle(basename)
 
                 # Re-enable caret updating and syntax highlighting after load
