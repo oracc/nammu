@@ -174,7 +174,8 @@ class NammuController(object):
                 syntax_highlight.syntax_highlight_on = False
                 self.atfAreaController.setAtfAreaText(atfText)
 
-                self.logger.debug("File %s successfully opened.", filename)
+                self.logger.debug("File {} successfully "
+                                  "opened.".format(filename))
                 self.view.setTitle(basename)
 
                 # Re-enable caret updating and syntax highlighting after load
@@ -249,11 +250,12 @@ class NammuController(object):
         try:
             self.writeTextFile(self.currentFilename, atfText)
         except:
-            self.logger.error("There was an error trying to save %s.",
-                              self.currentFilename)
+            self.logger.error("There was an error trying to "
+                              "save {}}.".format(self.currentFilename))
         else:
-            self.logger.info("File %s successfully saved.",
-                             self.currentFilename)
+            self.logger.info("File {} successfully "
+                             "saved.".format(self.currentFilename))
+
 
         # Find project and language and add to settings.yaml as default
         self.update_config()
@@ -286,8 +288,8 @@ class NammuController(object):
         '''
         Update local config with given values if they are not None.
         '''
-        self.logger.debug("Trying to update settings' %s with value %s.",
-                          element, value)
+        self.logger.debug("Trying to update settings' {} with "
+                          "value {}.".format(element, value))
         if value:
             if self.config[group][element] != value:
                 # We need to ensure that this value is written inside a list
@@ -330,11 +332,11 @@ class NammuController(object):
             try:
                 self.writeTextFile(self.currentFilename, atfText)
             except:
-                self.logger.error("There was an error trying to save %s.",
-                                  self.currentFilename)
+                self.logger.error("There was an error trying to "
+                                  "save {}.".format(self.currentFilename))
             else:
-                self.logger.info("File %s successfully saved.",
-                                 self.currentFilename)
+                self.logger.info("File {} successfully "
+                                 "saved.".format(self.currentFilename))
 
         # Find project and language and add to settings.yaml as default
         self.update_config()
@@ -359,8 +361,8 @@ class NammuController(object):
         if self.handleUnsaved():
             self.atfAreaController.clearAtfArea()
             self.view.setTitle("Nammu")
-            self.logger.debug("File %s successfully closed.",
-                              self.currentFilename)
+            self.logger.debug("File {} successfully "
+                              "closed.".format(self.currentFilename))
             self.currentFilename = None
 
     def unsavedChanges(self):
@@ -464,8 +466,8 @@ class NammuController(object):
             file_ext = os.path.splitext(self.currentFilename)[1]
 
             if file_ext == '.atf':
-                self.logger.debug("Validating ATF file %s.",
-                                  self.currentFilename)
+                self.logger.debug("Validating ATF "
+                                  "file {}.".format(self.currentFilename))
 
                 # Search for project name in file. If not found, don't validate
                 project = self.get_project()
@@ -475,15 +477,13 @@ class NammuController(object):
                 else:
                     # TODO: Prompt dialog
                     if self.currentFilename:
-                        self.logger.error(
-                                "No project found in file %s. "
-                                "Add project and retry.",
-                                self.currentFilename)
+                        self.logger.error("No project found in file {}. Add "
+                                          "project and retry"
+                                          ".".format(self.currentFilename))
                     else:
                         self.logger.error(
-                                "No project found in file %s. "
-                                "Add project and retry.",
-                                self.currentFilename)
+                                "No project found in file {}. Add project and"
+                                " retry.".format(self.currentFilename))
 
                 self.logger.debug("Validating ATF done.")
             else:
@@ -508,7 +508,8 @@ class NammuController(object):
         self.atfAreaController.clearToolTips()
 
         if self.currentFilename:
-            self.logger.debug("Lemmatising ATF file %s.", self.currentFilename)
+            self.logger.debug("Lemmatising ATF file "
+                              "{}.".format(self.currentFilename))
 
             # Search for project name in file. If not found, don't validate
             project = self.get_project()
@@ -518,9 +519,8 @@ class NammuController(object):
             else:
                 # TODO: Prompt dialog.
                 self.logger.error(
-                                "No project found in file %s. "
-                                "Add project and retry.",
-                                self.currentFilename)
+                                "No project found in file {}. Add project "
+                                "and retry.".format(self.currentFilename))
 
             self.logger.debug("Lemmatising ATF done.")
             # Restore the caret position following lemmatisation
@@ -570,7 +570,7 @@ class NammuController(object):
         server_id = client.get_response_id()
 
         # Wait for server to prepare response
-        self.logger.debug("Request sent OK with ID %s", server_id)
+        self.logger.debug("Request sent OK with ID {}".format(server_id))
         self.logger.debug("Waiting for ORACC server to prepare response...")
         try:
             self.wait_for_response(client, server_id)
@@ -649,14 +649,14 @@ class NammuController(object):
         try:
             client.send()
         except (Timeout, ConnectTimeout):
-            self.logger.error('ORACC %s server timed out after 5 seconds.',
-                              client.url)
+            self.logger.error('ORACC {} server timed out after 5 '
+                              'seconds.'.format(client.url))
             self.logger.error('You can try with a different server from the '
                               'settings menu.')
-            raise Exception('Connetion to server %s timed out.', url)
+            raise Exception('Connetion to server {} timed out.'.format(url))
         except ConnectionError:
-            raise Exception("Can't connect to ORACC server at %s.",
-                            client.url)
+            raise Exception("Can't connect to ORACC server "
+                            "at {}.".format(client.url))
         except HTTPError:
             raise Exception("ORACC server returned invalid HTTP response.")
 
@@ -673,16 +673,16 @@ class NammuController(object):
             self.logger.error("ORACC server timed out after 5 seconds.")
             raise
         except ConnectionError:
-            self.logger.error("Can't connect to ORACC server at %s.",
-                              client.url)
+            self.logger.error("Can't connect to ORACC server "
+                              "at {}.".format(client.url))
             raise
         except HTTPError:
             self.logger.error("ORACC server returned invalid HTTP response.")
             raise
         except Exception as e:
             if e.args == "UnknownServerError":
-                self.logger.error(
-                            "ORACC server seems down. Contact server admin.")
+                self.logger.error("ORACC server seems to be down. "
+                                  "Contact server admin.")
                 raise
             else:
                 self.logger.error("Unexpected error when waiting for ORACC "
