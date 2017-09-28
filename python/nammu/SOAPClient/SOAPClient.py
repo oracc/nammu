@@ -59,9 +59,9 @@ class SOAPClient(object):
         url = "{}:{}".format(self.url, self.port)
         headers = dict(self.request.get_headers())
         body = self.request.get_body()
-        self.logger.debug("Sending request to server at %s.", url)
-        self.logger.debug("HTTP request headers sent: %s", headers)
-        self.logger.debug("HTTP request body sent: %s", body)
+        self.logger.debug("Sending request to server at {}.".format(url))
+        self.logger.debug("HTTP request headers sent: {}".format(headers))
+        self.logger.debug("HTTP request body sent: {}".format(body))
         try:
             self.response = requests.post(url, data=body, headers=headers,
                                           timeout=3)
@@ -130,13 +130,12 @@ class SOAPClient(object):
             if key.endswith("autolem.atf"):
                 autolem = value
 
-        self.logger.debug("The returned file from server contains: %s",
-                          zip_content.keys())
+        self.logger.debug("The returned file from server "
+                          "contains: {}".format(zip_content.keys()))
 
-        for file in zip_content.keys():
-            self.logger.debug("These are the contents of %s: \n%s",
-                              file,
-                              zip_content[file])
+        for filename in zip_content.keys():
+            self.logger.debug("These are the contents of {}: "
+                              "\n{}".format(filename, zip_content[filename]))
 
         return oracc_log, request_log, autolem
 
