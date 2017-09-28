@@ -44,8 +44,8 @@ class EditSettingsController:
             try:
                 setattr(self, keyword, self.config[keyword])
             except KeyError:
-                self.controller.logger.error('%s missing on settings file.',
-                                             keyword)
+                self.controller.logger.error('{} missing on settings '
+                                             'file.'.format(keyword))
                 self.view.display_error(keyword)
 
     def update_config(self, working_dir, server, console_fontsize, font_color,
