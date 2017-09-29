@@ -57,7 +57,10 @@ class ModelController(object):
         self.logger = self.controller.logger
 
         # Go through parsed ATF object, serialize and pass elements to view
-        atfText = parsedAtf.text
+        try:
+            atfText = parsedAtf.text
+        except:
+            atfText = None
 
         # Clear the console before printng any messages
         self.controller.consoleController.clearConsole()
@@ -65,11 +68,14 @@ class ModelController(object):
         self.logger.info("The Model View is an experimental feature, use with "
                          "caution!")
 
-        if isinstance(atfText, Composite):
+        if isinstance(atfText, Composite) and atfText:
             self.logger.info("The current file {} contains multiple fragments "
                              "and cannot be loaded into the model view. Please"
                              " save the file as individual fragments and try "
                              " again".format(self.controller.currentFilename))
+        elif atfText is None:
+            self.logger.info("The current file is formatted in a way that"
+                             "the model view cannot understand.")
         else:
             self.configure_model_view_single(atfText)
 
