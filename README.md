@@ -133,9 +133,9 @@ installable file for your operating system
 
 If you keep having trouble, you can also run it from the command line, like this:
 
-`java -jar /path/to/nammu.jar`
+`java -jar /path/to/nammu-1.0.0.jar`
 
-This will output a clearer log message about what the problem is.
+Where `/path/to/` reflects your local path to where the `nammu-1.0.0.jar` file has been downloaded. This will output a clearer log message about what the problem is.
 
 ### Known problems:
 * Nammu doesn't validate or lemmatise properly when filenames include a space.
