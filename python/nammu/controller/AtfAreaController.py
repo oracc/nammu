@@ -21,7 +21,6 @@ from javax.swing.undo import CannotUndoException, CannotRedoException
 from java.awt import Color
 
 from ..view.AtfAreaView import AtfAreaView
-from ..view.LineNumbersArea import LineNumbersArea
 from ..view.AtfEditArea import AtfEditArea
 from ..view.SyntaxHighlighter import SyntaxHighlighter
 import TextLineNumber
