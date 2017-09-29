@@ -20,6 +20,8 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 import os
+from swingutils.threads.swing import runSwingLater
+
 from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
 from java.awt import GridBagLayout, GridBagConstraints, Insets
 from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
@@ -474,6 +476,10 @@ class EditSettingsView(JDialog):
         self.controller.refreshEditArea()
         # Close window
         self.dispose()
+
+        # Refresh the syntax highlighting in a separate thread so it updates
+        # after everything else has been done.
+        runSwingLater(self.controller.controller.initHighlighting)
 
     def browse(self, event=None):
         '''

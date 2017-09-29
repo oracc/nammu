@@ -192,6 +192,9 @@ class NammuController(object):
             self.update_config_element(self.get_working_dir(),
                                        'default', 'working_dir')
 
+            # Finally, refresh the edit area to propagate custom font settings
+            self.atfAreaController.refreshEditArea()
+
     def initHighlighting(self):
         '''
         A helper function to be called when we need to initialise syntax
