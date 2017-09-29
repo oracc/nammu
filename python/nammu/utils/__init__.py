@@ -192,7 +192,7 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
                     tmp = {}  # for the nested dics
                     for sub_key in jar_config[key]:
                         if sub_key in local_config[key]:
-                            logger.debug("{}: {}: {}} --> Using local values"
+                            logger.debug("{}: {}: {} --> Using local values"
                                          ".".format(key, sub_key,
                                                     jar_config[key][sub_key]))
                             tmp[sub_key] = local_config[key][sub_key]

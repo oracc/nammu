@@ -251,7 +251,7 @@ class NammuController(object):
             self.writeTextFile(self.currentFilename, atfText)
         except:
             self.logger.error("There was an error trying to "
-                              "save {}}.".format(self.currentFilename))
+                              "save {}.".format(self.currentFilename))
         else:
             self.logger.info("File {} successfully "
                              "saved.".format(self.currentFilename))
