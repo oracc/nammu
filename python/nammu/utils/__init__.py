@@ -192,34 +192,31 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
                     tmp = {}  # for the nested dics
                     for sub_key in jar_config[key]:
                         if sub_key in local_config[key]:
-                            logger.debug("%s: %s: %s --> Using local values.",
-                                         key,
-                                         sub_key,
-                                         jar_config[key][sub_key])
+                            logger.debug("{}: {}: {} --> Using local values"
+                                         ".".format(key, sub_key,
+                                                    jar_config[key][sub_key]))
                             tmp[sub_key] = local_config[key][sub_key]
                         else:
-                            logger.debug("%s: %s: %s --> Using jar values.",
-                                         key,
-                                         sub_key,
-                                         jar_config[key][sub_key])
+                            logger.debug("{}: {}: {} --> Using jar values"
+                                         ".".format(key, sub_key,
+                                                    jar_config[key][sub_key]))
                             tmp[sub_key] = jar_config[key][sub_key]
                     d[key] = tmp
                 else:
-                    logger.debug("%s doesnt exist locally, creating...", key)
+                    logger.debug("{} doesnt exist locally, "
+                                 "creating...".format(key))
                     d[key] = jar_config[key]
             else:  # One level deep dictionary
                 if key in local_config:
-                    logger.debug("%s: %s --> Using local values.",
-                                 key,
-                                 jar_config[key])
+                    logger.debug("{}: {} --> Using local values"
+                                 ".".format(key, jar_config[key]))
                     d[key] = local_config[key]
                 else:
-                    logger.debug("%s: %s --> Using jar values.",
-                                 key,
-                                 jar_config[key])
+                    logger.debug("{}: {} --> Using jar values"
+                                 ".".format(key, jar_config[key]))
                     d[key] = jar_config[key]
-        logger.debug("Updating version number in local config: %s --> %s",
-                     local_config['version'], jar_config['version'])
+        logger.debug("Updating version number in local config: {} --> {}",
+                     "".format(local_config['version'], jar_config['version']))
         d['version'] = jar_config['version']
         if test_mode:  # This is for running tests, a dic is returned to check
             return d  # keys are correct.
