@@ -176,7 +176,7 @@ class NewAtfView(JDialog):
             Prepares list of projects and subprojects ordered with the default
             one first.
             '''
-            default_project = self.projects['default'].split('/')[0]
+            default_project = self.projects['default'][0].split('/')[0]
             if '/' in self.projects['default']:
                 default_subproject = self.projects['default'].split('/')[1]
             else:

@@ -27,12 +27,14 @@ class ConsoleController(object):
     def __init__(self, mainControler):
         # Load the config file
         self.config = mainControler.config
+        self.test = mainControler
 
         # Create view with a reference to its controller to handle events
         self.view = ConsoleView(self)
 
         # Will also need delegating to parent presenter
         self.controller = mainControler
+
         # Need a record of previous messages so we can rebuild the html
         self.console_record = []
 

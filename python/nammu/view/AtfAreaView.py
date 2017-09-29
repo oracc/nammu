@@ -17,8 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import re
-from java.awt import BorderLayout, Dimension, Color, Point
+from java.awt import BorderLayout, Dimension, Point, Font, Color
 from java.awt.event import KeyListener, AdjustmentListener
 from javax.swing import JScrollPane, JPanel, JSplitPane
 from javax.swing.text import StyleContext, StyleConstants
@@ -27,6 +26,7 @@ from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener, DocumentListener
 from contextlib import contextmanager
 from .AtfEditArea import AtfEditArea
+from ..utils import set_font
 
 
 class AtfAreaView(JPanel):
@@ -152,6 +152,30 @@ class AtfAreaView(JPanel):
                                                               text)
 
         return top_ch, bottom_ch
+
+    def refresh(self):
+        '''
+        Restyle edit area using user selected appearance settings.
+        '''
+
+        config = self.controller.controller.config
+
+        # Create a new font with the new size
+        font = set_font(config['edit_area_style']['fontsize']['user'])
+
+        # Update the sytnax highlighter font params, so our changes are not
+        # superceded
+        self.controller.syntax_highlighter.font = font
+        self.controller.syntax_highlighter.setup_attribs()
+
+        attrs = self.controller.edit_area.getInputAttributes()
+        StyleConstants.setFontSize(attrs, font.getSize())
+
+        # Get the Styledoc so we can update it
+        doc = self.controller.edit_area.getStyledDocument()
+
+        # Apply the new fontsize to the whole document
+        doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
 
 
 class atfAreaDocumentListener(DocumentListener):

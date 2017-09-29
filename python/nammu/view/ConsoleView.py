@@ -53,13 +53,17 @@ class ConsoleView(JPanel):
         # Although most of the styling is done using css, we need to set these
         # properties to ensure the html is rendered properly in the console
         self.edit_area.border = BorderFactory.createEmptyBorder(6, 6, 6, 6)
-        self.edit_area.background = Color(238, 238, 238)
         self.edit_area.setContentType("text/html")
 
         # Disable writing in the console - required to render hyperlinks
         self.edit_area.setEditable(False)
 
-        # Initial call to refresh console to set the console font properties
+        # Map CSS color strings to Java Color objects
+        self.colors = {'Gray': Color(238, 238, 238),
+                       'Black': Color(0, 0, 0),
+                       'Yellow': Color(255, 255, 0)}
+
+        # Initial call to refresh console to set the console style properties
         self.refreshConsole()
 
         # Set up a hyperlink listener
@@ -78,14 +82,25 @@ class ConsoleView(JPanel):
         self.add(scrollingText, BorderLayout.CENTER)
 
     def refreshConsole(self):
-            # Here we use css to style the console and its text
-            fontsize = self.controller.config['console_style']['fontsize']
+        '''
+        Restyle console using CSS with user selected appearance settings.
+        '''
+        fontsize = self.controller.config['console_style']['fontsize']['user']
+        background_color = self.controller.config[
+                                'console_style']['background_color']['user']
+        font_color = self.controller.config[
+                                'console_style']['font_color']['user']
 
-            doc = self.edit_area.getDocument()
-            bodyRule = ("body {{ font-family: Monaco; font-size: {0} pt; "
-                        "font-weight: bold; background-color: #EEEEEE;"
-                        " color: #000000}}").format(fontsize)
-            doc.getStyleSheet().addRule(bodyRule)
+        bodyRule = ("body {{ font-family: Monaco; font-size: {0} pt; "
+                    "font-weight: bold; color: {1} }}").format(fontsize,
+                                                               font_color)
+        # Set font properties
+        doc = self.edit_area.getDocument()
+        doc.getStyleSheet().addRule(bodyRule)
+
+        # Set background color
+        self.edit_area.background = self.colors[background_color]
+        self.edit_area.repaint()
 
     def scroll(self):
         '''
