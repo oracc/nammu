@@ -139,10 +139,6 @@ Where `/path/to/` reflects your local path to where the `nammu-1.0.0.jar` file h
 
 ### Known problems:
 * Nammu doesn't validate or lemmatise properly when filenames include a space.
-* Nammu is slow when files are large due to syntax highlighting on every key
-stroke. We are working on fixing this issue. As a temporary work around, it's
-possible to switch off syntax highlight by clicking on the corresponding toolbar
-button.
 
 A full list of issues can be found [here](https://github.com/oracc/nammu/issues).
 
