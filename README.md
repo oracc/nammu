@@ -1,7 +1,7 @@
 # Nammu: Desktop GUI for ORACC
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/0.8.0/nammu-0.8.0.jar)
+[here](https://github.com/oracc/nammu/releases/download/1.0.0/nammu-1.0.0.jar)
 and just double click on it to open it.
 
 ## What is ORACC?
@@ -79,7 +79,7 @@ on how to correct them.
 ## How to run Nammu
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/0.8.0/nammu-0.8.0.jar)
+[here](https://github.com/oracc/nammu/releases/download/1.0.0/nammu-1.0.0.jar)
 and just double click on it to open it and use it.
 
 If you find any problem trying to open it, have a look in the [Troubleshooting](#known-problems-and-troubleshooting) section.
@@ -133,16 +133,12 @@ installable file for your operating system
 
 If you keep having trouble, you can also run it from the command line, like this:
 
-`java -jar /path/to/nammu.jar`
+`java -jar /path/to/nammu-1.0.0.jar`
 
-This will output a clearer log message about what the problem is.
+Where `/path/to/` reflects your local path to where the `nammu-1.0.0.jar` file has been downloaded. This will output a clearer log message about what the problem is.
 
 ### Known problems:
 * Nammu doesn't validate or lemmatise properly when filenames include a space.
-* Nammu is slow when files are large due to syntax highlighting on every key
-stroke. We are working on fixing this issue. As a temporary work around, it's
-possible to switch off syntax highlight by clicking on the corresponding toolbar
-button.
 
 A full list of issues can be found [here](https://github.com/oracc/nammu/issues).
 
@@ -214,7 +210,7 @@ from previous executions:
 like this:
  ```
 
- java -jar  target/nammu-0.8.0.jar
+ java -jar  target/nammu-1.0.0.jar
 
  ```
 
