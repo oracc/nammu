@@ -103,7 +103,7 @@ servers:
         port: 8085
         dir: 'p'
     upenn_build:
-        url: http://oracc.museum.upenn.edu
+        url: http://build-oracc.museum.upenn.edu
         port: 8085
         dir: 'p'
 
