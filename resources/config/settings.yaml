@@ -1,5 +1,5 @@
 ---
-version: 0.16
+version: 0.17
 
 languages:
     default: Sumerian
@@ -99,10 +99,6 @@ servers:
         port: 8085
         dir: 'p'
     upenn:
-        url: http://oracc.museum.upenn.edu
-        port: 8085
-        dir: 'p'
-    upenn_build:
         url: http://build-oracc.museum.upenn.edu
         port: 8085
         dir: 'p'
