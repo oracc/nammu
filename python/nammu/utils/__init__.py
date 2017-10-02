@@ -135,13 +135,18 @@ def get_yaml_config(yaml_filename):
         # We are running from the JAR file, not the local console
         update_yaml_config(path_to_jar, yaml_path, path_to_config)
 
-    # Load YAML file and perform required patches on the settings file
-    yaml_file = yaml.load(open(path_to_config, 'r'))
+    # Load local YAML file and perform required patches on the settings in
+    # memory if the settings version is different between the jar and the local
+    # file. Ensures that memory and file settings always match.
+    (jar_config, local_config,
+     jar_version, local_version) = get_config_versions(path_to_jar, yaml_path,
+                                                       path_to_config)
 
     if yaml_filename == 'settings.yaml':
-        return patch_config(yaml_file)
-    else:
-        return yaml_file
+        if different_versions(jar_version, local_version):
+            return patch_config(local_config)
+
+    return local_config
 
 
 def patch_config(yaml):
@@ -207,6 +212,24 @@ def different_versions(version1, version2):
     return cmp(normalize(version1), normalize(version2))
 
 
+def get_config_versions(path_to_jar, yaml_path, path_to_config):
+    '''
+    Method to return the jar and local config files and their versions.
+    '''
+    try:
+        jar_contents = zipfile.ZipFile(path_to_jar, 'r')
+    except zipfile.BadZipfile:
+        jar_config = yaml.load(open(path_to_jar, 'r'))
+    else:
+        jar_config = yaml.load(jar_contents.open(yaml_path))
+
+    local_config = yaml.load(open(path_to_config, 'r'))
+    jar_version = str(jar_config['version'])
+    local_version = str(local_config['version'])
+
+    return jar_config, local_config, jar_version, local_version
+
+
 def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
                        test_mode=False):
     '''
@@ -219,16 +242,9 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
     '''
     logger = logging.getLogger("NammuController")
 
-    try:
-        jar_contents = zipfile.ZipFile(path_to_jar, 'r')
-    except zipfile.BadZipfile:
-        jar_config = yaml.load(open(path_to_jar, 'r'))
-    else:
-        jar_config = yaml.load(jar_contents.open(yaml_path))
-
-    local_config = yaml.load(open(path_to_config, 'r'))
-    jar_version = str(jar_config['version'])
-    local_version = str(local_config['version'])
+    (jar_config, local_config,
+     jar_version, local_version) = get_config_versions(path_to_jar, yaml_path,
+                                                       path_to_config)
 
     if different_versions(jar_version, local_version):
         d = {}
