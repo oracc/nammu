@@ -138,7 +138,7 @@ def get_yaml_config(yaml_filename):
     # Load YAML file and perform required patches on the settings file
     yaml_file = yaml.load(open(path_to_config, 'r'))
 
-    if yaml_filename.endswith('settings.yaml'):
+    if yaml_filename == 'settings.yaml':
         return patch_config(yaml_file)
     else:
         return yaml_file
@@ -150,7 +150,7 @@ def patch_config(yaml):
     '''
     yaml = fix_old_default_project_yaml(yaml)
     yaml = patch_styles(yaml)
-    return yaml
+    return patch_server_settings(yaml)
 
 
 def fix_old_default_project_yaml(yaml):
@@ -188,9 +188,11 @@ def patch_server_settings(yaml):
     Following the change in server address we need to update user's config
     files without overwriting their other settings.
     '''
+    old_url = 'http://oracc.museum.upenn.edu'
+    new_url = 'http://build-oracc.museum.upenn.edu'
     if 'servers' in yaml.keys():
-        yaml['servers']['upenn'] = ("{dir: p, port: 8085, url: "
-                                    "'http://build-oracc.museum.upenn.edu'")
+        if yaml['servers']['upenn']['url'] == old_url:
+            yaml['servers']['upenn']['url'] = new_url
 
     return yaml
 
@@ -269,6 +271,9 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
         if test_mode:  # This is for running tests, a dic is returned to check
             return d  # keys are correct.
         else:
+            # Need to apply the patching to correct any problems between
+            # version 0.8 and version 1.0
+            d = patch_config(d)
             save_yaml_config(d)
     else:
         return

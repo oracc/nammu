@@ -263,7 +263,6 @@ class EditSettingsView(JDialog):
         combo = JComboBox()
         # Go through list of servers and add to combo box.
         for server in self.servers.keys():
-            print server, self.servers, self.servers[server]['url']
             if server != "default":
                 combo_item = "{}: {}:{}".format(server,
                                                 self.servers[server]['url'],
