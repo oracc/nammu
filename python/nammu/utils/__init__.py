@@ -190,7 +190,7 @@ def patch_server_settings(yaml):
     '''
     old_url = 'http://oracc.museum.upenn.edu'
     new_url = 'http://build-oracc.museum.upenn.edu'
-    if 'servers' in yaml.keys():
+    if 'servers' in yaml.keys() and 'upenn' in yaml['servers'].keys():
         if yaml['servers']['upenn']['url'] == old_url:
             yaml['servers']['upenn']['url'] = new_url
 
