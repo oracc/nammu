@@ -24,6 +24,7 @@ import collections
 import yaml
 import logging
 import re
+import urllib
 from java.lang import ClassLoader, System
 from java.io import InputStreamReader, BufferedReader
 from java.awt import Font
@@ -122,7 +123,12 @@ def get_yaml_config(yaml_filename):
     # In Unix getResource returns the path with prefix "file:" but in
     # Windows prefix is "jar:file:"
     path_to_jar = str(config_file_url).split('file:')[1]
-    path_to_jar = path_to_jar.split('!')[0]
+    # The path will be of the form /path/to/jar!path/inside/jar
+    # Take everything up to the final !, in case previous parts also contain !
+    path_to_jar = path_to_jar.rsplit('!', 1)[0]
+    # Decode any special characters contained in the path so that, for example,
+    # we use 'dir name' instead of 'dir%20name'
+    path_to_jar = urllib.unquote(path_to_jar)
 
     path_to_config = get_log_path(yaml_filename)
 
