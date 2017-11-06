@@ -319,21 +319,18 @@ def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
     it to ~/.nammu.
     '''
     try:
-        zf = zipfile.ZipFile(jar_file_path, 'r')
+        with zipfile.ZipFile(jar_file_path, 'r') as zf:
+            lst = zf.infolist()
+            for zi in lst:
+                fn = zi.filename
+                if fn.lower() == source_rel_path:
+                    source_file = zf.open(fn)
+                    target_file = file(target_path, "wb")
+                    with source_file, target_file:
+                        shutil.copyfileobj(source_file, target_file)
     except zipfile.BadZipfile:
         shutil.copyfileobj(file(source_rel_path, "wb"),
                            file(target_path, "wb"))
-    else:
-        lst = zf.infolist()
-        for zi in lst:
-            fn = zi.filename
-            if fn.lower() == source_rel_path:
-                source_file = zf.open(fn)
-                target_file = file(target_path, "wb")
-                with source_file, target_file:
-                    shutil.copyfileobj(source_file, target_file)
-    finally:
-        zf.close()
 
 
 def find_image_resource(name):
