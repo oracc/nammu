@@ -320,8 +320,7 @@ def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
     '''
     try:
         with zipfile.ZipFile(jar_file_path, 'r') as zf:
-            lst = zf.infolist()
-            for zi in lst:
+            for zi in zf.infolist():
                 fn = zi.filename
                 if fn.lower() == source_rel_path:
                     source_file = zf.open(fn)
