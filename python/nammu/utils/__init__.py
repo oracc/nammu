@@ -128,6 +128,10 @@ def get_yaml_config(yaml_filename):
     path_to_jar = path_to_jar.rsplit('!', 1)[0]
     # Decode any special characters contained in the path so that, for example,
     # we use 'dir name' instead of 'dir%20name'
+    # NB: The standard way to do it is to create a URI from the URL, which will
+    # automatically handle the encoding, and then go back to a URL or String.
+    # However, the URI class doesn't seem to handle the jar:file: prefix well,
+    # so using urllib directly seems a better solution.
     path_to_jar = urllib.unquote(path_to_jar)
 
     path_to_config = get_log_path(yaml_filename)
