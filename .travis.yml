@@ -7,6 +7,8 @@ matrix:
     - jdk: oraclejdk8
     - jdk: oraclejdk8
       env: PEP8=1
+    - jdk: oraclejdk9
+
 
 install:
   - |
