@@ -131,7 +131,7 @@
 			<plugin>
 				<groupId>net.sf.mavenjython</groupId>
 				<artifactId>jython-compile-maven-plugin</artifactId>
-				<version>1.4</version>
+                <version>1.4</version>
 				<executions>
 					<execution>
 						<id>before-tests</id>
@@ -150,7 +150,8 @@
 				</executions>
 				<configuration>
           <libraries>
-						<param>requests&lt;2.12.0</param>
+                        <param>--index-url=https://pypi.python.org/simple/</param>
+                        <param>requests&lt;2.12.0</param>
 						<param>pytest&lt;3.0</param>
 						<param>pyyaml</param>
 						<param>mako</param>
