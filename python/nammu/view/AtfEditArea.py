@@ -22,6 +22,7 @@ from swingutils.threads.swing import runSwingLater
 
 from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
+from java.awt.ComponentOrientation import RIGHT_TO_LEFT, LEFT_TO_RIGHT
 
 import MyStyledEditorKit
 
@@ -40,6 +41,9 @@ class AtfEditArea(JTextPane):
         # Consume mouse events when over this JTextPane
         listener = CustomMouseListener(self)
         self.addMouseListener(listener)
+
+        # Switch text direction
+        self.setComponentOrientation(RIGHT_TO_LEFT)
 
     def getToolTipText(self, event=None):
         '''
