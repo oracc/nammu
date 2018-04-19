@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import re
-from pyoracc.atf.atflex import AtfLexer
+from pyoracc.atf.common.atflex import AtfLexer
 from java.awt import Color
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
