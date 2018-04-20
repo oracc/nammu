@@ -43,7 +43,7 @@ from java.net import URI
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
 from javax.swing.text import DefaultCaret
-from pyoracc.atf.atffile import AtfFile
+from pyoracc.atf.common.atffile import AtfFile
 from requests.exceptions import RequestException
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 
