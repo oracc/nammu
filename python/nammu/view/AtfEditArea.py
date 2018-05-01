@@ -42,8 +42,6 @@ class AtfEditArea(JTextPane):
         listener = CustomMouseListener(self)
         self.addMouseListener(listener)
 
-        # Switch text direction
-        self.setComponentOrientation(RIGHT_TO_LEFT)
 
     def getToolTipText(self, event=None):
         '''
