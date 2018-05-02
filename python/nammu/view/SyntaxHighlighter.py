@@ -226,6 +226,9 @@ class SyntaxHighlighter:
                                                      attribs,
                                                      True)
 
+        # This needs replaced by a call to a new arabic format method
+        self.controller.view.refresh()
+
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
         Highlight text and apply highlight background for matches, taking
