@@ -42,7 +42,6 @@ class AtfEditArea(JTextPane):
         listener = CustomMouseListener(self)
         self.addMouseListener(listener)
 
-
     def getToolTipText(self, event=None):
         '''
         Overrides getToolTipText so that tooltips are only displayed when a

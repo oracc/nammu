@@ -64,27 +64,15 @@
 						      <include>**/*py.class</include>
 				          </includes>
 					  </fileset>
-						<fileset>
-				          <directory>./resources/lib</directory>
-				          <includes>
-						      <include>*.class</include>
-				          </includes>
-					  </fileset>
 			    </filesets>
 			  </configuration>
 		  </plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.2</version>
-			</plugin>
 
 			<!-- Make sure resources like toolbar icons are copied to final
             jar -->
   		<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.0.2</version>
+				<version>3.0.1</version>
 				<executions>
 
 					<execution>
@@ -104,25 +92,22 @@
 						</configuration>
 					</execution>
 
-					<execution>
+          <execution>
 						<id>copy-java-class</id>
-						<phase>process-classes</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/resources/lib</outputDirectory>
+							<outputDirectory>${basedir}/target/classes/Lib</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${basedir}/target/classes</directory>
-									<includes>
-										<include>*.class</include>
-									</includes>
+									<directory>${basedir}/resources/lib</directory>
+									<filtering>false</filtering>
 								</resource>
 							</resources>
 						</configuration>
 					</execution>
-
 				</executions>
 			</plugin>
 
@@ -150,7 +135,6 @@
 				</executions>
 				<configuration>
                                         <libraries>
-                                                <param>--index-url=https://pypi.python.org/simple/</param>
                                                 <param>requests&lt;2.12.0</param>
                                                 <param>pytest&lt;3.0</param>
 						<param>pyyaml</param>
@@ -183,7 +167,7 @@
 					</descriptorRefs>
 					<!-- The jar-with-dependencies is our main distributable jar, so
 					give it a sensible name and remove the default suffix
-					reated by this plugin -->
+					created by this plugin -->
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 				<executions>

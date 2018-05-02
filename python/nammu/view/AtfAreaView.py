@@ -179,7 +179,6 @@ class AtfAreaView(JPanel):
         # Apply the new fontsize to the whole document
         doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
 
-
         text = self.controller.edit_area.getText()
         index = re.search('@translation parallel ar.+\n', text).end()
 
@@ -189,7 +188,8 @@ class AtfAreaView(JPanel):
         right_align = SimpleAttributeSet()
         StyleConstants.setAlignment(right_align, StyleConstants.ALIGN_RIGHT)
 
-        doc.setParagraphAttributes(index, doc.getLength() + 1, right_align, True)
+        doc.setParagraphAttributes(index, doc.getLength() + 1,
+                                   right_align, True)
 
 
 class atfAreaDocumentListener(DocumentListener):
