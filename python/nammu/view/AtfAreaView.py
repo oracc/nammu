@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import re
+
 from java.awt import BorderLayout, Dimension, Point, Font, Color
 from java.awt.event import KeyListener, AdjustmentListener
 from javax.swing import JScrollPane, JPanel, JSplitPane
@@ -176,6 +178,18 @@ class AtfAreaView(JPanel):
 
         # Apply the new fontsize to the whole document
         doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
+
+
+        text = self.controller.edit_area.getText()
+        index = re.search('@translation parallel ar.+\n', text).end()
+
+        english = text[:index]
+        arabic = text[index:]
+
+        right_align = SimpleAttributeSet()
+        StyleConstants.setAlignment(right_align, StyleConstants.ALIGN_RIGHT)
+
+        doc.setParagraphAttributes(index, doc.getLength() + 1, right_align, True)
 
 
 class atfAreaDocumentListener(DocumentListener):
