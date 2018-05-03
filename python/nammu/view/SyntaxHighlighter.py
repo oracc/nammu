@@ -230,10 +230,16 @@ class SyntaxHighlighter:
         atfCont = self.controller.controller.atfAreaController
         arabicIndex = atfCont.findArabic(text)
 
+        justify = SimpleAttributeSet()
+
         if arabicIndex:
-            justify = SimpleAttributeSet()
             StyleConstants.setAlignment(justify, StyleConstants.ALIGN_RIGHT)
             self.styledoc.setParagraphAttributes(arabicIndex,
+                                                 self.styledoc.getLength() + 1,
+                                                 justify, True)
+        else:
+            StyleConstants.setAlignment(justify, StyleConstants.ALIGN_LEFT)
+            self.styledoc.setParagraphAttributes(0,
                                                  self.styledoc.getLength() + 1,
                                                  justify, True)
 
