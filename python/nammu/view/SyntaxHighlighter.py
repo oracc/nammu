@@ -225,8 +225,15 @@ class SyntaxHighlighter:
                                                      mylength,
                                                      attribs,
                                                      True)
+        # Deal with multi-language translations
+        self.justify_translation(text)
 
-        # This block searches for arabic translations, and right justifies them
+    def justify_translation(self, text):
+        '''
+        Method to justify parallel translations dependant on if they are
+        Arabic or not.
+        '''
+
         atfCont = self.controller.controller.atfAreaController
         arabicIndex = atfCont.findArabic(text)
 
