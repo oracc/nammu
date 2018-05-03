@@ -226,18 +226,16 @@ class SyntaxHighlighter:
                                                      attribs,
                                                      True)
 
+        # This block searches for arabic translations, and right justifies them
+        atfCont = self.controller.controller.atfAreaController
+        arabicIndex = atfCont.findArabic(text)
 
-        isArabic = self.controller.controller.atfAreaController.findArabic(text)
-
-        if isArabic:
-
-            right_align = SimpleAttributeSet()
-            StyleConstants.setAlignment(right_align, StyleConstants.ALIGN_RIGHT)
-            self.styledoc.setParagraphAttributes(isArabic,
+        if arabicIndex:
+            justify = SimpleAttributeSet()
+            StyleConstants.setAlignment(justify, StyleConstants.ALIGN_RIGHT)
+            self.styledoc.setParagraphAttributes(arabicIndex,
                                                  self.styledoc.getLength() + 1,
-                                                 right_align, True)
-
-
+                                                 justify, True)
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
