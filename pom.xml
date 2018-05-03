@@ -64,15 +64,27 @@
 						      <include>**/*py.class</include>
 				          </includes>
 					  </fileset>
+						<fileset>
+				          <directory>./resources/lib</directory>
+				          <includes>
+						      <include>*.class</include>
+				          </includes>
+					  </fileset>
 			    </filesets>
 			  </configuration>
 		  </plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.2</version>
+			</plugin>
 
 			<!-- Make sure resources like toolbar icons are copied to final
             jar -->
   		<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>3.0.2</version>
 				<executions>
 
 					<execution>
@@ -92,22 +104,25 @@
 						</configuration>
 					</execution>
 
-          <execution>
+					<execution>
 						<id>copy-java-class</id>
-						<phase>validate</phase>
+						<phase>process-classes</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/target/classes/Lib</outputDirectory>
+							<outputDirectory>${basedir}/resources/lib</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${basedir}/resources/lib</directory>
-									<filtering>false</filtering>
+									<directory>${basedir}/target/classes</directory>
+									<includes>
+										<include>*.class</include>
+									</includes>
 								</resource>
 							</resources>
 						</configuration>
 					</execution>
+
 				</executions>
 			</plugin>
 
@@ -116,7 +131,7 @@
 			<plugin>
 				<groupId>net.sf.mavenjython</groupId>
 				<artifactId>jython-compile-maven-plugin</artifactId>
-                                <version>1.4</version>
+				<version>1.4</version>
 				<executions>
 					<execution>
 						<id>before-tests</id>
@@ -134,9 +149,9 @@
 					</execution>
 				</executions>
 				<configuration>
-                                        <libraries>
-                                                <param>requests&lt;2.12.0</param>
-                                                <param>pytest&lt;3.0</param>
+          <libraries>
+						<param>requests&lt;2.12.0</param>
+						<param>pytest&lt;3.0</param>
 						<param>pyyaml</param>
 						<param>mako</param>
 						<param>ply</param>
@@ -167,7 +182,7 @@
 					</descriptorRefs>
 					<!-- The jar-with-dependencies is our main distributable jar, so
 					give it a sensible name and remove the default suffix
-					created by this plugin -->
+					reated by this plugin -->
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 				<executions>
