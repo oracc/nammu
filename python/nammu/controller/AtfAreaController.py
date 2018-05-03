@@ -370,7 +370,8 @@ class AtfAreaController(object):
         Returns the caret position of the beginning of the arabic block, if one
         is found. Otherwise returns None.
         '''
-        search = re.search('@translation parallel ar.+\n', text)
+        comp = re.compile(r'@translation parallel(\sar\s)(.*\n)+?(?=\d+\.)')
+        search = comp.search(text, re.MULTILINE)
         if search:
             return search.end()
         else:
