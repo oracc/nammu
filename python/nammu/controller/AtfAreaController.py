@@ -364,3 +364,14 @@ class AtfAreaController(object):
         Repaint edit area with appeareance chosen by user.
         '''
         self.view.refresh()
+
+    def findArabic(self, text):
+        '''
+        Returns the caret position of the beginning of the arabic block, if one
+        is found. Otherwise returns None.
+        '''
+        search = re.search('@translation parallel ar.+\n', text)
+        if search:
+            return search.end()
+        else:
+            return None
