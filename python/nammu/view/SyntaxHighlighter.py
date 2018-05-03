@@ -226,8 +226,18 @@ class SyntaxHighlighter:
                                                      attribs,
                                                      True)
 
-        # This needs replaced by a call to a new arabic format method
-        self.controller.view.refresh()
+
+        isArabic = self.controller.controller.atfAreaController.findArabic(text)
+
+        if isArabic:
+
+            right_align = SimpleAttributeSet()
+            StyleConstants.setAlignment(right_align, StyleConstants.ALIGN_RIGHT)
+            self.styledoc.setParagraphAttributes(isArabic,
+                                                 self.styledoc.getLength() + 1,
+                                                 right_align, True)
+
+
 
     def highlight_matches(self, matches, offset=0, current_match=None):
         '''
