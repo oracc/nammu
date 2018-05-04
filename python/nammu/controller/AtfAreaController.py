@@ -369,8 +369,16 @@ class AtfAreaController(object):
         '''
         Returns the caret position of the beginning of the arabic block, if one
         is found. Otherwise returns None.
+
+        Add additional values to lang_codes or trans_types if we need to
+        support other translation styles or right to left langages in the
+        future
         '''
-        regex = r'@translation parallel(\s(ar|fa|ku)\s)(.*\n)+?(?=\d+\.)'
+        lang_codes = '|'.join(['ar', 'fa', 'ku'])
+        trans_types = '|'.join(['parallel', 'labeled', 'unitary'])
+
+        regex = r'@translation(\s({}))(\s({})\s)(.*\n)+?'.format(trans_types,
+                                                                 lang_codes)
         comp = re.compile(regex)
         search = comp.search(text, re.MULTILINE)
         if search:
