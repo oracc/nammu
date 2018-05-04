@@ -22,7 +22,6 @@ from swingutils.threads.swing import runSwingLater
 
 from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
-from java.awt.ComponentOrientation import RIGHT_TO_LEFT, LEFT_TO_RIGHT
 
 import MyStyledEditorKit
 

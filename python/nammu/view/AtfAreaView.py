@@ -17,8 +17,6 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import re
-
 from java.awt import BorderLayout, Dimension, Point, Font, Color
 from java.awt.event import KeyListener, AdjustmentListener
 from javax.swing import JScrollPane, JPanel, JSplitPane
