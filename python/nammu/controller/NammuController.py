@@ -44,7 +44,7 @@ from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
 from javax.swing.text import DefaultCaret
 from pyoracc.atf.common.atffile import AtfFile
-from requests.exceptions import RequestException
+from requests.exceptions import RequestException, ConnectTimeout
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 
 from ..SOAPClient.SOAPClient import SOAPClient
