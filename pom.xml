@@ -131,7 +131,7 @@
 			<plugin>
 				<groupId>net.sf.mavenjython</groupId>
 				<artifactId>jython-compile-maven-plugin</artifactId>
-                                <version>2.0</version>
+                                <version>1.4</version>
 				<executions>
 					<execution>
 						<id>before-tests</id>
