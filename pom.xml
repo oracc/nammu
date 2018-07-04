@@ -152,7 +152,8 @@
          <libraries>
             <param>--index-url=https://pypi.python.org/simple/</param>
             <param>requests&lt;2.12.0</param>
-            <param>pytest&lt;2.9.2</param>
+            <param>setuptools-scm</param>
+            <param>pytest&lt;2.3.0</param>
 						<param>mako</param>
             <param>ply</param>
 						<param>jython-swingutils</param>
