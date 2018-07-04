@@ -150,9 +150,9 @@
 				</executions>
 				<configuration>
          <libraries>
-            <param>requests</param>
-            <param>pytest</param>
-						<param>pyyaml</param>
+            <param>--index-url=https://pypi.python.org/simple/</param>
+            <param>requests&lt;2.12.0</param>
+            <param>pytest&lt;3.0</param>
 						<param>mako</param>
             <param>ply</param>
 						<param>jython-swingutils</param>
