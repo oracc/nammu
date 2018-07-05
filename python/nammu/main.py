@@ -17,6 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+# http://bugs.jython.org/issue2143
+import site
+from org.python.util import jython
+jar_location = jython().getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
+import site
+import os.path
+site.addsitedir(os.path.join(jar_location, 'Lib/site-packages'))
+
 from controller.NammuController import NammuController
 
 
