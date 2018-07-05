@@ -1,21 +1,21 @@
 /**
  * Copyright 2015 - 2017 University College London.
- * 
+ *
  * This file is part of Nammu.
  *
  * Nammu is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Nammu is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 
 package uk.ac.ucl.rc.development.oracc.nammu;
@@ -43,6 +43,12 @@ public class NammuTest {
       systemState.path.append(new PyString("target/jython-plugins-tmp/build/pytest"));
       systemState.path.append(new PyString("target/jython-plugins-tmp/build/py"));
       systemState.path.append(new PyString("target/jython-plugins-tmp/build/requests"));
+      systemState.path.append(new PyString("target/jython-plugins-tmp/build/six"));
+      systemState.path.append(new PyString("target/jython-plugins-tmp/build/attrs"));
+      systemState.path.append(new PyString("target/jython-plugins-tmp/build/funcsigs"));
+      systemState.path.append(new PyString("target/jython-plugins-tmp/build/pluggy"));
+      systemState.path.append(new PyString("target/jython-plugins-tmp/build/atomicwrites"));
+      systemState.path.append(new PyString("target/jython-plugins-tmp/build/more-itertools"));
       PythonInterpreter interpreter = new PythonInterpreter();
       systemState.__setattr__("_jy_interpreter", Py.java2py(interpreter));
       String command = "try:\n "
