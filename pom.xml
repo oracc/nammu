@@ -47,6 +47,12 @@
 			<resource>
 				<directory>python</directory>
 			</resource>
+
+      <!-- Copy the site packages into the jar -->
+      <resource>
+        <directory>${basedir}/target/jython-plugins-tmp/Lib/site-packages</directory>
+        <targetPath>Lib/site-packages/</targetPath>
+      </resource>
 		</resources>
 
 		<plugins>
