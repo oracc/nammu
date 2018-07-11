@@ -149,9 +149,10 @@
 					</execution>
 				</executions>
 				<configuration>
-          <libraries>
-						<param>requests&lt;2.12.0</param>
-						<param>pytest&lt;3.0</param>
+                    <libraries>
+                                                <param>--index-url=https://pypi.python.org/simple/</param>
+                                                <param>requests&lt;2.12.0</param>
+                                                <!--param>pytest&lt;3.0</param-->
 						<param>pyyaml</param>
 						<param>mako</param>
 						<param>ply</param>
