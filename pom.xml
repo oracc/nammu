@@ -156,8 +156,21 @@
 				</executions>
 				<configuration>
          <libraries>
-            <param>requests</param>
-            <param>pytest</param>
+
+            <!--
+            pytest is pinned to 2.9.2 as newer versions require an updated version
+            of setuptools which is incompatible with jython
+
+            requests is pinned to 2.11.0 as newer versions require urllib3, which is
+            incompatible with jython
+
+            pyyaml is pinned to 3.12 as version 3.13's install fails for unknown
+            reasons. The pyyaml project is working on a new release for python 3.7,
+            so I anticipate more compatibility issues between pyyaml and jython in the
+            future --SWDG
+            -->
+            <param>requests==2.11.0</param>
+            <param>pytest==2.9.2</param>
 						<param>mako</param>
             <param>ply</param>
 						<param>jython-swingutils</param>
