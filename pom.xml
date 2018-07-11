@@ -169,9 +169,10 @@
             so I anticipate more compatibility issues between pyyaml and jython in the
             future -SWDG
             -->
+            <param>--user</param>
             <param>requests==2.11.0</param>
             <param>pytest==2.9.2</param>
-					
+						<param>mako</param>
             <param>ply</param>
 						<param>jython-swingutils</param>
 						<param>pyoracc</param>
