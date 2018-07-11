@@ -15,6 +15,9 @@ install:
        pip install --user pep8
     fi
 
+before_script:
+  - pip -V
+
 script:
   - |
     # Check if this is the PEP8 test instance and run pep8

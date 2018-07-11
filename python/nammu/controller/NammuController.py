@@ -44,7 +44,7 @@ from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
 from javax.swing.text import DefaultCaret
 from pyoracc.atf.common.atffile import AtfFile
-from requests.exceptions import RequestException
+from requests.exceptions import RequestException, ConnectTimeout
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 
 from ..SOAPClient.SOAPClient import SOAPClient
@@ -657,7 +657,8 @@ class NammuController(object):
                               client.url)
             self.logger.error('You can try with a different server from the '
                               'settings menu.')
-            raise Exception('Connetion to server %s timed out.', url)
+            raise Exception('Connection to server {} timed '
+                            'out.'.format(client.url))
         except ConnectionError:
             raise Exception("Can't connect to ORACC server at %s.",
                             client.url)
