@@ -158,11 +158,11 @@
          <libraries>
             <param>requests</param>
             <param>pytest</param>
-						<param>pyyaml</param>
 						<param>mako</param>
             <param>ply</param>
 						<param>jython-swingutils</param>
 						<param>pyoracc</param>
+            <param>pyyaml==3.12</param>
 					</libraries>
 				</configuration>
 			</plugin>
