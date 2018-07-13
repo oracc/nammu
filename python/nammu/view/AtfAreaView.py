@@ -98,6 +98,7 @@ class AtfAreaView(JPanel):
         # Revalitate is needed in order to repaint the components
         self.revalidate()
         self.repaint()
+        self.controller.syntax_highlight()
 
     def setup_edit_area(self, split_orientation=None):
         '''
@@ -126,12 +127,23 @@ class AtfAreaView(JPanel):
             self.container.setResizeWeight(0.5)
             self.add(self.container, BorderLayout.CENTER)
 
+            # Need to add scroll listeners to the scrollbars in the two panes
+            topscroll =  self.container.leftComponent.getVerticalScrollBar()
+            bottomscroll = self.container.rightComponent.getVerticalScrollBar()
+            topscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
+            bottomscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
+
     def get_viewport_carets(self):
         '''
         Get the top left and bottom left caret position of the current viewport
         '''
-        extent = self.container.getViewport().getExtentSize()
-        top_left_position = self.container.getViewport().getViewPosition()
+        try:
+            viewport = self.container.getViewport()
+        except:
+            viewport = self.container.leftComponent.getViewport()
+
+        extent = viewport.getExtentSize()
+        top_left_position = viewport.getViewPosition()
         top_left_char = self.edit_area.viewToModel(top_left_position)
         bottom_left_position = Point(top_left_position.x,
                                      top_left_position.y + extent.height)
