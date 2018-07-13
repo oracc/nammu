@@ -139,8 +139,10 @@ class AtfAreaView(JPanel):
         '''
         try:
             viewport = self.container.getViewport()
+            viewport_l = None
         except:
-            viewport = self.container.leftComponent.getViewport()
+            viewport_l = self.container.leftComponent.getViewport()
+            viewport = self.container.rightComponent.getViewport()
 
         extent = viewport.getExtentSize()
         top_left_position = viewport.getViewPosition()
@@ -162,6 +164,33 @@ class AtfAreaView(JPanel):
         top_ch = self.controller.pad_top_viewport_caret(top_left_char, text)
         bottom_ch = self.controller.pad_bottom_viewport_caret(bottom_left_char,
                                                               text)
+
+        bottom_ch_l = 0
+
+        if viewport_l:
+            extent = viewport_l.getExtentSize()
+            top_left_position = viewport_l.getViewPosition()
+            top_left_char = self.edit_area.viewToModel(top_left_position)
+            bottom_left_position = Point(top_left_position.x,
+                                         top_left_position.y + extent.height)
+            bottom_left_char = self.edit_area.viewToModel(bottom_left_position)
+
+            # Something has gone wrong. Assume that top_left should be at the start
+            # of the file
+            if top_left_char >= bottom_left_char:
+                top_left_char = 0
+
+            # Get the text in the full edit area
+            text = self.controller.edit_area.getText()
+
+            # Pad the top of the viewport to capture up to the nearest header and
+            # the bottom by 2 lines
+            top_ch_l = self.controller.pad_top_viewport_caret(top_left_char, text)
+            bottom_ch_l = self.controller.pad_bottom_viewport_caret(bottom_left_char,
+                                                                    text)
+
+        if bottom_ch_l > bottom_ch:
+            bottom_ch = bottom_ch_l
 
         return top_ch, bottom_ch
 
