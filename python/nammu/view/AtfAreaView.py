@@ -128,7 +128,7 @@ class AtfAreaView(JPanel):
             self.add(self.container, BorderLayout.CENTER)
 
             # Need to add scroll listeners to the scrollbars in the two panes
-            topscroll =  self.container.leftComponent.getVerticalScrollBar()
+            topscroll = self.container.leftComponent.getVerticalScrollBar()
             bottomscroll = self.container.rightComponent.getVerticalScrollBar()
             topscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
             bottomscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
@@ -175,19 +175,21 @@ class AtfAreaView(JPanel):
                                          top_left_position.y + extent.height)
             bottom_left_char = self.edit_area.viewToModel(bottom_left_position)
 
-            # Something has gone wrong. Assume that top_left should be at the start
-            # of the file
+            # Something has gone wrong. Assume that top_left should be at the
+            # start of the file
             if top_left_char >= bottom_left_char:
                 top_left_char = 0
 
             # Get the text in the full edit area
             text = self.controller.edit_area.getText()
 
-            # Pad the top of the viewport to capture up to the nearest header and
-            # the bottom by 2 lines
-            top_ch_l = self.controller.pad_top_viewport_caret(top_left_char, text)
-            bottom_ch_l = self.controller.pad_bottom_viewport_caret(bottom_left_char,
-                                                                    text)
+            # Pad the top of the viewport to capture up to the nearest header
+            # and the bottom by 2 lines
+            top_ch_l = self.controller.pad_top_viewport_caret(top_left_char,
+                                                              text)
+            bottom_ch_l = self.controller.pad_bottom_viewport_caret(
+                                                            bottom_left_char,
+                                                            text)
 
         if bottom_ch_l > bottom_ch:
             bottom_ch = bottom_ch_l
