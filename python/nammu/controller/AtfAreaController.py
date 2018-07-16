@@ -18,7 +18,9 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from javax.swing.undo import CannotUndoException, CannotRedoException
+from javax.swing import JEditorPane
 from java.awt import Color
+from javax.swing.text import SimpleAttributeSet, StyleConstants
 
 from ..view.AtfAreaView import AtfAreaView
 from ..view.AtfEditArea import AtfEditArea
@@ -37,7 +39,7 @@ class AtfAreaController(object):
         # Create text edition area
         self.edit_area = AtfEditArea(self)
         self.caret = self.edit_area.getCaret()
-        self.secondary_area = AtfEditArea(self)
+        self.secondary_area = JEditorPane()
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
         self.secondary_line_numbers = TextLineNumber(self.secondary_area)
@@ -53,8 +55,12 @@ class AtfAreaController(object):
         # Needed by syntax highlighter
         self.edit_area_styledoc = self.edit_area.getStyledDocument()
         # Synch content of split editor panes
-        self.secondary_area.setStyledDocument(
-                                            self.edit_area.getStyledDocument())
+        # self.secondary_area.setStyledDocument(
+                                            # self.edit_area.getStyledDocument())
+        self.secondary_area.setText("")
+        # attribs = SimpleAttributeSet()
+        # StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT)
+        # self.secondary_area.getDocument().setParagraphAttributes(attribs, true)
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
 

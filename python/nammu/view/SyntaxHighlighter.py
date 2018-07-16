@@ -226,7 +226,7 @@ class SyntaxHighlighter:
     #                                                  attribs,
     #                                                  True)
         # Deal with multi-language translations
-        self.justify_translation(text)
+        # self.justify_translation(text)
 
     def justify_translation(self, text):
         '''

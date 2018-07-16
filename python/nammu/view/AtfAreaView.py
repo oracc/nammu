@@ -19,6 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 from java.awt import BorderLayout, Dimension, Point, Font, Color
 from java.awt.event import KeyListener, AdjustmentListener
+from java.awt.ComponentOrientation import RIGHT_TO_LEFT, LEFT_TO_RIGHT
 from javax.swing import JScrollPane, JPanel, JSplitPane
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
@@ -75,8 +76,10 @@ class AtfAreaView(JPanel):
 
         # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self))
+        self.edit_area.setComponentOrientation(LEFT_TO_RIGHT)
         # Also needed in secondary area:
         self.secondary_area.addKeyListener(AtfAreaKeyListener(self))
+        self.secondary_area.setComponentOrientation(RIGHT_TO_LEFT)
 
         # Add a document listener to track changes to files
         docListener = atfAreaDocumentListener(self)
