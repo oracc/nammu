@@ -103,6 +103,19 @@ class AtfAreaView(JPanel):
         self.repaint()
         self.controller.syntax_highlight()
 
+    def toggle_split_arabic(self, split_orientation=None):
+        '''
+        Clear ATF edit area and repaint chosen layout (splitscreen/scrollpane).
+        '''
+        # Remove all existent components in parent JPanel
+        self.removeAll()
+        # Check what editor view to toggle
+        self.setup_edit_area(split_orientation)
+        # Revalitate is needed in order to repaint the components
+        self.revalidate()
+        self.repaint()
+        self.controller.syntax_highlight()
+
     def setup_edit_area(self, split_orientation=None):
         '''
         Check if the ATF text area is being displayed in a split editor.

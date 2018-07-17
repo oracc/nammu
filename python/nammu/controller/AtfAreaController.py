@@ -320,6 +320,12 @@ class AtfAreaController(object):
         '''
         self.view.toggle_split(split_orientation)
 
+    def splitEditorArabic(self, split_orientation):
+        '''
+        Toggles split editor view.
+        '''
+        self.view.toggle_split_arabic(split_orientation)
+
     def restore_highlight(self):
         '''
         Turn off syntax highlight of matches.

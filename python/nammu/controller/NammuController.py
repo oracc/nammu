@@ -786,11 +786,12 @@ class NammuController(object):
         else:
             return parsed
 
-    def unicode(self, event=None):
+    def arabic(self, event=None):
         '''
-        Create bool for unicode, change value when clicked.
+        Create bool for arabic, change value when clicked.
         '''
-        self.logger.debug("Unicode...")
+        self.logger.debug("Enabling/Disabling arabic translation mode...")
+        self.atfAreaController.splitEditorArabic(JSplitPane.VERTICAL_SPLIT)
 
     def splitEditorV(self, event=None):
         '''

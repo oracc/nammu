@@ -90,7 +90,7 @@ class MenuView(JMenuBar):
                                                             KeyEvent.VK_PERIOD,
                                                             "splitEditorH"
                                                             ]
-        menuItems["Window"]["Unicode Keyboard"] = [KeyEvent.VK_K, "unicode"]
+        menuItems["Window"]["Toggle Arabic Transalation Editor"] = [KeyEvent.VK_K, "arabic"]
 
         menuItems["Help"] = {}
         menuItems["Help"] = collections.OrderedDict()
