@@ -393,6 +393,6 @@ class AtfAreaController(object):
         comp = re.compile(regex)
         search = comp.search(text, re.MULTILINE)
         if search:
-            return search.end()
+            return search.start()
         else:
             return None
