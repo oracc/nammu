@@ -317,11 +317,13 @@ class AtfAreaController(object):
         '''
         self.view.toggle_split(split_orientation)
 
-    def splitEditorArabic(self, split_orientation):
+    def splitEditorArabic(self, split_orientation, atf_body, atf_translation):
         '''
         Toggles split editor view.
         '''
-        self.view.toggle_split_arabic(split_orientation)
+        self.view.toggle_split_arabic(split_orientation,
+                                      atf_body,
+                                      atf_translation)
 
     def restore_highlight(self):
         '''

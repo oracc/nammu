@@ -167,12 +167,25 @@ class NammuController(object):
                 # and such
                 self.atfAreaController.clearAtfArea()
 
-                # Turn off caret movement and highligting for file load
-                self.atfAreaController.caret.setUpdatePolicy(
-                                                    DefaultCaret.NEVER_UPDATE)
-                syntax_highlight = self.atfAreaController.syntax_highlighter
-                syntax_highlight.syntax_highlight_on = False
-                self.atfAreaController.setAtfAreaText(atfText)
+                # Check for Arabic content and toggle arabic translation mode
+                arabicIndex = self.atfAreaController.findArabic(atfText)
+                if arabicIndex:
+                    atf_body = atfText[:arabicIndex]
+                    atf_translation = atfText[arabicIndex:]
+
+                    self.arabic(atf_body=atf_body,
+                                atf_translation=atf_translation)
+
+
+
+                else:
+
+                    # Turn off caret movement and highligting for file load
+                    self.atfAreaController.caret.setUpdatePolicy(
+                                                            DefaultCaret.NEVER_UPDATE)
+                    syntax_highlight = self.atfAreaController.syntax_highlighter
+                    syntax_highlight.syntax_highlight_on = False
+                    self.atfAreaController.setAtfAreaText(atfText)
 
                 self.consoleController.clearConsole()
                 self.logger.info("File %s successfully opened.", filename)
@@ -180,8 +193,8 @@ class NammuController(object):
 
                 # Re-enable caret updating and syntax highlighting after load
                 self.atfAreaController.caret.setUpdatePolicy(
-                                                    DefaultCaret.ALWAYS_UPDATE)
-                syntax_highlight.syntax_highlight_on = True
+                                                        DefaultCaret.ALWAYS_UPDATE)
+                #syntax_highlight.syntax_highlight_on = True
 
                 # Now dispatch syntax highlighting in a new thread so
                 # we dont highlight before the full file is loaded
@@ -786,12 +799,14 @@ class NammuController(object):
         else:
             return parsed
 
-    def arabic(self, event=None):
+    def arabic(self, event=None, atf_body=None, atf_translation=None):
         '''
         Create bool for arabic, change value when clicked.
         '''
         self.logger.debug("Enabling/Disabling arabic translation mode...")
-        self.atfAreaController.splitEditorArabic(JSplitPane.VERTICAL_SPLIT)
+        self.atfAreaController.splitEditorArabic(JSplitPane.VERTICAL_SPLIT,
+                                                 atf_body,
+                                                 atf_translation)
 
     def splitEditorV(self, event=None):
         '''

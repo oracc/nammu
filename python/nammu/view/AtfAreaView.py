@@ -103,7 +103,8 @@ class AtfAreaView(JPanel):
         self.repaint()
         self.controller.syntax_highlight()
 
-    def toggle_split_arabic(self, split_orientation=None):
+    def toggle_split_arabic(self, split_orientation,
+                            atf_body, atf_translation):
         '''
         Clear ATF edit area and repaint chosen layout (splitscreen/scrollpane).
         '''
@@ -111,7 +112,11 @@ class AtfAreaView(JPanel):
         self.removeAll()
         # Check what editor view to toggle
         self.setup_edit_area(split_orientation)
-        # Revalitate is needed in order to repaint the components
+        # Separate body (in English) form translation (in Arabic) in different
+        # panels.
+        self.edit_area.setText(atf_body)
+        self.secondary_area.setText(atf_translation)
+        # Revalidate is needed in order to repaint the components
         self.revalidate()
         self.repaint()
         self.controller.syntax_highlight()
