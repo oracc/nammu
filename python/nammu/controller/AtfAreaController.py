@@ -18,7 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from javax.swing.undo import CannotUndoException, CannotRedoException
-from javax.swing import JEditorPane
+from javax.swing import JEditorPane, JTextPane
 from java.awt import Color
 from javax.swing.text import SimpleAttributeSet, StyleConstants
 
@@ -39,7 +39,7 @@ class AtfAreaController(object):
         # Create text edition area
         self.edit_area = AtfEditArea(self)
         self.caret = self.edit_area.getCaret()
-        self.secondary_area = JEditorPane()
+        self.secondary_area = JTextPane()
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
         self.secondary_line_numbers = TextLineNumber(self.secondary_area)
@@ -58,9 +58,6 @@ class AtfAreaController(object):
         # self.secondary_area.setStyledDocument(
                                             # self.edit_area.getStyledDocument())
         self.secondary_area.setText("")
-        # attribs = SimpleAttributeSet()
-        # StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_RIGHT)
-        # self.secondary_area.getDocument().setParagraphAttributes(attribs, true)
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
 
