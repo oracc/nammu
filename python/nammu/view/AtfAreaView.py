@@ -56,6 +56,10 @@ class AtfAreaView(JPanel):
         self.secondary_area = self.controller.secondary_area
         self.secondary_line_numbers = self.controller.secondary_line_numbers
 
+        # Create arabic translation text area for arabic edition
+        self.arabic_area = self.controller.arabic_area
+        self.arabic_line_numbers = self.controller.arabic_line_numbers
+
         # Set undo/redo manager to edit area
         self.undo_manager = UndoManager()
         self.undo_manager.limit = 3000
@@ -76,10 +80,11 @@ class AtfAreaView(JPanel):
 
         # Key listener that triggers syntax highlighting, etc. upon key release
         self.edit_area.addKeyListener(AtfAreaKeyListener(self))
-        self.edit_area.setComponentOrientation(LEFT_TO_RIGHT)
         # Also needed in secondary area:
         self.secondary_area.addKeyListener(AtfAreaKeyListener(self))
-        self.secondary_area.setComponentOrientation(RIGHT_TO_LEFT)
+        # Also needed in arabic translation area:
+        self.arabic_area.addKeyListener(AtfAreaKeyListener(self))
+        self.arabic_area.setComponentOrientation(RIGHT_TO_LEFT)
 
         # Add a document listener to track changes to files
         docListener = atfAreaDocumentListener(self)
@@ -111,34 +116,41 @@ class AtfAreaView(JPanel):
         # Remove all existent components in parent JPanel
         self.removeAll()
         # Check what editor view to toggle
-        self.setup_edit_area(split_orientation)
+        self.setup_edit_area(split_orientation, arabic=True)
         # Separate body (in English) form translation (in Arabic) in different
         # panels.
         self.edit_area.setText(atf_body)
-        self.secondary_area.setText(atf_translation)
+        self.arabic_area.setText(atf_translation)
         # Revalidate is needed in order to repaint the components
         self.revalidate()
         self.repaint()
         self.controller.syntax_highlight()
 
-    def setup_edit_area(self, split_orientation=None):
+    def setup_edit_area(self, split_orientation=None, arabic=False):
         '''
         Check if the ATF text area is being displayed in a split editor.
         If so, resets to normal JScrollPane. If not, splits the screen.
         '''
-        if isinstance(self.container, JSplitPane):
+        if isinstance(self.container, JSplitPane) and not arabic:
             # If Nammu is already displaying a split pane, reset to original
             # setup
             self.container = JScrollPane(self.edit_area)
             self.container.setRowHeaderView(self.line_numbers_area)
             self.container.setVisible(True)
             self.add(self.container, BorderLayout.CENTER)
+            self.controller.controller.arabic_edition_on = False
         else:
             # If there is not a split pane, create both panels and setup view
             main_editor = JScrollPane(self.edit_area)
             main_editor.setRowHeaderView(self.line_numbers_area)
-            secondary_editor = JScrollPane(self.secondary_area)
-            secondary_editor.setRowHeaderView(self.secondary_line_numbers)
+            if arabic:
+                secondary_editor = JScrollPane(self.arabic_area)
+                secondary_editor.setRowHeaderView(self.arabic_line_numbers)
+                self.controller.controller.arabic_edition_on = True
+            else:
+                secondary_editor = JScrollPane(self.secondary_area)
+                secondary_editor.setRowHeaderView(self.secondary_line_numbers)
+                self.controller.controller.arabic_edition_on = False
             self.container = JSplitPane(split_orientation,
                                         main_editor,
                                         secondary_editor)

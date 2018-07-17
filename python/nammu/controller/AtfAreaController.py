@@ -39,13 +39,16 @@ class AtfAreaController(object):
         # Create text edition area
         self.edit_area = AtfEditArea(self)
         self.caret = self.edit_area.getCaret()
-        self.secondary_area = JTextPane()
+        self.secondary_area = AtfEditArea(self)
+        self.arabic_area = JTextPane()
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
         self.secondary_line_numbers = TextLineNumber(self.secondary_area)
+        self.arabic_line_numbers = TextLineNumber(self.arabic_area)
         # Ensure the line numbers update when the editor font is changed
         self.line_numbers_area.setUpdateFont(True)
         self.secondary_line_numbers.setUpdateFont(True)
+        self.arabic_line_numbers.setUpdateFont(True)
         # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
         # Get a reference to the view's undo_manager
@@ -55,9 +58,11 @@ class AtfAreaController(object):
         # Needed by syntax highlighter
         self.edit_area_styledoc = self.edit_area.getStyledDocument()
         # Synch content of split editor panes
-        # self.secondary_area.setStyledDocument(
-                                            # self.edit_area.getStyledDocument())
-        self.secondary_area.setText("")
+        self.secondary_area.setStyledDocument(
+                                            self.edit_area.getStyledDocument())
+        # Temporary fix for arabic translation area
+        #self.arabic_area.setText("")
+
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
 
@@ -79,13 +84,15 @@ class AtfAreaController(object):
         '''
         return self.view.edit_area.getText()
 
-    def clearAtfArea(self):
+    def clearAtfArea(self, arabic=False):
         '''
         Every time we clear the ATF text area we also need to clear the edits
         pile, repaint the line numbers and remove the styling from previous
         validation highlight.
         '''
         self.setAtfAreaText("")
+        if arabic:
+            self.arabic_area.setText("")
         # When opening a new file we should discard the previous edits
         self.view.undo_manager.discardAllEdits()
         # Clear tooltips

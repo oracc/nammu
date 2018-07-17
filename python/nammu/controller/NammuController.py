@@ -110,6 +110,9 @@ class NammuController(object):
         # Find windows shouldn't coexist
         self.finding = False
 
+        # Keep track of arabic edition being on or off
+        self.arabic_edition_on = True
+
         # Here are the current urls for nammu on github and the oracc docs
         self.urls = {'nammu': 'https://github.com/oracc/nammu',
                      'oracc': ('http://oracc.museum.upenn.edu/doc/help/'
@@ -165,21 +168,19 @@ class NammuController(object):
                 self.currentFilename = atfFile.getCanonicalPath()
                 # Clear ATF area before adding next text to clean up tooltips
                 # and such
-                self.atfAreaController.clearAtfArea()
+                self.atfAreaController.clearAtfArea(
+                                            arabic=self.arabic_edition_on)
 
                 # Check for Arabic content and toggle arabic translation mode
                 arabicIndex = self.atfAreaController.findArabic(atfText)
+                print(arabicIndex)
                 if arabicIndex:
-                    atf_body = atfText[:arabicIndex]
-                    atf_translation = atfText[arabicIndex:]
-
-                    self.arabic(atf_body=atf_body,
-                                atf_translation=atf_translation)
-
-
-
+                    self.atf_body = atfText[:arabicIndex]
+                    self.atf_translation = atfText[arabicIndex:]
+                    self.arabic()
                 else:
-
+                    self.atf_body = ""
+                    self.atf_translation = ""
                     # Turn off caret movement and highligting for file load
                     self.atfAreaController.caret.setUpdatePolicy(
                                                             DefaultCaret.NEVER_UPDATE)
@@ -799,14 +800,14 @@ class NammuController(object):
         else:
             return parsed
 
-    def arabic(self, event=None, atf_body=None, atf_translation=None):
+    def arabic(self, event=None):
         '''
         Create bool for arabic, change value when clicked.
         '''
         self.logger.debug("Enabling/Disabling arabic translation mode...")
         self.atfAreaController.splitEditorArabic(JSplitPane.VERTICAL_SPLIT,
-                                                 atf_body,
-                                                 atf_translation)
+                                                 self.atf_body,
+                                                 self.atf_translation)
 
     def splitEditorV(self, event=None):
         '''
