@@ -111,7 +111,7 @@ class NammuController(object):
         self.finding = False
 
         # Keep track of arabic edition being on or off
-        self.arabic_edition_on = True
+        self.arabic_edition_on = False
 
         # Here are the current urls for nammu on github and the oracc docs
         self.urls = {'nammu': 'https://github.com/oracc/nammu',
@@ -187,6 +187,10 @@ class NammuController(object):
                     syntax_highlight = self.atfAreaController.syntax_highlighter
                     syntax_highlight.syntax_highlight_on = False
                     self.atfAreaController.setAtfAreaText(atfText)
+                    print(self.arabic_edition_on)
+                    if self.arabic_edition_on:
+                        self.splitEditorV()
+                        self.arabic_edition_on = False
 
                 self.consoleController.clearConsole()
                 self.logger.info("File %s successfully opened.", filename)
