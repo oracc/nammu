@@ -242,7 +242,13 @@ class NammuController(object):
         to save in desired location.
         Also checks for project name, and if found, makes it default.
         '''
-        atfText = self.atfAreaController.getAtfAreaText()
+
+        if self.arabic_edition_on:
+            atfText = (self.atfAreaController.edit_area.getText() +
+                      self.atfAreaController.arabic_area.getText())
+        else:
+            atfText = self.atfAreaController.getAtfAreaText()
+        print(atfText)
         if not self.currentFilename:
             fileChooser = JFileChooser(self.get_working_dir())
             file_filter = FileNameExtensionFilter("ATF files", ["atf"])
