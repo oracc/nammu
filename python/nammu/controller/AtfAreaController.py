@@ -18,9 +18,8 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from javax.swing.undo import CannotUndoException, CannotRedoException
-from javax.swing import JEditorPane, JTextPane
+from javax.swing import JTextPane
 from java.awt import Color
-from javax.swing.text import SimpleAttributeSet, StyleConstants
 
 from ..view.AtfAreaView import AtfAreaView
 from ..view.AtfEditArea import AtfEditArea

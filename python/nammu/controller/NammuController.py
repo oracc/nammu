@@ -18,13 +18,10 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import codecs
-from logging import StreamHandler, Formatter
+from logging import Formatter
 import logging
 import logging.config
-from logging.handlers import RotatingFileHandler
 import os
-import urllib
-import re
 from swingutils.threads.swing import runSwingLater
 
 from AtfAreaController import AtfAreaController
@@ -36,9 +33,8 @@ from NewAtfController import NewAtfController
 from FindController import FindController
 from EditSettingsController import EditSettingsController
 from WelcomeController import WelcomeController
-from java.awt import Desktop, Color
-from java.io import File
-from java.lang import System, Integer, ClassLoader
+from java.awt import Desktop
+from java.lang import System, Integer
 from java.net import URI
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
