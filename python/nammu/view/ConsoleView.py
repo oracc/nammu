@@ -19,7 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 from swingutils.events import addEventListener
 
-from java.awt import Font, BorderLayout, Color, Dimension
+from java.awt import BorderLayout, Color, Dimension
 from javax.swing import JEditorPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultCaret
 from javax.swing.event import HyperlinkListener

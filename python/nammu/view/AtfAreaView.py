@@ -17,16 +17,15 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from java.awt import BorderLayout, Dimension, Point, Font, Color
+from java.awt import BorderLayout, Dimension, Point
 from java.awt.event import KeyListener, AdjustmentListener
 from java.awt.ComponentOrientation import RIGHT_TO_LEFT, LEFT_TO_RIGHT
 from javax.swing import JScrollPane, JPanel, JSplitPane
-from javax.swing.text import StyleContext, StyleConstants
-from javax.swing.text import SimpleAttributeSet
+from javax.swing.text import StyleConstants
+
 from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener, DocumentListener
-from contextlib import contextmanager
-from .AtfEditArea import AtfEditArea
+
 from ..utils import set_font
 
 

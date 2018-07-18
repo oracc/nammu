@@ -20,12 +20,10 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import zipfile
 import shutil
-import collections
 import yaml
 import logging
 import re
 from java.lang import ClassLoader, System
-from java.io import InputStreamReader, BufferedReader
 from java.awt import Font
 
 '''

@@ -22,12 +22,11 @@ import logging
 import os
 from swingutils.threads.swing import runSwingLater
 
-from java.awt import GridLayout, Component, FlowLayout, Color, BorderLayout
-from java.awt import GridBagLayout, GridBagConstraints, Insets
-from javax.swing import JDialog, JFrame, JTabbedPane, JComponent, JPanel
-from javax.swing import JLabel, BoxLayout, JTextField, JComboBox, JButton
+from java.awt import FlowLayout, BorderLayout, Insets
+from java.awt import GridBagLayout, GridBagConstraints
+from javax.swing import JDialog, JFrame, JTabbedPane, JPanel
+from javax.swing import JLabel, JTextField, JComboBox, JButton
 from javax.swing import JFileChooser
-from javax.swing.border import EmptyBorder
 
 
 class EditSettingsView(JDialog):

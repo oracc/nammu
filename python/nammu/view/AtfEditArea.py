@@ -18,14 +18,11 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import re
-from swingutils.threads.swing import runSwingLater
 
 from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
 
 import MyStyledEditorKit
-
-from ..utils import set_font
 
 
 class AtfEditArea(JTextPane):
