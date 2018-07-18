@@ -269,20 +269,7 @@ public class TextLineNumber extends JPanel
     			int stringWidth = fontMetrics.stringWidth( lineNumber );
     			int x = getOffsetX(availableWidth, stringWidth) + insets.left;
 				  int y = getOffsetY(rowStartOffset, fontMetrics);
-
-          // if (lineNumber.length() == 0){
-          //
-          //   g.drawString("1 ", x, y);
-          //
-          // }
-          // else{
-
-            g.drawString(lineNumber, x, y);
-            // System.out.println(lineNumber + ".");
-
-          // }
-
-
+          g.drawString(lineNumber, x, y);
 
     			//  Move to the next row
 
