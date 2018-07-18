@@ -181,8 +181,8 @@ class NammuController(object):
                     # Turn off caret movement and highligting for file load
                     self.atfAreaController.caret.setUpdatePolicy(
                                                     DefaultCaret.NEVER_UPDATE)
-                    syntax_highlight = self.atfAreaController.syntax_highlighter
-                    syntax_highlight.syntax_highlight_on = True
+                    syntax_high = self.atfAreaController.syntax_highlighter
+                    syntax_high.syntax_highlight_on = True
                     self.atfAreaController.setAtfAreaText(atfText)
                     self.atf_body = atfText
                     self.atf_translation = ""
@@ -197,8 +197,8 @@ class NammuController(object):
 
                 # Re-enable caret updating and syntax highlighting after load
                 self.atfAreaController.caret.setUpdatePolicy(
-                                                        DefaultCaret.ALWAYS_UPDATE)
-                #syntax_highlight.syntax_highlight_on = True
+                                                    DefaultCaret.ALWAYS_UPDATE)
+                # syntax_high.syntax_highlight_on = True
 
                 # Now dispatch syntax highlighting in a new thread so
                 # we dont highlight before the full file is loaded
@@ -244,8 +244,8 @@ class NammuController(object):
 
         if self.arabic_edition_on:
             atfText = u'{}\n{}'.format(
-                                    self.atfAreaController.edit_area.getText(),
-                                    self.atfAreaController.arabic_area.getText())
+                                self.atfAreaController.edit_area.getText(),
+                                self.atfAreaController.arabic_area.getText())
         else:
             atfText = self.atfAreaController.getAtfAreaText()
         print(atfText)
@@ -818,14 +818,13 @@ class NammuController(object):
         if event:
             # todo: handle unsaved arabic area
             self.atfAreaController.splitEditorArabic(
-                                        JSplitPane.VERTICAL_SPLIT,
-                                        self.atfAreaController.getAtfAreaText(),
-                                        "")
+                                    JSplitPane.VERTICAL_SPLIT,
+                                    self.atfAreaController.getAtfAreaText(),
+                                    "")
         else:
             self.atfAreaController.splitEditorArabic(JSplitPane.VERTICAL_SPLIT,
                                                      self.atf_body,
                                                      self.atf_translation)
-
 
     def splitEditorV(self, event=None):
         '''
