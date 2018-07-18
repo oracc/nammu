@@ -898,7 +898,7 @@ class NammuController(object):
         if lang_str in nammu_text:
             try:
                 parsed_atf = self.parse(nammu_text)
-                lang_value = getattr(parsed.text, 'language')
+                lang_value = getattr(parsed_atf.text, 'language')
             except:
                 # File can't be parsed but might still contain a project code
                 try:
