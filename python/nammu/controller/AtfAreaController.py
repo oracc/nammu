@@ -28,6 +28,8 @@ from ..view.SyntaxHighlighter import SyntaxHighlighter
 import TextLineNumber
 import re
 
+from ..utils import set_font
+
 
 class AtfAreaController(object):
     '''
@@ -41,6 +43,7 @@ class AtfAreaController(object):
         self.caret = self.edit_area.getCaret()
         self.secondary_area = AtfEditArea(self)
         self.arabic_area = JTextPane()
+
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
         self.secondary_line_numbers = TextLineNumber(self.secondary_area)
@@ -65,6 +68,15 @@ class AtfAreaController(object):
 
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
+
+        # Set the arabic area's font size to match the user difened value
+        # Setting the edit area here as well forces both line numbers to be
+        # the same size
+        self.conf = self.controller.config
+        font = set_font(self.conf['edit_area_style']['fontsize']['user'])
+        self.arabic_area.setFont(font)
+        self.edit_area.setFont(font)
+        self.secondary_area.setFont(font)
 
     def setAtfAreaText(self, text):
         '''
