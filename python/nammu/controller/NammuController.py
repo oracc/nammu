@@ -182,7 +182,7 @@ class NammuController(object):
                     self.atfAreaController.caret.setUpdatePolicy(
                                                     DefaultCaret.NEVER_UPDATE)
                     syntax_highlight = self.atfAreaController.syntax_highlighter
-                    syntax_highlight.syntax_highlight_on = False
+                    syntax_highlight.syntax_highlight_on = True
                     self.atfAreaController.setAtfAreaText(atfText)
                     self.atf_body = atfText
                     self.atf_translation = ""
@@ -816,6 +816,7 @@ class NammuController(object):
         '''
         self.logger.debug("Enabling/Disabling arabic translation mode...")
         if event:
+            # todo: handle unsaved arabic area
             self.atfAreaController.splitEditorArabic(
                                         JSplitPane.VERTICAL_SPLIT,
                                         self.atfAreaController.getAtfAreaText(),
