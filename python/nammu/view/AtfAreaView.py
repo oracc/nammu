@@ -19,7 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 from java.awt import BorderLayout, Dimension, Point, Font, Color
 from java.awt.event import KeyListener, AdjustmentListener
-from javax.swing import JScrollPane, JPanel, JSplitPane
+from javax.swing import JScrollPane, JPanel, JSplitPane, UIManager
 from javax.swing.text import StyleContext, StyleConstants
 from javax.swing.text import SimpleAttributeSet
 from javax.swing.undo import UndoManager, CompoundEdit
@@ -294,6 +294,8 @@ class AtfUndoableEditListener(UndoableEditListener):
         self.undo_manager = undo_manager
         self.current_compound = CompoundEdit()
         self.must_compound = False
+        self.deletion = UIManager.getString('AbstractDocument.deletionText')
+        self.addition =  UIManager.getString('AbstractDocument.additionText')
 
     def force_start_compound(self):
         """
@@ -316,11 +318,11 @@ class AtfUndoableEditListener(UndoableEditListener):
 
     def undoableEditHappened(self, event):
         edit = event.getEdit()
-        edit_type = str(edit.getType())
+        edit_type = edit.getPresentationName()
 
         # If significant INSERT/REMOVE event happen, end and add current
         # edit compound to undo_manager and start a new one.
-        if ((edit_type == "INSERT" or edit_type == "REMOVE") and
+        if ((edit_type == self.addition or edit_type == self.deletion) and
                 not self.must_compound):
             # Explicitly end compound edits so their inProgress flag goes
             # to false. Note undo() only undoes compound edits when they
