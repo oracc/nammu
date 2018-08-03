@@ -165,17 +165,10 @@ class AtfAreaView(JPanel):
             topscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
             bottomscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
 
-    def get_viewport_carets(self):
+    def get_viewport_top_bottom(self, viewport):
         '''
-        Get the top left and bottom left caret position of the current viewport
-        '''
-        try:
-            viewport = self.container.getViewport()
-            viewport_l = None
-        except:
-            viewport_l = self.container.leftComponent.getViewport()
-            viewport = self.container.rightComponent.getViewport()
 
+        '''
         extent = viewport.getExtentSize()
         top_left_position = viewport.getViewPosition()
         top_left_char = self.edit_area.viewToModel(top_left_position)
@@ -196,6 +189,26 @@ class AtfAreaView(JPanel):
         top_ch = self.controller.pad_top_viewport_caret(top_left_char, text)
         bottom_ch = self.controller.pad_bottom_viewport_caret(bottom_left_char,
                                                               text)
+
+        return top_ch, bottom_ch
+
+
+
+    def get_viewport_carets(self):
+        '''
+        Get the top left and bottom left caret position of the viewports on
+        screen. If we have a split window, the carets will span both viewports
+        and will give the range from the top of the file block to the lower
+        extent of the two viewports.
+        '''
+        try:
+            viewport = self.container.getViewport()
+            viewport_l = None
+        except:
+            viewport_l = self.container.leftComponent.getViewport()
+            viewport = self.container.rightComponent.getViewport()
+
+        top_ch, bottom_ch = self.get_viewport_top_bottom(viewport)
 
         bottom_ch_l = 0
 
