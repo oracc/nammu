@@ -9,7 +9,7 @@ matrix:
 
 before_install:
   - |
-    if [ -z "$PYTEST" ]; then
+    if [ -e "$PYTEST" ]; then
       export JYTHON_URL='http://search.maven.org/remotecontent?filepath=org/python/jython-installer/2.7.0/jython-installer-2.7.0.jar'
       wget $JYTHON_URL -O jython_installer.jar; java -jar jython_installer.jar -s -d $HOME/jython; export PATH=$HOME/jython/bin:$PATH
       export JYTHONPATH=$HOME/build/oracc/nammu/resources/lib:$JYTHONPATH
@@ -19,19 +19,19 @@ before_install:
 
 install:
   - |
-    if [ -z "$PYTEST" ]; then
+    if [ -e "$PYTEST" ]; then
        pip install --user -r requirements.txt
        mkdir $HOME/build/oracc/nammu/resources/lib
        javac -d $HOME/build/oracc/nammu/resources/lib $HOME/build/oracc/nammu/src/main/java/uk/ac/ucl/rc/development/oracc/ext/*.java
     fi
   - |
-    if [ -z "$PEP8" ]; then
+    if [ -e "$PEP8" ]; then
        pip install --user pep8
     fi
 
 before_script:
  - |
-   if [ -z "$PYTEST" ]; then
+   if [ -e "$PYTEST" ]; then
      "export DISPLAY=:99.0"
      "sh -e /etc/init.d/xvfb start"
      sleep 3
@@ -39,14 +39,14 @@ before_script:
 
 script:
   - |
-    if [ -z "$PYTEST" ]; then
+    if [ -e "$PYTEST" ]; then
       py.test
     fi
   - |
-    if [ -z "$PEP8" ]; then
+    if [ -e "$PEP8" ]; then
       python -m pep8 python/
     fi
   - |
-    if [ -z "$MVN" ]; then
+    if [ -e "$MVN" ]; then
       mvn clean install -DskipTests
     fi
