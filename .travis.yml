@@ -13,11 +13,11 @@ install:
   - export JYTHONPATH=$HOME/build/oracc/nammu/resources/lib:$JYTHONPATH
   - mkdir $HOME/.nammu
   - cp $HOME/build/oracc/nammu/resources/config/*.yaml $HOME/.nammu
-  
+
 before_script:
  - "export DISPLAY=:99.0"
  - "sh -e /etc/init.d/xvfb start"
  - sleep 3 # give xvfb some time to start
 
 script:
-  - jython -c 'from python.nammu.controller.NammuController import NammuController; a = NammuController()'
+  - py.test
