@@ -167,7 +167,7 @@ class AtfAreaView(JPanel):
 
     def get_viewport_top_bottom(self, viewport):
         '''
-
+        returns the top and bottom caret positions for a given viewport
         '''
         extent = viewport.getExtentSize()
         top_left_position = viewport.getViewPosition()
@@ -192,8 +192,6 @@ class AtfAreaView(JPanel):
 
         return top_ch, bottom_ch
 
-
-
     def get_viewport_carets(self):
         '''
         Get the top left and bottom left caret position of the viewports on
@@ -202,42 +200,19 @@ class AtfAreaView(JPanel):
         extent of the two viewports.
         '''
         try:
+            # Assumes a single edit pane
             viewport = self.container.getViewport()
-            viewport_l = None
+            top_ch, bottom_ch = self.get_viewport_top_bottom(viewport)
+
         except:
+            # Otherwise we have a split pane
             viewport_l = self.container.leftComponent.getViewport()
             viewport = self.container.rightComponent.getViewport()
+            top_ch, bottom_ch = self.get_viewport_top_bottom(viewport)
+            top_ch_l, bottom_ch_l = self.get_viewport_top_bottom(viewport_l)
 
-        top_ch, bottom_ch = self.get_viewport_top_bottom(viewport)
-
-        bottom_ch_l = 0
-
-        if viewport_l:
-            extent = viewport_l.getExtentSize()
-            top_left_position = viewport_l.getViewPosition()
-            top_left_char = self.edit_area.viewToModel(top_left_position)
-            bottom_left_position = Point(top_left_position.x,
-                                         top_left_position.y + extent.height)
-            bottom_left_char = self.edit_area.viewToModel(bottom_left_position)
-
-            # Something has gone wrong. Assume that top_left should be at the
-            # start of the file
-            if top_left_char >= bottom_left_char:
-                top_left_char = 0
-
-            # Get the text in the full edit area
-            text = self.controller.edit_area.getText()
-
-            # Pad the top of the viewport to capture up to the nearest header
-            # and the bottom by 2 lines
-            top_ch_l = self.controller.pad_top_viewport_caret(top_left_char,
-                                                              text)
-            bottom_ch_l = self.controller.pad_bottom_viewport_caret(
-                                                            bottom_left_char,
-                                                            text)
-
-        if bottom_ch_l > bottom_ch:
-            bottom_ch = bottom_ch_l
+            if bottom_ch_l > bottom_ch:
+                bottom_ch = bottom_ch_l
 
         return top_ch, bottom_ch
 
