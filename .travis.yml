@@ -17,5 +17,6 @@ before_script:
  - sleep 3 # give xvfb some time to start
 
 script:
+  - ls $HOME/jython
   - jython --version
   - jython -c 'from python.nammu.controller.NammuController import NammuController; a = NammuController()'
