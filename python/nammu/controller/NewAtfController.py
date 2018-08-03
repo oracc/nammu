@@ -36,3 +36,5 @@ class NewAtfController:
     def show_template(self):
         self.controller.atfAreaController.setAtfAreaText(
                                                 self.template.decode('utf-8'))
+
+        self.controller.atfAreaController.arabic_area.setText('')
