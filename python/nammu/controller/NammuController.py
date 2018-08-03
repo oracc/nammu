@@ -239,9 +239,7 @@ class NammuController(object):
         '''
 
         if self.arabic_edition_on:
-            atfText = u'{}\n{}'.format(
-                                self.atfAreaController.edit_area.getText(),
-                                self.atfAreaController.arabic_area.getText())
+            atfText = self.atfAreaController.concatenate_arabic_text()
         else:
             atfText = self.atfAreaController.getAtfAreaText()
         print(atfText)
@@ -328,7 +326,11 @@ class NammuController(object):
         Forces saving as dialog to be prompted.
         Also checks for project name, and if found, makes it default.
         '''
-        atfText = self.atfAreaController.getAtfAreaText()
+        if self.arabic_edition_on:
+            atfText = self.atfAreaController.concatenate_arabic_text()
+        else:
+            atfText = self.atfAreaController.getAtfAreaText()
+
         fileChooser = JFileChooser(self.get_working_dir())
         file_filter = FileNameExtensionFilter("ATF files", ["atf"])
         fileChooser.setFileFilter(file_filter)
