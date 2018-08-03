@@ -10,10 +10,7 @@ before_install:
 
 install:
   - pip install --user -r requirements.txt
-  - sudo apt-get install tree
-  - tree $HOME/build/oracc/nammu/src/
-  - pwd
-  - ls
+  - mkdir $HOME/build/oracc/nammu/resources/lib
   - javac -d $HOME/build/oracc/nammu/resources/lib $HOME/build/oracc/nammu/src/main/java/uk/ac/ucl/rc/development/oracc/ext/*.java
 
 before_script:
