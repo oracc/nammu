@@ -2,7 +2,6 @@ import pytest
 from python.nammu.controller.NammuController import NammuController
 
 
-
 class TestNammu(object):
 
     def setup_class(self):
