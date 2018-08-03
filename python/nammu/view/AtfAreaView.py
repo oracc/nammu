@@ -363,7 +363,7 @@ class AtfUndoableEditListener(UndoableEditListener):
         self.current_compound = CompoundEdit()
         self.must_compound = False
         self.deletion = UIManager.getString('AbstractDocument.deletionText')
-        self.addition =  UIManager.getString('AbstractDocument.additionText')
+        self.addition = UIManager.getString('AbstractDocument.additionText')
 
     def force_start_compound(self):
         """
