@@ -12,10 +12,8 @@ class TestNammu(object):
         del self.nammu
 
     def test_set_text(self):
-        print "test_set_text"
         self.nammu.atfAreaController.edit_area.setText('Hello!')
         assert self.nammu.atfAreaController.edit_area.getText() == 'Hello!'
 
     def test_set_text2(self):
-        print "test_set_text2"
         assert 1 == 1
