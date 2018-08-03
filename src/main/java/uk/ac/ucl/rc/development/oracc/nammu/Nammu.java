@@ -24,12 +24,6 @@ import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
-//import org.python.core.PyDictionary;
-
-
-//import java.util.HashMap;
-//import java.util.Map;
-
 
 /**
  * This is the entry point for Nammu.
@@ -43,12 +37,8 @@ public class Nammu {
 
     public static void main(final String[] args) throws PyException {
 
-        // PyDictionary dict = new PyDictionary();
-        // dict.put(new PyString("python.security.respectJavaAccessibility"), new PyInteger(0));
-
         PySystemState systemState = Py.getSystemState();
         PythonInterpreter interpreter = new PythonInterpreter();
-        // PythonInterpreter interpreter = new PythonInterpreter(dict);
         systemState.__setattr__("_jy_interpreter", Py.java2py(interpreter));
         String command = "try:\n "
                        + "  import nammu.main\n "
