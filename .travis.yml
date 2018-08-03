@@ -5,7 +5,12 @@ python: "2.7"
 before_install: sudo apt-get install jython
 
 install:
-  - pip install -r requirements.txt
+  - pip install --user -r requirements.txt
+
+before_script:
+ - "export DISPLAY=:99.0"
+ - "sh -e /etc/init.d/xvfb start"
+ - sleep 3 # give xvfb some time to start
 
 script:
   - jython --version
