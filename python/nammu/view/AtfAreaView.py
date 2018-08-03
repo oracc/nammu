@@ -138,6 +138,11 @@ class AtfAreaView(JPanel):
             self.container.setVisible(True)
             self.add(self.container, BorderLayout.CENTER)
             self.controller.controller.arabic_edition_on = False
+
+            # Reset the scroll listener
+            self.vert_scroll = self.container.getVerticalScrollBar()
+            listener = atfAreaAdjustmentListener(self)
+            self.vert_scroll.addAdjustmentListener(listener)
         else:
             # If there is not a split pane, create both panels and setup view
             main_editor = JScrollPane(self.edit_area)
