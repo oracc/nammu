@@ -6,7 +6,7 @@ matrix:
 
 before_install:
   - export JYTHON_URL='http://search.maven.org/remotecontent?filepath=org/python/jython-installer/2.7.0/jython-installer-2.7.0.jar'
-  - wget $JYTHON_URL -O jython_installer.jar; java -jar jython_installer.jar -s -d $HOME/jython; export PATH=$HOME/jython:$PATH
+  - wget $JYTHON_URL -O jython_installer.jar; java -jar jython_installer.jar -s -d $HOME/jython; export PATH=$HOME/jython/bin:$PATH
 
 install:
   - pip install --user -r requirements.txt
@@ -18,5 +18,6 @@ before_script:
 
 script:
   - ls $HOME/jython
+  - ls $HOME/jython/bin
   - jython --version
   - jython -c 'from python.nammu.controller.NammuController import NammuController; a = NammuController()'
