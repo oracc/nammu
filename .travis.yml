@@ -1,26 +1,12 @@
-sudo: false
 
-language: java
 
-matrix:
-  include:
-    - jdk: oraclejdk8
-    - jdk: oraclejdk8
-      env: PEP8=1
+python: "2.7"
+
+before_install: sudo apt-get install jython
 
 install:
-  - |
-    # Check if this is the PEP8 test instance and install pep8
-    if ! [ -z "$PEP8" ]; then
-       pip install --user pep8
-    fi
+  - pip install -r requirements.txt
 
 script:
-  - |
-    # Check if this is the PEP8 test instance and run pep8
-    if [ -z "$PEP8" ]; then
-      # Temporarily skipping tests because we can't install pytest
-      mvn clean test -DskipTests
-    else
-      python -m pep8 python/
-    fi
+  - jython --version
+  - jython -c 'print "hello world"'
