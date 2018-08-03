@@ -10,7 +10,9 @@ before_install:
 
 install:
   - pip install --user -r requirements.txt
-  - javac -d resources/lib src/main/java/uk/ac/ucl/rc/development/oracc/ext/*.java
+  - pwd
+  - ls
+  - javac -d nammu/resources/lib nammu/src/main/java/uk/ac/ucl/rc/development/oracc/ext/*.java
 
 before_script:
  - "export DISPLAY=:99.0"
