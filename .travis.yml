@@ -21,5 +21,7 @@ before_script:
 script:
   - echo $CLASSPATH
   - echo $JYTHONPATH
+  - export JYTHONPATH=$HOME/build/oracc/nammu/resources/lib:$JYTHONPATH
+  - echo $JYTHONPATH
   - jython --version
   - jython -c 'from python.nammu.controller.NammuController import NammuController; a = NammuController()'
