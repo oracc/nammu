@@ -10,6 +10,7 @@ before_install:
 
 install:
   - pip install --user -r requirements.txt
+  - javac -d resources/lib src/main/java/uk/ac/ucl/rc/development/oracc/ext/*.java
 
 before_script:
  - "export DISPLAY=:99.0"
@@ -17,7 +18,7 @@ before_script:
  - sleep 3 # give xvfb some time to start
 
 script:
-  - ls $HOME/jython
-  - ls $HOME/jython/bin
+  - echo $CLASSPATH
+  - echo $JYTHONPATH
   - jython --version
   - jython -c 'from python.nammu.controller.NammuController import NammuController; a = NammuController()'
