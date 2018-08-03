@@ -5,12 +5,17 @@ from python.nammu.controller.NammuController import NammuController
 
 class TestNammu(object):
 
-    def setup_method(self, method):
+    def setup_class(self):
         self.nammu = NammuController()
 
-    def teardown_method(self, method):
-        self.nammu.quit()
+    def teardown_class(self):
+        del self.nammu
 
     def test_set_text(self):
+        print "test_set_text"
         self.nammu.atfAreaController.edit_area.setText('Hello!')
         assert self.nammu.atfAreaController.edit_area.getText() == 'Hello!'
+
+    def test_set_text2(self):
+        print "test_set_text2"
+        assert 1 == 1
