@@ -4,10 +4,10 @@ matrix:
       env: PYTEST=1
     - jdk: oraclejdk8
       env: MVN=1
-    - jdk: oraclejdk9
-      env: MVN=1
-    - jdk: oraclejdk10
-      env: MVN=1
+    # - jdk: oraclejdk9
+    #   env: MVN=1
+    # - jdk: oraclejdk10
+    #   env: MVN=1
     - jdk: oraclejdk8
       env: PEP8=1
 
