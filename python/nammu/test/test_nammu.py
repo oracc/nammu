@@ -1,4 +1,4 @@
- # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import pytest
 import codecs
 import time
@@ -11,49 +11,66 @@ from java.awt import Color
 def simpletext():
     return u'this is a simple test line'
 
+
 @pytest.fixture
 def english():
-    return codecs.open('resources/test/english.atf', encoding='utf-8').read()
+    return codecs.open('resources/test/english.atf',
+                       encoding='utf-8').read()
+
 
 @pytest.fixture
 def english_no_lem():
-    return codecs.open('resources/test/english_no_lem.atf', encoding='utf-8').read()
+    return codecs.open('resources/test/english_no_lem.atf',
+                       encoding='utf-8').read()
+
 
 @pytest.fixture
 def broken_atf():
-    return codecs.open('resources/test/english_broken.atf', encoding='utf-8').read()
+    return codecs.open('resources/test/english_broken.atf',
+                       encoding='utf-8').read()
+
 
 @pytest.fixture
 def arabic():
-    return codecs.open('resources/test/arabic.atf', encoding='utf-8').read()
+    return codecs.open('resources/test/arabic.atf',
+                       encoding='utf-8').read()
+
 
 @pytest.fixture
 def arabic_no_lem():
-    return codecs.open('resources/test/arabic_no_lem.atf', encoding='utf-8').read()
+    return codecs.open('resources/test/arabic_no_lem.atf',
+                       encoding='utf-8').read()
+
 
 @pytest.fixture
 def black():
     return Color(0, 0, 0)
 
+
 @pytest.fixture
 def green():
     return Color(133, 153, 0)
+
 
 @pytest.fixture
 def yellow():
     return Color(181, 137, 0)
 
+
 @pytest.fixture
 def red():
     return Color(220, 50, 47)
+
 
 @pytest.fixture
 def blue():
     return Color(108, 113, 196)
 
+
 @pytest.fixture
 def pink():
     return Color(211, 54, 130)
+
 
 class TestNammu(object):
 
@@ -73,9 +90,12 @@ class TestNammu(object):
     @pytest.mark.parametrize('text, caret, color', [(simpletext(), 5, black()),
                                                     (english(), 137, red()),
                                                     (arabic(), 46, pink()),
-                                                    (arabic_no_lem(), 113, blue()),
-                                                    (english_no_lem(), 166, yellow()),
-                                                    (broken_atf(), 3, green())])
+                                                    (arabic_no_lem(), 113,
+                                                     blue()),
+                                                    (english_no_lem(), 166,
+                                                     yellow()),
+                                                    (broken_atf(), 3,
+                                                     green())])
     def test_syntax_highlight(self, text, caret, color):
         self.nammu.atfAreaController.edit_area.setText(text)
         # Wait here so the highlight completes before getting the styledoc
