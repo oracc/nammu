@@ -663,7 +663,7 @@ class NammuController(object):
 
         # Always syntax highlight, not only when there are errors, otherwise
         # old error lines' styling won't be cleared!
-        self.atfAreaController.syntax_highlight()
+        runSwingLater(self.initHighlighting)
 
     def send_request(self, client):
         """
