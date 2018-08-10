@@ -1,7 +1,10 @@
  # -*- coding: utf-8 -*-
 import pytest
 import codecs
+import time
 from python.nammu.controller.NammuController import NammuController
+
+from java.awt import Color
 
 
 @pytest.fixture
@@ -28,6 +31,30 @@ def arabic():
 def arabic_no_lem():
     return codecs.open('resources/test/arabic_no_lem.atf', encoding='utf-8').read()
 
+@pytest.fixture
+def black():
+    return Color(0, 0, 0)
+
+@pytest.fixture
+def green():
+    return Color(133, 153, 0)
+
+@pytest.fixture
+def yellow():
+    return Color(181, 137, 0)
+
+@pytest.fixture
+def red():
+    return Color(220, 50, 47)
+
+@pytest.fixture
+def blue():
+    return Color(108, 113, 196)
+
+@pytest.fixture
+def pink():
+    return Color(211, 54, 130)
+
 class TestNammu(object):
 
     def setup_class(self):
@@ -43,13 +70,21 @@ class TestNammu(object):
         self.nammu.atfAreaController.edit_area.setText(text)
         assert self.nammu.atfAreaController.edit_area.getText() == text
 
-    # def test_arabic_split_pane(self, arabic):
-    #     assert self.nammu.arabic_edition_on == False
-    #     self.nammu.atfAreaController.edit_area.setText(arabic)
-    #     assert self.nammu.arabic_edition_on == True
+    @pytest.mark.parametrize('text, caret, color', [(simpletext(), 5, black()),
+                                                    (english(), 137, red()),
+                                                    (arabic(), 46, pink()),
+                                                    (arabic_no_lem(), 113, blue()),
+                                                    (english_no_lem(), 166, yellow()),
+                                                    (broken_atf(), 3, green())])
+    def test_syntax_highlight(self, text, caret, color):
+        self.nammu.atfAreaController.edit_area.setText(text)
+        # Wait here so the highlight completes before getting the styledoc
+        time.sleep(2)
+        doc = self.nammu.atfAreaController.edit_area.getStyledDocument()
 
-    def test_syntax_highlight(self):
-        pass
+        # Get the colour of a given character that should be highlighted
+        c = doc.getForeground(doc.getCharacterElement(caret).getAttributes())
+        assert c.equals(color)
 
     @pytest.mark.parametrize('text', [english_no_lem(), arabic_no_lem()])
     def test_successful_lem_no_existing_lem(self, text):
@@ -73,12 +108,6 @@ class TestNammu(object):
         # An empty dictionary means no validation errors
         assert self.nammu.atfAreaController.validation_errors
 
-    def test_saving_split_pane(self):
-        pass
-
-    def test_saving_single_pane(self):
-        pass
-
     @pytest.mark.parametrize('text', [english(), arabic(), english_no_lem(),
                                       arabic_no_lem()])
     def test_successful_validation(self, text):
@@ -97,5 +126,16 @@ class TestNammu(object):
         # An empty dictionary means no validation errors
         assert self.nammu.atfAreaController.validation_errors
 
-    def test_file_load(self):
-        pass
+    # def test_file_load(self):
+    #     pass
+    #
+    # def test_saving_split_pane(self):
+    #     pass
+    #
+    # def test_saving_single_pane(self):
+    #     pass
+
+    # def test_arabic_split_pane(self, arabic):
+    #     assert self.nammu.arabic_edition_on == False
+    #     self.nammu.atfAreaController.edit_area.setText(arabic)
+    #     assert self.nammu.arabic_edition_on == True
