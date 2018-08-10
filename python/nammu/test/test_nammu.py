@@ -65,8 +65,13 @@ class TestNammu(object):
         self.nammu.lemmatise()
         assert text == self.nammu.atfAreaController.edit_area.getText()
 
-    def test_unsuccsessful_lem(self):
-        pass
+    def test_unsuccsessful_lem(self, broken_atf):
+        self.nammu.currentFilename = 'pytest.atf'  # bypass saving the file
+        self.nammu.atfAreaController.edit_area.setText(broken_atf)
+        self.nammu.lemmatise()
+
+        # An empty dictionary means no validation errors
+        assert self.nammu.atfAreaController.validation_errors
 
     def test_saving_split_pane(self):
         pass
