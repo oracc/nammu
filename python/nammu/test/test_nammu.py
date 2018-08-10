@@ -24,6 +24,10 @@ def broken_atf():
 def arabic():
     return codecs.open('resources/test/arabic.atf', encoding='utf-8').read()
 
+@pytest.fixture
+def arabic_no_lem():
+    return codecs.open('resources/test/arabic_no_lem.atf', encoding='utf-8').read()
+
 class TestNammu(object):
 
     def setup_class(self):
@@ -33,7 +37,8 @@ class TestNammu(object):
         del self.nammu
 
     @pytest.mark.parametrize('text', [simpletext(), english(), arabic(),
-                                      english_no_lem(), broken_atf()])
+                                      english_no_lem(), arabic_no_lem(),
+                                      broken_atf()])
     def test_set_text(self, text):
         self.nammu.atfAreaController.edit_area.setText(text)
         assert self.nammu.atfAreaController.edit_area.getText() == text
@@ -46,8 +51,19 @@ class TestNammu(object):
     def test_syntax_highlight(self):
         pass
 
-    def test_successful_lem(self):
-        pass
+    @pytest.mark.parametrize('text', [english_no_lem(), arabic_no_lem()])
+    def test_successful_lem_no_existing_lem(self, text):
+        self.nammu.currentFilename = 'pytest.atf'  # bypass saving the file
+        self.nammu.atfAreaController.edit_area.setText(text)
+        self.nammu.lemmatise()
+        assert text != self.nammu.atfAreaController.edit_area.getText()
+
+    @pytest.mark.parametrize('text', [english(), arabic()])
+    def test_successful_lem_existing_lem(self, text):
+        self.nammu.currentFilename = 'pytest.atf'  # bypass saving the file
+        self.nammu.atfAreaController.edit_area.setText(text)
+        self.nammu.lemmatise()
+        assert text == self.nammu.atfAreaController.edit_area.getText()
 
     def test_unsuccsessful_lem(self):
         pass
@@ -55,8 +71,11 @@ class TestNammu(object):
     def test_saving_split_pane(self):
         pass
 
-    @pytest.mark.parametrize('text', [english(), arabic(),
-                                      english_no_lem()])
+    def test_saving_single_pane(self):
+        pass
+
+    @pytest.mark.parametrize('text', [english(), arabic(), english_no_lem(),
+                                      arabic_no_lem()])
     def test_successful_validation(self, text):
         self.nammu.currentFilename = 'pytest.atf'  # bypass saving the file
         self.nammu.atfAreaController.edit_area.setText(text)
