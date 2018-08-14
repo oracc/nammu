@@ -2,9 +2,11 @@
 import pytest
 import codecs
 import time
+import os
 from python.nammu.controller.NammuController import NammuController
 
 from java.awt import Color
+from javax.swing import JSplitPane
 
 
 @pytest.fixture
@@ -70,6 +72,35 @@ def blue():
 @pytest.fixture
 def pink():
     return Color(211, 54, 130)
+
+
+def show_diag_patch(a, b, c):
+    '''
+    Monkeypatch the clicking of the ok button on the file load dialog.
+    '''
+    return 0
+
+
+def selected_file_patch_english(a):
+    return mockFile('resources/test/english.atf')
+
+
+def selected_file_patch_arabic(a):
+    return mockFile('resources/test/arabic.atf')
+
+
+class mockFile(object):
+    '''
+    A class used to monkeypatch the Java file object
+    '''
+    def __init__(self, filename):
+        self.filename = filename
+
+    def getCanonicalPath(self):
+        return self.filename
+
+    def getName(self):
+        return os.path.basename(self.filename)
 
 
 class TestNammu(object):
@@ -146,16 +177,33 @@ class TestNammu(object):
         # An empty dictionary means no validation errors
         assert self.nammu.atfAreaController.validation_errors
 
-    # def test_file_load(self):
-    #     pass
-    #
+    def test_file_load(self, monkeypatch):
+        import javax.swing.JFileChooser
+        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+                            selected_file_patch_english)
+
+        self.nammu.openFile()
+        assert len(self.nammu.atfAreaController.edit_area.getText()) > 1
+
     # def test_saving_split_pane(self):
     #     pass
     #
     # def test_saving_single_pane(self):
     #     pass
 
-    # def test_arabic_split_pane(self, arabic):
-    #     assert self.nammu.arabic_edition_on == False
-    #     self.nammu.atfAreaController.edit_area.setText(arabic)
-    #     assert self.nammu.arabic_edition_on == True
+    def test_arabic_split_pane(self, monkeypatch):
+
+        import javax.swing.JFileChooser
+        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+                            selected_file_patch_arabic)
+
+        assert self.nammu.arabic_edition_on is False
+        self.nammu.openFile()
+        assert self.nammu.arabic_edition_on is True
+
+        assert isinstance(self.nammu.atfAreaController.view.container,
+                          JSplitPane)
