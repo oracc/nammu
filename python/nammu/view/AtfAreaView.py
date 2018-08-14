@@ -22,9 +22,10 @@ from java.awt.event import KeyListener, AdjustmentListener
 from java.awt.ComponentOrientation import RIGHT_TO_LEFT, LEFT_TO_RIGHT
 from javax.swing import JScrollPane, JPanel, JSplitPane, UIManager
 from javax.swing.text import StyleConstants
-
 from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener, DocumentListener
+
+from swingutils.threads.swing import runSwingLater
 
 from ..utils import set_font
 
@@ -309,12 +310,7 @@ class atfAreaAdjustmentListener(AdjustmentListener):
 
     def adjustmentValueChanged(self, e):
         if not e.getValueIsAdjusting():
-
-            top_l_char, bottom_l_char = self.areaview.get_viewport_carets()
-
-            # Call SyntaxHighlighter(top_l_char, bottom_l_char)
-            self.areaviewcontroller.syntax_highlight(top_l_char,
-                                                     bottom_l_char)
+            runSwingLater(self.areaviewcontroller.controller.initHighlighting)
 
 
 class AtfAreaKeyListener(KeyListener):
