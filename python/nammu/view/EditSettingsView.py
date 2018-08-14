@@ -371,7 +371,7 @@ class EditSettingsView(JDialog):
         else:
             input_size = self.controller.config[target_key]['fontsize']['user']
             self.logger.error("Invalid {} font size. Please enter a "
-                              "number between 8 and 36.\n\n"
+                              "number between 8 and 30.\n\n"
                               "Font size left at "
                               "previous value: {}".format(target, input_size))
 

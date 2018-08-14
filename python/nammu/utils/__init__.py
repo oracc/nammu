@@ -23,6 +23,7 @@ import shutil
 import yaml
 import logging
 import re
+import urllib
 from java.lang import ClassLoader, System
 from java.awt import Font
 
@@ -120,7 +121,16 @@ def get_yaml_config(yaml_filename):
     # In Unix getResource returns the path with prefix "file:" but in
     # Windows prefix is "jar:file:"
     path_to_jar = str(config_file_url).split('file:')[1]
-    path_to_jar = path_to_jar.split('!')[0]
+    # The path will be of the form /path/to/jar!path/inside/jar
+    # Take everything up to the final !, in case previous parts also contain !
+    path_to_jar = path_to_jar.rsplit('!', 1)[0]
+    # Decode any special characters contained in the path so that, for example,
+    # we use 'dir name' instead of 'dir%20name'
+    # NB: The standard way to do it is to create a URI from the URL, which will
+    # automatically handle the encoding, and then go back to a URL or String.
+    # However, the URI class doesn't seem to handle the jar:file: prefix well,
+    # so using urllib directly seems a better solution.
+    path_to_jar = urllib.unquote(path_to_jar)
 
     path_to_config = get_log_path(yaml_filename)
 
@@ -311,21 +321,17 @@ def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
     it to ~/.nammu.
     '''
     try:
-        zf = zipfile.ZipFile(jar_file_path, 'r')
+        with zipfile.ZipFile(jar_file_path, 'r') as zf:
+            for zi in zf.infolist():
+                fn = zi.filename
+                if fn.lower() == source_rel_path:
+                    source_file = zf.open(fn)
+                    target_file = file(target_path, "wb")
+                    with source_file, target_file:
+                        shutil.copyfileobj(source_file, target_file)
     except zipfile.BadZipfile:
         shutil.copyfileobj(file(source_rel_path, "wb"),
                            file(target_path, "wb"))
-    else:
-        lst = zf.infolist()
-        for zi in lst:
-            fn = zi.filename
-            if fn.lower() == source_rel_path:
-                source_file = zf.open(fn)
-                target_file = file(target_path, "wb")
-                with source_file, target_file:
-                    shutil.copyfileobj(source_file, target_file)
-    finally:
-        zf.close()
 
 
 def find_image_resource(name):
