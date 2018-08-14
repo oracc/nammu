@@ -96,6 +96,7 @@ def unsaved_patch():
 def generic_loader(filename):
     return codecs.open(filename, encoding='utf-8').read()
 
+
 class mockFile(object):
     '''
     A class used to monkeypatch the Java file object
