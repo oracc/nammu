@@ -89,6 +89,10 @@ def selected_file_patch_arabic(a):
     return mockFile('resources/test/arabic.atf')
 
 
+def unsaved_patch():
+    return True
+
+
 class mockFile(object):
     '''
     A class used to monkeypatch the Java file object
@@ -183,6 +187,7 @@ class TestNammu(object):
                             show_diag_patch)
         monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
                             selected_file_patch_english)
+        monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
 
         self.nammu.openFile()
         assert len(self.nammu.atfAreaController.edit_area.getText()) > 1
@@ -200,6 +205,7 @@ class TestNammu(object):
                             show_diag_patch)
         monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
                             selected_file_patch_arabic)
+        monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
 
         assert self.nammu.arabic_edition_on is False
         self.nammu.openFile()
