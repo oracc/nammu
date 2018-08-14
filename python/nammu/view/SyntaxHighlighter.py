@@ -161,6 +161,12 @@ class SyntaxHighlighter:
         if not self.syntax_highlight_on or no_of_chars < 1:
             return
 
+
+        # when we have arabic text, we need to fix an off by 1 error caused
+        # by how we split the panes
+        if self.controller.controller.arabicIndex:
+            no_of_chars = self.controller.controller.arabicIndex - 1
+
         # Get only the text on the screen
         text = self.styledoc.getText(self.viewport_extent[2], no_of_chars)
 
