@@ -420,5 +420,5 @@ class AtfAreaController(object):
         Convienience method to get the text from the main text pane and the
         arabic pane and join them together so files can be saved properly.
         '''
-        return u'{}\n{}'.format(self.edit_area.getText(),
+        return u'{}{}'.format(self.edit_area.getText(),
                                 self.arabic_area.getText())
