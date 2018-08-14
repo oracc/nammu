@@ -93,6 +93,9 @@ def unsaved_patch():
     return True
 
 
+def generic_loader(filename):
+    return codecs.open(filename, encoding='utf-8').read()
+
 class mockFile(object):
     '''
     A class used to monkeypatch the Java file object
@@ -192,11 +195,37 @@ class TestNammu(object):
         self.nammu.openFile()
         assert len(self.nammu.atfAreaController.edit_area.getText()) > 1
 
-    # def test_saving_split_pane(self):
-    #     pass
-    #
-    # def test_saving_single_pane(self):
-    #     pass
+    def test_saving_split_pane(self, monkeypatch, tmpdir, arabic):
+        import javax.swing.JFileChooser
+        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+                            selected_file_patch_arabic)
+        monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
+
+        self.nammu.openFile()
+        self.nammu.currentFilename = str(tmpdir.join('pytest.atf'))
+
+        self.nammu.saveFile()
+
+        assert os.path.isfile(self.nammu.currentFilename)
+        assert generic_loader(self.nammu.currentFilename) == arabic
+
+    def test_saving_single_pane(self, monkeypatch, tmpdir, english):
+        import javax.swing.JFileChooser
+        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+                            selected_file_patch_english)
+        monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
+
+        self.nammu.openFile()
+        self.nammu.currentFilename = str(tmpdir.join('pytest.atf'))
+
+        self.nammu.saveFile()
+
+        assert os.path.isfile(self.nammu.currentFilename)
+        assert generic_loader(self.nammu.currentFilename) == english
 
     def test_arabic_split_pane(self, monkeypatch):
 
