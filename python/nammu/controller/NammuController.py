@@ -98,6 +98,10 @@ class NammuController(object):
         # TODO: save array with all opened ATFs
         self.currentFilename = None
 
+        # We need to initialise this so a conditional test in the syntax
+        # highlighter does not fail when we have no arabic translation
+        self.arabicIndex = None
+
         # Configure the tooltip manager for tooltips to appear quicker and not
         # to vanish until mouse moves away
         ToolTipManager.sharedInstance().setInitialDelay(0)
