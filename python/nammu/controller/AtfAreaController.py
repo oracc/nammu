@@ -421,4 +421,4 @@ class AtfAreaController(object):
         arabic pane and join them together so files can be saved properly.
         '''
         return u'{}{}'.format(self.edit_area.getText(),
-                                self.arabic_area.getText())
+                              self.arabic_area.getText())
