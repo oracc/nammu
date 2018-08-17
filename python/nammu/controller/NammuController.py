@@ -403,7 +403,7 @@ class NammuController(object):
         different that those of the save file that is currently opened, and
         when the user has inserted some text and not saved it yet.
         '''
-        nammuText = self.atfAreaController.getAtfAreaText()
+        nammuText = self._getAtfText(self.arabic_edition_on)
 
         if self.currentFilename:
             if os.path.isfile(self.currentFilename):
@@ -822,8 +822,9 @@ class NammuController(object):
         '''
         self.logger.debug("Enabling/Disabling arabic translation mode...")
         if event:
-            # todo: handle unsaved arabic area
-            self.atfAreaController.splitEditorArabic(
+            if self.handleUnsaved():
+
+                self.atfAreaController.splitEditorArabic(
                                     JSplitPane.VERTICAL_SPLIT,
                                     self.atfAreaController.getAtfAreaText(),
                                     "")
