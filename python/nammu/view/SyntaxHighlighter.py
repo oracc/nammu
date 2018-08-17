@@ -224,7 +224,12 @@ class SyntaxHighlighter:
                 if str(tok.lineno) in error_lines:
                     attribs = self.error_attribs[color]
                 else:
-                    attribs = self.attribs[color]
+                    try:
+                        attribs = self.attribs[color]
+                    except KeyError:
+                        logger = self.controller.controller.logger
+                        logger.debug('Color not found in attribute table.')
+
                 self.styledoc.setCharacterAttributes(tok.lexpos +
                                                      self.viewport_extent[2],
                                                      mylength,
