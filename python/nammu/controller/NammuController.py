@@ -243,6 +243,8 @@ class NammuController(object):
         else:
             atfText = self.atfAreaController.getAtfAreaText()
 
+        return atfText
+
     def saveFile(self, event=None):
         '''
         If file being edited has a path, then overwrite with latest changes.
