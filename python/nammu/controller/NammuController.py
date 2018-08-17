@@ -823,8 +823,20 @@ class NammuController(object):
         self.logger.debug("Enabling/Disabling arabic translation mode...")
         if event:
             if self.handleUnsaved():
+                if self.arabic_edition_on:
+                    # revert back to single pane
+                    joined = self.atfAreaController.concatenate_arabic_text()
+                    if self.atfAreaController.findArabic(joined):
+                        self.logger.info("Cannot disable Arabic translation"
+                                         " mode, Arabic translation detected")
+                    else:
+                        self.atfAreaController.view.toggle_split()
+                        self.arabic_edition_on = False
+                        self.atfAreaController.edit_area.setText(joined)
 
-                self.atfAreaController.splitEditorArabic(
+                else:
+                    # toggle arabic pane
+                    self.atfAreaController.splitEditorArabic(
                                     JSplitPane.VERTICAL_SPLIT,
                                     self.atfAreaController.getAtfAreaText(),
                                     "")
