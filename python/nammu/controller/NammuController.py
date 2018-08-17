@@ -198,7 +198,6 @@ class NammuController(object):
                 # Re-enable caret updating and syntax highlighting after load
                 self.atfAreaController.caret.setUpdatePolicy(
                                                     DefaultCaret.ALWAYS_UPDATE)
-                # syntax_high.syntax_highlight_on = True
 
                 # Now dispatch syntax highlighting in a new thread so
                 # we dont highlight before the full file is loaded
@@ -234,6 +233,16 @@ class NammuController(object):
         text = codecs.open(filename, encoding='utf-8').read()
         return text
 
+    def _getAtfText(self, arabic_flag):
+        '''
+        Private method to return the atf text, concatenating the two panes if
+        arabic_flag is True
+        '''
+        if arabic_flag:
+            atfText = self.atfAreaController.concatenate_arabic_text()
+        else:
+            atfText = self.atfAreaController.getAtfAreaText()
+
     def saveFile(self, event=None):
         '''
         If file being edited has a path, then overwrite with latest changes.
@@ -241,12 +250,8 @@ class NammuController(object):
         to save in desired location.
         Also checks for project name, and if found, makes it default.
         '''
+        atfText = self._getAtfText(self.arabic_edition_on)
 
-        if self.arabic_edition_on:
-            atfText = self.atfAreaController.concatenate_arabic_text()
-        else:
-            atfText = self.atfAreaController.getAtfAreaText()
-        print(atfText)
         if not self.currentFilename:
             fileChooser = JFileChooser(self.get_working_dir())
             file_filter = FileNameExtensionFilter("ATF files", ["atf"])
@@ -330,10 +335,7 @@ class NammuController(object):
         Forces saving as dialog to be prompted.
         Also checks for project name, and if found, makes it default.
         '''
-        if self.arabic_edition_on:
-            atfText = self.atfAreaController.concatenate_arabic_text()
-        else:
-            atfText = self.atfAreaController.getAtfAreaText()
+        atfText = self._getAtfText(self.arabic_edition_on)
 
         fileChooser = JFileChooser(self.get_working_dir())
         file_filter = FileNameExtensionFilter("ATF files", ["atf"])
@@ -854,6 +856,12 @@ class NammuController(object):
         Show/Hide Toolbar.
         '''
         self.logger.debug("Toolbar... ")
+
+    def unicode(self, event=None):
+        '''
+        Create bool for unicode, change value when clicked.
+        '''
+        self.logger.debug("Unicode...")
 
     def __getattr__(self, name):
         '''

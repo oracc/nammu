@@ -62,8 +62,6 @@ class AtfAreaController(object):
         # Synch content of split editor panes
         self.secondary_area.setStyledDocument(
                                             self.edit_area.getStyledDocument())
-        # Temporary fix for arabic translation area
-        # self.arabic_area.setText("")
 
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
