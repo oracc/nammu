@@ -36,7 +36,7 @@ of ORACC, enabling more projects to adopt it.
 Nammu is currently being developed by the
 [UCL Research Software Development Group](https://www.ucl.ac.uk/research-it-services/about/research-software-development).
 
-<img src="./doc/mockups/nammu_0.6.png" align="center" width="90%">
+<img src="./doc/mockups/nammu_1.2.png" align="center" width="90%">
 
 
 ## Validation and lemmatisation of ATF files
@@ -75,6 +75,19 @@ validation using pyORACC when they don't have Internet access. This will return
 error messages coming from pyORACC and presented in the GUI to guide the user
 on how to correct them.
 
+#### Right to left translation support
+
+<img src="./doc/mockups/nammu_arabic.png" align="center" width="90%">
+
+As part of the [Nahrein project](http://www.ucl.ac.uk/nahrein), Nammu has been extended to support Arabic, Farsi and Kurdish translation languages. This is enabled through the creation of an Arabic Translation pane, which opens automatically on valid ATF files which contain an Arabic, Kurdish or Farsi translation line, such as:
+
+```
+@translation parallel ar project
+```
+
+If editing a new file which does not yet have a translation, this mode can be activated using the `Window` menu, which contains an option `Toggle Arabic Translation Editor` which will enable or disable the translation pane.
+
+This feature is still a work in progress so please open an [issue](https://github.com/oracc/nammu/issues/new) and let us know if you have any problems.
 
 ## How to run Nammu
 
