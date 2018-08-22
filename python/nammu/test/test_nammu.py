@@ -299,5 +299,5 @@ class TestNammu(object):
         '''
         pass
 
-#TODO Add 'redo' versions of all these cases.
-#     This is stating to look like it needs its own test class.
+# TODO Add 'redo' versions of all these cases.
+#      This is stating to look like it needs its own test class.
