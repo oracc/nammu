@@ -243,3 +243,61 @@ class TestNammu(object):
 
         assert isinstance(self.nammu.atfAreaController.view.container,
                           JSplitPane)
+
+    def test_edit_compound(self):
+        '''
+        Adding a character should trigger several edit events (insert and
+        update colouring), added to the undo manager as a single edit compound
+        so they are all undone/redone at once.
+        '''
+        pass
+
+    def test_undo_empty_pane(self):
+        '''
+        Undo when empty pane should not do anything and undo stackpile should
+        remain empty.
+        '''
+        pass
+
+    def test_undo_after_closing_file(self):
+        '''
+        Undo after closing a file should not bring back the old file.
+        '''
+        pass
+
+    def test_undo_edit_pane(self, simpletext):
+        '''
+        Check adding a simple text and undoing last edit compound works.
+        '''
+        pass
+
+    def test_undo_split_primary_pane(self, simpletext):
+        '''
+        Using Nammu's split pane mode, check undoing something on the primary
+        pane is reflected also in secondary pane.
+        '''
+        pass
+
+    def test_undo_split_secondary_pane(self, simpletext):
+        '''
+        Using Nammu's split pane mode, check undoing something on the secondary
+        pane is reflected also in primary pane.
+        '''
+        pass
+
+    def test_undo_arabic_primary(self, arabic):
+        '''
+        Using Nammu's arabic mode, check undoing something on the primary
+        pane works and arabic pane's content remains intact.
+        '''
+        pass
+
+    def test_undo_arabic_pane(self, arabic):
+        '''
+        Using Nammu's arabic mode, check undoing something on the arabic
+        pane works and primary pane's content remains intact.
+        '''
+        pass
+
+#TODO Add 'redo' versions of all these cases.
+#     This is stating to look like it needs its own test class.
