@@ -1,7 +1,7 @@
 # Nammu: Desktop GUI for ORACC
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/1.2.0/nammu-1.2.0.jar)
+[here](https://github.com/oracc/nammu/releases/download/1.2.1/nammu-1.2.1.jar)
 and just double click on it to open it.
 
 ## What is ORACC?
@@ -92,7 +92,7 @@ This feature is still a work in progress so please open an [issue](https://githu
 ## How to run Nammu
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/1.2.0/nammu-1.2.0.jar)
+[here](https://github.com/oracc/nammu/releases/download/1.2.1/nammu-1.2.1.jar)
 and just double click on it to open it and use it.
 
 If you find any problem trying to open it, have a look in the [Troubleshooting](#known-problems-and-troubleshooting) section.
@@ -146,9 +146,9 @@ installable file for your operating system
 
 If you keep having trouble, you can also run it from the command line, like this:
 
-`java -jar /path/to/nammu-1.2.0.jar`
+`java -jar /path/to/nammu-1.2.1.jar`
 
-Where `/path/to/` reflects your local path to where the `nammu-1.2.0.jar` file has been downloaded. This will output a clearer log message about what the problem is.
+Where `/path/to/` reflects your local path to where the `nammu-1.2.1.jar` file has been downloaded. This will output a clearer log message about what the problem is.
 
 ### Known problems:
 * Nammu doesn't validate or lemmatise properly when filenames include a space.
@@ -194,7 +194,7 @@ has been installed. It doesn't require any other extra configuration.
 
 ### Requirements
 
-Nammu is developed and tested on Java 8. The new release of Nammu (1.2.0) now supports Java versions 9 and 10. If you encounter problems running Nammu on these versions, please let us know by filing an issue.
+Nammu is developed and tested on Java 8. The new release of Nammu (1.2.1) now supports Java versions 9 and 10. If you encounter problems running Nammu on these versions, please let us know by filing an issue.
 
 #### Contributors
 
@@ -211,27 +211,39 @@ contribute to it if you like.
 To obtain the code and run it, you can follow these steps:
 
 1. Clone the repo in your computer:
- `git clone git@github.com:oracc/nammu.git`
-2. Download and install the [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
-3. Download and install [Maven](https://maven.apache.org) following instructions.
-4. Run the following Maven command to install the project and clean the output
-from previous executions:
- ```
- mvn clean install
- ```
-5. This will create Nammu's jar in the `target` folder. Then you can execute it
+    ```
+    git clone git@github.com:oracc/nammu.git
+    ```    
+1. Install requirements:
+    ```bash
+    cd nammu
+    pip install -r requirements.txt
+    ```
+1. Run tests from nammu's root folder. These check the Oracc's server
+functionality needed by Nammu for validation and lemmatisation, as well as use
+cases related to Nammu's Arabic translation mode. More tests will be added
+before the next release.
+    ```bash
+    py.test
+    ````
+1. Download and install the [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+1. Download and install [Maven](https://maven.apache.org) following instructions.
+1. Run the following Maven command to install the project and clean the output
+from previous executions, skipping tests which can be run separately from the
+build as indicated in step 3:
+    ```bash
+    mvn clean install -DskipTests
+    ```
+1. This will create Nammu's jar in the `target` folder. Then you can execute it
 like this:
- ```
-
- java -jar  target/nammu-1.2.0.jar
-
- ```
-
-6. You can also run Nammu in development mode from the console. See instructions:
+    ```bash
+    java -jar  target/nammu-1.2.1.jar
+    ```
+1. You can also run Nammu in development mode from the console. See instructions:
 https://github.com/oracc/nammu/wiki/Running-Nammu-from-a-console
 
-If you find any problem or need more information, you can create an issue
-[here](https://github.com/oracc/nammu/issues).
+If you find any problem, need more information or would like to contribute, you
+can create an issue [here](https://github.com/oracc/nammu/issues).
 
 
 ## License
