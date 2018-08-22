@@ -224,7 +224,7 @@ functionality needed by Nammu for validation and lemmatisation, as well as use
 cases related to Nammu's Arabic translation mode. More tests will be added
 before the next release.
     ```bash
-    py.test
+    py.test ./python/nammu
     ````
 1. Download and install the [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 1. Download and install [Maven](https://maven.apache.org) following instructions.
