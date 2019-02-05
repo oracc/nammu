@@ -246,7 +246,7 @@ class AtfAreaView(JPanel):
         # Apply the new fontsize to the whole document
         doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
 
-        # If arabic pane is displayed, also apply new fontsize
+        # Also apply new fontsize to arabic pane
         arabic_doc = self.controller.arabic_area.getStyledDocument()
         arabic_doc.setCharacterAttributes(0,
                                           arabic_doc.getLength() + 1,
