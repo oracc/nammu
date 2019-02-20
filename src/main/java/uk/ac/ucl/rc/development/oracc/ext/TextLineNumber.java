@@ -268,8 +268,8 @@ public class TextLineNumber extends JPanel
     			String lineNumber = getTextLineNumber(rowStartOffset);
     			int stringWidth = fontMetrics.stringWidth( lineNumber );
     			int x = getOffsetX(availableWidth, stringWidth) + insets.left;
-				int y = getOffsetY(rowStartOffset, fontMetrics);
-    			g.drawString(lineNumber, x, y);
+				  int y = getOffsetY(rowStartOffset, fontMetrics);
+          g.drawString(lineNumber, x, y);
 
     			//  Move to the next row
 
@@ -306,8 +306,11 @@ public class TextLineNumber extends JPanel
 
 		if (line.getStartOffset() == rowStartOffset)
 			return String.valueOf(index + 1);
-		else
-			return "";
+    // Need this clause to deal with right to left text encoding
+		else if (line.getEndOffset() == rowStartOffset + 1)
+			return String.valueOf(index + 1);
+    else
+      return "";
 	}
 
 	/*

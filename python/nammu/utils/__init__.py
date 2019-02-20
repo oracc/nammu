@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -20,13 +20,11 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import zipfile
 import shutil
-import collections
 import yaml
 import logging
 import re
 import urllib
 from java.lang import ClassLoader, System
-from java.io import InputStreamReader, BufferedReader
 from java.awt import Font
 
 '''

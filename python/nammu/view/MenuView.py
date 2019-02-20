@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -90,7 +90,10 @@ class MenuView(JMenuBar):
                                                             KeyEvent.VK_PERIOD,
                                                             "splitEditorH"
                                                             ]
-        menuItems["Window"]["Unicode Keyboard"] = [KeyEvent.VK_K, "unicode"]
+        menuItems["Window"]["Toggle Arabic Translation Editor"] = [
+                                                                KeyEvent.VK_K,
+                                                                "arabic"
+                                                                ]
 
         menuItems["Help"] = {}
         menuItems["Help"] = collections.OrderedDict()

@@ -5,7 +5,7 @@
 
 	<groupId>uk.ac.ucl.rc.development.oracc</groupId>
 	<artifactId>nammu</artifactId>
-	<version>1.0.0</version>
+	<version>1.2.0</version>
 	<packaging>jar</packaging>
 
 	<name>nammu</name>
@@ -20,6 +20,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
 	</properties>
 
 	<dependencies>
@@ -149,15 +151,17 @@
 					</execution>
 				</executions>
 				<configuration>
-                                        <libraries>
-                                                <param>--index-url=https://pypi.python.org/simple/</param>
-                                                <param>requests&lt;2.12.0</param>
-                                                <param>pytest&lt;3.0</param>
+
+          <libraries>
+            <param>--index-url=https://pypi.python.org/simple/</param>
+            <param>requests&lt;2.12.0</param>
+            <!--param>pytest&lt;3.0</param-->
 						<param>pyyaml</param>
 						<param>mako</param>
 						<param>ply</param>
 						<param>jython-swingutils</param>
-						<param>https://github.com/ucl/pyoracc/archive/master.tar.gz</param>
+						<param>https://github.com/ucl/pyoracc/archive/80313c17744c8aea6196a854656e4aed2d1835b8.tar.gz</param>
+
 					</libraries>
 				</configuration>
 			</plugin>

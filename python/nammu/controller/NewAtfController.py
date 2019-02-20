@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -36,3 +36,5 @@ class NewAtfController:
     def show_template(self):
         self.controller.atfAreaController.setAtfAreaText(
                                                 self.template.decode('utf-8'))
+
+        self.controller.atfAreaController.arabic_area.setText('')

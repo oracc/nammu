@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -18,7 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon, JDialog
-from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
+from javax.swing import JFrame, JLabel, JComboBox, JTextField, JButton
 from java.awt.event import ActionListener
 from java.awt import Dimension, Dialog
 from ..utils import find_image_resource

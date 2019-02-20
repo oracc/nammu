@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -16,11 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
-import re
-from pyoracc.atf.common.atflex import AtfLexer
+
+from pyoracc.atf.atflex import AtfLexer
+
 from java.awt import Color
-from javax.swing.text import StyleContext, StyleConstants
-from javax.swing.text import SimpleAttributeSet
+from javax.swing.text import StyleConstants, SimpleAttributeSet
 from ..utils import set_font
 
 
@@ -163,6 +163,11 @@ class SyntaxHighlighter:
         if not self.syntax_highlight_on or no_of_chars < 1:
             return
 
+        # when we have arabic text, we need to fix an off by 1 error caused
+        # by how we split the panes
+        if self.controller.controller.arabicIndex:
+            no_of_chars = self.controller.controller.arabicIndex - 1
+
         # Get only the text on the screen
         text = self.styledoc.getText(self.viewport_extent[2], no_of_chars)
 
@@ -219,7 +224,12 @@ class SyntaxHighlighter:
                 if str(tok.lineno) in error_lines:
                     attribs = self.error_attribs[color]
                 else:
-                    attribs = self.attribs[color]
+                    try:
+                        attribs = self.attribs[color]
+                    except KeyError:
+                        logger = self.controller.controller.logger
+                        logger.debug('Color not found in attribute table.')
+
                 self.styledoc.setCharacterAttributes(tok.lexpos +
                                                      self.viewport_extent[2],
                                                      mylength,

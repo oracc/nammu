@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -24,8 +24,6 @@ from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
 
 import MyStyledEditorKit
-
-from ..utils import set_font
 
 
 class AtfEditArea(JTextPane):
@@ -78,10 +76,8 @@ class AtfEditArea(JTextPane):
         '''
         super(AtfEditArea, self).setText(text)
 
-        # call here with a top line and bottom line for highlighting following
-        # a set text call
-        top_caret, bottom_caret = self.controller.view.get_viewport_carets()
-        self.controller.syntax_highlight(top_caret, bottom_caret)
+        # Deploy syntax highlighting in a new thread
+        runSwingLater(self.controller.controller.initHighlighting)
 
     def replaceSelection(self, text):
         '''

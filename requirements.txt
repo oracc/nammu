@@ -4,4 +4,4 @@ pyyaml
 mako
 ply
 jython-swingutils
-https://github.com/ucl/pyoracc/archive/master.tar.gz
+https://github.com/ucl/pyoracc/archive/80313c17744c8aea6196a854656e4aed2d1835b8.tar.gz

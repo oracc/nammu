@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -19,13 +19,12 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import logging
-import os
+
 from swingutils.events import addEventListener
 from java.awt import (Color, BorderLayout, GridBagLayout, GridBagConstraints,
                       Insets)
 from javax.swing import (JDialog, JFrame, JPanel, JButton, JCheckBox,
                          JEditorPane, JScrollPane, BorderFactory)
-from javax.swing.border import EmptyBorder
 from javax.swing.event import HyperlinkListener
 from javax.swing.event.HyperlinkEvent import EventType
 from javax.swing.text.html import HTMLEditorKit

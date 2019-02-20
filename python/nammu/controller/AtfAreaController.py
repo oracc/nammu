@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -18,6 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from javax.swing.undo import CannotUndoException, CannotRedoException
+from javax.swing import JTextPane
 from java.awt import Color
 
 from ..view.AtfAreaView import AtfAreaView
@@ -25,6 +26,8 @@ from ..view.AtfEditArea import AtfEditArea
 from ..view.SyntaxHighlighter import SyntaxHighlighter
 import TextLineNumber
 import re
+
+from ..utils import set_font
 
 
 class AtfAreaController(object):
@@ -38,12 +41,16 @@ class AtfAreaController(object):
         self.edit_area = AtfEditArea(self)
         self.caret = self.edit_area.getCaret()
         self.secondary_area = AtfEditArea(self)
+        self.arabic_area = JTextPane()
+
         # Create text panel to display the line numbers
         self.line_numbers_area = TextLineNumber(self.edit_area)
         self.secondary_line_numbers = TextLineNumber(self.secondary_area)
+        self.arabic_line_numbers = TextLineNumber(self.arabic_area)
         # Ensure the line numbers update when the editor font is changed
         self.line_numbers_area.setUpdateFont(True)
         self.secondary_line_numbers.setUpdateFont(True)
+        self.arabic_line_numbers.setUpdateFont(True)
         # Create view with a reference to its controller to handle events
         self.view = AtfAreaView(self)
         # Get a reference to the view's undo_manager
@@ -55,8 +62,18 @@ class AtfAreaController(object):
         # Synch content of split editor panes
         self.secondary_area.setStyledDocument(
                                             self.edit_area.getStyledDocument())
+
         # Syntax highlighting
         self.syntax_highlighter = SyntaxHighlighter(self)
+
+        # Set the arabic area's font size to match the user difened value
+        # Setting the edit area here as well forces both line numbers to be
+        # the same size
+        self.conf = self.controller.config
+        font = set_font(self.conf['edit_area_style']['fontsize']['user'])
+        self.arabic_area.setFont(font)
+        self.edit_area.setFont(font)
+        self.secondary_area.setFont(font)
 
     def setAtfAreaText(self, text):
         '''
@@ -76,13 +93,15 @@ class AtfAreaController(object):
         '''
         return self.view.edit_area.getText()
 
-    def clearAtfArea(self):
+    def clearAtfArea(self, arabic=False):
         '''
         Every time we clear the ATF text area we also need to clear the edits
         pile, repaint the line numbers and remove the styling from previous
         validation highlight.
         '''
         self.setAtfAreaText("")
+        if arabic:
+            self.arabic_area.setText("")
         # When opening a new file we should discard the previous edits
         self.view.undo_manager.discardAllEdits()
         # Clear tooltips
@@ -314,6 +333,14 @@ class AtfAreaController(object):
         '''
         self.view.toggle_split(split_orientation)
 
+    def splitEditorArabic(self, split_orientation, atf_body, atf_translation):
+        '''
+        Toggles split editor view.
+        '''
+        self.view.toggle_split_arabic(split_orientation,
+                                      atf_body,
+                                      atf_translation)
+
     def restore_highlight(self):
         '''
         Turn off syntax highlight of matches.
@@ -364,3 +391,32 @@ class AtfAreaController(object):
         Repaint edit area with appeareance chosen by user.
         '''
         self.view.refresh()
+
+    def findArabic(self, text):
+        '''
+        Returns the caret position of the beginning of the arabic block, if one
+        is found. Otherwise returns None.
+
+        Add additional values to lang_codes or trans_types if we need to
+        support other translation styles or right to left langages in the
+        future
+        '''
+        lang_codes = '|'.join(['ar', 'fa', 'ku'])
+        trans_types = '|'.join(['parallel', 'labeled', 'unitary'])
+
+        regex = r'@translation(\s({}))(\s({})\s)(.*\n)+?'.format(trans_types,
+                                                                 lang_codes)
+        comp = re.compile(regex)
+        search = comp.search(text, re.MULTILINE)
+        if search:
+            return search.start()
+        else:
+            return None
+
+    def concatenate_arabic_text(self):
+        '''
+        Convienience method to get the text from the main text pane and the
+        arabic pane and join them together so files can be saved properly.
+        '''
+        return u'{}{}'.format(self.edit_area.getText(),
+                              self.arabic_area.getText())
