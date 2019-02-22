@@ -292,7 +292,7 @@ class NewAtfView(JDialog):
 
     def build_language_row(self):
         '''
-        Builds the language row.
+        Builds the language line in the new ATF template.
         '''
         # Build own panel with SpringLayout.
         panel = JPanel()
