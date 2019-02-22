@@ -61,6 +61,9 @@ deploy:
     # Note; this api_key is only valid for oracc/nammu; you need
     # to make your own: https://docs.travis-ci.com/user/deployment/releases/
     secure: EW3xfk4/6xV5VMurFlOR8svSH8bk+kvGIw9rBZrnI5sh76M+n3QaqmaI0WWq8V17lix2GzBSbR0CsS5Po2QlIPlSZPwpP1VGrO9BEq0q4EVAVjUQMa0D0U8NSiR3IKhuxox4V48PJttksxeGxN7KcOoDM+WFsttaAxZDl7YU6L8=
-  file: "$HOME/.m2/repository/uk/ac/ucl/rc/development/oracc/nammu/**/nammu*.jar"
+  file_glob: true
+  file: $HOME/.m2/repository/uk/ac/ucl/rc/development/oracc/nammu/**/nammu*.jar
+  skip_cleanup: true
   on:
     repo: oracc/nammu
+    tags: true
