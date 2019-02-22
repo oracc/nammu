@@ -300,7 +300,7 @@ class NewAtfView(JDialog):
         panel.setLayout(layout)
         # Get language list from settings.yaml, removing the default one from
         # the list
-        languages = self.languages.keys()
+        languages = sorted(self.languages.keys())
         languages.remove('default')
         # Create necessary components and add them to panel.
         language_label = JLabel('Language: ')
