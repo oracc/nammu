@@ -16,17 +16,17 @@ before_install:
     if ! [ -z "$PYTEST" ]; then
       export JYTHON_URL='http://search.maven.org/remotecontent?filepath=org/python/jython-installer/2.7.0/jython-installer-2.7.0.jar'
       wget $JYTHON_URL -O jython_installer.jar; java -jar jython_installer.jar -s -d $HOME/jython; export PATH=$HOME/jython/bin:$PATH
-      export JYTHONPATH=$HOME/build/oracc/nammu/resources/lib:$JYTHONPATH
+      export JYTHONPATH=$HOME/build/$TRAVIS_REPO_SLUG/resources/lib:$JYTHONPATH
       mkdir $HOME/.nammu
-      cp $HOME/build/oracc/nammu/resources/config/*.yaml $HOME/.nammu
+      cp $HOME/build/$TRAVIS_REPO_SLUG/resources/config/*.yaml $HOME/.nammu
     fi
 
 install:
   - |
     if ! [ -z "$PYTEST" ]; then
        pip install --user -r requirements.txt
-       mkdir $HOME/build/oracc/nammu/resources/lib
-       javac -d $HOME/build/oracc/nammu/resources/lib $HOME/build/oracc/nammu/src/main/java/uk/ac/ucl/rc/development/oracc/ext/*.java
+       mkdir $HOME/build/$TRAVIS_REPO_SLUG/resources/lib
+       javac -d $HOME/build/$TRAVIS_REPO_SLUG/resources/lib $HOME/build/$TRAVIS_REPO_SLUG/src/main/java/uk/ac/ucl/rc/development/oracc/ext/*.java
     fi
   - |
     if ! [ -z "$PEP8" ]; then
