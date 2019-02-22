@@ -1,5 +1,5 @@
 ---
-version: 0.18
+version: 0.19
 
 languages:
     default: Sumerian
@@ -23,12 +23,9 @@ languages:
     Syllabic: sux-x-syllabic
     Udgalnun: sux-x-udgalnun
     Urartian: xur
-    Urartian Akkadograms: xur-944
-    Urartian Sumerograms: xur-946
     Old Persian: peo
     Hurrian: xhu
     Elamite: elx
-    Aramaic: arc
 
 projects:
     default:
