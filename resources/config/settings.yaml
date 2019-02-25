@@ -1,5 +1,5 @@
 ---
-version: 0.19
+version: 0.20
 
 languages:
     default: Sumerian
@@ -26,6 +26,7 @@ languages:
     Old Persian: peo
     Hurrian: xhu
     Elamite: elx
+    Ugaritic: uga
 
 projects:
     default:
