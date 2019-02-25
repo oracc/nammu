@@ -1,5 +1,5 @@
 ---
-version: 0.17
+version: 0.19
 
 languages:
     default: Sumerian
@@ -22,6 +22,10 @@ languages:
     Emesal: sux-x-emesal
     Syllabic: sux-x-syllabic
     Udgalnun: sux-x-udgalnun
+    Urartian: xur
+    Old Persian: peo
+    Hurrian: xhu
+    Elamite: elx
 
 projects:
     default:

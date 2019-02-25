@@ -630,10 +630,18 @@ class NammuController(object):
                               "request.")
             self.logger.exception(str(re))
             return
+        except Exception as e:
+            self.logger.error("Server error.")
+            self.logger.debug(str(e))
+            return
 
         # Retrieve server logs and lemmatised file from server SOAP response
         self.logger.debug("Reading response sent by ORACC server... ")
-        oracc_log, request_log, autolem = client.get_server_logs()
+        try:
+            oracc_log, request_log, autolem = client.get_server_logs()
+        except IndexError:
+            self.logger.error("Couldn't get server logs.")
+            return
         self.process_server_response(oracc_log, request_log, autolem)
 
     def process_server_response(self, oracc_log, request_log, autolem):
