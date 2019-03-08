@@ -260,10 +260,23 @@ class TestNammu(object):
 
     def test_undo_empty_pane(self):
         '''
-        Undo when empty pane should not do anything and undo stackpile should
-        remain empty.
+        Undo when empty pane should not do anything and the undo stackpile
+        should remain empty.
+        This test is needed because undoing empty panels is unstable and
+        sometimes raises exceptions.
         '''
-        pass
+        #self.nammu.atfAreaController.undo()
+        assert ("edits: []" in self.undo_manager.toString())
+
+    def test_redo_empty_pane(self):
+        '''
+        Redo when empty pane should not do anything and the undo stackpile
+        should remain empty.
+        This test is needed because undoing empty panels is unstable and
+        sometimes raises exceptions.
+        '''
+        #self.nammu.atfAreaController.redo()
+        assert ("edits: []" in self.undo_manager.toString())
 
     def test_undo_after_closing_file(self):
         '''
