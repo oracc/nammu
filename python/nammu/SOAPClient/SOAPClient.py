@@ -64,7 +64,7 @@ class SOAPClient(object):
         self.logger.debug("HTTP request body sent: %s", body)
         try:
             self.response = requests.post(url, data=body, headers=headers,
-                                          timeout=3)
+                                          timeout=5)
         except ConnectTimeout:
             self.logger.error('Connection timed out when sending POST '
                               'request.')
