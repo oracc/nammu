@@ -284,11 +284,14 @@ class TestNammu(object):
         '''
         pass
 
-    def test_undo_edit_pane(self, simpletext):
+    def test_undo_edit_pane(self, empty_compound):
         '''
         Check adding a simple text and undoing last edit compound works.
         '''
-        pass
+        controller = self.nammu.atfAreaController
+        controller.edit_area.setText("Hello Nammu!")
+        controller.undo()
+        assert (self.edit_listener.current_compound != empty_compound)
 
     def test_undo_split_primary_pane(self, simpletext):
         '''
