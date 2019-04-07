@@ -9,6 +9,7 @@ from java.awt import Color
 from javax.swing import JSplitPane
 from javax.swing.undo import CompoundEdit
 
+
 @pytest.fixture
 def simpletext():
     return u'this is a simple test line'
@@ -122,7 +123,7 @@ class TestNammu(object):
         self.nammu = NammuController()
 
     def teardown_class(self):
-        System.exit(0)
+        del self.nammu
 
     @pytest.mark.parametrize('text', [simpletext(), english(), arabic(),
                                       english_no_lem(), arabic_no_lem(),
@@ -272,9 +273,10 @@ class TestNammu(object):
         This test is needed because undoing empty panels is unstable and
         sometimes raises exceptions.
         '''
-        self.nammu.atfAreaController.clearAtfArea()
-        self.nammu.atfAreaController.undo()
-        assert ("edits: []" in self.nammu.atfAreaController.undo_manager.toString())
+        controller = self.nammu.atfAreaController
+        controller.clearAtfArea()
+        controller.undo()
+        assert ("edits: []" in controller.undo_manager.toString())
 
     def test_redo_empty_pane(self):
         '''
@@ -283,9 +285,10 @@ class TestNammu(object):
         This test is needed because undoing empty panels is unstable and
         sometimes raises exceptions.
         '''
-        self.nammu.atfAreaController.clearAtfArea()
-        self.nammu.atfAreaController.redo()
-        assert ("edits: []" in self.nammu.atfAreaController.undo_manager.toString())
+        controller = self.nammu.atfAreaController
+        controller.clearAtfArea()
+        controller.redo()
+        assert ("edits: []" in controller.undo_manager.toString())
 
     def test_undo_after_opening_file(self, monkeypatch):
         '''
@@ -297,12 +300,10 @@ class TestNammu(object):
         monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
                             selected_file_patch_english)
         monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
-
         self.nammu.openFile()
-        self.nammu.closeFile()
-
-        self.nammu.atfAreaController.redo()
-        assert ("edits: []" in self.nammu.atfAreaController.undo_manager.toString())
+        controller = self.nammu.atfAreaController
+        controller.redo()
+        assert ("edits: []" in controller.undo_manager.toString())
 
     def test_undo_after_closing_file(self, monkeypatch):
         '''
@@ -314,12 +315,11 @@ class TestNammu(object):
         monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
                             selected_file_patch_english)
         monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
-
         self.nammu.openFile()
         self.nammu.closeFile()
-
-        self.nammu.atfAreaController.redo()
-        assert ("edits: []" in self.nammu.atfAreaController.undo_manager.toString())
+        controller = self.nammu.atfAreaController
+        controller.redo()
+        assert ("edits: []" in controller.undo_manager.toString())
 
     def test_undo_edit_pane(self, empty_compound):
         '''
