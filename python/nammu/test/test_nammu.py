@@ -272,8 +272,9 @@ class TestNammu(object):
         This test is needed because undoing empty panels is unstable and
         sometimes raises exceptions.
         '''
-        #self.nammu.atfAreaController.undo()
-        assert ("edits: []" in self.undo_manager.toString())
+        self.nammu.atfAreaController.clearAtfArea()
+        self.nammu.atfAreaController.undo()
+        assert ("edits: []" in self.nammu.atfAreaController.undo_manager.toString())
 
     def test_redo_empty_pane(self):
         '''
