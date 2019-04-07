@@ -283,14 +283,43 @@ class TestNammu(object):
         This test is needed because undoing empty panels is unstable and
         sometimes raises exceptions.
         '''
-        #self.nammu.atfAreaController.redo()
-        assert ("edits: []" in self.undo_manager.toString())
+        self.nammu.atfAreaController.clearAtfArea()
+        self.nammu.atfAreaController.redo()
+        assert ("edits: []" in self.nammu.atfAreaController.undo_manager.toString())
 
-    def test_undo_after_closing_file(self):
+    def test_undo_after_opening_file(self, monkeypatch):
         '''
         Undo after closing a file should not bring back the old file.
         '''
-        pass
+        import javax.swing.JFileChooser
+        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+                            selected_file_patch_english)
+        monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
+
+        self.nammu.openFile()
+        self.nammu.closeFile()
+
+        self.nammu.atfAreaController.redo()
+        assert ("edits: []" in self.nammu.atfAreaController.undo_manager.toString())
+
+    def test_undo_after_closing_file(self, monkeypatch):
+        '''
+        Undo after closing a file should not bring back the old file.
+        '''
+        import javax.swing.JFileChooser
+        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+                            selected_file_patch_english)
+        monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
+
+        self.nammu.openFile()
+        self.nammu.closeFile()
+
+        self.nammu.atfAreaController.redo()
+        assert ("edits: []" in self.nammu.atfAreaController.undo_manager.toString())
 
     def test_undo_edit_pane(self, empty_compound):
         '''
