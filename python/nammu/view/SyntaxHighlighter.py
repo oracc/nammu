@@ -20,7 +20,10 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 from pyoracc.atf.atflex import AtfLexer
 
 from java.awt import Color
-from javax.swing.text import StyleConstants, SimpleAttributeSet, BadLocationException
+from javax.swing.text import (
+    StyleConstants,
+    SimpleAttributeSet,
+    BadLocationException)
 from ..utils import set_font
 
 
