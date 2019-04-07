@@ -255,13 +255,15 @@ class TestNammu(object):
         update colouring), added to the undo manager as a single edit compound
         so they are all undone/redone at once.
         '''
-        self.nammu.atfAreaController.edit_area.setText("a")
+        controller = self.nammu.atfAreaController
+        controller.edit_area.setText("a")
+        listener = controller.view.edit_listener
         # Edits list within the undo_manager is not accessible and toString()
         # is the only way I found to inspect it.
         # TODO: I could do some of this stuff in Java, where I can access the
         # edits, but that's a bit overcomplicated at this stage.
-        assert (self.edit_listener.current_compound != empty_compound and
-                "edits: []" not in self.undo_manager.toString())
+        assert (listener.current_compound != empty_compound and
+                "edits: []" not in controller.undo_manager.toString())
 
     def test_undo_empty_pane(self):
         '''
@@ -296,7 +298,8 @@ class TestNammu(object):
         controller = self.nammu.atfAreaController
         controller.edit_area.setText("Hello Nammu!")
         controller.undo()
-        assert (self.edit_listener.current_compound != empty_compound)
+        listener = controller.view.edit_listener
+        assert (listener.current_compound != empty_compound)
 
     def test_undo_split_primary_pane(self, simpletext):
         '''
