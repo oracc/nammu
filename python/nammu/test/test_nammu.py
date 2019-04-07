@@ -122,7 +122,7 @@ class TestNammu(object):
         self.nammu = NammuController()
 
     def teardown_class(self):
-        del self.nammu
+        System.exit(0)
 
     @pytest.mark.parametrize('text', [simpletext(), english(), arabic(),
                                       english_no_lem(), arabic_no_lem(),
