@@ -119,11 +119,13 @@ class mockFile(object):
 
 class TestNammu(object):
 
+    @classmethod
     def setup_class(self):
         self.nammu = NammuController()
 
+    @classmethod
     def teardown_class(self):
-        del self.nammu
+        self.nammu.view.dispose()
 
     @pytest.mark.parametrize('text', [simpletext(), english(), arabic(),
                                       english_no_lem(), arabic_no_lem(),
