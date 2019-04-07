@@ -7,7 +7,7 @@ from python.nammu.controller.NammuController import NammuController
 
 from java.awt import Color
 from javax.swing import JSplitPane
-
+from javax.swing.undo import CompoundEdit
 
 @pytest.fixture
 def simpletext():
@@ -72,6 +72,11 @@ def blue():
 @pytest.fixture
 def pink():
     return Color(211, 54, 130)
+
+
+@pytest.fixture
+def empty_compound():
+    return CompoundEdit()
 
 
 def show_diag_patch(a, b, c):
