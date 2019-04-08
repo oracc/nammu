@@ -203,6 +203,7 @@ class NammuController(object):
                 # we dont highlight before the full file is loaded
                 runSwingLater(self.initHighlighting)
 
+
             # TODO: Else, prompt user to choose again before closing
 
             # Update settings with current file's path
@@ -211,6 +212,9 @@ class NammuController(object):
 
             # Finally, refresh the edit area to propagate custom font settings
             self.atfAreaController.refreshEditArea()
+
+            # Clear stack of edits
+            self.atfAreaController.view.undo_manager.discardAllEdits()
 
     def initHighlighting(self):
         '''
