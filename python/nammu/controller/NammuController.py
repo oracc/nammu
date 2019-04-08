@@ -400,6 +400,8 @@ class NammuController(object):
             self.logger.debug("File %s successfully closed.",
                               self.currentFilename)
             self.currentFilename = None
+            # Clear stack of edits
+            self.atfAreaController.view.undo_manager.discardAllEdits()
 
     def unsavedChanges(self):
         '''
