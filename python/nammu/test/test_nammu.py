@@ -304,7 +304,7 @@ class TestNammu(object):
         monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
         self.nammu.openFile()
         controller = self.nammu.atfAreaController
-        controller.redo()
+        controller.undo()
         assert ("edits: []" in controller.undo_manager.toString())
 
     def test_undo_after_closing_file(self, monkeypatch):
@@ -320,7 +320,7 @@ class TestNammu(object):
         self.nammu.openFile()
         self.nammu.closeFile()
         controller = self.nammu.atfAreaController
-        controller.redo()
+        controller.undo()
         assert ("edits: []" in controller.undo_manager.toString())
 
     def test_undo_edit_pane(self, empty_compound):
