@@ -748,7 +748,7 @@ class NammuController(object):
                 if line_number not in validation_errors.keys():
                     validation_errors[line_number] = ''
 
-                formatted_err = ('<a href={0}>{1}:{0}:{2}</a>:{3}'
+                formatted_err = ('<a href={0}>{1}:{0}</a>:{2}:{3}'
                                  .format(line_number,
                                          server_filename,
                                          project_id,
