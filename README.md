@@ -194,7 +194,7 @@ has been installed. It doesn't require any other extra configuration.
 
 ### Requirements
 
-Nammu is developed and tested on Java 8. The new release of Nammu (1.2.2) now supports Java versions 9 and 10. If you encounter problems running Nammu on these versions, please let us know by filing an issue.
+Nammu is developed and tested on Java 8. The new release of Nammu (1.2.2) now supports Java versions 9 and 10 for users, although not yet for development. If you encounter problems running Nammu on these versions, please let us know by filing an issue.
 
 #### Contributors
 
