@@ -471,8 +471,6 @@ class NammuController(object):
         if self.handleUnsaved():
             System.exit(0)
 
-    # def quit_
-
     def undo(self, event=None):
         self.atfAreaController.undo()
 
