@@ -213,7 +213,7 @@ class NammuController(object):
             self.atfAreaController.refreshEditArea()
 
             # Clear stack of edits
-            self.atfAreaController.view.undo_manager.discardAllEdits()
+            self.atfAreaController.undo_manager.discardAllEdits()
 
     def initHighlighting(self):
         '''
@@ -400,7 +400,7 @@ class NammuController(object):
                               self.currentFilename)
             self.currentFilename = None
             # Clear stack of edits
-            self.atfAreaController.view.undo_manager.discardAllEdits()
+            self.atfAreaController.undo_manager.discardAllEdits()
 
     def unsavedChanges(self):
         '''
