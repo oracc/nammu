@@ -585,7 +585,7 @@ class NammuController(object):
         client = SOAPClient(url, port, url_dir, method='POST')
 
         atf_basename = os.path.basename(self.currentFilename)
-        nammu_text = self.atfAreaController.getAtfAreaText()
+        nammu_text = self._getAtfText(self.arabic_edition_on)
 
         # Remove spaces from filename which make the server confused
         atf_basename = atf_basename.replace(' ', '')
