@@ -203,7 +203,6 @@ class NammuController(object):
                 # we dont highlight before the full file is loaded
                 runSwingLater(self.initHighlighting)
 
-
             # TODO: Else, prompt user to choose again before closing
 
             # Update settings with current file's path
@@ -471,6 +470,8 @@ class NammuController(object):
         '''
         if self.handleUnsaved():
             System.exit(0)
+
+    # def quit_
 
     def undo(self, event=None):
         self.atfAreaController.undo()
