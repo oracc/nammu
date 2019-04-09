@@ -219,7 +219,7 @@ To obtain the code and run it, you can follow these steps:
     cd nammu
     pip install -r requirements.txt
     ```
-1. Run tests from nammu's root folder. These check the Oracc's server
+1. Run tests from nammu's root folder. These check the Oracc server's
 functionality needed by Nammu for validation and lemmatisation, as well as use
 cases related to Nammu's Arabic translation mode. More tests will be added
 before the next release.
