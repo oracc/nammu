@@ -6,7 +6,7 @@ import os
 from python.nammu.controller.NammuController import NammuController
 
 from java.awt import Color
-from javax.swing import JSplitPane
+from javax.swing import JSplitPane, JFileChooser
 from javax.swing.undo import CompoundEdit
 
 
@@ -194,10 +194,9 @@ class TestNammu(object):
         assert self.nammu.atfAreaController.validation_errors
 
     def test_file_load(self, monkeypatch):
-        import javax.swing.JFileChooser
-        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+        monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
-        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
                             selected_file_patch_english)
         monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
 
@@ -205,10 +204,9 @@ class TestNammu(object):
         assert len(self.nammu.atfAreaController.edit_area.getText()) > 1
 
     def test_saving_split_pane(self, monkeypatch, tmpdir, arabic):
-        import javax.swing.JFileChooser
-        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+        monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
-        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
                             selected_file_patch_arabic)
         monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
 
@@ -221,10 +219,9 @@ class TestNammu(object):
         assert generic_loader(self.nammu.currentFilename) == arabic
 
     def test_saving_single_pane(self, monkeypatch, tmpdir, english):
-        import javax.swing.JFileChooser
-        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+        monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
-        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
                             selected_file_patch_english)
         monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
 
@@ -237,11 +234,9 @@ class TestNammu(object):
         assert generic_loader(self.nammu.currentFilename) == english
 
     def test_arabic_split_pane(self, monkeypatch):
-
-        import javax.swing.JFileChooser
-        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+        monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
-        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
                             selected_file_patch_arabic)
         monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
 
@@ -296,10 +291,9 @@ class TestNammu(object):
         '''
         Undo after closing a file should not bring back the old file.
         '''
-        import javax.swing.JFileChooser
-        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+        monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
-        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
                             selected_file_patch_english)
         monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
         self.nammu.openFile()
@@ -311,10 +305,9 @@ class TestNammu(object):
         '''
         Undo after closing a file should not bring back the old file.
         '''
-        import javax.swing.JFileChooser
-        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+        monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
-        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
                             selected_file_patch_english)
         monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
         self.nammu.openFile()
