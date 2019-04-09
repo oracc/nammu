@@ -39,3 +39,4 @@ class NewAtfController:
                                                 self.template.decode('utf-8'))
 
         self.controller.atfAreaController.arabic_area.setText('')
+        self.controller.atfAreaController.undo_manager.discardAllEdits()
