@@ -240,7 +240,7 @@ like this:
     java -jar  target/nammu-1.2.2.jar
     ```
 1. You can also run Nammu in development mode from the console. See instructions:
-https://github.com/oracc/nammu/wiki/Running-Nammu-from-a-console
+https://github.com/oracc/nammu/wiki/Run-Nammu-from-a-console
 
 If you find any problem, need more information or would like to contribute, you
 can create an issue [here](https://github.com/oracc/nammu/issues).
