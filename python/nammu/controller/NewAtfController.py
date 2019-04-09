@@ -34,6 +34,7 @@ class NewAtfController:
         self.view.display()
 
     def show_template(self):
+        self.controller.atfAreaController.clearAtfArea()
         self.controller.atfAreaController.setAtfAreaText(
                                                 self.template.decode('utf-8'))
 
