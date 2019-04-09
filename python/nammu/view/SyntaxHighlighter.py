@@ -178,7 +178,7 @@ class SyntaxHighlighter:
             text = self.styledoc.getText(self.viewport_extent[2], no_of_chars)
         except BadLocationException:
             logger = self.controller.controller.logger
-            logger.warning("BadLocation error when syntax highlighting.")
+            logger.debug("BadLocation error when syntax highlighting.")
             return
 
         # Reset lexer and parse text
