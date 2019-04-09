@@ -288,7 +288,7 @@ class TestNammu(object):
 
     def test_undo_after_opening_file(self, monkeypatch):
         '''
-        Undo after closing a file should not bring back the old file.
+        Undo after opening a new file should not bring back the old file.
         '''
         monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
