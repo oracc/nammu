@@ -247,7 +247,7 @@ class TestNammu(object):
         assert isinstance(self.nammu.atfAreaController.view.container,
                           JSplitPane)
 
-    def test_edit_compound(self, empty_compound):
+    def test_edit_compound(self):
         '''
         Adding a character should trigger several edit events (insert and
         update colouring), added to the undo manager as a single edit compound
@@ -260,8 +260,7 @@ class TestNammu(object):
         # is the only way I found to inspect it.
         # TODO: I could do some of this stuff in Java, where I can access the
         # edits, but that's a bit overcomplicated at this stage.
-        assert (listener.current_compound != empty_compound and
-                "edits: []" not in controller.undo_manager.toString())
+        assert ("edits: []" not in controller.undo_manager.toString())
 
     def test_undo_empty_pane(self):
         '''
@@ -321,10 +320,14 @@ class TestNammu(object):
         Check adding a simple text and undoing last edit compound works.
         '''
         controller = self.nammu.atfAreaController
+        undo_manager = controller.undo_manager
+        # Clear all possible edits from previous tests
+        undo_manager.discardAllEdits()
+        # Write something to undo
         controller.edit_area.setText("Hello Nammu!")
         controller.undo()
-        listener = controller.view.edit_listener
-        assert (listener.current_compound != empty_compound)
+        assert (controller.edit_area.getText() == "" and
+                "edits: []" not in undo_manager.toString())
 
     def test_undo_split_primary_pane(self, simpletext):
         '''
