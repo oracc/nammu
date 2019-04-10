@@ -44,7 +44,7 @@ before_script:
 script:
   - |
     if ! [ -z "$PYTEST" ]; then
-      py.test
+      py.test python/nammu/test/
     fi
   - |
     if ! [ -z "$PEP8" ]; then

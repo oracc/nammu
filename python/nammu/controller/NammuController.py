@@ -212,6 +212,9 @@ class NammuController(object):
             # Finally, refresh the edit area to propagate custom font settings
             self.atfAreaController.refreshEditArea()
 
+            # Clear stack of edits
+            self.atfAreaController.undo_manager.discardAllEdits()
+
     def initHighlighting(self):
         '''
         A helper function to be called when we need to initialise syntax
@@ -396,6 +399,8 @@ class NammuController(object):
             self.logger.debug("File %s successfully closed.",
                               self.currentFilename)
             self.currentFilename = None
+            # Clear stack of edits
+            self.atfAreaController.undo_manager.discardAllEdits()
 
     def unsavedChanges(self):
         '''
@@ -580,7 +585,7 @@ class NammuController(object):
         client = SOAPClient(url, port, url_dir, method='POST')
 
         atf_basename = os.path.basename(self.currentFilename)
-        nammu_text = self.atfAreaController.getAtfAreaText()
+        nammu_text = self._getAtfText(self.arabic_edition_on)
 
         # Remove spaces from filename which make the server confused
         atf_basename = atf_basename.replace(' ', '')
@@ -750,7 +755,7 @@ class NammuController(object):
                 if line_number not in validation_errors.keys():
                     validation_errors[line_number] = ''
 
-                formatted_err = ('<a href={0}>{1}:{0}:{2}</a>:{3}'
+                formatted_err = ('<a href={0}>{1}:{0}</a>:{2}:{3}'
                                  .format(line_number,
                                          server_filename,
                                          project_id,

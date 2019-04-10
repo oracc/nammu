@@ -66,6 +66,8 @@ class AtfAreaView(JPanel):
         self.edit_listener = AtfUndoableEditListener(self.undo_manager)
         self.edit_area.getDocument().addUndoableEditListener(
                                                         self.edit_listener)
+        self.arabic_area.getDocument().addUndoableEditListener(
+                                                        self.edit_listener)
 
         # Sort out layout by synch-ing line numbers and text area and putting
         # only the text area in a scroll pane as indicated in the
@@ -89,6 +91,7 @@ class AtfAreaView(JPanel):
         # Add a document listener to track changes to files
         docListener = atfAreaDocumentListener(self)
         self.edit_area.getDocument().addDocumentListener(docListener)
+        self.arabic_area.getDocument().addDocumentListener(docListener)
 
         # instance variable to store a record of the text contents prior to the
         # most recent change. Needed so that the different listeners can access
@@ -245,6 +248,13 @@ class AtfAreaView(JPanel):
 
         # Apply the new fontsize to the whole document
         doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
+
+        # Also apply new fontsize to arabic pane
+        arabic_doc = self.controller.arabic_area.getStyledDocument()
+        arabic_doc.setCharacterAttributes(0,
+                                          arabic_doc.getLength() + 1,
+                                          attrs,
+                                          False)
 
 
 class atfAreaDocumentListener(DocumentListener):

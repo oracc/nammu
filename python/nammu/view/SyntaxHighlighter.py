@@ -20,7 +20,10 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 from pyoracc.atf.atflex import AtfLexer
 
 from java.awt import Color
-from javax.swing.text import StyleConstants, SimpleAttributeSet
+from javax.swing.text import (
+    StyleConstants,
+    SimpleAttributeSet,
+    BadLocationException)
 from ..utils import set_font
 
 
@@ -169,7 +172,14 @@ class SyntaxHighlighter:
             no_of_chars = self.controller.controller.arabicIndex - 1
 
         # Get only the text on the screen
-        text = self.styledoc.getText(self.viewport_extent[2], no_of_chars)
+        # TODO: This exception can probably be understood and worked around
+        #       in a nicer way
+        try:
+            text = self.styledoc.getText(self.viewport_extent[2], no_of_chars)
+        except BadLocationException:
+            logger = self.controller.controller.logger
+            logger.debug("BadLocation error when syntax highlighting.")
+            return
 
         # Reset lexer and parse text
         self.lexer.input(text)

@@ -6,7 +6,13 @@ import os
 from python.nammu.controller.NammuController import NammuController
 
 from java.awt import Color
-from javax.swing import JSplitPane
+from javax.swing import JSplitPane, JFileChooser
+from javax.swing.undo import CompoundEdit
+
+
+@pytest.yield_fixture(scope="class", autouse=True)
+def nammu():
+    yield NammuController()
 
 
 @pytest.fixture
@@ -74,6 +80,11 @@ def pink():
     return Color(211, 54, 130)
 
 
+@pytest.fixture
+def empty_compound():
+    return CompoundEdit()
+
+
 def show_diag_patch(a, b, c):
     '''
     Monkeypatch the clicking of the ok button on the file load dialog.
@@ -113,18 +124,12 @@ class mockFile(object):
 
 class TestNammu(object):
 
-    def setup_class(self):
-        self.nammu = NammuController()
-
-    def teardown_class(self):
-        del self.nammu
-
     @pytest.mark.parametrize('text', [simpletext(), english(), arabic(),
                                       english_no_lem(), arabic_no_lem(),
                                       broken_atf()])
-    def test_set_text(self, text):
-        self.nammu.atfAreaController.edit_area.setText(text)
-        assert self.nammu.atfAreaController.edit_area.getText() == text
+    def test_set_text(self, text, nammu):
+        nammu.atfAreaController.edit_area.setText(text)
+        assert nammu.atfAreaController.edit_area.getText() == text
 
     @pytest.mark.parametrize('text, caret, color', [(simpletext(), 5, black()),
                                                     (english(), 137, red()),
@@ -135,111 +140,275 @@ class TestNammu(object):
                                                      yellow()),
                                                     (broken_atf(), 3,
                                                      green())])
-    def test_syntax_highlight(self, text, caret, color):
-        self.nammu.atfAreaController.edit_area.setText(text)
+    def test_syntax_highlight(self, text, caret, color, nammu):
+        nammu.atfAreaController.edit_area.setText(text)
         # Wait here so the highlight completes before getting the styledoc
         time.sleep(2)
-        doc = self.nammu.atfAreaController.edit_area.getStyledDocument()
+        doc = nammu.atfAreaController.edit_area.getStyledDocument()
 
         # Get the colour of a given character that should be highlighted
         c = doc.getForeground(doc.getCharacterElement(caret).getAttributes())
         assert c.equals(color)
 
     @pytest.mark.parametrize('text', [english_no_lem(), arabic_no_lem()])
-    def test_successful_lem_no_existing_lem(self, text):
-        self.nammu.currentFilename = 'pytest.atf'  # bypass saving the file
-        self.nammu.atfAreaController.edit_area.setText(text)
-        self.nammu.lemmatise()
-        assert text != self.nammu.atfAreaController.edit_area.getText()
+    def test_successful_lem_no_existing_lem(self, text, nammu):
+        nammu.currentFilename = 'pytest.atf'  # bypass saving the file
+        nammu.atfAreaController.edit_area.setText(text)
+        nammu.lemmatise()
+        assert text != nammu.atfAreaController.edit_area.getText()
 
     @pytest.mark.parametrize('text', [english(), arabic()])
-    def test_successful_lem_existing_lem(self, text):
-        self.nammu.currentFilename = 'pytest.atf'  # bypass saving the file
-        self.nammu.atfAreaController.edit_area.setText(text)
-        self.nammu.lemmatise()
-        assert text == self.nammu.atfAreaController.edit_area.getText()
+    def test_successful_lem_existing_lem(self, text, nammu):
+        nammu.currentFilename = 'pytest.atf'  # bypass saving the file
+        nammu.atfAreaController.edit_area.setText(text)
+        nammu.lemmatise()
+        assert text == nammu.atfAreaController.edit_area.getText()
 
-    def test_unsuccsessful_lem(self, broken_atf):
-        self.nammu.currentFilename = 'pytest.atf'  # bypass saving the file
-        self.nammu.atfAreaController.edit_area.setText(broken_atf)
-        self.nammu.lemmatise()
+    def test_unsuccsessful_lem(self, broken_atf, nammu):
+        nammu.currentFilename = 'pytest.atf'  # bypass saving the file
+        nammu.atfAreaController.edit_area.setText(broken_atf)
+        nammu.lemmatise()
 
         # An empty dictionary means no validation errors
-        assert self.nammu.atfAreaController.validation_errors
+        assert nammu.atfAreaController.validation_errors
 
     @pytest.mark.parametrize('text', [english(), arabic(), english_no_lem(),
                                       arabic_no_lem()])
-    def test_successful_validation(self, text):
-        self.nammu.currentFilename = 'pytest.atf'  # bypass saving the file
-        self.nammu.atfAreaController.edit_area.setText(text)
-        self.nammu.validate()
+    def test_successful_validation(self, text, nammu):
+        nammu.currentFilename = 'pytest.atf'  # bypass saving the file
+        nammu.atfAreaController.edit_area.setText(text)
+        nammu.validate()
 
         # An empty dictionary means no validation errors
-        assert not self.nammu.atfAreaController.validation_errors
+        assert not nammu.atfAreaController.validation_errors
 
-    def test_unsuccessful_validation(self, broken_atf):
-        self.nammu.currentFilename = 'pytest.atf'  # bypass saving the file
-        self.nammu.atfAreaController.edit_area.setText(broken_atf)
-        self.nammu.validate()
+    def test_unsuccessful_validation(self, broken_atf, nammu):
+        nammu.currentFilename = 'pytest.atf'  # bypass saving the file
+        nammu.atfAreaController.edit_area.setText(broken_atf)
+        nammu.validate()
 
         # An empty dictionary means no validation errors
-        assert self.nammu.atfAreaController.validation_errors
+        assert nammu.atfAreaController.validation_errors
 
-    def test_file_load(self, monkeypatch):
-        import javax.swing.JFileChooser
-        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+    def test_file_load(self, monkeypatch, nammu):
+        monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
-        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
                             selected_file_patch_english)
-        monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
+        monkeypatch.setattr(nammu, 'handleUnsaved', unsaved_patch)
 
-        self.nammu.openFile()
-        assert len(self.nammu.atfAreaController.edit_area.getText()) > 1
+        nammu.openFile()
+        assert len(nammu.atfAreaController.edit_area.getText()) > 1
 
-    def test_saving_split_pane(self, monkeypatch, tmpdir, arabic):
-        import javax.swing.JFileChooser
-        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+    def test_saving_split_pane(self, monkeypatch, tmpdir, arabic, nammu):
+        monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
-        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
                             selected_file_patch_arabic)
-        monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
+        monkeypatch.setattr(nammu, 'handleUnsaved', unsaved_patch)
 
-        self.nammu.openFile()
-        self.nammu.currentFilename = str(tmpdir.join('pytest.atf'))
+        nammu.openFile()
+        nammu.currentFilename = str(tmpdir.join('pytest.atf'))
 
-        self.nammu.saveFile()
+        nammu.saveFile()
 
-        assert os.path.isfile(self.nammu.currentFilename)
-        assert generic_loader(self.nammu.currentFilename) == arabic
+        assert os.path.isfile(nammu.currentFilename)
+        assert generic_loader(nammu.currentFilename) == arabic
 
-    def test_saving_single_pane(self, monkeypatch, tmpdir, english):
-        import javax.swing.JFileChooser
-        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+    def test_saving_single_pane(self, monkeypatch, tmpdir, english, nammu):
+        monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
-        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
                             selected_file_patch_english)
-        monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
+        monkeypatch.setattr(nammu, 'handleUnsaved', unsaved_patch)
 
-        self.nammu.openFile()
-        self.nammu.currentFilename = str(tmpdir.join('pytest.atf'))
+        nammu.openFile()
+        nammu.currentFilename = str(tmpdir.join('pytest.atf'))
 
-        self.nammu.saveFile()
+        nammu.saveFile()
 
-        assert os.path.isfile(self.nammu.currentFilename)
-        assert generic_loader(self.nammu.currentFilename) == english
+        assert os.path.isfile(nammu.currentFilename)
+        assert generic_loader(nammu.currentFilename) == english
 
-    def test_arabic_split_pane(self, monkeypatch):
-
-        import javax.swing.JFileChooser
-        monkeypatch.setattr(javax.swing.JFileChooser, 'showDialog',
+    def test_arabic_split_pane(self, monkeypatch, nammu):
+        monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
-        monkeypatch.setattr(javax.swing.JFileChooser, 'getSelectedFile',
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
                             selected_file_patch_arabic)
-        monkeypatch.setattr(self.nammu, 'handleUnsaved', unsaved_patch)
+        monkeypatch.setattr(nammu, 'handleUnsaved', unsaved_patch)
 
-        assert self.nammu.arabic_edition_on is False
-        self.nammu.openFile()
-        assert self.nammu.arabic_edition_on is True
+        assert nammu.arabic_edition_on is False
+        nammu.openFile()
+        assert nammu.arabic_edition_on is True
 
-        assert isinstance(self.nammu.atfAreaController.view.container,
+        assert isinstance(nammu.atfAreaController.view.container,
                           JSplitPane)
+
+    def test_edit_compound(self, nammu):
+        '''
+        Adding a character should trigger several edit events (insert and
+        update colouring), added to the undo manager as a single edit compound
+        so they are all undone/redone at once.
+        '''
+        controller = nammu.atfAreaController
+        controller.edit_area.setText("a")
+        listener = controller.view.edit_listener
+        # Edits list within the undo_manager is not accessible and toString()
+        # is the only way I found to inspect it.
+        # TODO: I could do some of this stuff in Java, where I can access the
+        # edits, but that's a bit overcomplicated at this stage.
+        assert ("edits: []" not in controller.undo_manager.toString())
+
+    def test_undo_empty_pane(self, nammu):
+        '''
+        Undo when empty pane should not do anything and the undo stackpile
+        should remain empty.
+        This test is needed because undoing empty panels is unstable and
+        sometimes raises exceptions.
+        '''
+        controller = nammu.atfAreaController
+        controller.clearAtfArea()
+        controller.undo()
+        assert ("edits: []" in controller.undo_manager.toString())
+
+    def test_redo_empty_pane(self, nammu):
+        '''
+        Redo when empty pane should not do anything and the undo stackpile
+        should remain empty.
+        This test is needed because undoing empty panels is unstable and
+        sometimes raises exceptions.
+        '''
+        controller = nammu.atfAreaController
+        controller.clearAtfArea()
+        controller.redo()
+        assert ("edits: []" in controller.undo_manager.toString())
+
+    def test_undo_after_opening_file(self, monkeypatch, nammu):
+        '''
+        Undo after opening a new file should not bring back the old file.
+        '''
+        monkeypatch.setattr(JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
+                            selected_file_patch_english)
+        monkeypatch.setattr(nammu, 'handleUnsaved', unsaved_patch)
+        nammu.openFile()
+        controller = nammu.atfAreaController
+        controller.undo()
+        assert ("edits: []" in controller.undo_manager.toString())
+
+    def test_undo_after_closing_file(self, monkeypatch, nammu):
+        '''
+        Undo after closing a file should not bring back the old file.
+        '''
+        monkeypatch.setattr(JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
+                            selected_file_patch_english)
+        monkeypatch.setattr(nammu, 'handleUnsaved', unsaved_patch)
+        nammu.openFile()
+        nammu.closeFile()
+        controller = nammu.atfAreaController
+        controller.undo()
+        assert ("edits: []" in controller.undo_manager.toString())
+
+    def test_undo_edit_pane(self, empty_compound, nammu):
+        '''
+        Check adding a simple text and undoing last edit compound works.
+        '''
+        controller = nammu.atfAreaController
+        undo_manager = controller.undo_manager
+        # Clear all possible edits from previous tests
+        undo_manager.discardAllEdits()
+        # Write something to undo
+        controller.edit_area.setText("Hello Nammu!")
+        controller.undo()
+        assert (controller.edit_area.getText() == "" and
+                "edits: []" not in undo_manager.toString())
+
+    def test_undo_split_primary_pane(self, simpletext, nammu):
+        '''
+        Using Nammu's split pane mode, check undoing something on the primary
+        pane is reflected also in secondary pane and vice versa.
+        Undo action is not linked to an edit area but to the controller, so
+        this test checks for undoing in both primary and secondary.
+        '''
+        controller = nammu.atfAreaController
+        nammu.splitEditorV()
+        controller.edit_area.setText("Hello primary edit area!")
+        controller.undo()
+        assert (controller.edit_area.getText() ==
+                controller.secondary_area.getText())
+
+    def test_redo_split_primary_pane(self, simpletext, nammu):
+        '''
+        Using Nammu's split pane mode, check redoing something on the primary
+        pane is reflected also in secondary pane and vice versa.
+        Redo action is not linked to an edit area but to the controller, so
+        this test checks for redoing in both primary and secondary.
+        '''
+        controller = nammu.atfAreaController
+        nammu.splitEditorV()
+        controller.edit_area.setText("Hello primary edit area!")
+        controller.undo()
+        controller.redo()
+        assert (controller.edit_area.getText() ==
+                controller.secondary_area.getText())
+
+    def test_undo_arabic_primary(self, arabic, nammu):
+        '''
+        Using Nammu's arabic mode, check undoing something on the primary
+        pane works and arabic pane's content remains intact.
+        '''
+        edit_area = nammu.atfAreaController.edit_area
+        arabic_area = nammu.atfAreaController.arabic_area
+        nammu.arabic()
+        edit_area.setText("Hello primary edit area!")
+        arabic_area.setText("في شتة")
+        nammu.atfAreaController.undo()
+        assert (edit_area.getText() == "Hello primary edit area!" and
+                arabic_area.getText() == "")
+
+    def test_redo_arabic_primary(self, arabic, nammu):
+        '''
+        Using Nammu's arabic mode, check redoing something on the primary
+        pane works and arabic pane's content remains intact.
+        '''
+        edit_area = nammu.atfAreaController.edit_area
+        arabic_area = nammu.atfAreaController.arabic_area
+        nammu.arabic()
+        edit_area.setText("Hello primary edit area!")
+        arabic_area.setText("في شتة")
+        nammu.atfAreaController.undo()
+        nammu.atfAreaController.redo()
+        assert (edit_area.getText() == "Hello primary edit area!" and
+                arabic_area.getText() == "في شتة")
+
+    def test_undo_arabic_pane(self, arabic, nammu):
+        '''
+        Using Nammu's arabic mode, check undoing something on the arabic
+        pane works and primary pane's content remains intact.
+        '''
+        edit_area = nammu.atfAreaController.edit_area
+        arabic_area = nammu.atfAreaController.arabic_area
+        nammu.arabic()
+        arabic_area.setText("في شتة")
+        edit_area.setText("Hello primary edit area!")
+        nammu.atfAreaController.undo()
+        assert (edit_area.getText() == "" and
+                arabic_area.getText() == "في شتة")
+
+    def test_redo_arabic_pane(self, arabic, nammu):
+        '''
+        Using Nammu's arabic mode, check redoing something on the arabic
+        pane works and primary pane's content remains intact.
+        '''
+        edit_area = nammu.atfAreaController.edit_area
+        arabic_area = nammu.atfAreaController.arabic_area
+        nammu.arabic()
+        arabic_area.setText("في شتة")
+        edit_area.setText("Hello primary edit area!")
+        nammu.atfAreaController.undo()
+        nammu.atfAreaController.redo()
+        assert (edit_area.getText() == "Hello primary edit area!" and
+                arabic_area.getText() == "في شتة")
