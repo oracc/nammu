@@ -360,51 +360,55 @@ class TestNammu(object):
         Using Nammu's arabic mode, check undoing something on the primary
         pane works and arabic pane's content remains intact.
         '''
-        controller = nammu.atfAreaController
+        edit_area = nammu.atfAreaController.edit_area
+        arabic_area = nammu.atfAreaController.arabic_area
         nammu.arabic()
-        controller.edit_area.setText("Hello primary edit area!")
-        controller.arabic_area.setText("في شتة")
-        controller.undo()
-        assert (controller.edit_area.getText() == "Hello primary edit area!"
-                and controller.arabic_area.getText() == "")
+        edit_area.setText("Hello primary edit area!")
+        arabic_area.setText("في شتة")
+        nammu.atfAreaController.undo()
+        assert (edit_area.getText() == "Hello primary edit area!" and
+                arabic_area.getText() == "")
 
     def test_redo_arabic_primary(self, arabic, nammu):
         '''
         Using Nammu's arabic mode, check redoing something on the primary
         pane works and arabic pane's content remains intact.
         '''
-        controller = nammu.atfAreaController
+        edit_area = nammu.atfAreaController.edit_area
+        arabic_area = nammu.atfAreaController.arabic_area
         nammu.arabic()
-        controller.edit_area.setText("Hello primary edit area!")
-        controller.arabic_area.setText("في شتة")
-        controller.undo()
-        controller.redo()
-        assert (controller.edit_area.getText() == "Hello primary edit area!"
-                and controller.arabic_area.getText() == "في شتة")
+        edit_area.setText("Hello primary edit area!")
+        arabic_area.setText("في شتة")
+        nammu.atfAreaController.undo()
+        nammu.atfAreaController.redo()
+        assert (edit_area.getText() == "Hello primary edit area!" and
+                arabic_area.getText() == "في شتة")
 
     def test_undo_arabic_pane(self, arabic, nammu):
         '''
         Using Nammu's arabic mode, check undoing something on the arabic
         pane works and primary pane's content remains intact.
         '''
-        controller = nammu.atfAreaController
+        edit_area = nammu.atfAreaController.edit_area
+        arabic_area = nammu.atfAreaController.arabic_area
         nammu.arabic()
-        controller.arabic_area.setText("في شتة")
-        controller.edit_area.setText("Hello primary edit area!")
-        controller.undo()
-        assert (controller.edit_area.getText() == ""
-                and controller.arabic_area.getText() == "في شتة")
+        arabic_area.setText("في شتة")
+        edit_area.setText("Hello primary edit area!")
+        nammu.atfAreaController.undo()
+        assert (edit_area.getText() == "" and
+                arabic_area.getText() == "في شتة")
 
     def test_redo_arabic_pane(self, arabic, nammu):
         '''
         Using Nammu's arabic mode, check redoing something on the arabic
         pane works and primary pane's content remains intact.
         '''
-        controller = nammu.atfAreaController
+        edit_area = nammu.atfAreaController.edit_area
+        arabic_area = nammu.atfAreaController.arabic_area
         nammu.arabic()
-        controller.arabic_area.setText("في شتة")
-        controller.edit_area.setText("Hello primary edit area!")
-        controller.undo()
-        controller.redo()
-        assert (controller.edit_area.getText() == "Hello primary edit area!"
-                and controller.arabic_area.getText() == "في شتة")
+        arabic_area.setText("في شتة")
+        edit_area.setText("Hello primary edit area!")
+        nammu.atfAreaController.undo()
+        nammu.atfAreaController.redo()
+        assert (edit_area.getText() == "Hello primary edit area!" and
+                arabic_area.getText() == "في شتة")
