@@ -329,30 +329,82 @@ class TestNammu(object):
     def test_undo_split_primary_pane(self, simpletext, nammu):
         '''
         Using Nammu's split pane mode, check undoing something on the primary
-        pane is reflected also in secondary pane.
+        pane is reflected also in secondary pane and vice versa.
+        Undo action is not linked to an edit area but to the controller, so
+        this test checks for undoing in both primary and secondary.
         '''
-        pass
+        controller = nammu.atfAreaController
+        nammu.splitEditorV()
+        controller.edit_area.setText("Hello primary edit area!")
+        controller.undo()
+        assert (controller.edit_area.getText() ==
+                controller.secondary_area.getText())
 
-    def test_undo_split_secondary_pane(self, simpletext, nammu):
+    def test_redo_split_primary_pane(self, simpletext, nammu):
         '''
-        Using Nammu's split pane mode, check undoing something on the secondary
-        pane is reflected also in primary pane.
+        Using Nammu's split pane mode, check redoing something on the primary
+        pane is reflected also in secondary pane and vice versa.
+        Redo action is not linked to an edit area but to the controller, so
+        this test checks for redoing in both primary and secondary.
         '''
-        pass
+        controller = nammu.atfAreaController
+        nammu.splitEditorV()
+        controller.edit_area.setText("Hello primary edit area!")
+        controller.undo()
+        controller.redo()
+        assert (controller.edit_area.getText() ==
+                controller.secondary_area.getText())
 
     def test_undo_arabic_primary(self, arabic, nammu):
         '''
         Using Nammu's arabic mode, check undoing something on the primary
         pane works and arabic pane's content remains intact.
         '''
-        pass
+        controller = nammu.atfAreaController
+        nammu.arabic()
+        controller.edit_area.setText("Hello primary edit area!")
+        controller.arabic_area.setText("في شتة")
+        controller.undo()
+        assert (controller.edit_area.getText() == "Hello primary edit area!"
+                and controller.arabic_area.getText() == "")
+
+    def test_redo_arabic_primary(self, arabic, nammu):
+        '''
+        Using Nammu's arabic mode, check redoing something on the primary
+        pane works and arabic pane's content remains intact.
+        '''
+        controller = nammu.atfAreaController
+        nammu.arabic()
+        controller.edit_area.setText("Hello primary edit area!")
+        controller.arabic_area.setText("في شتة")
+        controller.undo()
+        controller.redo()
+        assert (controller.edit_area.getText() == "Hello primary edit area!"
+                and controller.arabic_area.getText() == "في شتة")
 
     def test_undo_arabic_pane(self, arabic, nammu):
         '''
         Using Nammu's arabic mode, check undoing something on the arabic
         pane works and primary pane's content remains intact.
         '''
-        pass
+        controller = nammu.atfAreaController
+        nammu.arabic()
+        controller.arabic_area.setText("في شتة")
+        controller.edit_area.setText("Hello primary edit area!")
+        controller.undo()
+        assert (controller.edit_area.getText() == ""
+                and controller.arabic_area.getText() == "في شتة")
 
-# TODO Add 'redo' versions of all these cases.
-#      This is stating to look like it needs its own test class.
+    def test_redo_arabic_pane(self, arabic, nammu):
+        '''
+        Using Nammu's arabic mode, check redoing something on the arabic
+        pane works and primary pane's content remains intact.
+        '''
+        controller = nammu.atfAreaController
+        nammu.arabic()
+        controller.arabic_area.setText("في شتة")
+        controller.edit_area.setText("Hello primary edit area!")
+        controller.undo()
+        controller.redo()
+        assert (controller.edit_area.getText() == "Hello primary edit area!"
+                and controller.arabic_area.getText() == "في شتة")
