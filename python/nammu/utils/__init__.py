@@ -297,17 +297,23 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
             # Need to apply the patching to correct any problems between
             # version 0.8 and version 1.0
             d = patch_config(d)
-            save_yaml_config(d)
+            save_yaml_config(d, filename=os.path.basename(path_to_config))
     else:
         return
 
 
-def save_yaml_config(config):
+def save_yaml_config(config, filename='settings.yaml'):
     '''
     Overwrites settings with given config dict.
+
+    If a file name (e.g. "logging.yaml") is expliclity specified, then that
+    configuration file will be overwritten; otherwise, overwrites the settings
+    file by default.
+    Note that this function can also be called during Nammu's lifetime
+    (e.g. when a file is saved), not only during launch.
     '''
     # Get config path
-    path_to_config = get_log_path('settings.yaml')
+    path_to_config = get_log_path(filename)
 
     # Save given config in yaml file
     with open(path_to_config, 'w') as outfile:
