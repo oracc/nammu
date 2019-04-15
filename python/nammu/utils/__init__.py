@@ -330,8 +330,8 @@ def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
                     with source_file, target_file:
                         shutil.copyfileobj(source_file, target_file)
     except zipfile.BadZipfile:
-        shutil.copyfileobj(file(source_rel_path, "wb"),
-                           file(target_path, "wb"))
+        with open(source_rel_path, "r") as src, open(target_path, "w") as dest:
+            shutil.copyfileobj(src, dest)
 
 
 def find_image_resource(name):
