@@ -17,8 +17,12 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import pytest
+import filecmp
 import os
+
+import pytest
+
+from python.nammu.controller.NammuController import NammuController
 # from ..utils import update_yaml_config
 
 
@@ -35,3 +39,28 @@ def test_update_yaml_config():
                            test_mode=True)
     # assert goal_setting == jar_config
     # make sure the user (project) setting is not overwritten....
+
+
+def test_settings_copied_correctly(monkeypatch, tmpdir):
+    """
+    Check that the settings are initialised correctly at first launch.
+
+    More specifically, this test ensures that, if the user starts Nammu without
+    already having any configuration files, then local configuration files with
+    the correct content will be created, without affecting the original files.
+
+    This test currently assumes it will run on Linux/Mac.
+    """
+    # Mock the user's home directory
+    monkeypatch.setitem(os.environ, 'HOME', str(tmpdir))
+    assert os.listdir(str(tmpdir)) == []  # sanity check!
+    NammuController()  # start up Nammu, but don't do anything with it
+    settings_dir = os.path.join(os.environ['HOME'], '.nammu')
+    for filename in ['settings.yaml', 'logging.yaml']:
+        target_file = os.path.join(settings_dir, filename)
+        original_file = os.path.join('resources/config', filename)
+        assert os.path.isfile(target_file)
+        assert filecmp.cmp(target_file, original_file)
+        # Check that the original config files have not been emptied (see #347)
+        with open(original_file, 'r') as orig:
+            assert orig.readlines()
