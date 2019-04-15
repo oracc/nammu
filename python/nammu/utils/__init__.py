@@ -140,7 +140,6 @@ def get_yaml_config(yaml_filename):
     if not os.path.isfile(path_to_config):
         copy_yaml_to_home(path_to_jar, yaml_path, path_to_config)
     else:
-        # We are running from the JAR file, not the local console
         update_yaml_config(path_to_jar, yaml_path, path_to_config)
 
     # Load local YAML file and perform required patches on the settings in
