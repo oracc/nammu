@@ -20,25 +20,29 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import filecmp
 import os
 
-import pytest
+import yaml
 
 from python.nammu.controller.NammuController import NammuController
-# from ..utils import update_yaml_config
+from ..utils import update_yaml_config
 
 
-@pytest.mark.skip(reason=("pyyaml is not working in the tests yet"))
 def test_update_yaml_config():
     """
-    Ensure that upon updating yaml settings files from jar, a users
+    Ensure that, upon updating yaml settings files from jar, a user's
     default project settings are not overwritten.
     """
     pth = "resources/test/"
-    d = update_yaml_config(path_to_jar=pth+"jar_settings.yaml",
-                           yaml_path=pth+"user_settings.yaml",
-                           path_to_config=pth+"user_settings.yaml",
-                           test_mode=True)
-    # assert goal_setting == jar_config
-    # make sure the user (project) setting is not overwritten....
+    local_file = os.path.join(pth, "user_settings.yaml")
+    jar_file = os.path.join(pth, "jar_settings.yaml")
+    new_config = update_yaml_config(path_to_jar=jar_file,
+                                    yaml_path=local_file,
+                                    path_to_config=local_file,
+                                    test_mode=True)
+    with open(local_file, "r") as f:
+        orig_config = yaml.safe_load(f)
+    # Make sure the user (project) setting is not overwritten
+    assert (new_config["projects"]["default"]
+            == orig_config["projects"]["default"])
 
 
 def test_settings_copied_correctly(monkeypatch, tmpdir):
