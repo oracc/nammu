@@ -246,6 +246,29 @@ class EditSettingsView(JDialog):
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.edit_area_fs_field, constraints)
 
+    def build_arabic_pane_font_panel(self, constraints, panel):
+        '''
+        Font size in Arabic pane's textfield.
+        '''
+        fontzise_label = JLabel("Arabic pane font size:")
+        constraints = self.add_constraints(constraints, weightx=0.20,
+                                           gridx=0, gridy=1)
+        panel.add(fontzise_label, constraints)
+
+        self.arabic_pane_fs_field = JTextField()
+        self.arabic_pane_fs_field.setEditable(True)
+        if self.edit_area_fontsize:
+            self.arabic_pane_fs_field.setText(
+                "{}".format(self.edit_area_fontsize))
+        else:
+            self.arabic_pane_fs_field.setText(self.controller.config[
+                'arabic_pane_style']['fontsize']['default'])
+
+        constraints = self.add_constraints(constraints, weightx=0.80,
+                                           gridx=1, gridy=1,
+                                           fill=GridBagConstraints.HORIZONTAL)
+        panel.add(self.arabic_pane_fs_field, constraints)
+
     def build_combobox(self, choices, default):
         '''
         Generic method to construct a combobox. choices should be an iterable
@@ -328,6 +351,7 @@ class EditSettingsView(JDialog):
         self.build_console_font_color_panel(constraints, panel)
         self.build_console_background_color_panel(constraints, panel)
         self.build_edit_area_font_panel(constraints, panel)
+        self.build_arabic_pane_font_panel(constraints, panel)
         return panel
 
     def display(self):

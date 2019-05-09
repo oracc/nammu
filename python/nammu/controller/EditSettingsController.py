@@ -39,7 +39,7 @@ class EditSettingsController:
         '''
         config_keywords = ['working_dir', 'servers', 'keystrokes',
                            'languages', 'projects', 'console_style',
-                           'edit_area_style']
+                           'edit_area_style', 'arabic_pane_style']
         for keyword in config_keywords:
             try:
                 setattr(self, keyword, self.config[keyword])
