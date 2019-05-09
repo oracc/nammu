@@ -156,13 +156,13 @@ class EditSettingsView(JDialog):
         '''
         console_bg_label = JLabel("Console background color:")
         constraints = self.add_constraints(constraints, weightx=0.30,
-                                           gridx=0, gridy=2)
+                                           gridx=0, gridy=3)
         panel.add(console_bg_label, constraints)
 
         self.bg_color_combo = self.build_combobox(self.color_options,
                                                   self.console_bg_color)
         constraints = self.add_constraints(constraints, weightx=0.70,
-                                           gridx=1, gridy=2, gridwidth=2,
+                                           gridx=1, gridy=3, gridwidth=2,
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.bg_color_combo, constraints)
 
@@ -173,13 +173,13 @@ class EditSettingsView(JDialog):
         '''
         console_font_label = JLabel("Console font color:")
         constraints = self.add_constraints(constraints, weightx=0.30,
-                                           gridx=0, gridy=3)
+                                           gridx=0, gridy=4)
         panel.add(console_font_label, constraints)
 
         self.font_color_combo = self.build_combobox(self.color_options,
                                                     self.console_font_color)
         constraints = self.add_constraints(constraints, weightx=0.70,
-                                           gridx=1, gridy=3, gridwidth=2,
+                                           gridx=1, gridy=4, gridwidth=2,
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.font_color_combo, constraints)
 
@@ -206,7 +206,7 @@ class EditSettingsView(JDialog):
         '''
         fontzise_label = JLabel("Console font size:")
         constraints = self.add_constraints(constraints, weightx=0.20,
-                                           gridx=0, gridy=0,
+                                           gridx=0, gridy=2,
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(fontzise_label, constraints)
 
@@ -219,7 +219,7 @@ class EditSettingsView(JDialog):
                                     'console_style']['fontsize']['default'])
 
         constraints = self.add_constraints(constraints, weightx=0.80,
-                                           gridx=1, gridy=0,
+                                           gridx=1, gridy=2,
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.fs_field, constraints)
 
@@ -229,7 +229,7 @@ class EditSettingsView(JDialog):
         '''
         fontzise_label = JLabel("Edit area font size:")
         constraints = self.add_constraints(constraints, weightx=0.20,
-                                           gridx=0, gridy=4)
+                                           gridx=0, gridy=0)
         panel.add(fontzise_label, constraints)
 
         self.edit_area_fs_field = JTextField()
@@ -242,7 +242,7 @@ class EditSettingsView(JDialog):
                                     'edit_area_style']['fontsize']['default'])
 
         constraints = self.add_constraints(constraints, weightx=0.80,
-                                           gridx=1, gridy=4,
+                                           gridx=1, gridy=0,
                                            fill=GridBagConstraints.HORIZONTAL)
         panel.add(self.edit_area_fs_field, constraints)
 
