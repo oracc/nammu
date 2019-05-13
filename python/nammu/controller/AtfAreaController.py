@@ -70,8 +70,9 @@ class AtfAreaController(object):
         # Setting the edit area here as well forces both line numbers to be
         # the same size
         self.conf = self.controller.config
-        font = set_font(self.conf['edit_area_style']['fontsize']['user'])
+        font = set_font(self.conf['arabic_pane_style']['fontsize']['user'])
         self.arabic_area.setFont(font)
+        font = set_font(self.conf['edit_area_style']['fontsize']['user'])
         self.edit_area.setFont(font)
         self.secondary_area.setFont(font)
 

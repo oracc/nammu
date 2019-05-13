@@ -31,7 +31,8 @@ from javax.swing import JFileChooser
 
 class EditSettingsView(JDialog):
     def __init__(self, controller, working_dir, servers, console_style,
-                 edit_area_style, keystrokes, languages, projects):
+                 edit_area_style, arabic_pane_style, keystrokes,
+                 languages, projects):
         self.logger = logging.getLogger("NammuController")
         self.setAlwaysOnTop(True)
         self.controller = controller
@@ -44,6 +45,7 @@ class EditSettingsView(JDialog):
         self.console_font_color = console_style['font_color']['user']
         self.console_bg_color = console_style['background_color']['user']
         self.edit_area_fontsize = edit_area_style['fontsize']['user']
+        self.arabic_pane_fontsize = arabic_pane_style['fontsize']['user']
         self.pane = self.getContentPane()
 
         # Grab the console color options from the console view
@@ -206,8 +208,8 @@ class EditSettingsView(JDialog):
         if fontsize:
             fs_field.setText("{}".format(fontsize))
         else:
-            fs_field.setText(self.controller.config[
-                style]['fontsize']['default'])
+            fs_field.setText(str(self.controller.config[
+                style]['fontsize']['default']))
 
         constraints = self.add_constraints(constraints, weightx=0.80,
                                            gridx=1, gridy=gridy,
@@ -243,7 +245,7 @@ class EditSettingsView(JDialog):
         self.build_font_settings_panel(constraints, panel,
                                        JLabel("Arabic pane font size:"), 1,
                                        self.arabic_pane_fs_field,
-                                       self.edit_area_fontsize,  # FIXME
+                                       self.arabic_pane_fontsize,
                                        'arabic_pane_style')
 
     def build_combobox(self, choices, default):
@@ -410,7 +412,8 @@ class EditSettingsView(JDialog):
             return None, False
 
     def validate_all_inputs(self, working_dir, console_fontsize,
-                            edit_area_fontsize, bg_color, font_color):
+                            edit_area_fontsize, arabic_pane_fontsize,
+                            bg_color, font_color):
         '''
         Wrapper around the input validation methods. Returns a tuple containing
         the validated inputs with the last value in the tuple a boolean set to
@@ -433,12 +436,16 @@ class EditSettingsView(JDialog):
                                               'edit_area_style')
         validation_results.append(v)
 
+        arabic_size, v = self.validate_fontsize(arabic_pane_fontsize,
+                                                'arabic_pane_style')
+        validation_results.append(v)
+
         # Validate input console colors
         bg_color, font_color, v = self.validate_colors(bg_color, font_color)
         validation_results.append(v)
 
         return (working_dir, int(con_size), font_color, bg_color,
-                int(edit_size), all(validation_results))
+                int(edit_size), int(arabic_size), all(validation_results))
 
     def save(self, event=None):
         '''
@@ -451,24 +458,27 @@ class EditSettingsView(JDialog):
         # Read the fontsize from the textfield
         console_fontsize = self.fs_field.getText()
         edit_area_fontsize = self.edit_area_fs_field.getText()
+        arabic_pane_fontsize = self.arabic_pane_fs_field.getText()
 
         # Get the user selected font and background colours
         bg_color = self.bg_color_combo.getSelectedItem()
         font_color = self.font_color_combo.getSelectedItem()
 
         validated = self.validate_all_inputs(working_dir, console_fontsize,
-                                             edit_area_fontsize, bg_color,
+                                             edit_area_fontsize,
+                                             arabic_pane_fontsize, bg_color,
                                              font_color)
 
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
         self.controller.update_config(validated[0], server,
                                       validated[1], validated[2],
-                                      validated[3], int(validated[4]))
+                                      validated[3], int(validated[4]),
+                                      int(validated[5]))
 
         # If no values have been changed, print that settings have been
         # updated without errors
-        if validated[5]:
+        if validated[6]:
             self.logger.info("Settings have been successfully updated.")
 
         # On saving settings, update the console and edit area properties

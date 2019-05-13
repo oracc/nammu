@@ -250,10 +250,13 @@ class AtfAreaView(JPanel):
         doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
 
         # Also apply new fontsize to arabic pane
+        arabic_attrs = self.controller.arabic_area.getInputAttributes()
+        arabic_font = set_font(config['arabic_pane_style']['fontsize']['user'])
         arabic_doc = self.controller.arabic_area.getStyledDocument()
+        StyleConstants.setFontSize(arabic_attrs, arabic_font.getSize())
         arabic_doc.setCharacterAttributes(0,
                                           arabic_doc.getLength() + 1,
-                                          attrs,
+                                          arabic_attrs,
                                           False)
 
 
