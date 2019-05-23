@@ -61,9 +61,9 @@ class AtfAreaView(JPanel):
         self.arabic_line_numbers = self.controller.arabic_line_numbers
 
         # Set undo/redo manager to edit area
-        self.undo_manager = UndoManager()
+        self.undo_manager = MyUndoManager(self)
         self.undo_manager.limit = 3000
-        self.edit_listener = AtfUndoableEditListener(self.undo_manager)
+        self.edit_listener = AtfUndoableEditListener(self)
         self.edit_area.getDocument().addUndoableEditListener(
                                                         self.edit_listener)
         self.arabic_area.getDocument().addUndoableEditListener(
@@ -401,9 +401,10 @@ class AtfUndoableEditListener(UndoableEditListener):
     TODO: Make compounds save whole words so undoing is not so much of a pain
           for the user.
     '''
-    def __init__(self, undo_manager):
-        self.undo_manager = undo_manager
-        self.current_compound = CompoundEdit()
+    def __init__(self, panel):
+        self.panel = panel
+        self.undo_manager = self.panel.undo_manager
+        self.current_compound = NewEdit()
         self.must_compound = False
         self.deletion = UIManager.getString('AbstractDocument.deletionText')
         self.addition = UIManager.getString('AbstractDocument.additionText')
@@ -414,13 +415,13 @@ class AtfUndoableEditListener(UndoableEditListener):
         significant edit events that we want to put together in a compound
         edit.
         """
-        empty_compound = CompoundEdit()
+        empty_compound = NewEdit()
         if not self.must_compound:
             self.must_compound = True
             if not self.current_compound.equals(empty_compound):
                 self.current_compound.end()
                 self.undo_manager.addEdit(self.current_compound)
-            self.current_compound = CompoundEdit()
+            self.current_compound = NewEdit()
 
     def force_stop_compound(self):
         self.current_compound.end()
@@ -439,8 +440,54 @@ class AtfUndoableEditListener(UndoableEditListener):
             # to false. Note undo() only undoes compound edits when they
             # are not in progress.
             self.current_compound.end()
-            self.current_compound = CompoundEdit()
+            self.current_compound = NewEdit()
             self.undo_manager.addEdit(self.current_compound)
 
         # Always add current edit to current compound
         self.current_compound.addEdit(edit)
+
+
+class NewEdit(CompoundEdit):
+    # add a getter for a protected field
+    def getEdits(self):
+        field = CompoundEdit.getDeclaredField("edits")
+        field.setAccessible(True)
+        return field.get(self)
+
+    def firstEdit(self):
+        return self.getEdits()[0]
+
+
+class MyUndoManager(UndoManager):
+    def __init__(self, panel):
+        self.panel = panel
+
+    def editToBeRedone(self):
+        """
+        Return the protected method `editToBeRedone()`.
+        """
+        return self.super__editToBeRedone()
+
+    def editToBeUndone(self):
+        """
+        Return the protected method `editToBeUndone()`.
+        """
+        return self.super__editToBeUndone()
+
+    def changeFocus(self, action=None):
+        """
+        Move focus to the pane where the current edit to redo/undo was done.
+        The `action` argument can be either `"undo"` or "`redo`".
+        """
+        currentEdit = None
+        if action == "undo":
+            currentEdit = self.editToBeUndone()
+        elif action == "redo":
+            currentEdit = self.editToBeRedone()
+
+        if currentEdit:
+            editDoc = currentEdit.firstEdit().getDocument()
+            if editDoc == self.panel.controller.arabic_area.getStyledDocument():
+                self.panel.controller.arabic_area.requestFocusInWindow()
+            elif editDoc == self.panel.controller.edit_area.getStyledDocument():
+                self.panel.controller.edit_area.requestFocusInWindow()
