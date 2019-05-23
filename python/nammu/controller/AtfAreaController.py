@@ -131,6 +131,8 @@ class AtfAreaController(object):
         ended.
         '''
         self.view.edit_listener.current_compound.end()
+        self.undo_manager.changeFocus("undo")
+
         try:
             self.undo_manager.undo()
         except CannotUndoException:
@@ -141,6 +143,7 @@ class AtfAreaController(object):
             self.syntax_highlight()
 
     def redo(self):
+        self.undo_manager.changeFocus("redo")
         try:
             self.undo_manager.redo()
         except CannotRedoException:
