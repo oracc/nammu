@@ -123,16 +123,34 @@ class AtfAreaController(object):
         '''
         self.validation_errors = validation_errors
 
-    def moveFocus(self, currentEdit=None):
+    def undoOrRedo(self, forward):
         """
-        Move focus to the pane where `currentEdit` was done.
+        Helper function for undo() and redo().  The boolean argument `forward`
+        specifies if the edit is to be undone (`False`) or redone (`True`).
         """
-        if currentEdit:
-            editDoc = currentEdit.firstEdit().getDocument()
-            if editDoc == self.arabic_area.getStyledDocument():
-                self.arabic_area.requestFocusInWindow()
-            elif editDoc == self.edit_area.getStyledDocument():
-                self.edit_area.requestFocusInWindow()
+        currentEdit = None
+        try:
+            # Before actually redoing/undoing, get the edit about to be
+            # redone/undone, in order to then move focus to its pane.
+            if forward:
+                currentEdit = self.undo_manager.editToBeRedone()
+                self.undo_manager.redo()
+            else:
+                currentEdit = self.undo_manager.editToBeUndone()
+                self.undo_manager.undo()
+        except (CannotUndoException, CannotRedoException):
+            # These exceptions indicate we've reached the end of the edits
+            # vector.  Nothing to do
+            pass
+        else:
+            if currentEdit:
+                # Move focus to the pane where `currentEdit` was done.
+                editDoc = currentEdit.firstEdit().getDocument()
+                if editDoc == self.arabic_area.getStyledDocument():
+                    self.arabic_area.requestFocusInWindow()
+                elif editDoc == self.edit_area.getStyledDocument():
+                    self.edit_area.requestFocusInWindow()
+                self.syntax_highlight()
 
     def undo(self):
         '''
@@ -143,38 +161,10 @@ class AtfAreaController(object):
         ended.
         '''
         self.view.edit_listener.current_compound.end()
-        # Before actually undoing, get the edit about to be undone, in
-        # order to move focus to that pane
-        currentEdit = self.undo_manager.editToBeUndone()
-        if not currentEdit:
-            return
-
-        try:
-            self.undo_manager.undo()
-        except CannotUndoException:
-            # This exception should never be thrown because we're checking that
-            # there is something to undo.
-            pass
-        else:
-            self.moveFocus(currentEdit)
-            self.syntax_highlight()
+        self.undoOrRedo(forward=False)
 
     def redo(self):
-        # Before actually redoing, get the edit about to be redone, in
-        # order to move focus to that pane
-        currentEdit = self.undo_manager.editToBeRedone()
-        if not currentEdit:
-            return
-
-        try:
-            self.undo_manager.redo()
-        except CannotRedoException:
-            # This exception should never be thrown because we're checking that
-            # there is something to redo.
-            pass
-        else:
-            self.moveFocus(currentEdit)
-            self.syntax_highlight()
+        self.undoOrRedo(forward=True)
 
     def __getattr__(self, name):
         '''
