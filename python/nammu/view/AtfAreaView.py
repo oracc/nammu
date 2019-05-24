@@ -473,21 +473,3 @@ class MyUndoManager(UndoManager):
         Return the protected method `editToBeUndone()`.
         """
         return self.super__editToBeUndone()
-
-    def changeFocus(self, action=None):
-        """
-        Move focus to the pane where the current edit to redo/undo was done.
-        The `action` argument can be either `"undo"` or "`redo`".
-        """
-        currentEdit = None
-        if action == "undo":
-            currentEdit = self.editToBeUndone()
-        elif action == "redo":
-            currentEdit = self.editToBeRedone()
-
-        if currentEdit:
-            editDoc = currentEdit.firstEdit().getDocument()
-            if editDoc == self.panel.controller.arabic_area.getStyledDocument():
-                self.panel.controller.arabic_area.requestFocusInWindow()
-            elif editDoc == self.panel.controller.edit_area.getStyledDocument():
-                self.panel.controller.edit_area.requestFocusInWindow()
