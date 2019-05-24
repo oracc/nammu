@@ -122,6 +122,17 @@ class AtfAreaController(object):
         '''
         self.validation_errors = validation_errors
 
+    def moveFocus(self, currentEdit=None):
+        """
+        Move focus to the pane where `currentEdit` was done.
+        """
+        if currentEdit:
+            editDoc = currentEdit.firstEdit().getDocument()
+            if editDoc == self.arabic_area.getStyledDocument():
+                self.arabic_area.requestFocusInWindow()
+            elif editDoc == self.edit_area.getStyledDocument():
+                self.edit_area.requestFocusInWindow()
+
     def undo(self):
         '''
         CompoundEdits only get added  to the undo manager when the next
@@ -131,10 +142,10 @@ class AtfAreaController(object):
         ended.
         '''
         self.view.edit_listener.current_compound.end()
-        self.undo_manager.changeFocus("undo")
 
         try:
             self.undo_manager.undo()
+            self.moveFocus(self.undo_manager.editToBeUndone())
         except CannotUndoException:
             # This exception indicates we've reached the end of the edits
             # vector Nothing to do
@@ -143,9 +154,9 @@ class AtfAreaController(object):
             self.syntax_highlight()
 
     def redo(self):
-        self.undo_manager.changeFocus("redo")
         try:
             self.undo_manager.redo()
+            self.moveFocus(self.undo_manager.editToBeRedone())
         except CannotRedoException:
             # This exception indicates we've reached the end of the edits
             # vector - Nothing to do
