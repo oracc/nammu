@@ -142,26 +142,37 @@ class AtfAreaController(object):
         ended.
         '''
         self.view.edit_listener.current_compound.end()
+        # Before actually undoing, get the edit about to be undone, in
+        # order to move focus to that pane
+        currentEdit = self.undo_manager.editToBeUndone()
+        if not currentEdit:
+            return
 
         try:
             self.undo_manager.undo()
-            self.moveFocus(self.undo_manager.editToBeUndone())
         except CannotUndoException:
-            # This exception indicates we've reached the end of the edits
-            # vector Nothing to do
+            # This exception should never be thrown because we're checking that
+            # there is something to undo.
             pass
         else:
+            self.moveFocus(currentEdit)
             self.syntax_highlight()
 
     def redo(self):
+        # Before actually redoing, get the edit about to be redone, in
+        # order to move focus to that pane
+        currentEdit = self.undo_manager.editToBeRedone()
+        if not currentEdit:
+            return
+
         try:
             self.undo_manager.redo()
-            self.moveFocus(self.undo_manager.editToBeRedone())
         except CannotRedoException:
-            # This exception indicates we've reached the end of the edits
-            # vector - Nothing to do
+            # This exception should never be thrown because we're checking that
+            # there is something to redo.
             pass
         else:
+            self.moveFocus(currentEdit)
             self.syntax_highlight()
 
     def __getattr__(self, name):
