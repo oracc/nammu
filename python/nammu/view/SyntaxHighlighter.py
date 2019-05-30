@@ -155,14 +155,22 @@ class SyntaxHighlighter:
         If user is doing find/replace, highlight matches.
         '''
 
+        logger = self.controller.controller.logger
+        logger.debug("~~~ SHL: TL=%s, BL=%s, TC=%s, BC=%s ~~~",
+                     top_line, bottom_line,
+                     top_caret, bottom_caret)
+
         if top_line is not None and bottom_line is not None:
             self.viewport_extent = (top_line, bottom_line,
                                     top_caret, bottom_caret)
+
+        logger.debug("~~~ SHL:  Viewport = %s", self.viewport_extent)
 
         error_lines = self.controller.validation_errors.keys()
 
         # Check that syntax highlight is on and that there is text to highlight
         no_of_chars = self.viewport_extent[3] - self.viewport_extent[2]
+        logger.debug("~~~ SHL:   # OF CHARS: %s ~~~", no_of_chars)
         if not self.syntax_highlight_on or no_of_chars < 1:
             return
 
@@ -196,6 +204,7 @@ class SyntaxHighlighter:
         # Keep background style from validation errors
         # Only process lines that are on the screen
         start_line_no = self.viewport_extent[0]
+        logger.debug("~~~ SHL:    START LINE #: %s ~~~", start_line_no)
         for line_num, line in enumerate(splittext, start=start_line_no):
             if str(line_num) in error_lines:
                 attribs = self.error_attribs[defaultcolor]
@@ -209,9 +218,10 @@ class SyntaxHighlighter:
                                                  attribs,
                                                  True)
 
-    # Go through each token in the text, check which type it is to assign
-    # a colour to it, check which position it is to set up default or
-    # error background, etc.
+        # Go through each token in the text, check which type it is to assign
+        # a colour to it, check which position it is to set up default or
+        # error background, etc.
+        logger.debug("~~~ SHL:     TOKENS LOOP ~~~")
         for tok in self.lexer:
             if tok.type in self.tokencolorlu:
                 if type(self.tokencolorlu[tok.type]) is dict:

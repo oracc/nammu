@@ -107,6 +107,8 @@ class ConsoleView(JPanel):
         Scroll down to bottom.
         '''
         length = self.edit_area.getDocument().getLength()
+        self.controller.controller.logger.debug("~~~ SCROLL (%s) ~~~",
+                                                length)
         self.edit_area.setCaretPosition(length)
 
     def handleEvent(self, event):
@@ -129,6 +131,8 @@ class ConsoleView(JPanel):
             # This would be done with some logic around getCaretPosition(), but
             # this would need a caret listener to be constructed.
             for i in xrange(2):
+                self.controller.controller.logger.debug("~~~ HANDLEEVENT (%s) ~~~",
+                                                        pos + i)
                 atfCont.setCaretPosition(pos + i)
 
             # Return focus to the editor window

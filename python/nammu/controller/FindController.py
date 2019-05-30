@@ -120,6 +120,8 @@ class FindController(object):
             # TODO: Display pop up - No matches
         else:
             # Move focus to current match
+            self.controller.logger.debug("~~~ FIND NEXT (%s) ~~~",
+                                         self.current_match.start())
             self.controller.atfAreaController.setCaretPosition(
                                                 self.current_match.start())
             # Highlight matches, taking current match into account for

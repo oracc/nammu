@@ -131,12 +131,16 @@ class AtfAreaController(object):
         try:
             # Before actually redoing/undoing, get the edit about to be
             # redone/undone, in order to then move focus to its pane.
+            self.controller.logger.debug("~~~ POS BEFORE UNDO/REDO: %s ~~~",
+                                         self.edit_area.getCaretPosition())
             if forward:
                 currentEdit = self.undo_manager.editToBeRedone()
                 self.undo_manager.redo()
             else:
                 currentEdit = self.undo_manager.editToBeUndone()
                 self.undo_manager.undo()
+            self.controller.logger.debug("~~~ POS AFTER  UNDO/REDO: %s ~~~",
+                                         self.edit_area.getCaretPosition())
         except (CannotUndoException, CannotRedoException):
             # These exceptions indicate we've reached the end of the edits
             # vector.  Nothing to do
@@ -180,6 +184,11 @@ class AtfAreaController(object):
             def wrapper(*args, **kw):
                 return getattr(self.edit_area, name)(*args, **kw)
             return wrapper
+
+    def setCaretPosition(self, position):
+        self.controller.logger.debug("~~~ SET CARET POSITION OVERLOADED (%S) ~~~",
+                                     position)
+        return
 
     def get_viewport_top_bottom(self, top, bottom):
         '''

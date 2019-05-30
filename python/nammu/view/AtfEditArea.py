@@ -22,6 +22,7 @@ from swingutils.threads.swing import runSwingLater
 
 from javax.swing import JTextPane, BorderFactory
 from java.awt.event import MouseAdapter
+from javax.swing.event import CaretListener
 
 import MyStyledEditorKit
 
@@ -38,6 +39,8 @@ class AtfEditArea(JTextPane):
         # Consume mouse events when over this JTextPane
         listener = CustomMouseListener(self)
         self.addMouseListener(listener)
+        caretListener = CustomCaretListener(self)
+        self.addCaretListener(caretListener)
 
     def getToolTipText(self, event=None):
         '''
@@ -117,3 +120,15 @@ class CustomMouseListener(MouseAdapter):
 
     def mousePressed(self, event):
         offset = self.panel.viewToModel(event.getPoint())
+
+
+class CustomCaretListener(CaretListener):
+    '''
+    Consumes mouse events.
+    '''
+    def __init__(self, panel):
+        self.panel = panel
+
+    def caretUpdate(self, e):
+        self.panel.controller.controller.logger.debug("~ CARET POSITION %s ~",
+                                                      e)

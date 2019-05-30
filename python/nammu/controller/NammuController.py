@@ -563,6 +563,8 @@ class NammuController(object):
 
             self.logger.debug("Lemmatising ATF done.")
             # Restore the caret position following lemmatisation
+            self.logger.debug("~~~ LEMMATISE (%s) ~~~",
+                              pre_cursor)
             self.atfAreaController.edit_area.setCaretPosition(pre_cursor)
         else:
             self.logger.error("Please save file before trying to lemmatise.")
