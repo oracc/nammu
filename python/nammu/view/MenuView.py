@@ -86,7 +86,7 @@ class MenuView(JMenuBar):
                                                             KeyEvent.VK_COMMA,
                                                             "splitEditorV"
                                                             ]
-        menuItems["Window"]["Toggle Horizonal Split Editor"] = [
+        menuItems["Window"]["Toggle Horizontal Split Editor"] = [
                                                             KeyEvent.VK_PERIOD,
                                                             "splitEditorH"
                                                             ]

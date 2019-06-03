@@ -129,50 +129,78 @@ class AtfAreaView(JPanel):
         self.repaint()
         self.controller.syntax_highlight()
 
+    def setup_edit_area_no_split(self):
+        self.container = JScrollPane(self.edit_area)
+        self.container.setRowHeaderView(self.line_numbers_area)
+        self.container.setVisible(True)
+        self.add(self.container, BorderLayout.CENTER)
+        self.controller.controller.arabic_edition_on = False
+
+        # Reset the scroll listener
+        self.vert_scroll = self.container.getVerticalScrollBar()
+        listener = atfAreaAdjustmentListener(self)
+        self.vert_scroll.addAdjustmentListener(listener)
+        menu = self.controller.controller.menuController.view.getMenu(3)
+        menu.getItem(4).setEnabled(True)
+        menu.getItem(5).setEnabled(True)
+        menu.getItem(6).setEnabled(True)
+
+    def setup_edit_area_split(self, split_orientation=None, arabic=False):
+        menu = self.controller.controller.menuController.view.getMenu(3)
+        main_editor = JScrollPane(self.edit_area)
+        main_editor.setRowHeaderView(self.line_numbers_area)
+        if arabic:
+            secondary_editor = JScrollPane(self.arabic_area)
+            secondary_editor.setRowHeaderView(self.arabic_line_numbers)
+            self.controller.controller.arabic_edition_on = True
+            menu.getItem(4).setEnabled(False)
+            menu.getItem(5).setEnabled(False)
+        else:
+            secondary_editor = JScrollPane(self.secondary_area)
+            secondary_editor.setRowHeaderView(self.secondary_line_numbers)
+            self.controller.controller.arabic_edition_on = False
+            if split_orientation == JSplitPane.VERTICAL_SPLIT:
+                menu.getItem(5).setEnabled(False)
+            elif split_orientation == JSplitPane.HORIZONTAL_SPLIT:
+                menu.getItem(4).setEnabled(False)
+            menu.getItem(6).setEnabled(False)
+        self.container = JSplitPane(split_orientation,
+                                    main_editor,
+                                    secondary_editor)
+        self.container.setDividerSize(5)
+        self.container.setVisible(True)
+        self.container.setDividerLocation(0.5)
+        self.container.setResizeWeight(0.5)
+        self.add(self.container, BorderLayout.CENTER)
+
+        # Need to add scroll listeners to the scrollbars in the two panes
+        topscroll = self.container.leftComponent.getVerticalScrollBar()
+        bottomscroll = self.container.rightComponent.getVerticalScrollBar()
+        topscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
+        bottomscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
+
     def setup_edit_area(self, split_orientation=None, arabic=False):
         '''
         Check if the ATF text area is being displayed in a split editor.
         If so, resets to normal JScrollPane. If not, splits the screen.
         '''
         if isinstance(self.container, JSplitPane) and not arabic:
+            if self.controller.controller.arabic_edition_on:
+                # If "arabic" is false and there is an Arabic pane active, keep
+                # it without toggling anything
+                self.setup_edit_area_split(JSplitPane.VERTICAL_SPLIT, True)
+                return
+            if split_orientation != self.container.getOrientation():
+                # Refuse to toggle orthogonal split!
+                self.setup_edit_area_split(self.container.getOrientation(),
+                                           arabic)
+                return
             # If Nammu is already displaying a split pane, reset to original
             # setup
-            self.container = JScrollPane(self.edit_area)
-            self.container.setRowHeaderView(self.line_numbers_area)
-            self.container.setVisible(True)
-            self.add(self.container, BorderLayout.CENTER)
-            self.controller.controller.arabic_edition_on = False
-
-            # Reset the scroll listener
-            self.vert_scroll = self.container.getVerticalScrollBar()
-            listener = atfAreaAdjustmentListener(self)
-            self.vert_scroll.addAdjustmentListener(listener)
+            self.setup_edit_area_no_split()
         else:
             # If there is not a split pane, create both panels and setup view
-            main_editor = JScrollPane(self.edit_area)
-            main_editor.setRowHeaderView(self.line_numbers_area)
-            if arabic:
-                secondary_editor = JScrollPane(self.arabic_area)
-                secondary_editor.setRowHeaderView(self.arabic_line_numbers)
-                self.controller.controller.arabic_edition_on = True
-            else:
-                secondary_editor = JScrollPane(self.secondary_area)
-                secondary_editor.setRowHeaderView(self.secondary_line_numbers)
-                self.controller.controller.arabic_edition_on = False
-            self.container = JSplitPane(split_orientation,
-                                        main_editor,
-                                        secondary_editor)
-            self.container.setDividerSize(5)
-            self.container.setVisible(True)
-            self.container.setDividerLocation(0.5)
-            self.container.setResizeWeight(0.5)
-            self.add(self.container, BorderLayout.CENTER)
-
-            # Need to add scroll listeners to the scrollbars in the two panes
-            topscroll = self.container.leftComponent.getVerticalScrollBar()
-            bottomscroll = self.container.rightComponent.getVerticalScrollBar()
-            topscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
-            bottomscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
+            self.setup_edit_area_split(split_orientation, arabic)
 
     def get_viewport_top_bottom(self, viewport):
         '''
