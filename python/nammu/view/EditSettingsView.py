@@ -478,6 +478,7 @@ class EditSettingsView(JDialog):
 
         # Refresh the syntax highlighting in a separate thread so it updates
         # after everything else has been done.
+        self.controller.controller.logger.debug("~~~ SAVE ~~~")
         runSwingLater(self.controller.controller.initHighlighting)
 
     def browse(self, event=None):

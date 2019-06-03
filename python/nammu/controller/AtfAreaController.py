@@ -336,6 +336,7 @@ class AtfAreaController(object):
         '''
         Short hand for syntax highlighting. Takes the line bounds.
         '''
+        self.controller.logger.debug("~~~ SHL IN ATFAREACONTROLLER ~~~")
         if top_caret is not None and bottom_caret is not None:
             top_line, bottom_line = self.get_viewport_top_bottom(top_caret,
                                                                  bottom_caret)
@@ -371,6 +372,7 @@ class AtfAreaController(object):
         '''
         length = len(self.getAtfAreaText())
         self.syntax_highlighter._highlight_match(0, length, Color.white)
+        self.controller.logger.debug("~~~ RESTORE_HIGHLIGHT ~~~")
         self.syntax_highlighter.syntax_highlight()
 
     def getPositionFromLine(self, text, line_num):

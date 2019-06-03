@@ -80,6 +80,7 @@ class AtfEditArea(JTextPane):
         super(AtfEditArea, self).setText(text)
 
         # Deploy syntax highlighting in a new thread
+        self.controller.controller.logger.debug("~~~ SETTEXT ~~~")
         runSwingLater(self.controller.controller.initHighlighting)
 
     def replaceSelection(self, text):

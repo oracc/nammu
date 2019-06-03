@@ -201,6 +201,7 @@ class NammuController(object):
 
                 # Now dispatch syntax highlighting in a new thread so
                 # we dont highlight before the full file is loaded
+                self.logger.debug("~~~ OPEN FILE ~~~")
                 runSwingLater(self.initHighlighting)
 
             # TODO: Else, prompt user to choose again before closing
@@ -222,6 +223,7 @@ class NammuController(object):
         '''
         atfview = self.atfAreaController.view
         top, bottom = atfview.get_viewport_carets()
+        self.logger.debug("~~~ initHighlighting ~~~")
         self.atfAreaController.syntax_highlight(top, bottom)
 
     def readTextFile(self, filename):
@@ -686,6 +688,7 @@ class NammuController(object):
 
         # Always syntax highlight, not only when there are errors, otherwise
         # old error lines' styling won't be cleared!
+        self.logger.debug("~~~ process_server_response ~~~")
         runSwingLater(self.initHighlighting)
 
     def send_request(self, client):

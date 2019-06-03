@@ -109,6 +109,7 @@ class AtfAreaView(JPanel):
         # Revalitate is needed in order to repaint the components
         self.revalidate()
         self.repaint()
+        self.controller.controller.logger.debug("~~~ toggle_split ~~~")
         self.controller.syntax_highlight()
 
     def toggle_split_arabic(self, split_orientation,
@@ -127,6 +128,7 @@ class AtfAreaView(JPanel):
         # Revalidate is needed in order to repaint the components
         self.revalidate()
         self.repaint()
+        self.controller.controller.logger.debug("~~~ toggle_split_arabic ~~~")
         self.controller.syntax_highlight()
 
     def setup_edit_area(self, split_orientation=None, arabic=False):
@@ -134,7 +136,7 @@ class AtfAreaView(JPanel):
         Check if the ATF text area is being displayed in a split editor.
         If so, resets to normal JScrollPane. If not, splits the screen.
         '''
-        if isinstance(self.container, JSplitPane) and not arabic:
+        if False:  # isinstance(self.container, JSplitPane) and not arabic
             # If Nammu is already displaying a split pane, reset to original
             # setup
             self.container = JScrollPane(self.edit_area)
@@ -319,6 +321,8 @@ class atfAreaAdjustmentListener(AdjustmentListener):
         self.areaview = areaview
 
     def adjustmentValueChanged(self, e):
+        self.areaviewcontroller.controller.logger.debug("~~~ %s ~~~",
+                                                        e.paramString())
         if not e.getValueIsAdjusting():
             runSwingLater(self.areaviewcontroller.controller.initHighlighting)
 
@@ -337,8 +341,11 @@ class AtfAreaKeyListener(KeyListener):
         # Make sure we only syntax highlight when the key pressed is not an
         # action key (i.e. arrows, F1, ...) or is not shift, ctrl, alt, caps
         # lock or cmd.
+        self.areaviewcontroller.controller.logger.debug("~~~ KEYRELEASED (%s, %s) ~~~",
+                                                        ke.isActionKey(), ke.getKeyCode())
         if ((not ke.isActionKey()) and
-                (ke.getKeyCode() not in (16, 17, 18, 20, 157))):
+            (ke.getKeyCode() not in (16, 17, 18, 20, 27,
+                                     157, 524, 525, 65406))):
             top_l_char, bottom_l_char = self.areaview.get_viewport_carets()
             self.areaviewcontroller.syntax_highlight(top_l_char, bottom_l_char)
 
