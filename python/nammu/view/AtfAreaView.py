@@ -140,30 +140,28 @@ class AtfAreaView(JPanel):
         self.vert_scroll = self.container.getVerticalScrollBar()
         listener = atfAreaAdjustmentListener(self)
         self.vert_scroll.addAdjustmentListener(listener)
-        menu = self.controller.controller.menuController.view.getMenu(3)
-        menu.getItem(4).setEnabled(True)
-        menu.getItem(5).setEnabled(True)
-        menu.getItem(6).setEnabled(True)
+        self.controller.controller.menuController.enable_split_options(
+            horizontal=True, vertical=True, arabic=True)
 
     def setup_edit_area_split(self, split_orientation=None, arabic=False):
-        menu = self.controller.controller.menuController.view.getMenu(3)
         main_editor = JScrollPane(self.edit_area)
         main_editor.setRowHeaderView(self.line_numbers_area)
         if arabic:
             secondary_editor = JScrollPane(self.arabic_area)
             secondary_editor.setRowHeaderView(self.arabic_line_numbers)
             self.controller.controller.arabic_edition_on = True
-            menu.getItem(4).setEnabled(False)
-            menu.getItem(5).setEnabled(False)
+            self.controller.controller.menuController.enable_split_options(
+                horizontal=False, vertical=False, arabic=True)
         else:
             secondary_editor = JScrollPane(self.secondary_area)
             secondary_editor.setRowHeaderView(self.secondary_line_numbers)
             self.controller.controller.arabic_edition_on = False
             if split_orientation == JSplitPane.VERTICAL_SPLIT:
-                menu.getItem(5).setEnabled(False)
+                self.controller.controller.menuController.enable_split_options(
+                    horizontal=False, vertical=True, arabic=False)
             elif split_orientation == JSplitPane.HORIZONTAL_SPLIT:
-                menu.getItem(4).setEnabled(False)
-            menu.getItem(6).setEnabled(False)
+                self.controller.controller.menuController.enable_split_options(
+                    horizontal=True, vertical=False, arabic=False)
         self.container = JSplitPane(split_orientation,
                                     main_editor,
                                     secondary_editor)

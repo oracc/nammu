@@ -107,15 +107,25 @@ class MenuView(JMenuBar):
                       "Window": ["Display Model View"],
                       "Help": ["Help"]}
 
+        self.menu_positions = {}
         # Create menu items and add to menu bar
-        for menuName, keyEvent in menus.items():
+        for index, (menuName, keyEvent) in enumerate(menus.items()):
             menu = Menu(self,
                         menuName,
                         keyEvent,
                         menuItems[menuName],
                         separators[menuName])
             self.add(menu)
+            self.menu_positions[menuName] = index
 
     # Delegate methods not found here to view controller
     def __getattr__(self, name):
         return getattr(self.controller, name)
+
+    def getMenuByName(self, name):
+        return self.menu_positions[name]
+
+    def enable_item(self, menu_name, menu_item, value=True):
+        menu_index = self.menu_positions[menu_name]
+        menu_item_index = self.getMenu(menu_index).menu_positions[menu_item]
+        self.getMenu(menu_index).getItem(menu_item_index).setEnabled(value)

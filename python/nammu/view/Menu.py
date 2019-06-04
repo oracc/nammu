@@ -27,10 +27,16 @@ class Menu(JMenu):
         self.setText(name)
         self.setMnemonic(keyEvent)
         self.items = self.createItems(menuItems)
+        self.menu_positions = {}
+        index = 0
         for item in self.items:
             self.add(item)
-            if item.getText() in separators:
+            name = item.getText()
+            self.menu_positions[name] = index
+            if name in separators:
                 self.addSeparator()
+                index += 1
+            index += 1
 
     def createItems(self, menuItems):
         items = []
