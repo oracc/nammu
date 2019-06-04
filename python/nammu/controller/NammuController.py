@@ -857,6 +857,8 @@ class NammuController(object):
             self.atfAreaController.splitEditorArabic(JSplitPane.VERTICAL_SPLIT,
                                                      self.atf_body,
                                                      self.atf_translation)
+            self.menuController.enable_split_options(
+                horizontal=False, vertical=False, arabic=False)
 
     def splitEditorV(self, event=None):
         '''
