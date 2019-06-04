@@ -185,7 +185,10 @@ class AtfAreaView(JPanel):
         if isinstance(self.container, JSplitPane):
             if (split_orientation is not None and
                     split_orientation != self.container.getOrientation()):
-                # Refuse to toggle orthogonal split!
+                # Refuse to toggle orthogonal split!  If there is already an
+                # Arabic pane, keep it.  Note that this operation shouldn't be
+                # allowed by the GUI.
+                arabic = self.controller.controller.arabic_edition_on
                 self.setup_edit_area_split(self.container.getOrientation(),
                                            arabic)
                 return
