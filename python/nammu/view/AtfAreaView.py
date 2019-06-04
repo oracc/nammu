@@ -182,13 +182,9 @@ class AtfAreaView(JPanel):
         Check if the ATF text area is being displayed in a split editor.
         If so, resets to normal JScrollPane. If not, splits the screen.
         '''
-        if isinstance(self.container, JSplitPane) and not arabic:
-            if self.controller.controller.arabic_edition_on:
-                # If "arabic" is false and there is an Arabic pane active, keep
-                # it without toggling anything
-                self.setup_edit_area_split(JSplitPane.VERTICAL_SPLIT, True)
-                return
-            if split_orientation != self.container.getOrientation():
+        if isinstance(self.container, JSplitPane):
+            if (split_orientation is not None and
+                    split_orientation != self.container.getOrientation()):
                 # Refuse to toggle orthogonal split!
                 self.setup_edit_area_split(self.container.getOrientation(),
                                            arabic)
