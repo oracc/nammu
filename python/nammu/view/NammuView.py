@@ -18,7 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from java.awt import BorderLayout, Toolkit
-from java.awt.event import KeyEvent
+from java.awt.event import KeyEvent, WindowAdapter
 from javax.swing import JFrame, JSplitPane, KeyStroke, AbstractAction
 from javax.swing import JComponent
 
@@ -54,6 +54,11 @@ class NammuView(JFrame):
             pane.getInputMap(condition).put(key_stroke, action)
             pane.getActionMap().put(action, KeyStrokeAction(self, action))
 
+        # Handle closing of the frame when clicking on the X button in title
+        # bar.
+        listener = CustomWindowListener(self)
+        self.addWindowListener(listener)
+
         # TODO
         # Create splitPane with two empty panels for the ATF edition/console
         # area
@@ -87,7 +92,7 @@ class NammuView(JFrame):
         splitPane.setResizeWeight(0.9)
 
     def display(self):
-        self.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+        self.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE)
         self.setTitle("Nammu")
         self.pack()
         self.setLocationRelativeTo(None)
@@ -110,3 +115,14 @@ class KeyStrokeAction(AbstractAction):
         in the component's controller.
         '''
         getattr(self.component.controller, self.action)()
+
+
+class CustomWindowListener(WindowAdapter):
+    '''
+    Handle closing of the JFrame.
+    '''
+    def __init__(self, frame):
+        self.frame = frame
+
+    def windowClosing(self, event):
+        self.frame.controller.quit()
