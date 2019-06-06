@@ -99,37 +99,31 @@ class AtfAreaView(JPanel):
         self.oldtext = ''
 
     def toggle_split(self, split_orientation=None):
-        '''
-        Clear ATF edit area and repaint chosen layout (splitscreen/scrollpane).
-        '''
-        # Remove all existent components in parent JPanel
-        self.removeAll()
+        """
+        Toggle split view (non Arabic pane) with given `split_orientation`.
+        """
         # Check what editor view to toggle
-        self.setup_edit_area(split_orientation)
-        # Revalitate is needed in order to repaint the components
-        self.revalidate()
-        self.repaint()
-        self.controller.syntax_highlight()
+        self.setup_edit_area(split_orientation, arabic=False)
 
     def toggle_split_arabic(self, split_orientation,
                             atf_body, atf_translation):
-        '''
-        Clear ATF edit area and repaint chosen layout (splitscreen/scrollpane).
-        '''
-        # Remove all existent components in parent JPanel
-        self.removeAll()
-        # Check what editor view to toggle
-        self.setup_edit_area(split_orientation, arabic=True)
+        """
+        Toggle Arabic pane with given `split_orientation`.
+        """
         # Separate body (in English) form translation (in Arabic) in different
         # panels.
         self.edit_area.setText(atf_body)
         self.arabic_area.setText(atf_translation)
-        # Revalidate is needed in order to repaint the components
-        self.revalidate()
-        self.repaint()
-        self.controller.syntax_highlight()
+        # Check what editor view to toggle
+        self.setup_edit_area(split_orientation, arabic=True)
 
     def setup_edit_area_no_split(self):
+        """
+        Clear ATF edit area and repaint a scrollpane.
+        """
+        # Remove all existent components in parent JPanel
+        self.removeAll()
+
         self.container = JScrollPane(self.edit_area)
         self.container.setRowHeaderView(self.line_numbers_area)
         self.container.setVisible(True)
@@ -143,15 +137,28 @@ class AtfAreaView(JPanel):
         self.controller.controller.menuController.enable_split_options(
             horizontal=True, vertical=True, arabic=True)
 
+        # Revalidate is needed in order to repaint the components
+        self.revalidate()
+        self.repaint()
+        self.controller.syntax_highlight()
+
     def setup_edit_area_split(self, split_orientation=None, arabic=False):
+        """
+        Clear ATF edit area and repaint a splitscreen.
+        """
+        # Remove all existent components in parent JPanel
+        self.removeAll()
+
         main_editor = JScrollPane(self.edit_area)
         main_editor.setRowHeaderView(self.line_numbers_area)
         if arabic:
             secondary_editor = JScrollPane(self.arabic_area)
             secondary_editor.setRowHeaderView(self.arabic_line_numbers)
             self.controller.controller.arabic_edition_on = True
+            # Do not allow toggling arabic pane if there is text in it.
+            arabic_text = self.arabic_area.getText()
             self.controller.controller.menuController.enable_split_options(
-                horizontal=False, vertical=False, arabic=True)
+                horizontal=False, vertical=False, arabic=not arabic_text)
         else:
             secondary_editor = JScrollPane(self.secondary_area)
             secondary_editor.setRowHeaderView(self.secondary_line_numbers)
@@ -177,20 +184,28 @@ class AtfAreaView(JPanel):
         topscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
         bottomscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
 
+        # Revalitate is needed in order to repaint the components
+        self.revalidate()
+        self.repaint()
+        self.controller.syntax_highlight()
+
     def setup_edit_area(self, split_orientation=None, arabic=False):
         '''
         Check if the ATF text area is being displayed in a split editor.
         If so, resets to normal JScrollPane. If not, splits the screen.
         '''
         if isinstance(self.container, JSplitPane):
-            if (split_orientation is not None and
-                    split_orientation != self.container.getOrientation()):
-                # Refuse to toggle orthogonal split!  If there is already an
-                # Arabic pane, keep it.  Note that this operation shouldn't be
-                # allowed by the GUI.
-                arabic = self.controller.controller.arabic_edition_on
+            # If there is text in the Arabic pane or if the requested
+            # orientation is orthogonal to current split orientation, do not do
+            # anything.  Note that this operation shouldn't be allowed by the
+            # GUI.
+            if (self.arabic_area.getText() or
+                (split_orientation is not None and
+                 split_orientation != self.container.getOrientation())):
+                # If there is already an Arabic pane, keep it.
+                arabic_edition = self.controller.controller.arabic_edition_on
                 self.setup_edit_area_split(self.container.getOrientation(),
-                                           arabic)
+                                           arabic_edition)
                 return
             # If Nammu is already displaying a split pane, reset to original
             # setup

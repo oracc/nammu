@@ -122,23 +122,22 @@ class MenuView(JMenuBar):
     def __getattr__(self, name):
         return getattr(self.controller, name)
 
-    def getMenuByName(self, name):
+    def get_menu_by_name(self, name):
         """
         Return the menu with given `name`.
         """
         return self.getMenu(self.menu_positions[name])
 
-    def getMenuItemByName(self, menu_name, item_name):
+    def get_menu_item_by_name(self, menu_name, item_name):
         """
         Return menu item with given `item_name` under menu `menu_name`.
         """
-        menu = self.getMenuByName(menu_name)
+        menu = self.get_menu_by_name(menu_name)
         menu_item_index = menu.menu_positions[item_name]
         return menu.getItem(menu_item_index)
 
     def enable_item(self, menu_name, menu_item, value=True):
         """
-        Set visibiliy to `value` the visibility of `menu_item`, under
-        `menu_name`.
+        Set to `value` the visibility of `menu_item`, under `menu_name`.
         """
-        self.getMenuItemByName(menu_name, menu_item).setEnabled(value)
+        self.get_menu_item_by_name(menu_name, menu_item).setEnabled(value)

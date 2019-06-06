@@ -37,7 +37,7 @@ class MenuController(object):
     def enable_split_options(self, horizontal=True,
                              vertical=True, arabic=True):
         """
-        Set visibility of split menu items.
+        Show split menu items as enabled or disabled.
         """
         self.view.enable_item("Window", "Toggle Vertical Split Editor",
                               vertical)
