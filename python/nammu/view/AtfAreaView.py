@@ -248,6 +248,7 @@ class AtfAreaView(JPanel):
             doc = area.getStyledDocument()
             # Apply the new fontsize to the whole document
             doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
+            area.setFont(font)
 
 
 class atfAreaDocumentListener(DocumentListener):
