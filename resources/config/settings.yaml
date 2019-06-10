@@ -124,9 +124,9 @@ edit_area_style:
         default: 14
         user: 14
 
-arabic_pane_style:
+arabic_area_style:
     fontsize:
-        default: 14
-        user: 14
+        default: 16
+        user: 16
 
 new_user: True

@@ -31,7 +31,7 @@ from javax.swing import JFileChooser
 
 class EditSettingsView(JDialog):
     def __init__(self, controller, working_dir, servers, console_style,
-                 edit_area_style, arabic_pane_style, keystrokes,
+                 edit_area_style, arabic_area_style, keystrokes,
                  languages, projects):
         self.logger = logging.getLogger("NammuController")
         self.setAlwaysOnTop(True)
@@ -45,7 +45,7 @@ class EditSettingsView(JDialog):
         self.console_font_color = console_style['font_color']['user']
         self.console_bg_color = console_style['background_color']['user']
         self.edit_area_fontsize = edit_area_style['fontsize']['user']
-        self.arabic_pane_fontsize = arabic_pane_style['fontsize']['user']
+        self.arabic_area_fontsize = arabic_area_style['fontsize']['user']
         self.pane = self.getContentPane()
 
         # Grab the console color options from the console view
@@ -191,7 +191,7 @@ class EditSettingsView(JDialog):
         '''
         self.combo = self.build_servers_combobox()
         self.build_drop_down_menu(constraints, panel, self.combo,
-                                  JLabel("ORACC server location:"), 1,
+                                  JLabel("Oracc server location:"), 1,
                                   Insets(10, 10, 80, 10))
 
     def build_font_settings_panel(self, constraints, panel, label, gridy,
@@ -237,16 +237,16 @@ class EditSettingsView(JDialog):
                                        self.edit_area_fontsize,
                                        'edit_area_style')
 
-    def build_arabic_pane_font_panel(self, constraints, panel):
+    def build_arabic_area_font_panel(self, constraints, panel):
         '''
         Font settings in Arabic pane's textfield.
         '''
-        self.arabic_pane_fs_field = JTextField()
+        self.arabic_area_fs_field = JTextField()
         self.build_font_settings_panel(constraints, panel,
                                        JLabel("Arabic pane font size:"), 1,
-                                       self.arabic_pane_fs_field,
-                                       self.arabic_pane_fontsize,
-                                       'arabic_pane_style')
+                                       self.arabic_area_fs_field,
+                                       self.arabic_area_fontsize,
+                                       'arabic_area_style')
 
     def build_combobox(self, choices, default):
         '''
@@ -330,7 +330,7 @@ class EditSettingsView(JDialog):
         self.build_console_font_color_panel(constraints, panel)
         self.build_console_background_color_panel(constraints, panel)
         self.build_edit_area_font_panel(constraints, panel)
-        self.build_arabic_pane_font_panel(constraints, panel)
+        self.build_arabic_area_font_panel(constraints, panel)
         return panel
 
     def display(self):
@@ -412,7 +412,7 @@ class EditSettingsView(JDialog):
             return None, False
 
     def validate_all_inputs(self, working_dir, console_fontsize,
-                            edit_area_fontsize, arabic_pane_fontsize,
+                            edit_area_fontsize, arabic_area_fontsize,
                             bg_color, font_color):
         '''
         Wrapper around the input validation methods. Returns a tuple containing
@@ -436,8 +436,8 @@ class EditSettingsView(JDialog):
                                               'edit_area_style')
         validation_results.append(v)
 
-        arabic_size, v = self.validate_fontsize(arabic_pane_fontsize,
-                                                'arabic_pane_style')
+        arabic_size, v = self.validate_fontsize(arabic_area_fontsize,
+                                                'arabic_area_style')
         validation_results.append(v)
 
         # Validate input console colors
@@ -458,7 +458,7 @@ class EditSettingsView(JDialog):
         # Read the fontsize from the textfield
         console_fontsize = self.fs_field.getText()
         edit_area_fontsize = self.edit_area_fs_field.getText()
-        arabic_pane_fontsize = self.arabic_pane_fs_field.getText()
+        arabic_area_fontsize = self.arabic_area_fs_field.getText()
 
         # Get the user selected font and background colours
         bg_color = self.bg_color_combo.getSelectedItem()
@@ -466,7 +466,7 @@ class EditSettingsView(JDialog):
 
         validated = self.validate_all_inputs(working_dir, console_fontsize,
                                              edit_area_fontsize,
-                                             arabic_pane_fontsize, bg_color,
+                                             arabic_area_fontsize, bg_color,
                                              font_color)
 
         # The server format is "name: url:port". We only need "name"
