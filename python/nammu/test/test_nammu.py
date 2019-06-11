@@ -6,7 +6,7 @@ import os
 from python.nammu.controller.NammuController import NammuController
 
 from java.awt import Color
-from javax.swing import JSplitPane, JFileChooser
+from javax.swing import JSplitPane, JFileChooser, JScrollPane
 from javax.swing.undo import CompoundEdit
 
 
@@ -412,3 +412,99 @@ class TestNammu(object):
         nammu.atfAreaController.redo()
         assert (edit_area.getText() == "Hello primary edit area!" and
                 arabic_area.getText() == "في شتة")
+
+    @pytest.mark.parametrize("this, orthogonal",
+                             [("Vertical", "Horizontal"),
+                              ("Horizontal", "Vertical")])
+    def test_toggling_split(self, this, orthogonal):
+        """
+        Test toggling vertical and horizontal split view.
+        """
+        nammu = NammuController()
+        view = nammu.atfAreaController.view
+        view.setup_edit_area_no_split()
+        menuView = nammu.menuController.view
+        orientation = getattr(JSplitPane,
+                              "{}_SPLIT".format(this.upper()))
+        toggleThis = menuView.get_menu_item_by_name(
+            "Window", "Toggle {} Split Editor".format(this))
+        toggleOrthogonal = menuView.get_menu_item_by_name(
+            "Window", "Toggle {} Split Editor".format(orthogonal))
+        toggleArabic = menuView.get_menu_item_by_name(
+            "Window", "Toggle Arabic Translation Editor")
+        # Split: only toggling in the same direction should be enabled.
+        view.toggle_split(orientation)
+        assert view.container.getOrientation() == orientation
+        assert toggleThis.isEnabled()
+        assert not toggleOrthogonal.isEnabled()
+        assert not toggleArabic.isEnabled()
+        # Try toggling orthogonal split: nothing should happen.
+        view.toggle_split(getattr(JSplitPane,
+                                  "{}_SPLIT".format(orthogonal.upper())))
+        assert view.container.getOrientation() == orientation
+        assert toggleThis.isEnabled()
+        assert not toggleOrthogonal.isEnabled()
+        assert not toggleArabic.isEnabled()
+        # Toggle again: no split view.
+        view.toggle_split(orientation)
+        assert isinstance(view.container, JScrollPane)
+        assert toggleThis.isEnabled()
+        assert toggleOrthogonal.isEnabled()
+        assert toggleArabic.isEnabled()
+
+    def test_toggling_arabic_split(self):
+        """
+        Test toggling split views in Arabic file.
+        """
+        nammu = NammuController()
+        view = nammu.atfAreaController.view
+        view.setup_edit_area_no_split()
+        menuView = nammu.menuController.view
+        toggleVertical = menuView.get_menu_item_by_name(
+            "Window", "Toggle Vertical Split Editor")
+        toggleHorizontal = menuView.get_menu_item_by_name(
+            "Window", "Toggle Horizontal Split Editor")
+        toggleArabic = menuView.get_menu_item_by_name(
+            "Window", "Toggle Arabic Translation Editor")
+        # Split with Arabic pane but with no Arabic text: it creates the
+        # vertical split view.  Only toggling Arabic should be enabled.
+        view.toggle_split_arabic(JSplitPane.VERTICAL_SPLIT, "", "")
+        assert view.container.getOrientation() == JSplitPane.VERTICAL_SPLIT
+        assert not toggleVertical.isEnabled()
+        assert not toggleHorizontal.isEnabled()
+        assert toggleArabic.isEnabled()
+        # Try toggling horizontally: nothing should happen.
+        view.toggle_split(JSplitPane.HORIZONTAL_SPLIT)
+        assert view.container.getOrientation() == JSplitPane.VERTICAL_SPLIT
+        assert not toggleVertical.isEnabled()
+        assert not toggleHorizontal.isEnabled()
+        assert toggleArabic.isEnabled()
+        # Toggle Arabic pane: restore view with no split.
+        view.toggle_split_arabic(JSplitPane.VERTICAL_SPLIT, "", "")
+        assert isinstance(view.container, JScrollPane)
+        assert toggleVertical.isEnabled()
+        assert toggleHorizontal.isEnabled()
+        assert toggleArabic.isEnabled()
+        # Before entering Arabic mode, activate horizontal split.
+        view.toggle_split(JSplitPane.HORIZONTAL_SPLIT)
+        # Force full Arabic mode: it shouldn't be possible to toggle anything,
+        # we want to always keep the Arabic pane.
+        nammu.arabic(force=True)
+        assert view.container.getOrientation() == JSplitPane.VERTICAL_SPLIT
+        assert not toggleVertical.isEnabled()
+        assert not toggleHorizontal.isEnabled()
+        assert not toggleArabic.isEnabled()
+        # Try adding text to the arabic area and toggling
+        # horizontally/vertically while in an Arabic file.  Nothing should
+        # happen and the text in the the arabic pane should be retained.
+        for orientation in [JSplitPane.HORIZONTAL_SPLIT,
+                            JSplitPane.VERTICAL_SPLIT]:
+            arabic_area = nammu.atfAreaController.arabic_area
+            arabic_text = u"في شتة"
+            arabic_area.setText(arabic_text)
+            view.toggle_split(orientation)
+            assert view.container.getOrientation() == JSplitPane.VERTICAL_SPLIT
+            assert not toggleVertical.isEnabled()
+            assert not toggleHorizontal.isEnabled()
+            assert not toggleArabic.isEnabled()
+            assert view.arabic_area.getText() == arabic_text
