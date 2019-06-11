@@ -176,7 +176,7 @@ class NammuController(object):
                 if self.arabicIndex:
                     self.atf_body = atfText[:self.arabicIndex]
                     self.atf_translation = atfText[self.arabicIndex:]
-                    self.arabic()
+                    self.arabic(force=True)
                 else:
                     # Turn off caret movement and highligting for file load
                     self.atfAreaController.caret.setUpdatePolicy(
@@ -829,10 +829,21 @@ class NammuController(object):
         else:
             return parsed
 
-    def arabic(self, event=None):
+    def arabic(self, event=None, force=False):
         '''
         Create bool for arabic, change value when clicked.
+
+        If `force` is `True`, force enabling arabic mode.
         '''
+        if force:
+            self.logger.debug("Enabling Arabic translation mode...")
+            atfAreaView = self.atfAreaController.view
+            atfAreaView.edit_area.setText(self.atf_body)
+            atfAreaView.arabic_area.setText(self.atf_translation)
+            atfAreaView.setup_edit_area_split(JSplitPane.VERTICAL_SPLIT, arabic=True)
+            self.menuController.enable_split_options(
+                horizontal=False, vertical=False, arabic=False)
+            return
         self.logger.debug("Enabling/Disabling arabic translation mode...")
         if event:
             if self.handleUnsaved():
@@ -857,6 +868,8 @@ class NammuController(object):
             self.atfAreaController.splitEditorArabic(JSplitPane.VERTICAL_SPLIT,
                                                      self.atf_body,
                                                      self.atf_translation)
+            self.menuController.enable_split_options(
+                horizontal=False, vertical=False, arabic=False)
 
     def splitEditorV(self, event=None):
         '''
