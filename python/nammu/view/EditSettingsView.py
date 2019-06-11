@@ -31,7 +31,8 @@ from javax.swing import JFileChooser
 
 class EditSettingsView(JDialog):
     def __init__(self, controller, working_dir, servers, console_style,
-                 edit_area_style, keystrokes, languages, projects):
+                 edit_area_style, arabic_area_style, keystrokes,
+                 languages, projects):
         self.logger = logging.getLogger("NammuController")
         self.setAlwaysOnTop(True)
         self.controller = controller
@@ -44,6 +45,7 @@ class EditSettingsView(JDialog):
         self.console_font_color = console_style['font_color']['user']
         self.console_bg_color = console_style['background_color']['user']
         self.edit_area_fontsize = edit_area_style['fontsize']['user']
+        self.arabic_area_fontsize = arabic_area_style['fontsize']['user']
         self.pane = self.getContentPane()
 
         # Grab the console color options from the console view
@@ -151,100 +153,100 @@ class EditSettingsView(JDialog):
 
     def build_console_background_color_panel(self, constraints, panel):
         '''
-        Server location row: label + dropdown
-        Contains a drop down with the servers to choose from.
+        Console background color: label + dropdown
         '''
-        console_bg_label = JLabel("Console background color:")
-        constraints = self.add_constraints(constraints, weightx=0.30,
-                                           gridx=0, gridy=2)
-        panel.add(console_bg_label, constraints)
-
         self.bg_color_combo = self.build_combobox(self.color_options,
                                                   self.console_bg_color)
-        constraints = self.add_constraints(constraints, weightx=0.70,
-                                           gridx=1, gridy=2, gridwidth=2,
-                                           fill=GridBagConstraints.HORIZONTAL)
-        panel.add(self.bg_color_combo, constraints)
+        self.build_drop_down_menu(constraints, panel, self.bg_color_combo,
+                                  JLabel("Console background color:"), 3)
 
     def build_console_font_color_panel(self, constraints, panel):
         '''
-        Server location row: label + dropdown
-        Contains a drop down with the servers to choose from.
+        Console font color: label + dropdown
         '''
-        console_font_label = JLabel("Console font color:")
-        constraints = self.add_constraints(constraints, weightx=0.30,
-                                           gridx=0, gridy=3)
-        panel.add(console_font_label, constraints)
-
         self.font_color_combo = self.build_combobox(self.color_options,
                                                     self.console_font_color)
+        self.build_drop_down_menu(constraints, panel, self.font_color_combo,
+                                  JLabel("Console font color:"), 4)
+
+    def build_drop_down_menu(self, constraints, panel, combo,
+                             label, gridy, insets=None):
+        '''
+        Create a drop down option for the panel.
+        '''
+        constraints = self.add_constraints(constraints, weightx=0.30,
+                                           gridx=0, gridy=gridy,
+                                           insets=insets)
+        panel.add(label, constraints)
+
         constraints = self.add_constraints(constraints, weightx=0.70,
-                                           gridx=1, gridy=3, gridwidth=2,
+                                           gridx=1, gridy=gridy, gridwidth=2,
                                            fill=GridBagConstraints.HORIZONTAL)
-        panel.add(self.font_color_combo, constraints)
+        panel.add(combo, constraints)
 
     def build_servers_panel(self, constraints, panel):
         '''
         Server location row: label + dropdown
         Contains a drop down with the servers to choose from.
         '''
-        server_label = JLabel("ORACC server location:")
-        constraints = self.add_constraints(constraints, weightx=0.30,
-                                           gridx=0, gridy=1,
-                                           insets=Insets(10, 10, 80, 10))
-        panel.add(server_label, constraints)
-
         self.combo = self.build_servers_combobox()
-        constraints = self.add_constraints(constraints, weightx=0.70,
-                                           gridx=1, gridy=1, gridwidth=2,
+        self.build_drop_down_menu(constraints, panel, self.combo,
+                                  JLabel("Oracc server location:"), 1,
+                                  Insets(10, 10, 80, 10))
+
+    def build_font_settings_panel(self, constraints, panel, label, gridy,
+                                  fs_field, fontsize, style):
+        '''
+        Font size on a textfield.
+        '''
+        constraints = self.add_constraints(constraints, weightx=0.20,
+                                           gridx=0, gridy=gridy,
                                            fill=GridBagConstraints.HORIZONTAL)
-        panel.add(self.combo, constraints)
+        panel.add(label, constraints)
+
+        fs_field.setEditable(True)
+        if fontsize:
+            fs_field.setText("{}".format(fontsize))
+        else:
+            fs_field.setText(str(self.controller.config[
+                style]['fontsize']['default']))
+
+        constraints = self.add_constraints(constraints, weightx=0.80,
+                                           gridx=1, gridy=gridy,
+                                           fill=GridBagConstraints.HORIZONTAL)
+        panel.add(fs_field, constraints)
 
     def build_console_font_panel(self, constraints, panel):
         '''
-        Font size on a textfield.
+        Font settings for consol pane.
         '''
-        fontzise_label = JLabel("Console font size:")
-        constraints = self.add_constraints(constraints, weightx=0.20,
-                                           gridx=0, gridy=0,
-                                           fill=GridBagConstraints.HORIZONTAL)
-        panel.add(fontzise_label, constraints)
-
         self.fs_field = JTextField()
-        self.fs_field.setEditable(True)
-        if self.console_fontsize:
-            self.fs_field.setText("{}".format(self.console_fontsize))
-        else:
-            self.fs_field.setText(self.controller.config[
-                                    'console_style']['fontsize']['default'])
-
-        constraints = self.add_constraints(constraints, weightx=0.80,
-                                           gridx=1, gridy=0,
-                                           fill=GridBagConstraints.HORIZONTAL)
-        panel.add(self.fs_field, constraints)
+        self.build_font_settings_panel(constraints, panel,
+                                       JLabel("Console font size:"), 2,
+                                       self.fs_field, self.console_fontsize,
+                                       'console_style')
 
     def build_edit_area_font_panel(self, constraints, panel):
         '''
-        Font size on a textfield.
+        Font settings for edit are pane.
         '''
-        fontzise_label = JLabel("Edit area font size:")
-        constraints = self.add_constraints(constraints, weightx=0.20,
-                                           gridx=0, gridy=4)
-        panel.add(fontzise_label, constraints)
-
         self.edit_area_fs_field = JTextField()
-        self.edit_area_fs_field.setEditable(True)
-        if self.edit_area_fontsize:
-            self.edit_area_fs_field.setText(
-                                    "{}".format(self.edit_area_fontsize))
-        else:
-            self.edit_area_fs_field.setText(self.controller.config[
-                                    'edit_area_style']['fontsize']['default'])
+        self.build_font_settings_panel(constraints, panel,
+                                       JLabel("Edit area font size:"), 0,
+                                       self.edit_area_fs_field,
+                                       self.edit_area_fontsize,
+                                       'edit_area_style')
 
-        constraints = self.add_constraints(constraints, weightx=0.80,
-                                           gridx=1, gridy=4,
-                                           fill=GridBagConstraints.HORIZONTAL)
-        panel.add(self.edit_area_fs_field, constraints)
+    def build_arabic_area_font_panel(self, constraints, panel):
+        '''
+        Font settings in Arabic pane's textfield.
+        '''
+        self.arabic_area_fs_field = JTextField()
+        self.build_font_settings_panel(constraints, panel,
+                                       JLabel("Arabic pane font size:"), 1,
+                                       self.arabic_area_fs_field,
+                                       self.arabic_area_fontsize,
+                                       'arabic_area_style')
 
     def build_combobox(self, choices, default):
         '''
@@ -328,6 +330,7 @@ class EditSettingsView(JDialog):
         self.build_console_font_color_panel(constraints, panel)
         self.build_console_background_color_panel(constraints, panel)
         self.build_edit_area_font_panel(constraints, panel)
+        self.build_arabic_area_font_panel(constraints, panel)
         return panel
 
     def display(self):
@@ -409,7 +412,8 @@ class EditSettingsView(JDialog):
             return None, False
 
     def validate_all_inputs(self, working_dir, console_fontsize,
-                            edit_area_fontsize, bg_color, font_color):
+                            edit_area_fontsize, arabic_area_fontsize,
+                            bg_color, font_color):
         '''
         Wrapper around the input validation methods. Returns a tuple containing
         the validated inputs with the last value in the tuple a boolean set to
@@ -432,12 +436,16 @@ class EditSettingsView(JDialog):
                                               'edit_area_style')
         validation_results.append(v)
 
+        arabic_size, v = self.validate_fontsize(arabic_area_fontsize,
+                                                'arabic_area_style')
+        validation_results.append(v)
+
         # Validate input console colors
         bg_color, font_color, v = self.validate_colors(bg_color, font_color)
         validation_results.append(v)
 
         return (working_dir, int(con_size), font_color, bg_color,
-                int(edit_size), all(validation_results))
+                int(edit_size), int(arabic_size), all(validation_results))
 
     def save(self, event=None):
         '''
@@ -450,24 +458,27 @@ class EditSettingsView(JDialog):
         # Read the fontsize from the textfield
         console_fontsize = self.fs_field.getText()
         edit_area_fontsize = self.edit_area_fs_field.getText()
+        arabic_area_fontsize = self.arabic_area_fs_field.getText()
 
         # Get the user selected font and background colours
         bg_color = self.bg_color_combo.getSelectedItem()
         font_color = self.font_color_combo.getSelectedItem()
 
         validated = self.validate_all_inputs(working_dir, console_fontsize,
-                                             edit_area_fontsize, bg_color,
+                                             edit_area_fontsize,
+                                             arabic_area_fontsize, bg_color,
                                              font_color)
 
         # The server format is "name: url:port". We only need "name"
         server = self.combo.getSelectedItem().split(':')[0]
         self.controller.update_config(validated[0], server,
                                       validated[1], validated[2],
-                                      validated[3], int(validated[4]))
+                                      validated[3], int(validated[4]),
+                                      int(validated[5]))
 
         # If no values have been changed, print that settings have been
         # updated without errors
-        if validated[5]:
+        if validated[6]:
             self.logger.info("Settings have been successfully updated.")
 
         # On saving settings, update the console and edit area properties

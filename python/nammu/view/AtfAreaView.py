@@ -232,29 +232,23 @@ class AtfAreaView(JPanel):
 
         config = self.controller.controller.config
 
-        # Create a new font with the new size
-        font = set_font(config['edit_area_style']['fontsize']['user'])
-
-        # Update the sytnax highlighter font params, so our changes are not
-        # superceded
-        self.controller.syntax_highlighter.font = font
-        self.controller.syntax_highlighter.setup_attribs()
-
-        attrs = self.controller.edit_area.getInputAttributes()
-        StyleConstants.setFontSize(attrs, font.getSize())
-
-        # Get the Styledoc so we can update it
-        doc = self.controller.edit_area.getStyledDocument()
-
-        # Apply the new fontsize to the whole document
-        doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
-
-        # Also apply new fontsize to arabic pane
-        arabic_doc = self.controller.arabic_area.getStyledDocument()
-        arabic_doc.setCharacterAttributes(0,
-                                          arabic_doc.getLength() + 1,
-                                          attrs,
-                                          False)
+        for area_name in ['edit', 'arabic']:
+            area = getattr(self.controller, "{}_area".format(area_name))
+            style = "{}_area_style".format(area_name)
+            # Create a new font with the new size
+            font = set_font(config[style]['fontsize']['user'])
+            if area_name == 'edit':
+                # Update the sytnax highlighter font params, so our changes are
+                # not superceded
+                self.controller.syntax_highlighter.font = font
+                self.controller.syntax_highlighter.setup_attribs()
+            attrs = area.getInputAttributes()
+            StyleConstants.setFontSize(attrs, font.getSize())
+            # Get the Styledoc so we can update it
+            doc = area.getStyledDocument()
+            # Apply the new fontsize to the whole document
+            doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
+            area.setFont(font)
 
 
 class atfAreaDocumentListener(DocumentListener):
