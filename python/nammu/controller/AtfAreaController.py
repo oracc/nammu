@@ -123,6 +123,35 @@ class AtfAreaController(object):
         '''
         self.validation_errors = validation_errors
 
+    def undoOrRedo(self, forward):
+        """
+        Helper function for undo() and redo().  The boolean argument `forward`
+        specifies if the edit is to be undone (`False`) or redone (`True`).
+        """
+        currentEdit = None
+        try:
+            # Before actually redoing/undoing, get the edit about to be
+            # redone/undone, in order to then move focus to its pane.
+            if forward:
+                currentEdit = self.undo_manager.editToBeRedone()
+                self.undo_manager.redo()
+            else:
+                currentEdit = self.undo_manager.editToBeUndone()
+                self.undo_manager.undo()
+        except (CannotUndoException, CannotRedoException):
+            # These exceptions indicate we've reached the end of the edits
+            # vector.  Nothing to do
+            pass
+        else:
+            if currentEdit:
+                # Move focus to the pane where `currentEdit` was done.
+                editDoc = currentEdit.firstEdit().getDocument()
+                if editDoc == self.arabic_area.getStyledDocument():
+                    self.arabic_area.requestFocusInWindow()
+                elif editDoc == self.edit_area.getStyledDocument():
+                    self.edit_area.requestFocusInWindow()
+                self.syntax_highlight()
+
     def undo(self):
         '''
         CompoundEdits only get added  to the undo manager when the next
@@ -132,24 +161,10 @@ class AtfAreaController(object):
         ended.
         '''
         self.view.edit_listener.current_compound.end()
-        try:
-            self.undo_manager.undo()
-        except CannotUndoException:
-            # This exception indicates we've reached the end of the edits
-            # vector Nothing to do
-            pass
-        else:
-            self.syntax_highlight()
+        self.undoOrRedo(forward=False)
 
     def redo(self):
-        try:
-            self.undo_manager.redo()
-        except CannotRedoException:
-            # This exception indicates we've reached the end of the edits
-            # vector - Nothing to do
-            pass
-        else:
-            self.syntax_highlight()
+        self.undoOrRedo(forward=True)
 
     def __getattr__(self, name):
         '''
