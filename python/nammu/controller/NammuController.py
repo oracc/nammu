@@ -840,7 +840,8 @@ class NammuController(object):
             atfAreaView = self.atfAreaController.view
             atfAreaView.edit_area.setText(self.atf_body)
             atfAreaView.arabic_area.setText(self.atf_translation)
-            atfAreaView.setup_edit_area_split(JSplitPane.VERTICAL_SPLIT, arabic=True)
+            atfAreaView.setup_edit_area_split(JSplitPane.VERTICAL_SPLIT,
+                                              arabic=True)
             self.menuController.enable_split_options(
                 horizontal=False, vertical=False, arabic=False)
             return
