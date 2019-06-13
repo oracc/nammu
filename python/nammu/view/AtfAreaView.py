@@ -27,6 +27,7 @@ from javax.swing.event import UndoableEditListener, DocumentListener
 
 from swingutils.threads.swing import runSwingLater
 
+import os
 from ..utils import set_font
 
 
@@ -330,7 +331,15 @@ class atfAreaDocumentListener(DocumentListener):
         '''
         Must be implemented to avoid NotImplemented errors
         '''
-        pass
+        nammu = self.areaviewcontroller.controller
+        if nammu.currentFilename is None:
+            current_filename = "<New File>"
+        else:
+            current_filename = os.path.basename(nammu.currentFilename)
+        if nammu.unsavedChanges():
+            nammu.view.setTitle("(*) {}".format(current_filename))
+        else:
+            nammu.view.setTitle(current_filename)
 
     def insertUpdate(self, e):
         '''
