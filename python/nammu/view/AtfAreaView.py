@@ -272,9 +272,10 @@ class AtfAreaView(JPanel):
 
         config = self.controller.controller.config
 
-        for area_name in ['edit', 'arabic']:
+        for area_name, style in [['edit', 'edit_area_style'],
+                                 ['secondary', 'edit_area_style'],
+                                 ['arabic', 'arabic_area_style']]:
             area = getattr(self.controller, "{}_area".format(area_name))
-            style = "{}_area_style".format(area_name)
             # Create a new font with the new size
             font = set_font(config[style]['fontsize']['user'])
             if area_name == 'edit':
