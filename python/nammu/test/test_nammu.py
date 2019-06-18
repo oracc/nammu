@@ -153,9 +153,18 @@ class TestNammu(object):
     @pytest.mark.parametrize('text', [english_no_lem(), arabic_no_lem()])
     def test_successful_lem_no_existing_lem(self, text, nammu):
         nammu.currentFilename = 'pytest.atf'  # bypass saving the file
-        nammu.atfAreaController.edit_area.setText(text)
+        arabic_idx = nammu.atfAreaController.findArabic(text)
+        if arabic_idx:
+            nammu.atf_body = text[0:arabic_idx]
+            nammu.atf_translation = text[arabic_idx:]
+            nammu.arabic(force=True)
+        else:
+            nammu.atfAreaController.edit_area.setText(text)
         nammu.lemmatise()
-        assert text != nammu.atfAreaController.edit_area.getText()
+        text_with_lemmas = nammu.atfAreaController.edit_area.getText()
+        assert text != text_with_lemmas
+        # Make sure Arabic translation is not appended to the edit area.
+        assert not nammu.atfAreaController.findArabic(text_with_lemmas)
 
     @pytest.mark.parametrize('text', [english(), arabic()])
     def test_successful_lem_existing_lem(self, text, nammu):
