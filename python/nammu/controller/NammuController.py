@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2018 University College London.
+Copyright 2015 - 2019 University College London.
 
 This file is part of Nammu.
 
@@ -142,7 +142,7 @@ class NammuController(object):
             # Keep on where we were if user doesn't cancel
             if not new_atf_controller.view.cancelled:
                 self.currentFilename = None
-                self.view.setTitle("Nammu")
+                self.view.set_title()
                 self.logger.debug("New file created from template.")
 
     def openFile(self, event=None):
@@ -162,10 +162,8 @@ class NammuController(object):
 
             if status == JFileChooser.APPROVE_OPTION:
                 atfFile = fileChooser.getSelectedFile()
-                filename = atfFile.getCanonicalPath()
-                basename = atfFile.getName()
-                atfText = self.readTextFile(filename)
                 self.currentFilename = atfFile.getCanonicalPath()
+                atfText = self.readTextFile(self.currentFilename)
                 # Clear ATF area before adding next text to clean up tooltips
                 # and such
                 self.atfAreaController.clearAtfArea(
@@ -192,8 +190,9 @@ class NammuController(object):
                             self.splitEditorV()
 
                 self.consoleController.clearConsole()
-                self.logger.info("File %s successfully opened.", filename)
-                self.view.setTitle(basename)
+                self.logger.info("File %s successfully opened.",
+                                 self.currentFilename)
+                self.view.set_title()
 
                 # Re-enable caret updating and syntax highlighting after load
                 self.atfAreaController.caret.setUpdatePolicy(
@@ -279,7 +278,7 @@ class NammuController(object):
                         return
                 filename = self.force_atf_extension(filename)
                 self.currentFilename = filename
-                self.view.setTitle(os.path.basename(filename))
+                self.view.set_title()
             else:
                 return
         try:
@@ -361,9 +360,8 @@ class NammuController(object):
                             JOptionPane.YES_NO_OPTION)
                 if reply == JOptionPane.NO_OPTION:
                     return
-            filename = self.force_atf_extension(filename)
-            self.currentFilename = filename
-            self.view.setTitle(basename)
+            self.currentFilename = self.force_atf_extension(filename)
+            self.view.set_title()
             try:
                 self.writeTextFile(self.currentFilename, atfText)
             except:
@@ -400,6 +398,7 @@ class NammuController(object):
             self.logger.debug("File %s successfully closed.",
                               self.currentFilename)
             self.currentFilename = None
+            self.view.set_title()
             # Clear stack of edits
             self.atfAreaController.undo_manager.discardAllEdits()
             # Enable horizontal and vertical split only if we are not in Arabic

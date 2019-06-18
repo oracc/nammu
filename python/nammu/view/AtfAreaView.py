@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2018 University College London.
+Copyright 2015 - 2019 University College London.
 
 This file is part of Nammu.
 
@@ -331,20 +331,13 @@ class atfAreaDocumentListener(DocumentListener):
         '''
         Must be implemented to avoid NotImplemented errors
         '''
-        nammu = self.areaviewcontroller.controller
-        if nammu.currentFilename is None:
-            current_filename = "<New File>"
-        else:
-            current_filename = os.path.basename(nammu.currentFilename)
-        if nammu.unsavedChanges():
-            nammu.view.setTitle("(*) {}".format(current_filename))
-        else:
-            nammu.view.setTitle(current_filename)
+        pass
 
     def insertUpdate(self, e):
         '''
         Listen for an insertion to the document.
         '''
+        self.areaviewcontroller.controller.view.set_title(unsaved=True)
         text = self.areaviewcontroller.edit_area.getText()
         self.errorUpdate(e, text, 'insert')
 
@@ -352,6 +345,7 @@ class atfAreaDocumentListener(DocumentListener):
         '''
         Listen for a removal from the document
         '''
+        self.areaviewcontroller.controller.view.set_title(unsaved=True)
         # Get the text prior to this edit event
         text = self.areaview.oldtext
         self.errorUpdate(e, text, 'remove')
