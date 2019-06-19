@@ -27,7 +27,6 @@ from javax.swing.event import UndoableEditListener, DocumentListener
 
 from swingutils.threads.swing import runSwingLater
 
-import os
 from ..utils import set_font
 
 

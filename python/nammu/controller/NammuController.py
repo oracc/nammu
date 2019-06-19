@@ -348,7 +348,6 @@ class NammuController(object):
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
             filename = atfFile.getCanonicalPath()
-            basename = atfFile.getName()
             # Make sure users check before lightly overwriting a file
             # No need to ask if they choose to save on the file they are
             # currently and knowingly editing.

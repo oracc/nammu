@@ -101,10 +101,7 @@ class NammuView(JFrame):
             filename = "<New File>"
         else:
             filename = os.path.basename(self.controller.currentFilename)
-        if unsaved:
-            prefix = "(*) "
-        else:
-            prefix = ""
+        prefix = "(*) " if unsaved else ""
         self.setTitle("Nammu - {}{}".format(prefix, filename))
 
     def display(self):
