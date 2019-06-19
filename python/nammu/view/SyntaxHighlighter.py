@@ -168,8 +168,8 @@ class SyntaxHighlighter:
 
         # when we have arabic text, we need to fix an off by 1 error caused
         # by how we split the panes
-        if self.controller.controller.arabicIndex:
-            no_of_chars = self.controller.controller.arabicIndex - 1
+        if self.controller.controller.arabic_edition_on:
+            no_of_chars = self.styledoc.getLength()
 
         # Get only the text on the screen
         # TODO: This exception can probably be understood and worked around

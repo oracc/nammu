@@ -98,10 +98,6 @@ class NammuController(object):
         # TODO: save array with all opened ATFs
         self.currentFilename = None
 
-        # We need to initialise this so a conditional test in the syntax
-        # highlighter does not fail when we have no arabic translation
-        self.arabicIndex = None
-
         # Configure the tooltip manager for tooltips to appear quicker and not
         # to vanish until mouse moves away
         ToolTipManager.sharedInstance().setInitialDelay(0)
@@ -172,10 +168,10 @@ class NammuController(object):
                                             arabic=self.arabic_edition_on)
 
                 # Check for Arabic content and toggle arabic translation mode
-                self.arabicIndex = self.atfAreaController.findArabic(atfText)
-                if self.arabicIndex:
-                    self.atf_body = atfText[:self.arabicIndex]
-                    self.atf_translation = atfText[self.arabicIndex:]
+                arabicIndex = self.atfAreaController.findArabic(atfText)
+                if arabicIndex:
+                    self.atf_body = atfText[:arabicIndex]
+                    self.atf_translation = atfText[arabicIndex:]
                     self.arabic(force=True)
                 else:
                     # Turn off caret movement and highligting for file load
