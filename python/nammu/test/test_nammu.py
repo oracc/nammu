@@ -199,6 +199,29 @@ class TestNammu(object):
         # An empty dictionary means no validation errors
         assert nammu.atfAreaController.validation_errors
 
+    def test_syntax_highlight_add_text(self, monkeypatch, nammu):
+        """
+        Test that syntax highlighting works correctly when adding lines to a
+        document with an Arabic translation.
+        """
+        monkeypatch.setattr(JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
+                            selected_file_patch_arabic)
+        monkeypatch.setattr(nammu, 'handleUnsaved', unsaved_patch)
+        nammu.openFile()
+        edit_area = nammu.atfAreaController.edit_area
+        atf_body = edit_area.getText()
+        edit_area.setText(atf_body + '\n@obverse')
+
+        # Wait here so the highlight completes before getting the styledoc
+        time.sleep(2)
+        doc = edit_area.getStyledDocument()
+        caret = doc.getLength() - 2
+        # Get the colour of a given character that should be highlighted
+        c = doc.getForeground(doc.getCharacterElement(caret).getAttributes())
+        assert c.equals(blue())
+
     def test_file_load(self, monkeypatch, nammu):
         monkeypatch.setattr(JFileChooser, 'showDialog',
                             show_diag_patch)
