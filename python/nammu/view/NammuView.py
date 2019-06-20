@@ -102,7 +102,7 @@ class NammuView(JFrame):
         else:
             filename = os.path.basename(self.controller.currentFilename)
         prefix = "(*) " if unsaved else ""
-        self.setTitle("Nammu - {}{}".format(prefix, filename))
+        self.setTitle("{}{} - Nammu".format(prefix, filename))
 
     def display(self):
         self.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE)
