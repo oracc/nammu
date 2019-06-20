@@ -116,4 +116,4 @@ class CustomMouseListener(MouseAdapter):
         self.panel = panel
 
     def mousePressed(self, event):
-        offset = self.panel.viewToModel(event.getPoint())
+        self.panel.viewToModel(event.getPoint())

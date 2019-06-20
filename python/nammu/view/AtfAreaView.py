@@ -19,7 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 from java.awt import BorderLayout, Dimension, Point
 from java.awt.event import KeyListener, AdjustmentListener
-from java.awt.ComponentOrientation import RIGHT_TO_LEFT, LEFT_TO_RIGHT
+from java.awt.ComponentOrientation import RIGHT_TO_LEFT
 from javax.swing import JScrollPane, JPanel, JSplitPane, UIManager
 from javax.swing.text import StyleConstants
 from javax.swing.undo import UndoManager, CompoundEdit

@@ -797,7 +797,7 @@ class NammuController(object):
         # Clear console in preparation for new settings messages
         self.consoleController.clearConsole()
 
-        edit_settings_controller = EditSettingsController(self)
+        EditSettingsController(self)
 
     def displayModelView(self, event=None):
         '''
