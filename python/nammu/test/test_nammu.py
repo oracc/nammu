@@ -253,6 +253,40 @@ class TestNammu(object):
         assert isinstance(nammu.atfAreaController.view.container,
                           JSplitPane)
 
+    def test_close_file(self, monkeypatch, nammu):
+        """
+        Test that closing a document leaves the editor in a proper state.
+        """
+        atfAreaController = nammu.atfAreaController
+        view = atfAreaController.view
+        menuView = nammu.menuController.view
+        toggleVertical = menuView.get_menu_item_by_name(
+            "Window", "Toggle Vertical Split Editor")
+        toggleHorizontal = menuView.get_menu_item_by_name(
+            "Window", "Toggle Horizontal Split Editor")
+        toggleArabic = menuView.get_menu_item_by_name(
+            "Window", "Toggle Arabic Translation Editor")
+        monkeypatch.setattr(JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
+                            selected_file_patch_arabic)
+        monkeypatch.setattr(nammu, 'handleUnsaved', unsaved_patch)
+        nammu.openFile()
+        nammu.closeFile()
+        assert isinstance(view.container, JSplitPane)
+        assert atfAreaController.arabic_area.getText() == ""
+        assert not toggleVertical.isEnabled()
+        assert not toggleHorizontal.isEnabled()
+        assert toggleArabic.isEnabled()
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
+                            selected_file_patch_english)
+        nammu.openFile()
+        nammu.closeFile()
+        assert isinstance(view.container, JScrollPane)
+        assert toggleVertical.isEnabled()
+        assert toggleHorizontal.isEnabled()
+        assert toggleArabic.isEnabled()
+
     def test_edit_compound(self, nammu):
         '''
         Adding a character should trigger several edit events (insert and
