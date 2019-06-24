@@ -394,13 +394,20 @@ class NammuController(object):
         2. Clear text area
         '''
         if self.handleUnsaved():
-            self.atfAreaController.clearAtfArea()
+            # We want to always clear the Arabic pane.
+            self.atfAreaController.clearAtfArea(arabic=True)
             self.view.setTitle("Nammu")
             self.logger.debug("File %s successfully closed.",
                               self.currentFilename)
             self.currentFilename = None
             # Clear stack of edits
             self.atfAreaController.undo_manager.discardAllEdits()
+            # Enable horizontal and vertical split only if we are not in Arabic
+            # mode.
+            self.menuController.enable_split_options(
+                horizontal=not self.arabic_edition_on,
+                vertical=not self.arabic_edition_on,
+                arabic=True)
 
     def unsavedChanges(self):
         '''
