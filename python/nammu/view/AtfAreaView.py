@@ -19,7 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 from java.awt import BorderLayout, Dimension, Point
 from java.awt.event import KeyListener, AdjustmentListener
-from java.awt.ComponentOrientation import RIGHT_TO_LEFT
+from java.awt.ComponentOrientation import RIGHT_TO_LEFT, LEFT_TO_RIGHT
 from javax.swing import JScrollPane, JPanel, JSplitPane, UIManager
 from javax.swing.text import StyleConstants
 from javax.swing.undo import UndoManager, CompoundEdit
@@ -61,7 +61,7 @@ class AtfAreaView(JPanel):
         self.arabic_line_numbers = self.controller.arabic_line_numbers
 
         # Set undo/redo manager to edit area
-        self.undo_manager = MyUndoManager(self)
+        self.undo_manager = AtfUndoManager(self)
         self.undo_manager.limit = 3000
         self.edit_listener = AtfUndoableEditListener(self)
         self.edit_area.getDocument().addUndoableEditListener(
@@ -405,7 +405,7 @@ class AtfUndoableEditListener(UndoableEditListener):
     def __init__(self, panel):
         self.panel = panel
         self.undo_manager = self.panel.undo_manager
-        self.current_compound = NewEdit()
+        self.current_compound = AtfCompoundEdit()
         self.must_compound = False
         self.deletion = UIManager.getString('AbstractDocument.deletionText')
         self.addition = UIManager.getString('AbstractDocument.additionText')
@@ -416,13 +416,13 @@ class AtfUndoableEditListener(UndoableEditListener):
         significant edit events that we want to put together in a compound
         edit.
         """
-        empty_compound = NewEdit()
+        empty_compound = AtfCompoundEdit()
         if not self.must_compound:
             self.must_compound = True
             if not self.current_compound.equals(empty_compound):
                 self.current_compound.end()
                 self.undo_manager.addEdit(self.current_compound)
-            self.current_compound = NewEdit()
+            self.current_compound = AtfCompoundEdit()
 
     def force_stop_compound(self):
         self.current_compound.end()
@@ -441,14 +441,14 @@ class AtfUndoableEditListener(UndoableEditListener):
             # to false. Note undo() only undoes compound edits when they
             # are not in progress.
             self.current_compound.end()
-            self.current_compound = NewEdit()
+            self.current_compound = AtfCompoundEdit()
             self.undo_manager.addEdit(self.current_compound)
 
         # Always add current edit to current compound
         self.current_compound.addEdit(edit)
 
 
-class NewEdit(CompoundEdit):
+class AtfCompoundEdit(CompoundEdit):
     # add a getter for a protected field
     def getEdits(self):
         field = CompoundEdit.getDeclaredField("edits")
@@ -459,7 +459,7 @@ class NewEdit(CompoundEdit):
         return self.getEdits()[0]
 
 
-class MyUndoManager(UndoManager):
+class AtfUndoManager(UndoManager):
     def __init__(self, panel):
         self.panel = panel
 
