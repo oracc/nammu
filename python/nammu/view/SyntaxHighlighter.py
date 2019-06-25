@@ -166,8 +166,7 @@ class SyntaxHighlighter:
         if not self.syntax_highlight_on or no_of_chars < 1:
             return
 
-        # when we have arabic text, we need to fix an off by 1 error caused
-        # by how we split the panes
+        # When we have arabic text, use the length of the main edit area.
         if self.controller.controller.arabic_edition_on:
             no_of_chars = self.styledoc.getLength()
 
