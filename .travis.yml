@@ -1,3 +1,5 @@
+dist: trusty
+
 matrix:
   include:
     - python: 2.7
