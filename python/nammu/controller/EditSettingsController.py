@@ -30,7 +30,6 @@ class EditSettingsController:
                                      self.console_style, self.edit_area_style,
                                      self.arabic_area_style, self.keystrokes,
                                      self.languages, self.projects)
-        self.view.display()
 
     def load_config(self):
         '''

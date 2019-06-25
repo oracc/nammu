@@ -777,11 +777,8 @@ class NammuController(object):
         '''
         Checks if new_user flag is true, launches the welcome screen if needed
         '''
-        try:
-            if self.config['new_user']:
-                WelcomeController(self)
-        except KeyError:
-            WelcomeController(self)
+        if self.config.get('new_user', True):
+            WelcomeController(self).view.display()
 
     def printFile(self, event=None):
         '''
@@ -797,7 +794,7 @@ class NammuController(object):
         # Clear console in preparation for new settings messages
         self.consoleController.clearConsole()
 
-        EditSettingsController(self)
+        EditSettingsController(self).view.display()
 
     def displayModelView(self, event=None):
         '''
