@@ -44,9 +44,9 @@ class AtfAreaController(object):
         self.arabic_area = JTextPane()
 
         # Create text panel to display the line numbers
-        self.line_numbers_area = TextLineNumber(self.edit_area)
-        self.secondary_line_numbers = TextLineNumber(self.secondary_area)
-        self.arabic_line_numbers = TextLineNumber(self.arabic_area)
+        self.line_numbers_area = TextLineNumber(self.edit_area, True)
+        self.secondary_line_numbers = TextLineNumber(self.secondary_area, True)
+        self.arabic_line_numbers = TextLineNumber(self.arabic_area, False)
         # Ensure the line numbers update when the editor font is changed
         self.line_numbers_area.setUpdateFont(True)
         self.secondary_line_numbers.setUpdateFont(True)
