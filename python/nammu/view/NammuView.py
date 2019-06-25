@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2018 University College London.
+Copyright 2015 - 2019 University College London.
 
 This file is part of Nammu.
 
@@ -21,6 +21,7 @@ from java.awt import BorderLayout, Toolkit
 from java.awt.event import KeyEvent, WindowAdapter
 from javax.swing import JFrame, JSplitPane, KeyStroke, AbstractAction
 from javax.swing import JComponent
+import os
 
 
 class NammuView(JFrame):
@@ -91,9 +92,21 @@ class NammuView(JFrame):
         # Make console's high remain smaller compared to edit area
         splitPane.setResizeWeight(0.9)
 
+    def set_title(self, unsaved=False):
+        """
+        Set the title bar to the base name of the currently open file.
+        If `unsaved` is `True`, prepend "(*) " to the file name.
+        """
+        if self.controller.currentFilename is None:
+            filename = "<New File>"
+        else:
+            filename = os.path.basename(self.controller.currentFilename)
+        prefix = "(*) " if unsaved else ""
+        self.setTitle("{}{} - Nammu".format(prefix, filename))
+
     def display(self):
         self.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE)
-        self.setTitle("Nammu")
+        self.set_title()
         self.pack()
         self.setLocationRelativeTo(None)
 

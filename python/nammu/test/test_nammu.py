@@ -551,3 +551,26 @@ class TestNammu(object):
             assert not toggleHorizontal.isEnabled()
             assert not toggleArabic.isEnabled()
             assert view.arabic_area.getText() == arabic_text
+
+    def test_title_bar(self, monkeypatch, nammu):
+        """
+        Test the content of the title bar.
+        """
+        monkeypatch.setattr(nammu, 'handleUnsaved', unsaved_patch)
+        nammu.closeFile()
+        assert nammu.view.getTitle() == "<New File> - Nammu"
+        nammu.atfAreaController.edit_area.setText("Hello Mesopotamia")
+        assert nammu.view.getTitle() == "(*) <New File> - Nammu"
+        monkeypatch.setattr(JFileChooser, 'showDialog',
+                            show_diag_patch)
+        monkeypatch.setattr(JFileChooser, 'getSelectedFile',
+                            selected_file_patch_arabic)
+        nammu.openFile()
+        assert (nammu.view.getTitle() ==
+                "{} - Nammu".format(selected_file_patch_arabic(None)
+                                    .getName()))
+        nammu.atfAreaController.arabic_area.setText("Hello Mesopotamia")
+        assert (nammu.view.getTitle() ==
+                "(*) {} - Nammu".format(selected_file_patch_arabic(None)
+                                        .getName()))
+        nammu.closeFile()

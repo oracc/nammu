@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2018 University College London.
+Copyright 2015 - 2019 University College London.
 
 This file is part of Nammu.
 
@@ -336,6 +336,7 @@ class atfAreaDocumentListener(DocumentListener):
         '''
         Listen for an insertion to the document.
         '''
+        self.areaviewcontroller.controller.view.set_title(unsaved=True)
         text = self.areaviewcontroller.edit_area.getText()
         self.errorUpdate(e, text, 'insert')
 
@@ -343,6 +344,7 @@ class atfAreaDocumentListener(DocumentListener):
         '''
         Listen for a removal from the document
         '''
+        self.areaviewcontroller.controller.view.set_title(unsaved=True)
         # Get the text prior to this edit event
         text = self.areaview.oldtext
         self.errorUpdate(e, text, 'remove')
