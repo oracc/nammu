@@ -24,7 +24,7 @@ from swingutils.events import addEventListener
 from java.awt import (Color, BorderLayout, GridBagLayout, GridBagConstraints,
                       Insets)
 from javax.swing import (JDialog, JFrame, JPanel, JButton, JCheckBox,
-                         JEditorPane, JScrollPane, BorderFactory)
+                         JEditorPane, BorderFactory)
 from javax.swing.event import HyperlinkListener
 from javax.swing.event.HyperlinkEvent import EventType
 from javax.swing.text.html import HTMLEditorKit
@@ -77,7 +77,6 @@ class WelcomeView(JDialog):
         msg_pane.setEditable(False)
         kit = HTMLEditorKit()
         msg_pane.setEditorKit(kit)
-        scrollPane = JScrollPane(msg_pane)
 
         # This handles the stylesheet applied to the welcome message
         styleSheet = kit.getStyleSheet()
@@ -95,8 +94,8 @@ class WelcomeView(JDialog):
         msg_pane.setText(message)
 
         # Set up a hyperlink listener
-        listener = addEventListener(msg_pane, HyperlinkListener,
-                                    'hyperlinkUpdate', self.handleEvent)
+        addEventListener(msg_pane, HyperlinkListener,
+                         'hyperlinkUpdate', self.handleEvent)
 
         # Configure the placement of the JEditorPane
         constraints.gridx = 1

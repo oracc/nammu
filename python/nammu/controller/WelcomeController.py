@@ -26,7 +26,6 @@ class WelcomeController:
         self.controller = maincontroller
         self.config = self.controller.config
         self.view = WelcomeView(self)
-        self.view.display()
 
     def update_welcome_flag(self, flag):
         '''

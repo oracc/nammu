@@ -67,8 +67,8 @@ class ConsoleView(JPanel):
         self.refreshConsole()
 
         # Set up a hyperlink listener
-        listener = addEventListener(self.edit_area, HyperlinkListener,
-                                    'hyperlinkUpdate', self.handleEvent)
+        addEventListener(self.edit_area, HyperlinkListener,
+                         'hyperlinkUpdate', self.handleEvent)
 
         # Will need scrolling controls
         scrollingText = JScrollPane(self.edit_area)
