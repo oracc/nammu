@@ -117,6 +117,8 @@ class NammuController(object):
         # Now that init is done, launch the welcome screen if needed
         self.launchWelcomeScreen()
 
+        self.atf_body, self.atf_translation = "", ""
+
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
     # require interaction of several subcontrollers who have no visibility.

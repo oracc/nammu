@@ -248,12 +248,12 @@ class AtfAreaView(JPanel):
         and will give the range from the top of the file block to the lower
         extent of the two viewports.
         '''
-        try:
-            # Assumes a single edit pane
+        if isinstance(self.container, JScrollPane):
+            # This is a single edit pane
             viewport = self.container.getViewport()
             top_ch, bottom_ch = self.get_viewport_top_bottom(viewport)
 
-        except:
+        else:
             # Otherwise we have a split pane
             viewport_l = self.container.leftComponent.getViewport()
             viewport = self.container.rightComponent.getViewport()
