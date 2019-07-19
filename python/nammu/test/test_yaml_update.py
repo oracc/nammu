@@ -41,8 +41,8 @@ def test_update_yaml_config():
     with open(local_file, "r") as f:
         orig_config = yaml.safe_load(f)
     # Make sure the user (project) setting is not overwritten
-    assert (new_config["projects"]["default"]
-            == orig_config["projects"]["default"])
+    assert (new_config["projects"]["default"] ==
+            orig_config["projects"]["default"])
 
 
 def test_settings_copied_correctly(monkeypatch, tmpdir):
