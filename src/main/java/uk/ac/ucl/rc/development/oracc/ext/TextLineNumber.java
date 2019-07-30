@@ -76,7 +76,7 @@ public class TextLineNumber extends JPanel
 	 *	Create a line number component for a text component.
 	 *
 	 *  @param component  the related text component
-	 *  @param left_to_right  whether the text is left to right, this
+	 *  @param left_to_right  whether the text is left to right; this
 	 *                        affects alignment of line numbers and the
 	 *                        border of the panel
 	 *  @param minimumDisplayDigits  the number of digits used to calculate
