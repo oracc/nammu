@@ -154,6 +154,7 @@ class AtfAreaView(JPanel):
         if arabic:
             secondary_editor = JScrollPane(self.arabic_area)
             secondary_editor.setRowHeaderView(self.arabic_line_numbers)
+            secondary_editor.setComponentOrientation(RIGHT_TO_LEFT)
             self.controller.controller.arabic_edition_on = True
             # Do not allow toggling arabic pane if there is text in it.
             arabic_text = self.arabic_area.getText()
