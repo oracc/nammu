@@ -31,13 +31,15 @@ public class TextLineNumber extends JPanel
 	public final static float CENTER = 0.5f;
 	public final static float RIGHT = 1.0f;
 
-	private final static Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
-
 	private final static int HEIGHT = Integer.MAX_VALUE - 1000000;
 
 	//  Text component this TextTextLineNumber component is in sync with
 
 	private JTextComponent component;
+
+	// Other properties that will be set by constructor
+
+	private static Border OUTER;
 
 	//  Properties that can be changed
 
@@ -50,9 +52,9 @@ public class TextLineNumber extends JPanel
 	//  Keep history information to reduce the number of times the component
 	//  needs to be repainted
 
-    private int lastDigits;
-    private int lastHeight;
-    private int lastLine;
+	private int lastDigits;
+	private int lastHeight;
+	private int lastLine;
 
 	private HashMap<String, FontMetrics> fonts;
 
@@ -61,28 +63,44 @@ public class TextLineNumber extends JPanel
 	 *  display width will be based on 3 digits.
 	 *
 	 *  @param component  the related text component
+	 *  @param left_to_right  whether the text is left to right, this
+	 *                        affects alignment of line numbers and the
+	 *                        border of the panel
 	 */
-	public TextLineNumber(JTextComponent component)
+	public TextLineNumber(JTextComponent component, boolean left_to_right)
 	{
-		this(component, 3);
+		this(component, left_to_right, 3);
 	}
 
 	/**
 	 *	Create a line number component for a text component.
 	 *
 	 *  @param component  the related text component
+	 *  @param left_to_right  whether the text is left to right; this
+	 *                        affects alignment of line numbers and the
+	 *                        border of the panel
 	 *  @param minimumDisplayDigits  the number of digits used to calculate
 	 *                               the minimum width of the component
 	 */
-	public TextLineNumber(JTextComponent component, int minimumDisplayDigits)
+	public TextLineNumber(JTextComponent component, boolean left_to_right,
+			      int minimumDisplayDigits)
 	{
 		this.component = component;
+		if (left_to_right)
+		{
+			setDigitAlignment( RIGHT );
+			this.OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
+		}
+		else
+		{
+			setDigitAlignment( LEFT );
+			this.OUTER = new MatteBorder(0, 2, 0, 0, Color.GRAY);
+		}
 
 		setFont( component.getFont() );
 
 		setBorderGap( 5 );
 		setCurrentLineForeground( Color.RED );
-		setDigitAlignment( RIGHT );
 		setMinimumDisplayDigits( minimumDisplayDigits );
 
 		component.getDocument().addDocumentListener(this);
@@ -229,7 +247,6 @@ public class TextLineNumber extends JPanel
 			Dimension d = getPreferredSize();
 			d.setSize(preferredWidth, HEIGHT);
 			setPreferredSize( d );
-			setSize( d );
 		}
 	}
 
@@ -256,7 +273,7 @@ public class TextLineNumber extends JPanel
 		while (rowStartOffset <= endOffset)
 		{
 			try
-            {
+			{
     			if (isCurrentLine(rowStartOffset))
     				g.setColor( getCurrentLineForeground() );
     			else
@@ -268,8 +285,8 @@ public class TextLineNumber extends JPanel
     			String lineNumber = getTextLineNumber(rowStartOffset);
     			int stringWidth = fontMetrics.stringWidth( lineNumber );
     			int x = getOffsetX(availableWidth, stringWidth) + insets.left;
-				  int y = getOffsetY(rowStartOffset, fontMetrics);
-          g.drawString(lineNumber, x, y);
+			int y = getOffsetY(rowStartOffset, fontMetrics);
+			g.drawString(lineNumber, x, y);
 
     			//  Move to the next row
 
@@ -306,11 +323,11 @@ public class TextLineNumber extends JPanel
 
 		if (line.getStartOffset() == rowStartOffset)
 			return String.valueOf(index + 1);
-    // Need this clause to deal with right to left text encoding
+		// Need this clause to deal with right to left text encoding
 		else if (line.getEndOffset() == rowStartOffset + 1)
 			return String.valueOf(index + 1);
-    else
-      return "";
+		else
+			return "";
 	}
 
 	/*
