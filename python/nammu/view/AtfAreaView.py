@@ -465,12 +465,12 @@ class AtfUndoManager(UndoManager):
 
     def editToBeRedone(self):
         """
-        Return the protected method `editToBeRedone()`.
+        Expose the protected method `editToBeRedone()`.
         """
         return self.super__editToBeRedone()
 
     def editToBeUndone(self):
         """
-        Return the protected method `editToBeUndone()`.
+        Expose the protected method `editToBeUndone()`.
         """
         return self.super__editToBeUndone()

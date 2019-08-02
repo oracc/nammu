@@ -140,7 +140,7 @@ class AtfAreaController(object):
                 self.undo_manager.undo()
         except (CannotUndoException, CannotRedoException):
             # These exceptions indicate we've reached the end of the edits
-            # vector.  Nothing to do
+            # vector. Nothing to do.
             pass
         else:
             if currentEdit:
