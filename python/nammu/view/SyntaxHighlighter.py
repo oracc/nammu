@@ -208,9 +208,9 @@ class SyntaxHighlighter:
                                                  attribs,
                                                  True)
 
-    # Go through each token in the text, check which type it is to assign
-    # a colour to it, check which position it is to set up default or
-    # error background, etc.
+        # Go through each token in the text, check which type it is to assign
+        # a colour to it, check which position it is to set up default or
+        # error background, etc.
         for tok in self.lexer:
             if tok.type in self.tokencolorlu:
                 if type(self.tokencolorlu[tok.type]) is dict:
@@ -227,7 +227,21 @@ class SyntaxHighlighter:
                     color = self.tokencolorlu[tok.type][0]
                     styleline = self.tokencolorlu[tok.type][1]
                 if styleline:
-                    mylength = len(splittext[tok.lineno - 1])
+                    # `styleline` indicates whether we need to apply the style
+                    # to the whole line.
+                    if tok.lineno <= len(splittext):
+                        # Length of the full line.
+                        mylength = len(splittext[tok.lineno - 1])
+                    else:
+                        # For some reason, the line number stored in `tok` is
+                        # larger than the number of lines in `splittext`.  In
+                        # this case, ignore this token and issue a debug
+                        # message.  FIXME: this shouldn't happen.
+                        logger = self.controller.controller.logger
+                        logger.debug("Error in syntax_highlight: "
+                                     "trying to highlight a line after "
+                                     "the end of the file")
+                        continue
                 else:
                     mylength = len(tok.value)
                 if str(tok.lineno) in error_lines:
