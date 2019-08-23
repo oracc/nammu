@@ -449,18 +449,36 @@ class AtfUndoableEditListener(UndoableEditListener):
 
 
 class AtfCompoundEdit(CompoundEdit):
+    """
+    Compound edit for the ATF area, derived from `CompoundEdit`.
+
+    This exposes the protected field `edits` of the parent Java class.
+    """
     # add a getter for a protected field
     def getEdits(self):
+        """
+        Return the protected field 'edits' of the compound.
+        """
         field = CompoundEdit.getDeclaredField("edits")
         field.setAccessible(True)
         return field.get(self)
 
     def firstEdit(self):
+        """
+        Return the first edit in the compound.
+        """
         return self.getEdits()[0]
 
 
 class AtfUndoManager(UndoManager):
+    """
+    Undo manager of the ATF area, derived from `UndoManager`.
+
+    This exposes some protected methods of the parent Java class.
+    """
     def __init__(self, panel):
+        # This member is here only to ease debugging: you can access
+        # NammuController logger with `self.panel.controller.controller.logger`
         self.panel = panel
 
     def editToBeRedone(self):

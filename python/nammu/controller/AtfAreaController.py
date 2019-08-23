@@ -143,6 +143,12 @@ class AtfAreaController(object):
             # vector. Nothing to do.
             pass
         else:
+            # The following `if` is there only for the sake of safety, in case
+            # the previous `try` block leaks a falsy `currentEdit` which would
+            # cause an error when calling `firstEdit()` method.  If
+            # `currentEdit` is falsy it should raise one of the execptions
+            # caught above, so that only a truthy value should enter into this
+            # `else` branch.
             if currentEdit:
                 # Move focus to the pane where `currentEdit` was done.
                 editDoc = currentEdit.firstEdit().getDocument()
