@@ -19,7 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 from java.awt import BorderLayout, Dimension, Point
 from java.awt.event import KeyListener, AdjustmentListener
-from java.awt.ComponentOrientation import RIGHT_TO_LEFT
+from java.awt.ComponentOrientation import RIGHT_TO_LEFT, LEFT_TO_RIGHT
 from javax.swing import JScrollPane, JPanel, JSplitPane, UIManager
 from javax.swing.text import StyleConstants
 from javax.swing.undo import UndoManager, CompoundEdit
@@ -61,9 +61,9 @@ class AtfAreaView(JPanel):
         self.arabic_line_numbers = self.controller.arabic_line_numbers
 
         # Set undo/redo manager to edit area
-        self.undo_manager = UndoManager()
+        self.undo_manager = AtfUndoManager(self)
         self.undo_manager.limit = 3000
-        self.edit_listener = AtfUndoableEditListener(self.undo_manager)
+        self.edit_listener = AtfUndoableEditListener(self)
         self.edit_area.getDocument().addUndoableEditListener(
                                                         self.edit_listener)
         self.arabic_area.getDocument().addUndoableEditListener(
@@ -402,9 +402,10 @@ class AtfUndoableEditListener(UndoableEditListener):
     TODO: Make compounds save whole words so undoing is not so much of a pain
           for the user.
     '''
-    def __init__(self, undo_manager):
-        self.undo_manager = undo_manager
-        self.current_compound = CompoundEdit()
+    def __init__(self, panel):
+        self.panel = panel
+        self.undo_manager = self.panel.undo_manager
+        self.current_compound = AtfCompoundEdit()
         self.must_compound = False
         self.deletion = UIManager.getString('AbstractDocument.deletionText')
         self.addition = UIManager.getString('AbstractDocument.additionText')
@@ -415,13 +416,13 @@ class AtfUndoableEditListener(UndoableEditListener):
         significant edit events that we want to put together in a compound
         edit.
         """
-        empty_compound = CompoundEdit()
+        empty_compound = AtfCompoundEdit()
         if not self.must_compound:
             self.must_compound = True
             if not self.current_compound.equals(empty_compound):
                 self.current_compound.end()
                 self.undo_manager.addEdit(self.current_compound)
-            self.current_compound = CompoundEdit()
+            self.current_compound = AtfCompoundEdit()
 
     def force_stop_compound(self):
         self.current_compound.end()
@@ -440,8 +441,54 @@ class AtfUndoableEditListener(UndoableEditListener):
             # to false. Note undo() only undoes compound edits when they
             # are not in progress.
             self.current_compound.end()
-            self.current_compound = CompoundEdit()
+            self.current_compound = AtfCompoundEdit()
             self.undo_manager.addEdit(self.current_compound)
 
         # Always add current edit to current compound
         self.current_compound.addEdit(edit)
+
+
+class AtfCompoundEdit(CompoundEdit):
+    """
+    Compound edit for the ATF area, derived from `CompoundEdit`.
+
+    This exposes the protected field `edits` of the parent Java class.
+    """
+    # add a getter for a protected field
+    def getEdits(self):
+        """
+        Return the protected field 'edits' of the compound.
+        """
+        field = CompoundEdit.getDeclaredField("edits")
+        field.setAccessible(True)
+        return field.get(self)
+
+    def firstEdit(self):
+        """
+        Return the first edit in the compound.
+        """
+        return self.getEdits()[0]
+
+
+class AtfUndoManager(UndoManager):
+    """
+    Undo manager of the ATF area, derived from `UndoManager`.
+
+    This exposes some protected methods of the parent Java class.
+    """
+    def __init__(self, panel):
+        # This member is here only to ease debugging: you can access
+        # NammuController logger with `self.panel.controller.controller.logger`
+        self.panel = panel
+
+    def editToBeRedone(self):
+        """
+        Expose the protected method `editToBeRedone()`.
+        """
+        return self.super__editToBeRedone()
+
+    def editToBeUndone(self):
+        """
+        Expose the protected method `editToBeUndone()`.
+        """
+        return self.super__editToBeUndone()
