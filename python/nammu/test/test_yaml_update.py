@@ -62,7 +62,7 @@ def test_settings_copied_correctly(monkeypatch, tmpdir):
     settings_dir = os.path.join(os.environ['HOME'], '.nammu')
     for filename in ['settings.yaml', 'logging.yaml']:
         target_file = os.path.join(settings_dir, filename)
-        original_file = os.path.join('resources/config', filename)
+        original_file = os.path.join('resources', 'config', filename)
         assert os.path.isfile(target_file)
         assert filecmp.cmp(target_file, original_file)
         # Check that the original config files have not been emptied (see #347)
