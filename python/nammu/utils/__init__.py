@@ -140,7 +140,6 @@ def get_yaml_config(yaml_filename):
     if not os.path.isfile(path_to_config):
         copy_yaml_to_home(path_to_jar, yaml_path, path_to_config)
     else:
-        # We are running from the JAR file, not the local console
         update_yaml_config(path_to_jar, yaml_path, path_to_config)
 
     # Load local YAML file and perform required patches on the settings in
@@ -227,11 +226,11 @@ def get_config_versions(path_to_jar, yaml_path, path_to_config):
     try:
         jar_contents = zipfile.ZipFile(path_to_jar, 'r')
     except zipfile.BadZipfile:
-        jar_config = yaml.load(open(path_to_jar, 'r'))
+        jar_config = yaml.safe_load(open(path_to_jar, 'r'))
     else:
-        jar_config = yaml.load(jar_contents.open(yaml_path))
+        jar_config = yaml.safe_load(jar_contents.open(yaml_path))
 
-    local_config = yaml.load(open(path_to_config, 'r'))
+    local_config = yaml.safe_load(open(path_to_config, 'r'))
     jar_version = str(jar_config['version'])
     local_version = str(local_config['version'])
 
@@ -298,17 +297,23 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
             # Need to apply the patching to correct any problems between
             # version 0.8 and version 1.0
             d = patch_config(d)
-            save_yaml_config(d)
+            save_yaml_config(d, filename=os.path.basename(path_to_config))
     else:
         return
 
 
-def save_yaml_config(config):
+def save_yaml_config(config, filename='settings.yaml'):
     '''
     Overwrites settings with given config dict.
+
+    If a file name (e.g. "logging.yaml") is expliclity specified, then that
+    configuration file will be overwritten; otherwise, overwrites the settings
+    file by default.
+    Note that this function can also be called during Nammu's lifetime
+    (e.g. when a file is saved), not only during launch.
     '''
     # Get config path
-    path_to_config = get_log_path('settings.yaml')
+    path_to_config = get_log_path(filename)
 
     # Save given config in yaml file
     with open(path_to_config, 'w') as outfile:
@@ -330,8 +335,8 @@ def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
                     with source_file, target_file:
                         shutil.copyfileobj(source_file, target_file)
     except zipfile.BadZipfile:
-        shutil.copyfileobj(file(source_rel_path, "wb"),
-                           file(target_path, "wb"))
+        with open(source_rel_path, "r") as src, open(target_path, "w") as dest:
+            shutil.copyfileobj(src, dest)
 
 
 def find_image_resource(name):
