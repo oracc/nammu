@@ -23,7 +23,7 @@ import os
 import yaml
 
 from python.nammu.controller.NammuController import NammuController
-from ..utils import update_yaml_config
+from ..utils import get_home_env_var, update_yaml_config
 
 
 def test_update_yaml_config():
@@ -52,14 +52,13 @@ def test_settings_copied_correctly(monkeypatch, tmpdir):
     More specifically, this test ensures that, if the user starts Nammu without
     already having any configuration files, then local configuration files with
     the correct content will be created, without affecting the original files.
-
-    This test currently assumes it will run on Linux/Mac.
     """
     # Mock the user's home directory
-    monkeypatch.setitem(os.environ, 'HOME', str(tmpdir))
+    home_env_var = get_home_env_var()  # will vary depending on OS
+    monkeypatch.setitem(os.environ, home_env_var, str(tmpdir))
     assert os.listdir(str(tmpdir)) == []  # sanity check!
     NammuController()  # start up Nammu, but don't do anything with it
-    settings_dir = os.path.join(os.environ['HOME'], '.nammu')
+    settings_dir = os.path.join(os.environ[home_env_var], '.nammu')
     for filename in ['settings.yaml', 'logging.yaml']:
         target_file = os.path.join(settings_dir, filename)
         original_file = os.path.join('resources', 'config', filename)
