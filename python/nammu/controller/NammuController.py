@@ -91,12 +91,12 @@ class NammuController(object):
                 "create a new one from a template, or just start typing in "
                 "the text area.")
 
-        # Display Nammu's view
-        self.view.display()
-
         # Save current ATF filename
         # TODO: save array with all opened ATFs
         self.currentFilename = None
+
+        # Display Nammu's view
+        self.view.display()
 
         # Configure the tooltip manager for tooltips to appear quicker and not
         # to vanish until mouse moves away
