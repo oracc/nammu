@@ -1,4 +1,5 @@
-requests<2.12.0
+urllib3<1.25
+requests==2.22.0
 pytest<3.0
 pyyaml
 mako
