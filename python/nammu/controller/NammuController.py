@@ -330,7 +330,7 @@ class NammuController(object):
                 else:
                     self.config[group][element] = value
                 self.logger.debug("Settings updated.")
-                save_yaml_config(self.config)
+                save_yaml_config(self.config.data)
 
     def saveAsFile(self, event=None):
         '''
