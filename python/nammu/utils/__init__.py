@@ -69,7 +69,7 @@ class ConfigDict(UserDict):
                                    "Please delete the file, or "
                                    "rename it if you want to keep a "
                                    "backup copy,\nthen restart Nammu.\n\n"
-                                   "If you need help, open an issue in "
+                                   "If you need help, open an issue at "
                                    "https://github.com/oracc/nammu." %
                                    (self.config_file, key),
                                    "Nammu",
