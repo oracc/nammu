@@ -104,6 +104,9 @@ def selected_file_patch_arabic(a):
 
 
 def show_message_dialog(*args):
+    '''
+    This will be used to replace `JOptionPane().showMessageDialog`.
+    '''
     return 0
 
 

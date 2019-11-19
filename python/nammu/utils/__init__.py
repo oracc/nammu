@@ -40,8 +40,8 @@ class NammuException(Exception):
 
 class ConfigDict(UserDict):
     '''
-    Thin wrapper around `UserDict` class.  It has only an additional attribute
-    holding the path to the configuration file.
+    Thin wrapper around a dictionary class.  It has only an additional
+    attribute holding the path to the configuration file.
     '''
     def __init__(self, config_file, *args):
         '''
@@ -57,16 +57,20 @@ class ConfigDict(UserDict):
         Return the value corresponding to the `key` in the dictionary, if the
         key is available.  If it is not, show an error dialog and close Nammu.
         '''
-        if key in UserDict.keys(self):
+        if key in self:
             return UserDict.__getitem__(self, key)
         else:
+            # We instantiate `JOptionPane()` so that we can monkeypatch
+            # `showMessageDialog` in the tests.
             pane = JOptionPane()
             pane.showMessageDialog(JFrame().getContentPane(),
                                    "The configuration file \"%s\"\n"
                                    "is corrupted (missing \"%s\" key).\n\n"
-                                   "Please, delete the file, or "
+                                   "Please delete the file, or "
                                    "rename it if you want to keep a "
-                                   "backup copy,\nthen restart Nammu" %
+                                   "backup copy,\nthen restart Nammu.\n\n"
+                                   "If you need help, open an issue in "
+                                   "https://github.com/oracc/nammu." %
                                    (self.config_file, key),
                                    "Nammu",
                                    JOptionPane.ERROR_MESSAGE)
