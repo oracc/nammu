@@ -24,12 +24,57 @@ import yaml
 import logging
 import re
 import urllib
+from UserDict import UserDict
 from java.lang import ClassLoader, System
 from java.awt import Font
+from javax.swing import JFrame, JOptionPane
 
 '''
 This is a compilation of methods to be used from all Nammu classes.
 '''
+
+
+class NammuException(Exception):
+    pass
+
+
+class ConfigDict(UserDict):
+    '''
+    Thin wrapper around a dictionary class.  It has only an additional
+    attribute holding the path to the configuration file.
+    '''
+    def __init__(self, config_file, *args):
+        '''
+        Constructor of the `ConfigDict` class.  `config_file` is the path to
+        the configuration file, the rest of the arguments are passed to the
+        constructor of the base class.
+        '''
+        self.config_file = config_file
+        UserDict.__init__(self, *args)
+
+    def __getitem__(self, key):
+        '''
+        Return the value corresponding to the `key` in the dictionary, if the
+        key is available.  If it is not, show an error dialog and close Nammu.
+        '''
+        if key in self:
+            return UserDict.__getitem__(self, key)
+        else:
+            # We instantiate `JOptionPane()` so that we can monkeypatch
+            # `showMessageDialog` in the tests.
+            pane = JOptionPane()
+            pane.showMessageDialog(JFrame().getContentPane(),
+                                   "The configuration file \"%s\"\n"
+                                   "is corrupted (missing \"%s\" key).\n\n"
+                                   "Please delete the file, or "
+                                   "rename it if you want to keep a "
+                                   "backup copy,\nthen restart Nammu.\n\n"
+                                   "If you need help, open an issue at "
+                                   "https://github.com/oracc/nammu." %
+                                   (self.config_file, key),
+                                   "Nammu",
+                                   JOptionPane.ERROR_MESSAGE)
+            raise NammuException("Invalid config file")
 
 
 def set_font(font_size):
@@ -230,7 +275,9 @@ def get_config_versions(path_to_jar, yaml_path, path_to_config):
     else:
         jar_config = yaml.safe_load(jar_contents.open(yaml_path))
 
-    local_config = yaml.safe_load(open(path_to_config, 'r'))
+    local_config = ConfigDict(path_to_config,
+                              yaml.safe_load(open(path_to_config, 'r')))
+
     jar_version = str(jar_config['version'])
     local_version = str(local_config['version'])
 

@@ -3,11 +3,14 @@ import pytest
 import codecs
 import time
 import os
-from python.nammu.controller.NammuController import NammuController
 
 from java.awt import Color
 from javax.swing import JSplitPane, JFileChooser, JScrollPane
 from javax.swing.undo import CompoundEdit
+from javax.swing import JOptionPane
+
+from python.nammu.controller.NammuController import NammuController
+from python.nammu.utils import ConfigDict, NammuException
 
 
 @pytest.yield_fixture(scope="class", autouse=True)
@@ -98,6 +101,13 @@ def selected_file_patch_english(a):
 
 def selected_file_patch_arabic(a):
     return mockFile('resources/test/arabic.atf')
+
+
+def show_message_dialog(*args):
+    '''
+    This will be used to replace `JOptionPane().showMessageDialog`.
+    '''
+    return 0
 
 
 def unsaved_patch():
@@ -597,3 +607,14 @@ class TestNammu(object):
                 "(*) {} - Nammu".format(selected_file_patch_arabic(None)
                                         .getName()))
         nammu.closeFile()
+
+    def test_config_dict(self, monkeypatch):
+        """
+        Test that `ConfigDict` throws an error if a key is not present.
+        """
+        monkeypatch.setattr(JOptionPane, 'showMessageDialog',
+                            show_message_dialog)
+        conf = ConfigDict('config.yaml', {'version': '0.2'})
+        assert conf['version'] == '0.2'
+        with pytest.raises(NammuException):
+            conf['foo']
