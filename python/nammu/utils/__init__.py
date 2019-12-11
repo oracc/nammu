@@ -184,21 +184,18 @@ def get_yaml_config(yaml_filename):
     # If it does, check is up to date with latest version
     if not os.path.isfile(path_to_config):
         copy_yaml_to_home(path_to_jar, yaml_path, path_to_config)
+
+        (jar_config, local_config,
+         jar_version, local_version) = get_config_versions(path_to_jar,
+                                                           yaml_path,
+                                                           path_to_config)
+
+        return local_config
     else:
-        update_yaml_config(path_to_jar, yaml_path, path_to_config)
-
-    # Load local YAML file and perform required patches on the settings in
-    # memory if the settings version is different between the jar and the local
-    # file. Ensures that memory and file settings always match.
-    (jar_config, local_config,
-     jar_version, local_version) = get_config_versions(path_to_jar, yaml_path,
-                                                       path_to_config)
-
-    if yaml_filename == 'settings.yaml':
-        if different_versions(jar_version, local_version):
-            return patch_config(local_config)
-
-    return local_config
+        # Load local YAML file and perform required patches on the settings in
+        # memory if the settings version is different between the jar and the
+        # local file. Ensures that memory and file settings always match.
+        return update_yaml_config(path_to_jar, yaml_path, path_to_config)
 
 
 def patch_config(yaml):
@@ -293,6 +290,9 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
     the local values will be maintained.
     It also needs to compare what's in the jar and add new dictionaries to the
     local jar.
+
+    This returns the final configuration after the changes.  If `test_mode` is
+    `False`, it returns the configuration without patching or writing to file.
     '''
     logger = logging.getLogger("NammuController")
 
@@ -300,53 +300,54 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
      jar_version, local_version) = get_config_versions(path_to_jar, yaml_path,
                                                        path_to_config)
 
-    if different_versions(jar_version, local_version):
-        d = {}
-        logger.debug("Comparing install and local settings files...")
-        for key in jar_config:
-            if(isinstance(jar_config[key], dict)):  # Nested dics within a key
-                if key in local_config:
-                    tmp = {}  # for the nested dics
-                    for sub_key in jar_config[key]:
-                        if sub_key in local_config[key]:
-                            logger.debug("%s: %s: %s --> Using local values.",
-                                         key,
-                                         sub_key,
-                                         jar_config[key][sub_key])
-                            tmp[sub_key] = local_config[key][sub_key]
-                        else:
-                            logger.debug("%s: %s: %s --> Using jar values.",
-                                         key,
-                                         sub_key,
-                                         jar_config[key][sub_key])
-                            tmp[sub_key] = jar_config[key][sub_key]
-                    d[key] = tmp
-                else:
-                    logger.debug("%s doesnt exist locally, creating...", key)
-                    d[key] = jar_config[key]
-            else:  # One level deep dictionary
-                if key in local_config:
-                    logger.debug("%s: %s --> Using local values.",
-                                 key,
-                                 jar_config[key])
-                    d[key] = local_config[key]
-                else:
-                    logger.debug("%s: %s --> Using jar values.",
-                                 key,
-                                 jar_config[key])
-                    d[key] = jar_config[key]
-        logger.debug("Updating version number in local config: %s --> %s",
-                     local_config['version'], jar_config['version'])
-        d['version'] = jar_config['version']
-        if test_mode:  # This is for running tests, a dic is returned to check
-            return d  # keys are correct.
-        else:
-            # Need to apply the patching to correct any problems between
-            # version 0.8 and version 1.0
-            d = patch_config(d)
-            save_yaml_config(d, filename=os.path.basename(path_to_config))
-    else:
-        return
+    if not different_versions(jar_version, local_version):
+        return local_config
+
+    d = {}
+    logger.debug("Comparing install and local settings files...")
+    for key in jar_config:
+        if(isinstance(jar_config[key], dict)):  # Nested dics within a key
+            if key in local_config:
+                tmp = {}  # for the nested dics
+                for sub_key in jar_config[key]:
+                    if sub_key in local_config[key]:
+                        logger.debug("%s: %s: %s --> Using local values.",
+                                     key,
+                                     sub_key,
+                                     jar_config[key][sub_key])
+                        tmp[sub_key] = local_config[key][sub_key]
+                    else:
+                        logger.debug("%s: %s: %s --> Using jar values.",
+                                     key,
+                                     sub_key,
+                                     jar_config[key][sub_key])
+                        tmp[sub_key] = jar_config[key][sub_key]
+                d[key] = tmp
+            else:
+                logger.debug("%s doesnt exist locally, creating...", key)
+                d[key] = jar_config[key]
+        else:  # One level deep dictionary
+            if key in local_config:
+                logger.debug("%s: %s --> Using local values.",
+                             key,
+                             jar_config[key])
+                d[key] = local_config[key]
+            else:
+                logger.debug("%s: %s --> Using jar values.",
+                             key,
+                             jar_config[key])
+                d[key] = jar_config[key]
+    logger.debug("Updating version number in local config: %s --> %s",
+                 local_config['version'], jar_config['version'])
+    d['version'] = jar_config['version']
+
+    # When running tests directly return the dict without writing to file
+    if not test_mode:
+        # Need to apply the patching to correct any problems between
+        # version 0.8 and version 1.0
+        d = patch_config(d)
+        save_yaml_config(d, filename=os.path.basename(path_to_config))
+    return d
 
 
 def save_yaml_config(config, filename='settings.yaml'):
