@@ -271,12 +271,15 @@ def get_config_versions(path_to_jar, yaml_path, path_to_config):
     try:
         jar_contents = zipfile.ZipFile(path_to_jar, 'r')
     except zipfile.BadZipfile:
-        jar_config = yaml.safe_load(open(path_to_jar, 'r'))
+        with open(path_to_jar, 'r') as jar:
+            jar_config = yaml.safe_load(jar)
     else:
-        jar_config = yaml.safe_load(jar_contents.open(yaml_path))
+        with jar_contents.open(yaml_path) as jar:
+            jar_config = yaml.safe_load(jar)
 
-    local_config = ConfigDict(path_to_config,
-                              yaml.safe_load(open(path_to_config, 'r')))
+    with open(path_to_config, 'r') as config:
+        local_config = ConfigDict(path_to_config,
+                                  yaml.safe_load(config))
 
     jar_version = str(jar_config['version'])
     local_version = str(local_config['version'])
@@ -377,10 +380,9 @@ def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
             for zi in zf.infolist():
                 fn = zi.filename
                 if fn.lower() == source_rel_path:
-                    source_file = zf.open(fn)
-                    target_file = file(target_path, "wb")
-                    with source_file, target_file:
-                        shutil.copyfileobj(source_file, target_file)
+                    with zf.open(fn) as source_file:
+                        with file(target_path, "wb") as target_file:
+                            shutil.copyfileobj(source_file, target_file)
     except zipfile.BadZipfile:
         with open(source_rel_path, "r") as src, open(target_path, "w") as dest:
             shutil.copyfileobj(src, dest)
