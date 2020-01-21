@@ -157,7 +157,7 @@
             <param>urllib3&lt;1.25</param>
             <param>requests==2.22.0</param>
             <!--param>pytest&lt;3.0</param-->
-						<param>pyyaml</param>
+            <param>pyyaml==5.2</param>
 						<param>mako</param>
 						<param>ply</param>
 						<param>jython-swingutils</param>
