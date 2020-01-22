@@ -1,7 +1,7 @@
 urllib3<1.25
 requests==2.22.0
 pytest<3.0
-pyyaml
+pyyaml==5.2
 mako
 ply
 jython-swingutils
