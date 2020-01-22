@@ -364,7 +364,7 @@ def save_yaml_config(config, filename='settings.yaml'):
 
     # Save given config in yaml file
     with open(path_to_config, 'w') as outfile:
-        outfile.write(yaml.safe_dump(config))
+        outfile.write(yaml.safe_dump(dict(config)))
 
 
 def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
