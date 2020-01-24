@@ -4,13 +4,14 @@ import codecs
 import time
 import os
 
+import yaml
 from java.awt import Color
 from javax.swing import JSplitPane, JFileChooser, JScrollPane
 from javax.swing.undo import CompoundEdit
 from javax.swing import JOptionPane
 
 from python.nammu.controller.NammuController import NammuController
-from python.nammu.utils import ConfigDict, NammuException
+from python.nammu.utils import ConfigDict, NammuException, save_yaml_config
 
 
 @pytest.yield_fixture(scope="class", autouse=True)
@@ -618,3 +619,18 @@ class TestNammu(object):
         assert conf['version'] == '0.2'
         with pytest.raises(NammuException):
             conf['foo']
+
+    def test_save_config_dict(self, tmpdir):
+        """
+        Test round-trip of saving a `ConfigDict` to disk and reading it back
+        from file.
+        """
+        config_file = str(tmpdir.join('settings.yaml'))
+        config = {'nammu': 1, 'author': "anu-belsunu"}
+        config_dict = ConfigDict(config_file, config)
+        save_yaml_config(config_dict, config_file)
+        with open(config_file) as io:
+            # We can't use the high level `get_yaml_config` function because it
+            # prepends `resources/config/` to the path given in input.
+            new_config_dict = yaml.safe_load(io)
+        assert new_config_dict == config_dict
