@@ -269,12 +269,11 @@ def get_config_versions(path_to_jar, yaml_path, path_to_config):
     Method to return the jar and local config files and their versions.
     '''
     try:
-        jar_contents = zipfile.ZipFile(path_to_jar, 'r')
+        with zipfile.ZipFile(path_to_jar, 'r') as jar_contents:
+            with jar_contents.open(yaml_path) as jar:
+                jar_config = yaml.safe_load(jar)
     except zipfile.BadZipfile:
         with open(path_to_jar, 'r') as jar:
-            jar_config = yaml.safe_load(jar)
-    else:
-        with jar_contents.open(yaml_path) as jar:
             jar_config = yaml.safe_load(jar)
 
     with open(path_to_config, 'r') as config:
@@ -381,7 +380,7 @@ def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
                 fn = zi.filename
                 if fn.lower() == source_rel_path:
                     with zf.open(fn) as source_file:
-                        with file(target_path, "wb") as target_file:
+                        with open(target_path, "wb") as target_file:
                             shutil.copyfileobj(source_file, target_file)
     except zipfile.BadZipfile:
         with open(source_rel_path, "r") as src, open(target_path, "w") as dest:
