@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1414437.svg)](https://doi.org/10.5281/zenodo.1414437)
+
 # Nammu: Desktop GUI for ORACC
 
 To run Nammu on your computer, you can download it from
