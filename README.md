@@ -3,7 +3,7 @@
 # Nammu: Desktop GUI for ORACC
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/1.2.2/nammu-1.2.2.jar)
+[here](https://github.com/oracc/nammu/releases/download/1.3.0/nammu-1.3.0.jar)
 and just double click on it to open it.
 
 ## What is ORACC?
@@ -94,7 +94,7 @@ This feature is still a work in progress so please open an [issue](https://githu
 ## How to run Nammu
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/1.2.2/nammu-1.2.2.jar)
+[here](https://github.com/oracc/nammu/releases/download/1.3.0/nammu-1.3.0.jar)
 and just double click on it to open it and use it.
 
 If you find any problem trying to open it, have a look in the [Troubleshooting](#known-problems-and-troubleshooting) section.
@@ -148,9 +148,9 @@ installable file for your operating system
 
 If you keep having trouble, you can also run it from the command line, like this:
 
-`java -jar /path/to/nammu-1.2.2.jar`
+`java -jar /path/to/nammu-1.3.0.jar`
 
-Where `/path/to/` reflects your local path to where the `nammu-1.2.2.jar` file has been downloaded. This will output a clearer log message about what the problem is.
+Where `/path/to/` reflects your local path to where the `nammu-1.3.0.jar` file has been downloaded. This will output a clearer log message about what the problem is.
 
 ### Known problems:
 * Nammu doesn't validate or lemmatise properly when filenames include a space.
@@ -196,7 +196,7 @@ has been installed. It doesn't require any other extra configuration.
 
 ### Requirements
 
-Nammu is developed and tested on Java 8. The new release of Nammu (1.2.2) now supports Java versions 9 and 10 for users, although not yet for development. If you encounter problems running Nammu on these versions, please let us know by filing an issue.
+Nammu is developed and tested on Java 8. Since version 1.2.2, Nammu supports Java versions 9 and 10 for users, although not yet for development. If you encounter problems running Nammu on these versions, please let us know by filing an issue.
 
 #### Contributors
 
@@ -239,7 +239,7 @@ build as indicated in step 3:
 1. This will create Nammu's jar in the `target` folder. Then you can execute it
 like this:
     ```bash
-    java -jar  target/nammu-1.2.2.jar
+    java -jar  target/nammu-1.3.0.jar
     ```
 1. You can also run Nammu in development mode from the console. See instructions:
 https://github.com/oracc/nammu/wiki/Run-Nammu-from-a-console
