@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2019 University College London.
+Copyright 2015 - 2020 University College London.
 
 This file is part of Nammu.
 
@@ -276,11 +276,11 @@ class NammuController(object):
                         return
                 filename = self.force_atf_extension(filename)
                 self.currentFilename = filename
-                self.view.set_title()
             else:
                 return
         try:
             self.writeTextFile(self.currentFilename, atfText)
+            self.view.set_title()
         except:
             self.logger.error("There was an error trying to save %s.",
                               self.currentFilename)
@@ -361,7 +361,7 @@ class NammuController(object):
             self.view.set_title()
             try:
                 self.writeTextFile(self.currentFilename, atfText)
-            except:
+            except IOError:
                 self.logger.error("There was an error trying to save %s.",
                                   self.currentFilename)
             else:
