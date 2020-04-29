@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -26,7 +26,6 @@ class WelcomeController:
         self.controller = maincontroller
         self.config = self.controller.config
         self.view = WelcomeView(self)
-        self.view.display()
 
     def update_welcome_flag(self, flag):
         '''

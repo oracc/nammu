@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2019 University College London.
 
 This file is part of Nammu.
 
@@ -17,15 +17,16 @@ You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from java.awt import BorderLayout, Dimension, Point, Font, Color
+from java.awt import BorderLayout, Dimension, Point
 from java.awt.event import KeyListener, AdjustmentListener
-from javax.swing import JScrollPane, JPanel, JSplitPane
-from javax.swing.text import StyleContext, StyleConstants
-from javax.swing.text import SimpleAttributeSet
+from java.awt.ComponentOrientation import RIGHT_TO_LEFT, LEFT_TO_RIGHT
+from javax.swing import JScrollPane, JPanel, JSplitPane, UIManager
+from javax.swing.text import StyleConstants
 from javax.swing.undo import UndoManager, CompoundEdit
 from javax.swing.event import UndoableEditListener, DocumentListener
-from contextlib import contextmanager
-from .AtfEditArea import AtfEditArea
+
+from swingutils.threads.swing import runSwingLater
+
 from ..utils import set_font
 
 
@@ -55,11 +56,17 @@ class AtfAreaView(JPanel):
         self.secondary_area = self.controller.secondary_area
         self.secondary_line_numbers = self.controller.secondary_line_numbers
 
+        # Create arabic translation text area for arabic edition
+        self.arabic_area = self.controller.arabic_area
+        self.arabic_line_numbers = self.controller.arabic_line_numbers
+
         # Set undo/redo manager to edit area
-        self.undo_manager = UndoManager()
+        self.undo_manager = AtfUndoManager(self)
         self.undo_manager.limit = 3000
-        self.edit_listener = AtfUndoableEditListener(self.undo_manager)
+        self.edit_listener = AtfUndoableEditListener(self)
         self.edit_area.getDocument().addUndoableEditListener(
+                                                        self.edit_listener)
+        self.arabic_area.getDocument().addUndoableEditListener(
                                                         self.edit_listener)
 
         # Sort out layout by synch-ing line numbers and text area and putting
@@ -77,10 +84,14 @@ class AtfAreaView(JPanel):
         self.edit_area.addKeyListener(AtfAreaKeyListener(self))
         # Also needed in secondary area:
         self.secondary_area.addKeyListener(AtfAreaKeyListener(self))
+        # Also needed in arabic translation area:
+        self.arabic_area.addKeyListener(AtfAreaKeyListener(self))
+        self.arabic_area.setComponentOrientation(RIGHT_TO_LEFT)
 
         # Add a document listener to track changes to files
         docListener = atfAreaDocumentListener(self)
         self.edit_area.getDocument().addDocumentListener(docListener)
+        self.arabic_area.getDocument().addDocumentListener(docListener)
 
         # instance variable to store a record of the text contents prior to the
         # most recent change. Needed so that the different listeners can access
@@ -88,50 +99,128 @@ class AtfAreaView(JPanel):
         self.oldtext = ''
 
     def toggle_split(self, split_orientation=None):
-        '''
-        Clear ATF edit area and repaint chosen layout (splitscreen/scrollpane).
-        '''
+        """
+        Toggle split view (non Arabic pane) with given `split_orientation`.
+        """
+        # Check what editor view to toggle
+        self.setup_edit_area(split_orientation, arabic=False)
+
+    def toggle_split_arabic(self, split_orientation,
+                            atf_body, atf_translation):
+        """
+        Toggle Arabic pane with given `split_orientation`.
+        """
+        # Separate body (in English) form translation (in Arabic) in different
+        # panels.
+        self.edit_area.setText(atf_body)
+        self.arabic_area.setText(atf_translation)
+        # Check what editor view to toggle
+        self.setup_edit_area(split_orientation, arabic=True)
+
+    def setup_edit_area_no_split(self):
+        """
+        Clear ATF edit area and repaint a scrollpane.
+        """
         # Remove all existent components in parent JPanel
         self.removeAll()
-        # Check what editor view to toggle
-        self.setup_edit_area(split_orientation)
+
+        self.container = JScrollPane(self.edit_area)
+        self.container.setRowHeaderView(self.line_numbers_area)
+        self.container.setVisible(True)
+        self.add(self.container, BorderLayout.CENTER)
+        self.controller.controller.arabic_edition_on = False
+
+        # Reset the scroll listener
+        self.vert_scroll = self.container.getVerticalScrollBar()
+        listener = atfAreaAdjustmentListener(self)
+        self.vert_scroll.addAdjustmentListener(listener)
+        self.controller.controller.menuController.enable_split_options(
+            horizontal=True, vertical=True, arabic=True)
+
+        # Revalidate is needed in order to repaint the components
+        self.revalidate()
+        self.repaint()
+        self.controller.syntax_highlight()
+
+    def setup_edit_area_split(self, split_orientation=None, arabic=False):
+        """
+        Clear ATF edit area and repaint a splitscreen.
+        """
+        # Remove all existent components in parent JPanel
+        self.removeAll()
+
+        main_editor = JScrollPane(self.edit_area)
+        main_editor.setRowHeaderView(self.line_numbers_area)
+        if arabic:
+            secondary_editor = JScrollPane(self.arabic_area)
+            secondary_editor.setRowHeaderView(self.arabic_line_numbers)
+            secondary_editor.setComponentOrientation(RIGHT_TO_LEFT)
+            self.controller.controller.arabic_edition_on = True
+            # Do not allow toggling arabic pane if there is text in it.
+            arabic_text = self.arabic_area.getText()
+            self.controller.controller.menuController.enable_split_options(
+                horizontal=False, vertical=False, arabic=not arabic_text)
+        else:
+            secondary_editor = JScrollPane(self.secondary_area)
+            secondary_editor.setRowHeaderView(self.secondary_line_numbers)
+            self.controller.controller.arabic_edition_on = False
+            if split_orientation == JSplitPane.VERTICAL_SPLIT:
+                self.controller.controller.menuController.enable_split_options(
+                    horizontal=False, vertical=True, arabic=False)
+            elif split_orientation == JSplitPane.HORIZONTAL_SPLIT:
+                self.controller.controller.menuController.enable_split_options(
+                    horizontal=True, vertical=False, arabic=False)
+        self.container = JSplitPane(split_orientation,
+                                    main_editor,
+                                    secondary_editor)
+        self.container.setDividerSize(5)
+        self.container.setVisible(True)
+        self.container.setDividerLocation(0.5)
+        self.container.setResizeWeight(0.5)
+        self.add(self.container, BorderLayout.CENTER)
+
+        # Need to add scroll listeners to the scrollbars in the two panes
+        topscroll = self.container.leftComponent.getVerticalScrollBar()
+        bottomscroll = self.container.rightComponent.getVerticalScrollBar()
+        topscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
+        bottomscroll.addAdjustmentListener(atfAreaAdjustmentListener(self))
+
         # Revalitate is needed in order to repaint the components
         self.revalidate()
         self.repaint()
+        self.controller.syntax_highlight()
 
-    def setup_edit_area(self, split_orientation=None):
+    def setup_edit_area(self, split_orientation=None, arabic=False):
         '''
         Check if the ATF text area is being displayed in a split editor.
         If so, resets to normal JScrollPane. If not, splits the screen.
         '''
         if isinstance(self.container, JSplitPane):
+            # If there is text in the Arabic pane or if the requested
+            # orientation is orthogonal to current split orientation, do not do
+            # anything.  Note that this operation shouldn't be allowed by the
+            # GUI.
+            if (self.arabic_area.getText() or
+                (split_orientation is not None and
+                 split_orientation != self.container.getOrientation())):
+                # If there is already an Arabic pane, keep it.
+                arabic_edition = self.controller.controller.arabic_edition_on
+                self.setup_edit_area_split(self.container.getOrientation(),
+                                           arabic_edition)
+                return
             # If Nammu is already displaying a split pane, reset to original
             # setup
-            self.container = JScrollPane(self.edit_area)
-            self.container.setRowHeaderView(self.line_numbers_area)
-            self.container.setVisible(True)
-            self.add(self.container, BorderLayout.CENTER)
+            self.setup_edit_area_no_split()
         else:
             # If there is not a split pane, create both panels and setup view
-            main_editor = JScrollPane(self.edit_area)
-            main_editor.setRowHeaderView(self.line_numbers_area)
-            secondary_editor = JScrollPane(self.secondary_area)
-            secondary_editor.setRowHeaderView(self.secondary_line_numbers)
-            self.container = JSplitPane(split_orientation,
-                                        main_editor,
-                                        secondary_editor)
-            self.container.setDividerSize(5)
-            self.container.setVisible(True)
-            self.container.setDividerLocation(0.5)
-            self.container.setResizeWeight(0.5)
-            self.add(self.container, BorderLayout.CENTER)
+            self.setup_edit_area_split(split_orientation, arabic)
 
-    def get_viewport_carets(self):
+    def get_viewport_top_bottom(self, viewport):
         '''
-        Get the top left and bottom left caret position of the current viewport
+        returns the top and bottom caret positions for a given viewport
         '''
-        extent = self.container.getViewport().getExtentSize()
-        top_left_position = self.container.getViewport().getViewPosition()
+        extent = viewport.getExtentSize()
+        top_left_position = viewport.getViewPosition()
         top_left_char = self.edit_area.viewToModel(top_left_position)
         bottom_left_position = Point(top_left_position.x,
                                      top_left_position.y + extent.height)
@@ -153,6 +242,30 @@ class AtfAreaView(JPanel):
 
         return top_ch, bottom_ch
 
+    def get_viewport_carets(self):
+        '''
+        Get the top left and bottom left caret position of the viewports on
+        screen. If we have a split window, the carets will span both viewports
+        and will give the range from the top of the file block to the lower
+        extent of the two viewports.
+        '''
+        if isinstance(self.container, JScrollPane):
+            # This is a single edit pane
+            viewport = self.container.getViewport()
+            top_ch, bottom_ch = self.get_viewport_top_bottom(viewport)
+
+        else:
+            # Otherwise we have a split pane
+            viewport_l = self.container.leftComponent.getViewport()
+            viewport = self.container.rightComponent.getViewport()
+            top_ch, bottom_ch = self.get_viewport_top_bottom(viewport)
+            top_ch_l, bottom_ch_l = self.get_viewport_top_bottom(viewport_l)
+
+            if bottom_ch_l > bottom_ch:
+                bottom_ch = bottom_ch_l
+
+        return top_ch, bottom_ch
+
     def refresh(self):
         '''
         Restyle edit area using user selected appearance settings.
@@ -160,22 +273,24 @@ class AtfAreaView(JPanel):
 
         config = self.controller.controller.config
 
-        # Create a new font with the new size
-        font = set_font(config['edit_area_style']['fontsize']['user'])
-
-        # Update the sytnax highlighter font params, so our changes are not
-        # superceded
-        self.controller.syntax_highlighter.font = font
-        self.controller.syntax_highlighter.setup_attribs()
-
-        attrs = self.controller.edit_area.getInputAttributes()
-        StyleConstants.setFontSize(attrs, font.getSize())
-
-        # Get the Styledoc so we can update it
-        doc = self.controller.edit_area.getStyledDocument()
-
-        # Apply the new fontsize to the whole document
-        doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
+        for area_name, style in [['edit', 'edit_area_style'],
+                                 ['secondary', 'edit_area_style'],
+                                 ['arabic', 'arabic_area_style']]:
+            area = getattr(self.controller, "{}_area".format(area_name))
+            # Create a new font with the new size
+            font = set_font(config[style]['fontsize']['user'])
+            if area_name == 'edit':
+                # Update the sytnax highlighter font params, so our changes are
+                # not superceded
+                self.controller.syntax_highlighter.font = font
+                self.controller.syntax_highlighter.setup_attribs()
+            attrs = area.getInputAttributes()
+            StyleConstants.setFontSize(attrs, font.getSize())
+            # Get the Styledoc so we can update it
+            doc = area.getStyledDocument()
+            # Apply the new fontsize to the whole document
+            doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, False)
+            area.setFont(font)
 
 
 class atfAreaDocumentListener(DocumentListener):
@@ -222,6 +337,7 @@ class atfAreaDocumentListener(DocumentListener):
         '''
         Listen for an insertion to the document.
         '''
+        self.areaviewcontroller.controller.view.set_title(unsaved=True)
         text = self.areaviewcontroller.edit_area.getText()
         self.errorUpdate(e, text, 'insert')
 
@@ -229,6 +345,7 @@ class atfAreaDocumentListener(DocumentListener):
         '''
         Listen for a removal from the document
         '''
+        self.areaviewcontroller.controller.view.set_title(unsaved=True)
         # Get the text prior to this edit event
         text = self.areaview.oldtext
         self.errorUpdate(e, text, 'remove')
@@ -241,12 +358,7 @@ class atfAreaAdjustmentListener(AdjustmentListener):
 
     def adjustmentValueChanged(self, e):
         if not e.getValueIsAdjusting():
-
-            top_l_char, bottom_l_char = self.areaview.get_viewport_carets()
-
-            # Call SyntaxHighlighter(top_l_char, bottom_l_char)
-            self.areaviewcontroller.syntax_highlight(top_l_char,
-                                                     bottom_l_char)
+            runSwingLater(self.areaviewcontroller.controller.initHighlighting)
 
 
 class AtfAreaKeyListener(KeyListener):
@@ -290,10 +402,13 @@ class AtfUndoableEditListener(UndoableEditListener):
     TODO: Make compounds save whole words so undoing is not so much of a pain
           for the user.
     '''
-    def __init__(self, undo_manager):
-        self.undo_manager = undo_manager
-        self.current_compound = CompoundEdit()
+    def __init__(self, panel):
+        self.panel = panel
+        self.undo_manager = self.panel.undo_manager
+        self.current_compound = AtfCompoundEdit()
         self.must_compound = False
+        self.deletion = UIManager.getString('AbstractDocument.deletionText')
+        self.addition = UIManager.getString('AbstractDocument.additionText')
 
     def force_start_compound(self):
         """
@@ -301,13 +416,13 @@ class AtfUndoableEditListener(UndoableEditListener):
         significant edit events that we want to put together in a compound
         edit.
         """
-        empty_compound = CompoundEdit()
+        empty_compound = AtfCompoundEdit()
         if not self.must_compound:
             self.must_compound = True
             if not self.current_compound.equals(empty_compound):
                 self.current_compound.end()
                 self.undo_manager.addEdit(self.current_compound)
-            self.current_compound = CompoundEdit()
+            self.current_compound = AtfCompoundEdit()
 
     def force_stop_compound(self):
         self.current_compound.end()
@@ -316,18 +431,64 @@ class AtfUndoableEditListener(UndoableEditListener):
 
     def undoableEditHappened(self, event):
         edit = event.getEdit()
-        edit_type = str(edit.getType())
+        edit_type = edit.getPresentationName()
 
         # If significant INSERT/REMOVE event happen, end and add current
         # edit compound to undo_manager and start a new one.
-        if ((edit_type == "INSERT" or edit_type == "REMOVE") and
+        if ((edit_type == self.addition or edit_type == self.deletion) and
                 not self.must_compound):
             # Explicitly end compound edits so their inProgress flag goes
             # to false. Note undo() only undoes compound edits when they
             # are not in progress.
             self.current_compound.end()
-            self.current_compound = CompoundEdit()
+            self.current_compound = AtfCompoundEdit()
             self.undo_manager.addEdit(self.current_compound)
 
         # Always add current edit to current compound
         self.current_compound.addEdit(edit)
+
+
+class AtfCompoundEdit(CompoundEdit):
+    """
+    Compound edit for the ATF area, derived from `CompoundEdit`.
+
+    This exposes the protected field `edits` of the parent Java class.
+    """
+    # add a getter for a protected field
+    def getEdits(self):
+        """
+        Return the protected field 'edits' of the compound.
+        """
+        field = CompoundEdit.getDeclaredField("edits")
+        field.setAccessible(True)
+        return field.get(self)
+
+    def firstEdit(self):
+        """
+        Return the first edit in the compound.
+        """
+        return self.getEdits()[0]
+
+
+class AtfUndoManager(UndoManager):
+    """
+    Undo manager of the ATF area, derived from `UndoManager`.
+
+    This exposes some protected methods of the parent Java class.
+    """
+    def __init__(self, panel):
+        # This member is here only to ease debugging: you can access
+        # NammuController logger with `self.panel.controller.controller.logger`
+        self.panel = panel
+
+    def editToBeRedone(self):
+        """
+        Expose the protected method `editToBeRedone()`.
+        """
+        return self.super__editToBeRedone()
+
+    def editToBeUndone(self):
+        """
+        Expose the protected method `editToBeUndone()`.
+        """
+        return self.super__editToBeUndone()

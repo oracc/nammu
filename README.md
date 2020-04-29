@@ -3,7 +3,7 @@
 # Nammu: Desktop GUI for ORACC
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/1.0.0/nammu-1.0.0.jar)
+[here](https://github.com/oracc/nammu/releases/download/1.3.0/nammu-1.3.0.jar)
 and just double click on it to open it.
 
 ## What is ORACC?
@@ -38,7 +38,7 @@ of ORACC, enabling more projects to adopt it.
 Nammu is currently being developed by the
 [UCL Research Software Development Group](https://www.ucl.ac.uk/research-it-services/about/research-software-development).
 
-<img src="./doc/mockups/nammu_0.6.png" align="center" width="90%">
+<img src="./doc/mockups/nammu_1.2.2.png" align="center" width="90%">
 
 
 ## Validation and lemmatisation of ATF files
@@ -77,11 +77,24 @@ validation using pyORACC when they don't have Internet access. This will return
 error messages coming from pyORACC and presented in the GUI to guide the user
 on how to correct them.
 
+#### Right to left translation support
+
+<img src="./doc/mockups/nammu_arabic.png" align="center" width="90%">
+
+As part of the [Nahrein project](http://www.ucl.ac.uk/nahrein), Nammu has been extended to support Arabic, Farsi and Kurdish translation languages. This is enabled through the creation of an Arabic Translation pane, which opens automatically on valid ATF files which contain an Arabic, Kurdish or Farsi translation line, such as:
+
+```
+@translation parallel ar project
+```
+
+If editing a new file which does not yet have a translation, this mode can be activated using the `Window` menu, which contains an option `Toggle Arabic Translation Editor` which will enable or disable the translation pane.
+
+This feature is still a work in progress so please open an [issue](https://github.com/oracc/nammu/issues/new) and let us know if you have any problems.
 
 ## How to run Nammu
 
 To run Nammu on your computer, you can download it from
-[here](https://github.com/oracc/nammu/releases/download/1.0.0/nammu-1.0.0.jar)
+[here](https://github.com/oracc/nammu/releases/download/1.3.0/nammu-1.3.0.jar)
 and just double click on it to open it and use it.
 
 If you find any problem trying to open it, have a look in the [Troubleshooting](#known-problems-and-troubleshooting) section.
@@ -135,9 +148,9 @@ installable file for your operating system
 
 If you keep having trouble, you can also run it from the command line, like this:
 
-`java -jar /path/to/nammu-1.0.0.jar`
+`java -jar /path/to/nammu-1.3.0.jar`
 
-Where `/path/to/` reflects your local path to where the `nammu-1.0.0.jar` file has been downloaded. This will output a clearer log message about what the problem is.
+Where `/path/to/` reflects your local path to where the `nammu-1.3.0.jar` file has been downloaded. This will output a clearer log message about what the problem is.
 
 ### Known problems:
 * Nammu doesn't validate or lemmatise properly when filenames include a space.
@@ -183,7 +196,7 @@ has been installed. It doesn't require any other extra configuration.
 
 ### Requirements
 
-Nammu is designed for and tested on Java 8. It is not currently possible to build the jar file using Java 7 due to problems with `jython-swingutils`. For more information on this issue and to follow progress in resolving it check out [this issue](https://github.com/oracc/nammu/issues/240).
+Nammu is developed and tested on Java 8. Since version 1.2.2, Nammu supports Java versions 9 and 10 for users, although not yet for development. If you encounter problems running Nammu on these versions, please let us know by filing an issue.
 
 #### Contributors
 
@@ -200,27 +213,39 @@ contribute to it if you like.
 To obtain the code and run it, you can follow these steps:
 
 1. Clone the repo in your computer:
- `git clone git@github.com:oracc/nammu.git`
-2. Download and install the [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
-3. Download and install [Maven](https://maven.apache.org) following instructions.
-4. Run the following Maven command to install the project and clean the output
-from previous executions:
- ```
- mvn clean install
- ```
-5. This will create Nammu's jar in the `target` folder. Then you can execute it
+    ```
+    git clone git@github.com:oracc/nammu.git
+    ```    
+1. Install requirements:
+    ```bash
+    cd nammu
+    pip install -r requirements.txt
+    ```
+1. Run tests from nammu's root folder. These check the Oracc server's
+functionality needed by Nammu for validation and lemmatisation, as well as use
+cases related to Nammu's Arabic translation mode. More tests will be added
+before the next release.
+    ```bash
+    py.test ./python/nammu
+    ````
+1. Download and install the [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+1. Download and install [Maven](https://maven.apache.org) following instructions.
+1. Run the following Maven command to install the project and clean the output
+from previous executions, skipping tests which can be run separately from the
+build as indicated in step 3:
+    ```bash
+    mvn clean install -DskipTests
+    ```
+1. This will create Nammu's jar in the `target` folder. Then you can execute it
 like this:
- ```
+    ```bash
+    java -jar  target/nammu-1.3.0.jar
+    ```
+1. You can also run Nammu in development mode from the console. See instructions:
+https://github.com/oracc/nammu/wiki/Run-Nammu-from-a-console
 
- java -jar  target/nammu-1.0.0.jar
-
- ```
-
-6. You can also run Nammu in development mode from the console. See instructions:
-https://github.com/oracc/nammu/wiki/Running-Nammu-from-a-console
-
-If you find any problem or need more information, you can create an issue
-[here](https://github.com/oracc/nammu/issues).
+If you find any problem, need more information or would like to contribute, you
+can create an issue [here](https://github.com/oracc/nammu/issues).
 
 
 ## License

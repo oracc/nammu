@@ -15,3 +15,5 @@ parsetab.py
 **/.cache
 **/effective-pom*.xml
 *.atf
+resources/lib
+.vagrant/

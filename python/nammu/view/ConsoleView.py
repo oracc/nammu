@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -19,7 +19,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 
 from swingutils.events import addEventListener
 
-from java.awt import Font, BorderLayout, Color, Dimension
+from java.awt import BorderLayout, Color, Dimension
 from javax.swing import JEditorPane, JScrollPane, JPanel, BorderFactory
 from javax.swing.text import DefaultCaret
 from javax.swing.event import HyperlinkListener
@@ -67,8 +67,8 @@ class ConsoleView(JPanel):
         self.refreshConsole()
 
         # Set up a hyperlink listener
-        listener = addEventListener(self.edit_area, HyperlinkListener,
-                                    'hyperlinkUpdate', self.handleEvent)
+        addEventListener(self.edit_area, HyperlinkListener,
+                         'hyperlinkUpdate', self.handleEvent)
 
         # Will need scrolling controls
         scrollingText = JScrollPane(self.edit_area)

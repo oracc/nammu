@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -19,13 +19,12 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import logging
-import os
+
 from swingutils.events import addEventListener
 from java.awt import (Color, BorderLayout, GridBagLayout, GridBagConstraints,
                       Insets)
 from javax.swing import (JDialog, JFrame, JPanel, JButton, JCheckBox,
-                         JEditorPane, JScrollPane, BorderFactory)
-from javax.swing.border import EmptyBorder
+                         JEditorPane, BorderFactory)
 from javax.swing.event import HyperlinkListener
 from javax.swing.event.HyperlinkEvent import EventType
 from javax.swing.text.html import HTMLEditorKit
@@ -78,7 +77,6 @@ class WelcomeView(JDialog):
         msg_pane.setEditable(False)
         kit = HTMLEditorKit()
         msg_pane.setEditorKit(kit)
-        scrollPane = JScrollPane(msg_pane)
 
         # This handles the stylesheet applied to the welcome message
         styleSheet = kit.getStyleSheet()
@@ -96,8 +94,8 @@ class WelcomeView(JDialog):
         msg_pane.setText(message)
 
         # Set up a hyperlink listener
-        listener = addEventListener(msg_pane, HyperlinkListener,
-                                    'hyperlinkUpdate', self.handleEvent)
+        addEventListener(msg_pane, HyperlinkListener,
+                         'hyperlinkUpdate', self.handleEvent)
 
         # Configure the placement of the JEditorPane
         constraints.gridx = 1

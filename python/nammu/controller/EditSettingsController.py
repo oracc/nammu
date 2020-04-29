@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -28,9 +28,8 @@ class EditSettingsController:
         self.load_config()
         self.view = EditSettingsView(self, self.working_dir, self.servers,
                                      self.console_style, self.edit_area_style,
-                                     self.keystrokes, self.languages,
-                                     self.projects)
-        self.view.display()
+                                     self.arabic_area_style, self.keystrokes,
+                                     self.languages, self.projects)
 
     def load_config(self):
         '''
@@ -39,7 +38,7 @@ class EditSettingsController:
         '''
         config_keywords = ['working_dir', 'servers', 'keystrokes',
                            'languages', 'projects', 'console_style',
-                           'edit_area_style']
+                           'edit_area_style', 'arabic_area_style']
         for keyword in config_keywords:
             try:
                 setattr(self, keyword, self.config[keyword])
@@ -49,8 +48,9 @@ class EditSettingsController:
                 self.view.display_error(keyword)
 
     def update_config(self, working_dir, server, console_fontsize, font_color,
-                      background_color, edit_area_fontsize, keystrokes=None,
-                      languages=None, projects=None):
+                      background_color, edit_area_fontsize,
+                      arabic_area_fontsize, keystrokes=None, languages=None,
+                      projects=None):
         '''
         Update the settings file with the user input.
         '''
@@ -64,6 +64,8 @@ class EditSettingsController:
         self.config[
                 'console_style']['background_color']['user'] = background_color
         self.config['edit_area_style']['fontsize']['user'] = edit_area_fontsize
+        self.config['arabic_area_style']['fontsize'][
+            'user'] = arabic_area_fontsize
         self.controller.logger.debug("Settings updated.")
         save_yaml_config(self.config)
 

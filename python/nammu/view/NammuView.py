@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2019 University College London.
 
 This file is part of Nammu.
 
@@ -18,9 +18,10 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from java.awt import BorderLayout, Toolkit
-from java.awt.event import KeyEvent
+from java.awt.event import KeyEvent, WindowAdapter
 from javax.swing import JFrame, JSplitPane, KeyStroke, AbstractAction
 from javax.swing import JComponent
+import os
 
 
 class NammuView(JFrame):
@@ -54,6 +55,11 @@ class NammuView(JFrame):
             pane.getInputMap(condition).put(key_stroke, action)
             pane.getActionMap().put(action, KeyStrokeAction(self, action))
 
+        # Handle closing of the frame when clicking on the X button in title
+        # bar.
+        listener = CustomWindowListener(self)
+        self.addWindowListener(listener)
+
         # TODO
         # Create splitPane with two empty panels for the ATF edition/console
         # area
@@ -86,9 +92,21 @@ class NammuView(JFrame):
         # Make console's high remain smaller compared to edit area
         splitPane.setResizeWeight(0.9)
 
+    def set_title(self, unsaved=False):
+        """
+        Set the title bar to the base name of the currently open file.
+        If `unsaved` is `True`, prepend "(*) " to the file name.
+        """
+        if self.controller.currentFilename is None:
+            filename = "<New File>"
+        else:
+            filename = os.path.basename(self.controller.currentFilename)
+        prefix = "(*) " if unsaved else ""
+        self.setTitle("{}{} - Nammu".format(prefix, filename))
+
     def display(self):
-        self.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-        self.setTitle("Nammu")
+        self.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE)
+        self.set_title()
         self.pack()
         self.setLocationRelativeTo(None)
 
@@ -110,3 +128,14 @@ class KeyStrokeAction(AbstractAction):
         in the component's controller.
         '''
         getattr(self.component.controller, self.action)()
+
+
+class CustomWindowListener(WindowAdapter):
+    '''
+    Handle closing of the JFrame.
+    '''
+    def __init__(self, frame):
+        self.frame = frame
+
+    def windowClosing(self, event):
+        self.frame.controller.quit()

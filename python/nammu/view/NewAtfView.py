@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -18,7 +18,7 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon, JDialog
-from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
+from javax.swing import JFrame, JLabel, JComboBox, JTextField, JButton
 from java.awt.event import ActionListener
 from java.awt import Dimension, Dialog
 from ..utils import find_image_resource
@@ -292,7 +292,7 @@ class NewAtfView(JDialog):
 
     def build_language_row(self):
         '''
-        Builds the language row.
+        Builds the language line in the new ATF template.
         '''
         # Build own panel with SpringLayout.
         panel = JPanel()
@@ -300,7 +300,7 @@ class NewAtfView(JDialog):
         panel.setLayout(layout)
         # Get language list from settings.yaml, removing the default one from
         # the list
-        languages = self.languages.keys()
+        languages = sorted(self.languages.keys())
         languages.remove('default')
         # Create necessary components and add them to panel.
         language_label = JLabel('Language: ')

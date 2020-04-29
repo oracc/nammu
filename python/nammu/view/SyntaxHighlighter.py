@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -16,11 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
-import re
+
 from pyoracc.atf.atflex import AtfLexer
+
 from java.awt import Color
-from javax.swing.text import StyleContext, StyleConstants
-from javax.swing.text import SimpleAttributeSet
+from javax.swing.text import (
+    StyleConstants,
+    SimpleAttributeSet,
+    BadLocationException)
 from ..utils import set_font
 
 
@@ -163,8 +166,19 @@ class SyntaxHighlighter:
         if not self.syntax_highlight_on or no_of_chars < 1:
             return
 
+        # When we have arabic text, use the length of the main edit area.
+        if self.controller.controller.arabic_edition_on:
+            no_of_chars = self.styledoc.getLength()
+
         # Get only the text on the screen
-        text = self.styledoc.getText(self.viewport_extent[2], no_of_chars)
+        # TODO: This exception can probably be understood and worked around
+        #       in a nicer way
+        try:
+            text = self.styledoc.getText(self.viewport_extent[2], no_of_chars)
+        except BadLocationException:
+            logger = self.controller.controller.logger
+            logger.debug("BadLocation error when syntax highlighting.")
+            return
 
         # Reset lexer and parse text
         self.lexer.input(text)
@@ -194,9 +208,9 @@ class SyntaxHighlighter:
                                                  attribs,
                                                  True)
 
-    # Go through each token in the text, check which type it is to assign
-    # a colour to it, check which position it is to set up default or
-    # error background, etc.
+        # Go through each token in the text, check which type it is to assign
+        # a colour to it, check which position it is to set up default or
+        # error background, etc.
         for tok in self.lexer:
             if tok.type in self.tokencolorlu:
                 if type(self.tokencolorlu[tok.type]) is dict:
@@ -213,13 +227,32 @@ class SyntaxHighlighter:
                     color = self.tokencolorlu[tok.type][0]
                     styleline = self.tokencolorlu[tok.type][1]
                 if styleline:
-                    mylength = len(splittext[tok.lineno - 1])
+                    # `styleline` indicates whether we need to apply the style
+                    # to the whole line.
+                    if tok.lineno <= len(splittext):
+                        # Length of the full line.
+                        mylength = len(splittext[tok.lineno - 1])
+                    else:
+                        # For some reason, the line number stored in `tok` is
+                        # larger than the number of lines in `splittext`.  In
+                        # this case, ignore this token and issue a debug
+                        # message.  FIXME: this shouldn't happen.
+                        logger = self.controller.controller.logger
+                        logger.debug("Error in syntax_highlight: "
+                                     "trying to highlight a line after "
+                                     "the end of the file")
+                        continue
                 else:
                     mylength = len(tok.value)
                 if str(tok.lineno) in error_lines:
                     attribs = self.error_attribs[color]
                 else:
-                    attribs = self.attribs[color]
+                    try:
+                        attribs = self.attribs[color]
+                    except KeyError:
+                        logger = self.controller.controller.logger
+                        logger.debug('Color not found in attribute table.')
+
                 self.styledoc.setCharacterAttributes(tok.lexpos +
                                                      self.viewport_extent[2],
                                                      mylength,

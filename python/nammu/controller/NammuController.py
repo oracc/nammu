@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2020 University College London.
 
 This file is part of Nammu.
 
@@ -18,13 +18,10 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import codecs
-from logging import StreamHandler, Formatter
+from logging import Formatter
 import logging
 import logging.config
-from logging.handlers import RotatingFileHandler
 import os
-import urllib
-import re
 from swingutils.threads.swing import runSwingLater
 
 from AtfAreaController import AtfAreaController
@@ -36,15 +33,14 @@ from NewAtfController import NewAtfController
 from FindController import FindController
 from EditSettingsController import EditSettingsController
 from WelcomeController import WelcomeController
-from java.awt import Desktop, Color
-from java.io import File
-from java.lang import System, Integer, ClassLoader
+from java.awt import Desktop
+from java.lang import System, Integer
 from java.net import URI
 from javax.swing import JFileChooser, JOptionPane, ToolTipManager, JSplitPane
 from javax.swing.filechooser import FileNameExtensionFilter
 from javax.swing.text import DefaultCaret
 from pyoracc.atf.atffile import AtfFile
-from requests.exceptions import RequestException
+from requests.exceptions import RequestException, ConnectTimeout
 from requests.exceptions import Timeout, ConnectionError, HTTPError
 
 from ..SOAPClient.SOAPClient import SOAPClient
@@ -95,12 +91,12 @@ class NammuController(object):
                 "create a new one from a template, or just start typing in "
                 "the text area.")
 
-        # Display Nammu's view
-        self.view.display()
-
         # Save current ATF filename
         # TODO: save array with all opened ATFs
         self.currentFilename = None
+
+        # Display Nammu's view
+        self.view.display()
 
         # Configure the tooltip manager for tooltips to appear quicker and not
         # to vanish until mouse moves away
@@ -110,6 +106,9 @@ class NammuController(object):
         # Find windows shouldn't coexist
         self.finding = False
 
+        # Keep track of arabic edition being on or off
+        self.arabic_edition_on = False
+
         # Here are the current urls for nammu on github and the oracc docs
         self.urls = {'nammu': 'https://github.com/oracc/nammu',
                      'oracc': ('http://oracc.museum.upenn.edu/doc/help/'
@@ -117,6 +116,8 @@ class NammuController(object):
 
         # Now that init is done, launch the welcome screen if needed
         self.launchWelcomeScreen()
+
+        self.atf_body, self.atf_translation = "", ""
 
     # Actions delegated from subcontrollers follow.
     # Subcontrollers can't handle these actions because they
@@ -139,7 +140,7 @@ class NammuController(object):
             # Keep on where we were if user doesn't cancel
             if not new_atf_controller.view.cancelled:
                 self.currentFilename = None
-                self.view.setTitle("Nammu")
+                self.view.set_title()
                 self.logger.debug("New file created from template.")
 
     def openFile(self, event=None):
@@ -159,29 +160,41 @@ class NammuController(object):
 
             if status == JFileChooser.APPROVE_OPTION:
                 atfFile = fileChooser.getSelectedFile()
-                filename = atfFile.getCanonicalPath()
-                basename = atfFile.getName()
-                atfText = self.readTextFile(filename)
                 self.currentFilename = atfFile.getCanonicalPath()
+                atfText = self.readTextFile(self.currentFilename)
                 # Clear ATF area before adding next text to clean up tooltips
                 # and such
-                self.atfAreaController.clearAtfArea()
+                self.atfAreaController.clearAtfArea(
+                                            arabic=self.arabic_edition_on)
 
-                # Turn off caret movement and highligting for file load
-                self.atfAreaController.caret.setUpdatePolicy(
+                # Check for Arabic content and toggle arabic translation mode
+                arabicIndex = self.atfAreaController.findArabic(atfText)
+                if arabicIndex:
+                    self.atf_body = atfText[:arabicIndex]
+                    self.atf_translation = atfText[arabicIndex:]
+                    self.arabic(force=True)
+                else:
+                    # Turn off caret movement and highligting for file load
+                    self.atfAreaController.caret.setUpdatePolicy(
                                                     DefaultCaret.NEVER_UPDATE)
-                syntax_highlight = self.atfAreaController.syntax_highlighter
-                syntax_highlight.syntax_highlight_on = False
-                self.atfAreaController.setAtfAreaText(atfText)
+                    syntax_high = self.atfAreaController.syntax_highlighter
+                    syntax_high.syntax_highlight_on = True
+                    self.atfAreaController.setAtfAreaText(atfText)
+                    self.atf_body = atfText
+                    self.atf_translation = ""
+                    if self.arabic_edition_on:
+                        if self.handleUnsaved():
+                            self.arabic_edition_on = False
+                            self.splitEditorV()
 
                 self.consoleController.clearConsole()
-                self.logger.info("File %s successfully opened.", filename)
-                self.view.setTitle(basename)
+                self.logger.info("File %s successfully opened.",
+                                 self.currentFilename)
+                self.view.set_title()
 
                 # Re-enable caret updating and syntax highlighting after load
                 self.atfAreaController.caret.setUpdatePolicy(
                                                     DefaultCaret.ALWAYS_UPDATE)
-                syntax_highlight.syntax_highlight_on = True
 
                 # Now dispatch syntax highlighting in a new thread so
                 # we dont highlight before the full file is loaded
@@ -195,6 +208,9 @@ class NammuController(object):
 
             # Finally, refresh the edit area to propagate custom font settings
             self.atfAreaController.refreshEditArea()
+
+            # Clear stack of edits
+            self.atfAreaController.undo_manager.discardAllEdits()
 
     def initHighlighting(self):
         '''
@@ -217,6 +233,18 @@ class NammuController(object):
         text = codecs.open(filename, encoding='utf-8').read()
         return text
 
+    def _getAtfText(self, arabic_flag):
+        '''
+        Private method to return the atf text, concatenating the two panes if
+        arabic_flag is True
+        '''
+        if arabic_flag:
+            atfText = self.atfAreaController.concatenate_arabic_text()
+        else:
+            atfText = self.atfAreaController.getAtfAreaText()
+
+        return atfText
+
     def saveFile(self, event=None):
         '''
         If file being edited has a path, then overwrite with latest changes.
@@ -224,7 +252,8 @@ class NammuController(object):
         to save in desired location.
         Also checks for project name, and if found, makes it default.
         '''
-        atfText = self.atfAreaController.getAtfAreaText()
+        atfText = self._getAtfText(self.arabic_edition_on)
+
         if not self.currentFilename:
             fileChooser = JFileChooser(self.get_working_dir())
             file_filter = FileNameExtensionFilter("ATF files", ["atf"])
@@ -247,11 +276,11 @@ class NammuController(object):
                         return
                 filename = self.force_atf_extension(filename)
                 self.currentFilename = filename
-                self.view.setTitle(os.path.basename(filename))
             else:
                 return
         try:
             self.writeTextFile(self.currentFilename, atfText)
+            self.view.set_title()
         except:
             self.logger.error("There was an error trying to save %s.",
                               self.currentFilename)
@@ -301,14 +330,15 @@ class NammuController(object):
                 else:
                     self.config[group][element] = value
                 self.logger.debug("Settings updated.")
-                save_yaml_config(self.config)
+                save_yaml_config(self.config.data)
 
     def saveAsFile(self, event=None):
         '''
         Forces saving as dialog to be prompted.
         Also checks for project name, and if found, makes it default.
         '''
-        atfText = self.atfAreaController.getAtfAreaText()
+        atfText = self._getAtfText(self.arabic_edition_on)
+
         fileChooser = JFileChooser(self.get_working_dir())
         file_filter = FileNameExtensionFilter("ATF files", ["atf"])
         fileChooser.setFileFilter(file_filter)
@@ -316,7 +346,6 @@ class NammuController(object):
         if status == JFileChooser.APPROVE_OPTION:
             atfFile = fileChooser.getSelectedFile()
             filename = atfFile.getCanonicalPath()
-            basename = atfFile.getName()
             # Make sure users check before lightly overwriting a file
             # No need to ask if they choose to save on the file they are
             # currently and knowingly editing.
@@ -328,12 +357,11 @@ class NammuController(object):
                             JOptionPane.YES_NO_OPTION)
                 if reply == JOptionPane.NO_OPTION:
                     return
-            filename = self.force_atf_extension(filename)
-            self.currentFilename = filename
-            self.view.setTitle(basename)
+            self.currentFilename = self.force_atf_extension(filename)
+            self.view.set_title()
             try:
                 self.writeTextFile(self.currentFilename, atfText)
-            except:
+            except IOError:
                 self.logger.error("There was an error trying to save %s.",
                                   self.currentFilename)
             else:
@@ -361,11 +389,21 @@ class NammuController(object):
         2. Clear text area
         '''
         if self.handleUnsaved():
-            self.atfAreaController.clearAtfArea()
+            # We want to always clear the Arabic pane.
+            self.atfAreaController.clearAtfArea(arabic=True)
             self.view.setTitle("Nammu")
             self.logger.debug("File %s successfully closed.",
                               self.currentFilename)
             self.currentFilename = None
+            self.view.set_title()
+            # Clear stack of edits
+            self.atfAreaController.undo_manager.discardAllEdits()
+            # Enable horizontal and vertical split only if we are not in Arabic
+            # mode.
+            self.menuController.enable_split_options(
+                horizontal=not self.arabic_edition_on,
+                vertical=not self.arabic_edition_on,
+                arabic=True)
 
     def unsavedChanges(self):
         '''
@@ -373,7 +411,7 @@ class NammuController(object):
         different that those of the save file that is currently opened, and
         when the user has inserted some text and not saved it yet.
         '''
-        nammuText = self.atfAreaController.getAtfAreaText()
+        nammuText = self._getAtfText(self.arabic_edition_on)
 
         if self.currentFilename:
             if os.path.isfile(self.currentFilename):
@@ -550,7 +588,9 @@ class NammuController(object):
         client = SOAPClient(url, port, url_dir, method='POST')
 
         atf_basename = os.path.basename(self.currentFilename)
-        nammu_text = self.atfAreaController.getAtfAreaText()
+        # Do not send Arabic translation for lemmatisation.
+        nammu_text = self._getAtfText(command != "lem" and
+                                      self.arabic_edition_on)
 
         # Remove spaces from filename which make the server confused
         atf_basename = atf_basename.replace(' ', '')
@@ -600,10 +640,18 @@ class NammuController(object):
                               "request.")
             self.logger.exception(str(re))
             return
+        except Exception as e:
+            self.logger.error("Server error.")
+            self.logger.debug(str(e))
+            return
 
         # Retrieve server logs and lemmatised file from server SOAP response
         self.logger.debug("Reading response sent by ORACC server... ")
-        oracc_log, request_log, autolem = client.get_server_logs()
+        try:
+            oracc_log, request_log, autolem = client.get_server_logs()
+        except IndexError:
+            self.logger.error("Couldn't get server logs.")
+            return
         self.process_server_response(oracc_log, request_log, autolem)
 
     def process_server_response(self, oracc_log, request_log, autolem):
@@ -641,7 +689,7 @@ class NammuController(object):
 
         # Always syntax highlight, not only when there are errors, otherwise
         # old error lines' styling won't be cleared!
-        self.atfAreaController.syntax_highlight()
+        runSwingLater(self.initHighlighting)
 
     def send_request(self, client):
         """
@@ -657,7 +705,8 @@ class NammuController(object):
                               client.url)
             self.logger.error('You can try with a different server from the '
                               'settings menu.')
-            raise Exception('Connetion to server %s timed out.', url)
+            raise Exception('Connection to server {} timed '
+                            'out.'.format(client.url))
         except ConnectionError:
             raise Exception("Can't connect to ORACC server at %s.",
                             client.url)
@@ -711,7 +760,7 @@ class NammuController(object):
                 if line_number not in validation_errors.keys():
                     validation_errors[line_number] = ''
 
-                formatted_err = ('<a href={0}>{1}:{0}:{2}</a>:{3}'
+                formatted_err = ('<a href={0}>{1}:{0}</a>:{2}:{3}'
                                  .format(line_number,
                                          server_filename,
                                          project_id,
@@ -731,11 +780,8 @@ class NammuController(object):
         '''
         Checks if new_user flag is true, launches the welcome screen if needed
         '''
-        try:
-            if self.config['new_user']:
-                WelcomeController(self)
-        except KeyError:
-            WelcomeController(self)
+        if self.config.get('new_user', True):
+            WelcomeController(self).view.display()
 
     def printFile(self, event=None):
         '''
@@ -751,7 +797,7 @@ class NammuController(object):
         # Clear console in preparation for new settings messages
         self.consoleController.clearConsole()
 
-        edit_settings_controller = EditSettingsController(self)
+        EditSettingsController(self).view.display()
 
     def displayModelView(self, event=None):
         '''
@@ -785,11 +831,48 @@ class NammuController(object):
         else:
             return parsed
 
-    def unicode(self, event=None):
+    def arabic(self, event=None, force=False):
         '''
-        Create bool for unicode, change value when clicked.
+        Create bool for arabic, change value when clicked.
+
+        If `force` is `True`, force enabling arabic mode.
         '''
-        self.logger.debug("Unicode...")
+        if force:
+            self.logger.debug("Enabling Arabic translation mode...")
+            atfAreaView = self.atfAreaController.view
+            atfAreaView.edit_area.setText(self.atf_body)
+            atfAreaView.arabic_area.setText(self.atf_translation)
+            atfAreaView.setup_edit_area_split(JSplitPane.VERTICAL_SPLIT,
+                                              arabic=True)
+            self.menuController.enable_split_options(
+                horizontal=False, vertical=False, arabic=False)
+            return
+        self.logger.debug("Enabling/Disabling arabic translation mode...")
+        if event:
+            if self.handleUnsaved():
+                if self.arabic_edition_on:
+                    # revert back to single pane
+                    joined = self.atfAreaController.concatenate_arabic_text()
+                    if self.atfAreaController.findArabic(joined):
+                        self.logger.info("Cannot disable Arabic translation"
+                                         " mode, Arabic translation detected")
+                    else:
+                        self.atfAreaController.view.toggle_split()
+                        self.arabic_edition_on = False
+                        self.atfAreaController.edit_area.setText(joined)
+
+                else:
+                    # toggle arabic pane
+                    self.atfAreaController.splitEditorArabic(
+                                    JSplitPane.VERTICAL_SPLIT,
+                                    self.atfAreaController.getAtfAreaText(),
+                                    "")
+        else:
+            self.atfAreaController.splitEditorArabic(JSplitPane.VERTICAL_SPLIT,
+                                                     self.atf_body,
+                                                     self.atf_translation)
+            self.menuController.enable_split_options(
+                horizontal=False, vertical=False, arabic=False)
 
     def splitEditorV(self, event=None):
         '''
@@ -817,6 +900,12 @@ class NammuController(object):
         Show/Hide Toolbar.
         '''
         self.logger.debug("Toolbar... ")
+
+    def unicode(self, event=None):
+        '''
+        Create bool for unicode, change value when clicked.
+        '''
+        self.logger.debug("Unicode...")
 
     def __getattr__(self, name):
         '''
@@ -867,7 +956,7 @@ class NammuController(object):
         if lang_str in nammu_text:
             try:
                 parsed_atf = self.parse(nammu_text)
-                lang_value = getattr(parsed.text, 'language')
+                lang_value = getattr(parsed_atf.text, 'language')
             except:
                 # File can't be parsed but might still contain a project code
                 try:

@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 - 2017 University College London.
+ * Copyright 2015 - 2018 University College London.
  *
  * This file is part of Nammu.
  *
@@ -36,6 +36,7 @@ import org.python.util.PythonInterpreter;
 public class Nammu {
 
     public static void main(final String[] args) throws PyException {
+
         PySystemState systemState = Py.getSystemState();
         PythonInterpreter interpreter = new PythonInterpreter();
         systemState.__setattr__("_jy_interpreter", Py.java2py(interpreter));

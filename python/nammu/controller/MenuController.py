@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -33,6 +33,18 @@ class MenuController(object):
 
         # Create view with a reference to its controller to handle events
         self.view = MenuView(self)
+
+    def enable_split_options(self, horizontal=True,
+                             vertical=True, arabic=True):
+        """
+        Show split menu items as enabled or disabled.
+        """
+        self.view.enable_item("Window", "Toggle Vertical Split Editor",
+                              vertical)
+        self.view.enable_item("Window", "Toggle Horizontal Split Editor",
+                              horizontal)
+        self.view.enable_item("Window", "Toggle Arabic Translation Editor",
+                              arabic)
 
     # Some actions need to be delegated to NammuController.
     # E.g. actions in menu that'll need modification of text area controlled

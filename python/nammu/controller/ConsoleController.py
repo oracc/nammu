@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -27,7 +27,6 @@ class ConsoleController(object):
     def __init__(self, mainControler):
         # Load the config file
         self.config = mainControler.config
-        self.test = mainControler
 
         # Create view with a reference to its controller to handle events
         self.view = ConsoleView(self)

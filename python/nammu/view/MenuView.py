@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -86,11 +86,14 @@ class MenuView(JMenuBar):
                                                             KeyEvent.VK_COMMA,
                                                             "splitEditorV"
                                                             ]
-        menuItems["Window"]["Toggle Horizonal Split Editor"] = [
+        menuItems["Window"]["Toggle Horizontal Split Editor"] = [
                                                             KeyEvent.VK_PERIOD,
                                                             "splitEditorH"
                                                             ]
-        menuItems["Window"]["Unicode Keyboard"] = [KeyEvent.VK_K, "unicode"]
+        menuItems["Window"]["Toggle Arabic Translation Editor"] = [
+                                                                KeyEvent.VK_K,
+                                                                "arabic"
+                                                                ]
 
         menuItems["Help"] = {}
         menuItems["Help"] = collections.OrderedDict()
@@ -104,15 +107,37 @@ class MenuView(JMenuBar):
                       "Window": ["Display Model View"],
                       "Help": ["Help"]}
 
+        self.menu_positions = {}
         # Create menu items and add to menu bar
-        for menuName, keyEvent in menus.items():
+        for index, (menuName, keyEvent) in enumerate(menus.items()):
             menu = Menu(self,
                         menuName,
                         keyEvent,
                         menuItems[menuName],
                         separators[menuName])
             self.add(menu)
+            self.menu_positions[menuName] = index
 
     # Delegate methods not found here to view controller
     def __getattr__(self, name):
         return getattr(self.controller, name)
+
+    def get_menu_by_name(self, name):
+        """
+        Return the menu with given `name`.
+        """
+        return self.getMenu(self.menu_positions[name])
+
+    def get_menu_item_by_name(self, menu_name, item_name):
+        """
+        Return menu item with given `item_name` under menu `menu_name`.
+        """
+        menu = self.get_menu_by_name(menu_name)
+        menu_item_index = menu.menu_positions[item_name]
+        return menu.getItem(menu_item_index)
+
+    def enable_item(self, menu_name, menu_item, value=True):
+        """
+        Set to `value` the visibility of `menu_item`, under `menu_name`.
+        """
+        self.get_menu_item_by_name(menu_name, menu_item).setEnabled(value)

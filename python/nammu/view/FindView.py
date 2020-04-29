@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -19,10 +19,10 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import logging
-from javax.swing import SpringLayout, JPanel, BoxLayout, ImageIcon, JDialog
-from javax.swing import JFrame, JLabel, JComboBox, JTextField, JList, JButton
+from javax.swing import SpringLayout, JPanel, BoxLayout, JDialog
+from javax.swing import JFrame, JLabel, JTextField, JButton
 from javax.swing import JCheckBox, KeyStroke, AbstractAction, JComponent
-from java.awt import Dimension, Dialog, BorderLayout, FlowLayout, Toolkit
+from java.awt import FlowLayout, Toolkit
 from java.awt.event import KeyEvent
 
 

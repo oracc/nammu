@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -97,13 +97,10 @@ class ModelController(object):
         self.view.addMetadata(objectID, atfText.project, atfText.language)
 
         for item in atfText.children:
-            itemType = "@" + item.objecttype
             for side in item.children:
                 # TODO Display side type and make panel as convenient to show
                 # all sides
                 if not(isinstance(side, Translation)):
-                    sideType = side.objecttype
-                    # self.view.addText(objectID, itemType, sideType)
                     for line in side.children:
                         # TODO Display label and words and lemmas in dropdown
                         # boxes

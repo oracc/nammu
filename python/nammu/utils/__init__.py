@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -20,17 +20,61 @@ along with Nammu.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import zipfile
 import shutil
-import collections
 import yaml
 import logging
 import re
+import urllib
+from UserDict import UserDict
 from java.lang import ClassLoader, System
-from java.io import InputStreamReader, BufferedReader
 from java.awt import Font
+from javax.swing import JFrame, JOptionPane
 
 '''
 This is a compilation of methods to be used from all Nammu classes.
 '''
+
+
+class NammuException(Exception):
+    pass
+
+
+class ConfigDict(UserDict):
+    '''
+    Thin wrapper around a dictionary class.  It has only an additional
+    attribute holding the path to the configuration file.
+    '''
+    def __init__(self, config_file, *args):
+        '''
+        Constructor of the `ConfigDict` class.  `config_file` is the path to
+        the configuration file, the rest of the arguments are passed to the
+        constructor of the base class.
+        '''
+        self.config_file = config_file
+        UserDict.__init__(self, *args)
+
+    def __getitem__(self, key):
+        '''
+        Return the value corresponding to the `key` in the dictionary, if the
+        key is available.  If it is not, show an error dialog and close Nammu.
+        '''
+        if key in self:
+            return UserDict.__getitem__(self, key)
+        else:
+            # We instantiate `JOptionPane()` so that we can monkeypatch
+            # `showMessageDialog` in the tests.
+            pane = JOptionPane()
+            pane.showMessageDialog(JFrame().getContentPane(),
+                                   "The configuration file \"%s\"\n"
+                                   "is corrupted (missing \"%s\" key).\n\n"
+                                   "Please delete the file, or "
+                                   "rename it if you want to keep a "
+                                   "backup copy,\nthen restart Nammu.\n\n"
+                                   "If you need help, open an issue at "
+                                   "https://github.com/oracc/nammu." %
+                                   (self.config_file, key),
+                                   "Nammu",
+                                   JOptionPane.ERROR_MESSAGE)
+            raise NammuException("Invalid config file")
 
 
 def set_font(font_size):
@@ -122,7 +166,16 @@ def get_yaml_config(yaml_filename):
     # In Unix getResource returns the path with prefix "file:" but in
     # Windows prefix is "jar:file:"
     path_to_jar = str(config_file_url).split('file:')[1]
-    path_to_jar = path_to_jar.split('!')[0]
+    # The path will be of the form /path/to/jar!path/inside/jar
+    # Take everything up to the final !, in case previous parts also contain !
+    path_to_jar = path_to_jar.rsplit('!', 1)[0]
+    # Decode any special characters contained in the path so that, for example,
+    # we use 'dir name' instead of 'dir%20name'
+    # NB: The standard way to do it is to create a URI from the URL, which will
+    # automatically handle the encoding, and then go back to a URL or String.
+    # However, the URI class doesn't seem to handle the jar:file: prefix well,
+    # so using urllib directly seems a better solution.
+    path_to_jar = urllib.unquote(path_to_jar)
 
     path_to_config = get_log_path(yaml_filename)
 
@@ -131,22 +184,18 @@ def get_yaml_config(yaml_filename):
     # If it does, check is up to date with latest version
     if not os.path.isfile(path_to_config):
         copy_yaml_to_home(path_to_jar, yaml_path, path_to_config)
+
+        (jar_config, local_config,
+         jar_version, local_version) = get_config_versions(path_to_jar,
+                                                           yaml_path,
+                                                           path_to_config)
+
+        return local_config
     else:
-        # We are running from the JAR file, not the local console
-        update_yaml_config(path_to_jar, yaml_path, path_to_config)
-
-    # Load local YAML file and perform required patches on the settings in
-    # memory if the settings version is different between the jar and the local
-    # file. Ensures that memory and file settings always match.
-    (jar_config, local_config,
-     jar_version, local_version) = get_config_versions(path_to_jar, yaml_path,
-                                                       path_to_config)
-
-    if yaml_filename == 'settings.yaml':
-        if different_versions(jar_version, local_version):
-            return patch_config(local_config)
-
-    return local_config
+        # Load local YAML file and perform required patches on the settings in
+        # memory if the settings version is different between the jar and the
+        # local file. Ensures that memory and file settings always match.
+        return update_yaml_config(path_to_jar, yaml_path, path_to_config)
 
 
 def patch_config(yaml):
@@ -217,13 +266,17 @@ def get_config_versions(path_to_jar, yaml_path, path_to_config):
     Method to return the jar and local config files and their versions.
     '''
     try:
-        jar_contents = zipfile.ZipFile(path_to_jar, 'r')
+        with zipfile.ZipFile(path_to_jar, 'r') as jar_contents:
+            with jar_contents.open(yaml_path) as jar:
+                jar_config = yaml.safe_load(jar)
     except zipfile.BadZipfile:
-        jar_config = yaml.load(open(path_to_jar, 'r'))
-    else:
-        jar_config = yaml.load(jar_contents.open(yaml_path))
+        with open(path_to_jar, 'r') as jar:
+            jar_config = yaml.safe_load(jar)
 
-    local_config = yaml.load(open(path_to_config, 'r'))
+    with open(path_to_config, 'r') as config:
+        local_config = ConfigDict(path_to_config,
+                                  yaml.safe_load(config))
+
     jar_version = str(jar_config['version'])
     local_version = str(local_config['version'])
 
@@ -239,6 +292,9 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
     the local values will be maintained.
     It also needs to compare what's in the jar and add new dictionaries to the
     local jar.
+
+    This returns the final configuration after the changes.  If `test_mode` is
+    `False`, it returns the configuration without patching or writing to file.
     '''
     logger = logging.getLogger("NammuController")
 
@@ -246,65 +302,72 @@ def update_yaml_config(path_to_jar, yaml_path, path_to_config, verbose=False,
      jar_version, local_version) = get_config_versions(path_to_jar, yaml_path,
                                                        path_to_config)
 
-    if different_versions(jar_version, local_version):
-        d = {}
-        logger.debug("Comparing install and local settings files...")
-        for key in jar_config:
-            if(isinstance(jar_config[key], dict)):  # Nested dics within a key
-                if key in local_config:
-                    tmp = {}  # for the nested dics
-                    for sub_key in jar_config[key]:
-                        if sub_key in local_config[key]:
-                            logger.debug("%s: %s: %s --> Using local values.",
-                                         key,
-                                         sub_key,
-                                         jar_config[key][sub_key])
-                            tmp[sub_key] = local_config[key][sub_key]
-                        else:
-                            logger.debug("%s: %s: %s --> Using jar values.",
-                                         key,
-                                         sub_key,
-                                         jar_config[key][sub_key])
-                            tmp[sub_key] = jar_config[key][sub_key]
-                    d[key] = tmp
-                else:
-                    logger.debug("%s doesnt exist locally, creating...", key)
-                    d[key] = jar_config[key]
-            else:  # One level deep dictionary
-                if key in local_config:
-                    logger.debug("%s: %s --> Using local values.",
-                                 key,
-                                 jar_config[key])
-                    d[key] = local_config[key]
-                else:
-                    logger.debug("%s: %s --> Using jar values.",
-                                 key,
-                                 jar_config[key])
-                    d[key] = jar_config[key]
-        logger.debug("Updating version number in local config: %s --> %s",
-                     local_config['version'], jar_config['version'])
-        d['version'] = jar_config['version']
-        if test_mode:  # This is for running tests, a dic is returned to check
-            return d  # keys are correct.
-        else:
-            # Need to apply the patching to correct any problems between
-            # version 0.8 and version 1.0
-            d = patch_config(d)
-            save_yaml_config(d)
-    else:
-        return
+    if not different_versions(jar_version, local_version):
+        return local_config
+
+    d = {}
+    logger.debug("Comparing install and local settings files...")
+    for key in jar_config:
+        if(isinstance(jar_config[key], dict)):  # Nested dics within a key
+            if key in local_config:
+                tmp = {}  # for the nested dics
+                for sub_key in jar_config[key]:
+                    if sub_key in local_config[key]:
+                        logger.debug("%s: %s: %s --> Using local values.",
+                                     key,
+                                     sub_key,
+                                     jar_config[key][sub_key])
+                        tmp[sub_key] = local_config[key][sub_key]
+                    else:
+                        logger.debug("%s: %s: %s --> Using jar values.",
+                                     key,
+                                     sub_key,
+                                     jar_config[key][sub_key])
+                        tmp[sub_key] = jar_config[key][sub_key]
+                d[key] = tmp
+            else:
+                logger.debug("%s doesnt exist locally, creating...", key)
+                d[key] = jar_config[key]
+        else:  # One level deep dictionary
+            if key in local_config:
+                logger.debug("%s: %s --> Using local values.",
+                             key,
+                             jar_config[key])
+                d[key] = local_config[key]
+            else:
+                logger.debug("%s: %s --> Using jar values.",
+                             key,
+                             jar_config[key])
+                d[key] = jar_config[key]
+    logger.debug("Updating version number in local config: %s --> %s",
+                 local_config['version'], jar_config['version'])
+    d['version'] = jar_config['version']
+
+    # When running tests directly return the dict without writing to file
+    if not test_mode:
+        # Need to apply the patching to correct any problems between
+        # version 0.8 and version 1.0
+        d = patch_config(d)
+        save_yaml_config(d, filename=os.path.basename(path_to_config))
+    return d
 
 
-def save_yaml_config(config):
+def save_yaml_config(config, filename='settings.yaml'):
     '''
     Overwrites settings with given config dict.
+
+    If a file name (e.g. "logging.yaml") is expliclity specified, then that
+    configuration file will be overwritten; otherwise, overwrites the settings
+    file by default.
+    Note that this function can also be called during Nammu's lifetime
+    (e.g. when a file is saved), not only during launch.
     '''
     # Get config path
-    path_to_config = get_log_path('settings.yaml')
+    path_to_config = get_log_path(filename)
 
     # Save given config in yaml file
     with open(path_to_config, 'w') as outfile:
-        outfile.write(yaml.safe_dump(config))
+        outfile.write(yaml.safe_dump(dict(config)))
 
 
 def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
@@ -313,21 +376,16 @@ def copy_yaml_to_home(jar_file_path, source_rel_path, target_path):
     it to ~/.nammu.
     '''
     try:
-        zf = zipfile.ZipFile(jar_file_path, 'r')
+        with zipfile.ZipFile(jar_file_path, 'r') as zf:
+            for zi in zf.infolist():
+                fn = zi.filename
+                if fn.lower() == source_rel_path:
+                    with zf.open(fn) as source_file:
+                        with open(target_path, "wb") as target_file:
+                            shutil.copyfileobj(source_file, target_file)
     except zipfile.BadZipfile:
-        shutil.copyfileobj(file(source_rel_path, "wb"),
-                           file(target_path, "wb"))
-    else:
-        lst = zf.infolist()
-        for zi in lst:
-            fn = zi.filename
-            if fn.lower() == source_rel_path:
-                source_file = zf.open(fn)
-                target_file = file(target_path, "wb")
-                with source_file, target_file:
-                    shutil.copyfileobj(source_file, target_file)
-    finally:
-        zf.close()
+        with open(source_rel_path, "r") as src, open(target_path, "w") as dest:
+            shutil.copyfileobj(src, dest)
 
 
 def find_image_resource(name):

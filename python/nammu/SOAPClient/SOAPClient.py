@@ -1,5 +1,5 @@
 '''
-Copyright 2015 - 2017 University College London.
+Copyright 2015 - 2018 University College London.
 
 This file is part of Nammu.
 
@@ -64,7 +64,7 @@ class SOAPClient(object):
         self.logger.debug("HTTP request body sent: %s", body)
         try:
             self.response = requests.post(url, data=body, headers=headers,
-                                          timeout=3)
+                                          timeout=5)
         except ConnectTimeout:
             self.logger.error('Connection timed out when sending POST '
                               'request.')
@@ -92,16 +92,27 @@ class SOAPClient(object):
         *  "err_stat\n" (something bad happened and we have to mail Steve)
         """
         url = "{}/{}/{}".format(self.url, self.url_dir, request_id)
-        while True:
+        # Try 10 times to get response from server
+        attempt = 0
+        while attempt < 10:
             try:
-                response = requests.get(url)
-            except RequestException:
+                response = requests.get(url, timeout=5)
+            except RequestException, ConnectTimeout:
                 raise
             else:
                 if response.text == "done\n":
                     return
                 elif response.text == "err_stat\n":
                     raise Exception("UnknownServerError")
+            attempt += 1
+        # If we get here, we have run the max number of attempts and got no
+        # server response - server might be full or broken.
+        self.logger.error("The Oracc server was unable to elaborate response "
+                          "for request with id {}. Please contact the Oracc "
+                          "server admin to look into this problem.".format(
+                            request_id
+                          ))
+        raise Exception("UnknownServerError")
 
     def get_response(self):
         return self.response.content
