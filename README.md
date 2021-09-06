@@ -1,18 +1,20 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1414437.svg)](https://doi.org/10.5281/zenodo.1414437)
 
-# Nammu: Desktop GUI for ORACC
+As of September 2021, the recommended desktop tool for Oracc edition is [Nisaba](https://github.com/oracc/nisaba), an extension for Visual Studio Code.
+
+# Nammu: Desktop GUI for Oracc
 
 To run Nammu on your computer, you can download it from
 [here](https://github.com/oracc/nammu/releases/download/1.3.0/nammu-1.3.0.jar)
 and just double click on it to open it.
 
-## What is ORACC?
-ORACC is the [Open Richly Annotated Cuneiform Corpus](http://oracc.org).
+## What is Oracc?
+Oracc is the [Open Richly Annotated Cuneiform Corpus](http://oracc.org).
 It provides open-access, standards-based publication platforms, research tools
 and teaching resources for Assyriology and ancient Near Eastern History,
 hosting around 40 academic research projects worldwide.
 
-ORACC has become established as one of the core online resources in the world
+Oracc has become established as one of the core online resources in the world
 of ancient Near Eastern studies. It originated in an AHRC-funded research project
 [Prof. Eleanor Robson](https://www.ucl.ac.uk/history/people/academic-staff/eleanor-robson)
 ran at the University of Cambridge several years ago and is now continuing to
@@ -21,7 +23,7 @@ Pennsylvania (Philadelphia).
 
 
 ## What is Nammu?
-Nammu is a desktop GUI that enables ORACC content creators to edit, check and
+Nammu is a desktop GUI that enables Oracc content creators to edit, check and
 upload transliterations of Sumerian texts in the form of text files in
 [ASCII Transliteration Format](http://oracc.museum.upenn.edu/doc/help/editinginatf/)
 (ATF). It is being developed as a text editor with extended functionality.
@@ -44,7 +46,7 @@ Nammu is currently being developed by the
 ## Validation and lemmatisation of ATF files
 
 In order to validate ATF files, Nammu uses two approaches:
-* Online validation against ORACC server, configurable on the settings menu.
+* Online validation against Oracc server, configurable on the settings menu.
 * Offline validation using [pyORACC](https://github.com/oracc/pyoracc), the new
 ATF parser developed by UCL RSDT.
 
@@ -60,7 +62,7 @@ and lemmatise ATF files, and then presents the server output in the GUI.
 
 
 #### Validation with pyORACC
-Validation against the ORACC server requires the user to have Internet access.
+Validation against the Oracc server requires the user to have Internet access.
 Since this is not always the case, the UCL RSDG is also developing
 an ATF parsing tool to provide offline initial ATF validation.
 This tool is called pyORACC and you can find more information about it
