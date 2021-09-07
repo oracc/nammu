@@ -26,6 +26,9 @@ before_install:
 install:
   - |
     if ! [ -z "$PYTEST" ]; then
+       # Install MarkupSafe separately to make sure the version we want is
+       # picked up
+       pip install --user MarkupSafe==1.1.1
        pip install --user -r requirements.txt
        mkdir $HOME/build/$TRAVIS_REPO_SLUG/resources/lib
        javac -d $HOME/build/$TRAVIS_REPO_SLUG/resources/lib $HOME/build/$TRAVIS_REPO_SLUG/src/main/java/uk/ac/ucl/rc/development/oracc/ext/*.java
