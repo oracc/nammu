@@ -1,5 +1,3 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1414437.svg)](https://doi.org/10.5281/zenodo.1414437)
-
 Please note that Nammu has not been actively developed since September 2021.
 
 The recommended desktop tool for Oracc edition is now [Nisaba](https://github.com/oracc/nisaba), an extension for [Visual Studio Code](https://code.visualstudio.com/download).
